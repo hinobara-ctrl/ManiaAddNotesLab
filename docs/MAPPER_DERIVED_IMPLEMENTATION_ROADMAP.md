@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1 research: **HOLD — DEDUPLICATION RULE NOT JUSTIFIED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -537,6 +537,14 @@ exactamente los casos sin duplicados, pero held-out reconstruction empeora liger
 variantes reales disponibles, todas de la misma familia Spring. No se autorizó ni implementó el A/B conductual.
 Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
+### Phase C1.1 — Witness vs Agreement Validation
+
+**Estado: COMPLETE — OUTCOME B.** Un corpus deduplicado de 11 familias/11 charts (ocho con LNs) mostró que las 14.828 convergencias duration/release eran `SameHeadAgreement`. LOO-head-group eliminó todas las convergencias y produjo empate exacto entre Legacy y UniqueWitness. LOO-object localizó los 3.103 empeoramientos UniqueWitness en targets con twin estructural exacto, a través de ocho familias y después del filtro geométrico.
+
+**Conclusión:** `IndependentWitnessAuthority` y `WitnessAgreement` son dimensiones separadas. No se valida path-sum como fórmula general ni unique-count como sustitución conductual. C1 continúa HOLD.
+
+**Siguiente fase recomendada:** C1.2 — Witness Agreement Modeling / Shadow. Debe conservar agreements descriptivos sin weight, bonus, score o confidence. No autoriza C2 ni una nueva policy.
+
 ## Phase C2 — Retrigger-specific frequency A/B
 
 **Goal:** reemplazar el soporte agregado aplicado a cada gap por frecuencia específica por gap y tipo de transición.
@@ -866,3 +874,18 @@ Research gate:
 **C1 HOLD — DEDUPLICATION RULE NOT JUSTIFIED**
 
 No se implementó C2 ni ninguna policy conductual C1.
+
+## Phase C1.1 validation gate
+
+1. corpus multi-family read-only y deduplicado: **PASS**;
+2. SameHead vs materialización vs other separados: **PASS**;
+3. exact/decimal/ms/tolerance registrados: **PASS**;
+4. LOO-object y LOO-head-group: **PASS**;
+5. structural twins sin threshold estilístico: **PASS**;
+6. geometría legacy y target retirada: **PASS**;
+7. probabilidad normalizada alineada con `TakeWeighted`: **PASS**;
+8. micro/macro y por family/chart: **PASS**;
+9. señal agreement multi-family: **PASS — OUTCOME B**;
+10. policy conductual: **NO AUTORIZADA**.
+
+**C1.1 COMPLETE — C1 REMAINS HOLD; NEXT RECOMMENDED C1.2 SHADOW.**

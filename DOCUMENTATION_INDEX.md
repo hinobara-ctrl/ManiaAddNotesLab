@@ -22,6 +22,8 @@ Los documentos maestros describen sólo el estado actual y se actualizan en cada
 - [Phase A — Evidence Infrastructure](docs/PHASE_A_EVIDENCE_INFRASTRUCTURE_REPORT.md) — cierre verificable del perfil original-only y regresión conductual nula.
 - [Phase B — Certificates and Failures](docs/PHASE_B_CERTIFICATES_AND_FAILURES_REPORT.md) — cierre de diagnostics, blockers y failure taxonomy en shadow.
 - [Phase C1 — LN Witness Deduplication](docs/PHASE_C1_LN_WITNESS_DEDUP_REPORT.md) — investigación, resultados held-out y decisión HOLD.
+- [Phase C1.1 — Witness vs Agreement Validation](docs/PHASE_C1_1_WITNESS_AGREEMENT_VALIDATION_REPORT.md) — corpus multi-family, holdouts, geometría y Outcome B.
+- [Phase C1.1 corpus inventory](docs/MAP_FAMILY_VALIDATION_INVENTORY.md) — charts humanos deduplicados, familias, keymodes y conteos reproducibles.
 - [Contextual/LN iteration](docs/ITERATION_CONTEXTUAL_LN_REPORT.md) — historial completo del rediseño de densidad, timing e interacción LN previo a Mapper-Derived.
 - [LN occupied-sections diagnosis](docs/DIAGNOSIS_LN_OCCUPIED_SECTIONS.md) — evidencia y causas raíz del bajo efecto ADD en secciones ocupadas por LNs.
 - [LN interior correction](docs/LN_INTERIOR_CORRECTION_REPORT.md) — implementación y A/B de elegibilidad/contexto interior.
@@ -42,4 +44,3 @@ Los outputs `.osu`, CSV de ejecución y baselines grandes permanecen como artefa
 ## Fixtures
 
 - [samples/README](samples/README.md) — descripción de los `.osu` sintéticos pequeños incluidos para pruebas reproducibles.
-

@@ -1,0 +1,11 @@
+scope,mode,charts,families,targets,micro_target_present_rate,macro_chart_target_present_rate,micro_legal_any_lane_rate,macro_chart_legal_any_lane_rate,agreements,same_head,materialization,other,beat_exact,millisecond_exact,tolerance_only,mean_delta_micro,mean_delta_macro_chart
+global,LeaveOneObjectOut,8,8,12554,0.937868408475,0.84329760744,0.874303010993,0.796713141775,14828,14828,0,0,11905,14828,0,-0.008842999691,-0.021810049408
+structural_twin,LeaveOneObjectOut,8,8,3771,1,1,0.917793688677,0.934671379321,5530,5530,0,0,,,,-0.038475225304,-0.063691115549
+no_structural_twin,LeaveOneObjectOut,8,8,8783,0.911192075601,0.797471104344,0.855630194694,0.761969868913,0,0,0,0,,,,0.004803990708,0.003153237386
+same_head_target,LeaveOneObjectOut,8,8,3771,1,1,0.917793688677,0.934671379321,5530,5530,0,0,,,,-0.038475225304,-0.063691115549
+no_duplicate_target,LeaveOneObjectOut,8,8,8783,0.911192075601,0.797471104344,0.855630194694,0.761969868913,0,0,0,0,,,,0.004803990708,0.003153237386
+global,LeaveOneHeadGroupOut,8,8,12554,0.91476820137,0.747310458654,0.85438903935,0.708881613951,0,0,0,0,0,0,0,0,0
+structural_twin,LeaveOneHeadGroupOut,8,8,3771,0.923097321665,0.613036062302,0.851498276319,0.570953361076,0,0,0,0,,,,0,0
+no_structural_twin,LeaveOneHeadGroupOut,8,8,8783,0.911192075601,0.797471104344,0.855630194694,0.761969868913,0,0,0,0,,,,0,0
+same_head_target,LeaveOneHeadGroupOut,0,0,0,0,,0,,0,0,0,0,,,,,
+no_duplicate_target,LeaveOneHeadGroupOut,8,8,12554,0.91476820137,0.747310458654,0.85438903935,0.708881613951,0,0,0,0,,,,0,0

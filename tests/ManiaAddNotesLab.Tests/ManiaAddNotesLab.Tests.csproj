@@ -17,4 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ManiaAddNotesLab.Core\ManiaAddNotesLab.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\samples\*.osu" Link="samples\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

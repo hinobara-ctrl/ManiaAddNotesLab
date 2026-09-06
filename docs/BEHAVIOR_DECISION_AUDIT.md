@@ -52,7 +52,7 @@ Una policy contract no es una verdad física ni de formato. Un `HARD_VALIDITY_IN
 | Source affinity | candidate builder | multiplica por 1.25 | Sí | MAPPER_DERIVED_CANDIDATE | Default manual | Sí | C | Frecuencia/testigos futuros |
 | Distance decay bands | `DistanceWeight` | ceil por beat, caída 0.2 | Sí | MAPPER_DERIVED_CANDIDATE | Default manual | Sí | E/I | Contexto predictivo futuro |
 | Minimum distance weight | `DistanceWeight` | piso 0.2 | Sí | MAPPER_DERIVED_CANDIDATE | Default manual | Sí | E/I | Autoriza influencia distante |
-| Duration and release vote addition | candidate builder | suma ambas rutas | Sí | MAPPER_DERIVED_CANDIDATE | Diseño legacy | Sí | C1 HOLD | Shadow por ObservationId es canónico algebraicamente, pero held-out real degradó ranking; legacy sigue activo |
+| Duration and release vote addition | candidate builder | suma ambas rutas | Sí | MAPPER_DERIVED_CANDIDATE | Diseño legacy | Sí | C1 HOLD | C1.1 mostró que deduplicar ayuda levemente sin twin pero degrada twins same-head en ocho familias; legacy sigue activo, no validado como fórmula general |
 | Exact source-form test | `Nearly`/end equality | afinidad por duración/release source | Sí | MAPPER_DERIVED_CANDIDATE | Diseño legacy | Sí | C | Tolerancia participa |
 | Minimum local LN duration envelope | candidate builder | descarta menor que mínimo observado | Sí | MAPPER_DERIVED_CANDIDATE | Generalización manual | Sí | C/F | Mínimo no prueba relación |
 | Map-relative vocabulary authority | candidate builder | conserva endpoints/duraciones originales | Sí | MAPPER_DERIVED_CANDIDATE | Hipótesis experimental | Refinar con relations | C | Estructuralmente validado |
@@ -94,7 +94,7 @@ Una policy contract no es una verdad física ni de formato. Un `HARD_VALIDITY_IN
 | Diagnostic candidate identity | `DiagnosticCandidateKey` | key policy-local por oportunidad, kind, orden y tiempos | No en generación | IMPLEMENTATION_ONLY | Phase B shadow | No; es provisional | B | No cambia equality/sort/merge legacy |
 | Diagnostic detail filter | CLI/Web export | `summary`, `relevant` o `all`; sin sampling | No | IMPLEMENTATION_ONLY | Operación/export | No | B | Relevant = placed + interior + no-shape; summary siempre global |
 | Diagnostic version | `DecisionDiagnosticVersions` | `phase-c1-shadow.1` separada de profile/policy | No | IMPLEMENTATION_ONLY | Reproducibilidad | No | C1 | Phase B cerró en `phase-b.1`; nuevo schema añade weights/provenance shadow |
-| C1 shadow witness aggregation | candidate diagnostics/research | calcula una contribución por OriginalObservationId sin gobernar selection | No mientras permanezca shadow | IMPLEMENTATION_ONLY | Investigación C1 | No activa | C1 HOLD | Diagnostics OFF no materializa witnesses; no existe policy conductual |
+| C1 shadow witness aggregation | candidate diagnostics/research | calcula una contribución por OriginalObservationId sin gobernar selection | No mientras permanezca shadow | IMPLEMENTATION_ONLY | Investigación C1 | No activa | C1 HOLD | C1.1 Outcome B: independent authority y agreement son dimensiones separadas; unique aggregation no se activa |
 | Comparable local context | ventanas y conteos | equivalencia temporal aproximada | Sí | OPEN_DESIGN_DECISION | Diseño faltante | Sí | E/F | Requiere mismatch/no-context |
 | Generalization policy | implícita por pooling/fallback | no está versionada como tal | Sí | OPEN_DESIGN_DECISION | Diseño faltante | Sí | F/I | Debe quedar en certificate |
 | Evidence confidence | no existe | no se muestra porcentaje | Sí | OPEN_DESIGN_DECISION | Investigación | Sí | I | Phase A no inventa fórmula |
@@ -105,6 +105,6 @@ Una policy contract no es una verdad física ni de formato. Un `HARD_VALIDITY_IN
 
 ## Resumen
 
-El inventario contiene ahora **86 decisiones**: 3 `USER_INTENT`, 6 `HARD_VALIDITY_INVARIANT`, 9 `CURRENT_POLICY_CONTRACT`, 49 `MAPPER_DERIVED_CANDIDATE`, 8 `IMPLEMENTATION_ONLY` y 11 `OPEN_DESIGN_DECISION`. No hay `FUTURE_POLICY_CONTRACT` activo todavía. C1 no reclasifica la suma duration/release porque la sustitución conductual quedó en HOLD.
+El inventario contiene **86 decisiones**: 3 `USER_INTENT`, 6 `HARD_VALIDITY_INVARIANT`, 9 `CURRENT_POLICY_CONTRACT`, 49 `MAPPER_DERIVED_CANDIDATE`, 8 `IMPLEMENTATION_ONLY` y 11 `OPEN_DESIGN_DECISION`. No hay `FUTURE_POLICY_CONTRACT` activo todavía. C1.1 tampoco reclasifica la suma duration/release: demuestra que `WitnessAgreement` es una señal distinta, pero no define su peso, y la sustitución conductual continúa en HOLD.
 
 Se debe actualizar al introducir cada policy version. La reclasificación distingue validez inderrotable de semántica conductual revisable; no modifica generación. Para la futura policy mapper-derived por defecto, el criterio final es `Active manually sourced style decisions = 0`. Cualquier `OPEN_DESIGN_DECISION` estilística debe resolverse o quedar inactiva, y `IMPLEMENTATION_ONLY` requiere evidencia de neutralidad estilística.

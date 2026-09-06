@@ -233,6 +233,30 @@ public sealed class AddNotesEngine
         }, applySourceAffinity, computeC1Weights: true);
     }
 
+    /// <summary>
+    /// Research-only view of the exact evidence routes materialized by the legacy candidate builder. The returned
+    /// candidates are produced by the same implementation as generation; route metadata has no scoring authority.
+    /// </summary>
+    public ReleaseCandidateResearchBuild BuildReleaseCandidatesForResearch(ManiaObject source,
+        LocalLnContext context, BeatTimeline timeline, double windowBeats,
+        double sourceAffinityMultiplier = SourceAffinityMultiplier, double distanceDecayPerBeat = 0.20,
+        double minimumDistanceWeight = 0.20, bool applySourceAffinity = false,
+        bool mapRelativeSnapEnabled = true)
+    {
+        var timed = new TimedManiaObject(source, context.SourceHeadBeat,
+            source.EndTime is null ? context.SourceHeadBeat : timeline.ToBeatDecimal(source.EndTime.Value));
+        var routes = new List<LnCandidateEvidenceRoute>();
+        var candidates = BuildReleaseCandidates(timed, context, timeline, new AddNotesOptions
+        {
+            LnWindowBeats = windowBeats,
+            SourceAffinityMultiplier = sourceAffinityMultiplier,
+            DistanceDecayPerBeat = distanceDecayPerBeat,
+            MinimumDistanceWeight = minimumDistanceWeight,
+            MapRelativeSnapEnabled = mapRelativeSnapEnabled
+        }, applySourceAffinity, computeC1Weights: true, routes);
+        return new ReleaseCandidateResearchBuild(candidates, routes.ToImmutableArray());
+    }
+
     public LocalLnContext BuildOriginalInteriorLnContext(ManiaObject parent, int anchorTime,
         IReadOnlyList<ManiaObject> originals, BeatTimeline timeline, double windowBeats, int minimumContext = 3)
     {
@@ -618,7 +642,7 @@ public sealed class AddNotesEngine
 
     private static IReadOnlyList<ReleaseCandidate> BuildReleaseCandidates(TimedManiaObject source,
         LocalLnContext context, BeatTimeline timeline, AddNotesOptions options, bool applySourceAffinity = true,
-        bool computeC1Weights = false)
+        bool computeC1Weights = false, List<LnCandidateEvidenceRoute>? researchRoutes = null)
     {
         var byEnd = new Dictionary<int, MutableCandidate>();
         foreach (var observation in context.Observations)
@@ -651,14 +675,15 @@ public sealed class AddNotesEngine
         void AddDuration(LnObservation observation, decimal intendedEndBeat, double weight)
         {
             var rawTime = timeline.ToTimeMilliseconds(intendedEndBeat);
-            Add(observation, rawTime, weight, 1, 0, 0, intendedEndBeat);
+            Add(observation, LnEvidenceLabel.Duration, rawTime, weight, 1, 0, 0, intendedEndBeat);
         }
 
         void AddRelease(LnObservation observation, double weight) =>
-            Add(observation, observation.Object.EndTime!.Value, weight, 0, 1, 1, observation.ReleaseBeat);
+            Add(observation, LnEvidenceLabel.ExactRelease, observation.Object.EndTime!.Value, weight, 0, 1, 1,
+                observation.ReleaseBeat);
 
-        void Add(LnObservation observation, int rawTime, double weight, int durationVotes, int releaseVotes,
-            int exactReleaseVotes, decimal intendedEndBeat)
+        void Add(LnObservation observation, LnEvidenceLabel label, int rawTime, double weight, int durationVotes,
+            int releaseVotes, int exactReleaseVotes, decimal intendedEndBeat)
         {
             var endTime = options.MapRelativeSnapEnabled ? rawTime : timeline.SnapToSupportedDivision(rawTime);
             var endBeat = endTime == rawTime ? intendedEndBeat : timeline.ToBeatDecimal(endTime);
@@ -678,6 +703,9 @@ public sealed class AddNotesEngine
                 candidate.IndependentWitnessCount++;
             }
             candidate.SnapAdjustmentMilliseconds += Math.Abs(endTime - rawTime);
+            researchRoutes?.Add(new LnCandidateEvidenceRoute(observation.Object, observation.HeadBeat,
+                observation.ReleaseBeat, label, intendedEndBeat, rawTime, endBeat, endTime,
+                Math.Abs(endTime - rawTime)));
         }
     }
 
@@ -1065,3 +1093,9 @@ public sealed record CandidateEvidence(int DurationVotes, int ReleaseVotes, int 
 public sealed record ReleaseCandidate(decimal EndBeat, int EndTime, double Weight, CandidateEvidence Evidence);
 public sealed record ResolvedReleaseCandidate(ReleaseCandidate Candidate, IReadOnlyList<int> LegalLanes,
     int DiagnosticIndex = -1);
+public enum LnEvidenceLabel { Duration, ExactRelease }
+public sealed record LnCandidateEvidenceRoute(ManiaObject Observation, decimal ObservationHeadBeat,
+    decimal ObservationReleaseBeat, LnEvidenceLabel Label, decimal IntendedEndBeat, int RawEndTime,
+    decimal MaterializedEndBeat, int MaterializedEndTime, int SnapAdjustmentMilliseconds);
+public sealed record ReleaseCandidateResearchBuild(IReadOnlyList<ReleaseCandidate> Candidates,
+    ImmutableArray<LnCandidateEvidenceRoute> Routes);
