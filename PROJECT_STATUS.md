@@ -10,9 +10,10 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 |---|---|---|
 | A — Evidence Infrastructure | **COMPLETE** | Ninguno; construye un perfil original-only. |
 | B — Certificates and Failures | **COMPLETE** | Ninguno; explica candidatos, blockers y rechazos en shadow opt-in. |
-| C1 — LN Witness Authority | **HOLD** | Ninguno; sólo compara un peso alternativo en shadow/research. |
+| C1 — LN Witness Authority | **HOLD — HYPOTHESIS REFRAMED** | Ninguno; sólo compara un peso alternativo en shadow/research. |
 | C1.1 — Witness vs Agreement Validation | **COMPLETE — OUTCOME B** | Ninguno; demuestra que el acuerdo same-head es una señal separada. |
 | C1.2 — Exact-Head Relation Modeling | **COMPLETE — OUTCOME A** | Ninguno; la relación H→R explica agreement C1.1. |
+| C2 — Retrigger-Specific Frequency | **DEFERRED** | Ninguno; hipótesis separada no iniciada. |
 | D0 — ChordCompletion Reconstruction | **NEXT / NOT AUTHORIZED YET** | Ninguno; candidato a próxima investigación shadow. |
 
 ## Qué funciona hoy
@@ -82,7 +83,8 @@ Current phase: C1.2 — COMPLETE — OUTCOME A<br>
 Next recommended phase: D0 — ChordCompletion Reconstruction / Shadow<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
-Diagnostic schema: `phase-c1-2-shadow.1`
+Diagnostic schema: `phase-c1-2-shadow.1`<br>
+Tests: 204 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [Phase C1.2 report](docs/PHASE_C1_2_EXACT_HEAD_RELATION_MODELING_REPORT.md). Los reports [C1.1](docs/PHASE_C1_1_WITNESS_AGREEMENT_VALIDATION_REPORT.md) y [C1](docs/PHASE_C1_LN_WITNESS_DEDUP_REPORT.md) permanecen como evidencia histórica.

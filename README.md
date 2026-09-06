@@ -23,7 +23,10 @@ La generación activa continúa en `legacy-experimental.1`. Phase A, Phase B y l
 <!-- PROJECT-STATE:BEGIN -->
 Current phase: C1.2 — COMPLETE — OUTCOME A<br>
 Next recommended phase: D0 — ChordCompletion Reconstruction / Shadow<br>
-Behavior policy: `legacy-experimental.1`
+Behavior policy: `legacy-experimental.1`<br>
+Evidence profile: `phase-a.1`<br>
+Diagnostic schema: `phase-c1-2-shadow.1`<br>
+Tests: 204 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

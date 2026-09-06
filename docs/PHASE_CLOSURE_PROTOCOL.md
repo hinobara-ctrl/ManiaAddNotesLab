@@ -33,3 +33,24 @@ Este documento maestro define el procedimiento obligatorio. Una fase no está ce
 17. Only then consider phase closed.
 
 El orden es deliberado: el report fija el resultado histórico y las fuentes vivas lo resumen después. Si el report y `PROJECT_STATE.json` divergen, el report cerrado determina qué ocurrió y el estado canónico debe corregirse.
+
+## Canonical phase semantics
+
+- `currentPhase` identifica la fase cerrada más reciente en el orden canónico de `phases`; debe tener estado `COMPLETE`, `HOLD` o `REJECTED` y coincidir con el report cerrado.
+- `nextRecommendedPhase` identifica exactamente una fase recomendada que todavía no comenzó; debe ser distinta de `currentPhase` y tener estado `NEXT`. Una recomendación no constituye autorización para implementarla.
+- `testStatus` conserva el snapshot del último cierre completo. No se actualiza con una ejecución parcial ni se usa para ocultar failures o skipped tests.
+
+## PRE-COMMIT / PRE-PUSH CHECK
+
+Desde la raíz del repositorio, ejecutar en este orden:
+
+```powershell
+dotnet run --project tools/DocConsistency -- --check
+dotnet test -c Release
+git diff --check
+git status --short
+```
+
+Además, revisar manualmente que todo documento maestro afectado por el cierre esté incluido en el diff y que el report, `PROJECT_STATE.json`, README, status, roadmaps, arquitectura, audit e índice describan el mismo resultado. Un checker verde no sustituye esta revisión.
+
+Este protocolo no autoriza `git add`, commit ni push. Esas acciones requieren una instrucción explícita posterior.
