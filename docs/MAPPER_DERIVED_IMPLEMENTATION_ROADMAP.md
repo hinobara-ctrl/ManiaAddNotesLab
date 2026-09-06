@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. D0 es el siguiente candidato shadow; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -83,8 +83,9 @@ La arquitectura separa explícitamente dos capas.
 ```text
 OriginalObjects
   → OriginalEvidence observations
+  → witness identity
+  → observed claims
   → observed relations
-  → TransformationWitness
   → MapperEvidenceProfile
   → SupportCertificate
 ```
@@ -118,7 +119,9 @@ opportunity
 
 **ObservationId:** identidad estable dentro del chart canónico. Debe ser única, determinista y no depender de seed, rango, ADD ni objetos añadidos.
 
-**TransformationWitness:** conjunto deduplicado de `ObservationId` y etiquetas que explica qué originales respaldan una afirmación. Varias etiquetas sobre el mismo ID siguen siendo un testigo independiente.
+**TransformationWitness:** conjunto deduplicado de `ObservationId` y etiquetas que explica qué originales respaldan una afirmación. Varias etiquetas sobre el mismo ID siguen siendo un testigo independiente, pero no se descartan las claims o relations distintas que ese ID respalda.
+
+**WITNESS IDENTITY ≠ RELATION COUNT:** `ObservationId` deduplica identidad de muestra; no deduplica semántica. Por ejemplo, O17 sigue siendo un witness independiente aunque preserve los claims `Duration`/`ExactRelease` y las relaciones `ExactHead(H)`/`HeadToRelease(H,R)`. Estas relaciones son provenance descriptiva, no unidades de weight.
 
 **ObservedValue:** un valor existe, por ejemplo una duración de `0.2 beat`.
 
@@ -293,7 +296,7 @@ La elección uniforme actual es una hipótesis estilística. Investigar coocurre
 
 - Extraer `shape witnesses` con duración, release y contexto temporal.
 - Conservar diferencia entre duración trasladada y release exacto.
-- Deduplicar por `(candidate, ObservationId)`; varias etiquetas no multiplican testigos.
+- Deduplicar la identidad del witness por `ObservationId` dentro del candidate. Preservar por separado todas las claims y relaciones distintas que ese witness demuestra; la multiplicidad de witnesses no equivale a agreement entre relations.
 - Condicionar gaps por transición: tap→tap, tap→LN, LN→tap, LN→LN, release→tap y release→LN head cuando corresponda.
 - Separar colisión/orden de spacing estilístico.
 - No interpretar el mínimo observado como autorización de cualquier gap superior.
@@ -339,6 +342,8 @@ Observation O17
 ```
 
 El certificado conserva ambas etiquetas, pero `IndependentWitnessCount=1`. Solo IDs distintos aumentan testigos independientes.
+
+Esto no implica que varias labels carezcan de información estructural. C1.1 demostró que `Duration` y `ExactRelease` pueden concordar por una relación exact-head. La identidad se deduplica; la provenance de claims/relations se conserva y su semántica se valida antes de asignarle autoridad.
 
 Los testigos deben ser conjuntos ordenados y deduplicados. Una parent que participa en varias relaciones no se clona como evidencia. Alternativas idénticas originadas por varias rutas se fusionan antes de crear competencia probabilística.
 
@@ -543,9 +548,15 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 **Conclusión:** `IndependentWitnessAuthority` y `WitnessAgreement` son dimensiones separadas. No se valida path-sum como fórmula general ni unique-count como sustitución conductual. C1 continúa HOLD.
 
-**Siguiente fase recomendada:** C1.2 — Witness Agreement Modeling / Shadow. Debe conservar agreements descriptivos sin weight, bonus, score o confidence. No autoriza C2 ni una nueva policy.
+**Siguiente fase recomendada:** C1.2 — Exact-Head Relation Modeling / Shadow. Debe conservar `H → R`, witness provenance y endpoints competidores sin weight, bonus, score o confidence. No autoriza C2 ni una nueva policy.
+
+### Phase C1.2 — Exact-Head Relation Modeling / Shadow
+
+**Estado: COMPLETE — OUTCOME A.** Grupos exact-head, relaciones head→release y sus `ObservationId` distinguen misma relación repetida de endpoints competidores. Held-out relation reconstruction explica 3.771/3.771 structural twins y los 3.103/3.103 targets worsened-by-UniqueWitness de C1.1, sin scores. `BehaviorPolicyVersion` y generation permanecen intactos. Véase `PHASE_C1_2_EXACT_HEAD_RELATION_MODELING_REPORT.md`.
 
 ## Phase C2 — Retrigger-specific frequency A/B
+
+**Estado: DEFERRED durante C1.2.**
 
 **Goal:** reemplazar el soporte agregado aplicado a cada gap por frecuencia específica por gap y tipo de transición.
 
@@ -748,7 +759,7 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 | Marginal statistics combined incorrectly | valores válidos forman relación inválida | relations y CompatibleComposition |
 | Context leakage | misma frase dona y valida | exclusión por bloques/observaciones |
 | Synthetics contaminating evidence | feedback estilístico | builder solo usa `OriginalObjects`; tests |
-| Double-counting witnesses | duration+release duplica autoridad | deduplicación por ObservationId |
+| Conflating witness multiplicity with relation agreement | tratar dos claims como dos samples o borrar una relación al deduplicar | deduplicar witness identity, preservar relation provenance y validar semántica antes de asignar autoridad |
 | Candidate accumulation | 3→4 repetido termina en 6 | resulting-state/timestamp plan |
 | False confidence | porcentaje sin interpretación | certificate descriptivo; no confidence Phase A |
 | Performance/memory | ventanas/relaciones duplicadas | índices, shared IDs, medición y cache inmutable |
@@ -889,3 +900,9 @@ No se implementó C2 ni ninguna policy conductual C1.
 10. policy conductual: **NO AUTORIZADA**.
 
 **C1.1 COMPLETE — C1 REMAINS HOLD; NEXT RECOMMENDED C1.2 SHADOW.**
+
+## Phase C1.2 validation gate
+
+Determinismo, provenance, witness dedup, claims múltiples, same/different release, corpus multi-family, cross-key y regression conductual: **PASS**. No se añadieron weight, bonus, confidence ni `MapperSupport`. La representación explica todos los exact structural twins y todos los casos worsened-by-UniqueWitness de C1.1.
+
+**C1.2 COMPLETE — OUTCOME A; D0 SHADOW RECOMMENDED NEXT, C2 DEFERRED.**

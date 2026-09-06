@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "lastUpdated": "2026-09-06",
+  "behaviorPolicyVersion": "legacy-experimental.1",
+  "evidenceProfileVersion": "phase-a.1",
+  "diagnosticVersion": "phase-c1-2-shadow.1",
+  "phases": [
+    { "id": "A", "name": "Evidence Infrastructure", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_A_EVIDENCE_INFRASTRUCTURE_REPORT.md" },
+    { "id": "B", "name": "Certificates and Failures", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_B_CERTIFICATES_AND_FAILURES_REPORT.md" },
+    { "id": "C1", "name": "LN Witness Authority", "status": "HOLD", "outcome": "HYPOTHESIS_REFRAMED", "behaviorChange": false, "report": "docs/PHASE_C1_LN_WITNESS_DEDUP_REPORT.md" },
+    { "id": "C1.1", "name": "Witness vs Agreement Validation", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_C1_1_WITNESS_AGREEMENT_VALIDATION_REPORT.md" },
+    { "id": "C1.2", "name": "Exact-Head Relation Modeling / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_C1_2_EXACT_HEAD_RELATION_MODELING_REPORT.md" },
+    { "id": "C2", "name": "Retrigger-Specific Frequency", "status": "DEFERRED", "outcome": null, "behaviorChange": null, "report": null },
+    { "id": "D0", "name": "ChordCompletion Reconstruction / Shadow", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null }
+  ],
+  "currentPhase": "C1.2",
+  "nextRecommendedPhase": "D0",
+  "testStatus": { "passed": 204, "failed": 0, "skipped": 0 },
+  "validationCorpus": { "families": 11, "humanCharts": 11, "chartsWithLn": 8, "keymodes": [4, 7, 10], "lnTargets": 12554 },
+  "masterDocuments": [
+    "README.md",
+    "PROJECT_STATUS.md",
+    "ROADMAP.md",
+    "ARCHITECTURE.md",
+    "DOCUMENTATION_INDEX.md",
+    "docs/DESIGN.md",
+    "docs/EXPERIMENTS.md",
+    "docs/MAPPER_DERIVED_IMPLEMENTATION_ROADMAP.md",
+    "docs/BEHAVIOR_DECISION_AUDIT.md",
+    "docs/PHASE_CLOSURE_PROTOCOL.md"
+  ]
+}

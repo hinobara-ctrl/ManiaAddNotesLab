@@ -6,6 +6,10 @@ Alcance: Core, parser/writer, CLI, Web y política experimental vigente.
 
 Esta auditoría no elimina ni modifica decisiones. Identifica números y elecciones no numéricas que pueden afectar el resultado para que futuras sustituciones sean versionadas y atribuibles.
 
+## Principio permanente de evidencia
+
+**WITNESS IDENTITY ≠ RELATION COUNT.** `ObservationId` identifica una muestra original independiente. Deduplicar ese ID no autoriza a borrar claims o relaciones distintas: O17 puede conservar `Duration`, `ExactRelease`, `ExactHead(H)` y `HeadToRelease(H,R)` y seguir siendo un solo witness. Tampoco se permite transformar esas relaciones directamente en weight, bonus, confidence o `MapperSupport`; primero deben representarse y validarse.
+
 ## Taxonomía de contratos
 
 - `HARD_VALIDITY_INVARIANT`: condiciones no compensables por evidencia o estilo: lane válida, duración positiva, no overlap, tiempos/serialización `.osu` válidos y source no sobrescrito.
@@ -93,8 +97,9 @@ Una policy contract no es una verdad física ni de formato. Un `HARD_VALIDITY_IN
 | Candidate semantic identity | generación legacy | sigue sin existir identidad semántica futura | Sí | OPEN_DESIGN_DECISION | Diseño faltante | Sí | D0/J | Phase B no la resuelve |
 | Diagnostic candidate identity | `DiagnosticCandidateKey` | key policy-local por oportunidad, kind, orden y tiempos | No en generación | IMPLEMENTATION_ONLY | Phase B shadow | No; es provisional | B | No cambia equality/sort/merge legacy |
 | Diagnostic detail filter | CLI/Web export | `summary`, `relevant` o `all`; sin sampling | No | IMPLEMENTATION_ONLY | Operación/export | No | B | Relevant = placed + interior + no-shape; summary siempre global |
-| Diagnostic version | `DecisionDiagnosticVersions` | `phase-c1-shadow.1` separada de profile/policy | No | IMPLEMENTATION_ONLY | Reproducibilidad | No | C1 | Phase B cerró en `phase-b.1`; nuevo schema añade weights/provenance shadow |
+| Diagnostic version | `DecisionDiagnosticVersions` | `phase-c1-2-shadow.1` separada de profile/policy | No | IMPLEMENTATION_ONLY | Reproducibilidad | No | C1.2 | Phase B cerró en `phase-b.1`; C1 añadió weights/provenance y C1.2 observed values/relations |
 | C1 shadow witness aggregation | candidate diagnostics/research | calcula una contribución por OriginalObservationId sin gobernar selection | No mientras permanezca shadow | IMPLEMENTATION_ONLY | Investigación C1 | No activa | C1 HOLD | C1.1 Outcome B: independent authority y agreement son dimensiones separadas; unique aggregation no se activa |
+| Exact-head relation representation | research shadow | representa H→R con witness IDs y claims, sin score | No mientras permanezca shadow | IMPLEMENTATION_ONLY | C1.2 | No activa | C1.2 COMPLETE/A | Explica 3.771/3.771 twins y 3.103/3.103 worsened C1.1; no asigna autoridad |
 | Comparable local context | ventanas y conteos | equivalencia temporal aproximada | Sí | OPEN_DESIGN_DECISION | Diseño faltante | Sí | E/F | Requiere mismatch/no-context |
 | Generalization policy | implícita por pooling/fallback | no está versionada como tal | Sí | OPEN_DESIGN_DECISION | Diseño faltante | Sí | F/I | Debe quedar en certificate |
 | Evidence confidence | no existe | no se muestra porcentaje | Sí | OPEN_DESIGN_DECISION | Investigación | Sí | I | Phase A no inventa fórmula |
@@ -105,6 +110,6 @@ Una policy contract no es una verdad física ni de formato. Un `HARD_VALIDITY_IN
 
 ## Resumen
 
-El inventario contiene **86 decisiones**: 3 `USER_INTENT`, 6 `HARD_VALIDITY_INVARIANT`, 9 `CURRENT_POLICY_CONTRACT`, 49 `MAPPER_DERIVED_CANDIDATE`, 8 `IMPLEMENTATION_ONLY` y 11 `OPEN_DESIGN_DECISION`. No hay `FUTURE_POLICY_CONTRACT` activo todavía. C1.1 tampoco reclasifica la suma duration/release: demuestra que `WitnessAgreement` es una señal distinta, pero no define su peso, y la sustitución conductual continúa en HOLD.
+El inventario contiene **87 decisiones**: 3 `USER_INTENT`, 6 `HARD_VALIDITY_INVARIANT`, 9 `CURRENT_POLICY_CONTRACT`, 49 `MAPPER_DERIVED_CANDIDATE`, 9 `IMPLEMENTATION_ONLY` y 11 `OPEN_DESIGN_DECISION`. No hay `FUTURE_POLICY_CONTRACT` activo todavía. C1.2 representa la señal exact-head que C1.1 aisló, pero no define su peso ni reclasifica la suma duration/release; la sustitución conductual continúa en HOLD.
 
 Se debe actualizar al introducir cada policy version. La reclasificación distingue validez inderrotable de semántica conductual revisable; no modifica generación. Para la futura policy mapper-derived por defecto, el criterio final es `Active manually sourced style decisions = 0`. Cualquier `OPEN_DESIGN_DECISION` estilística debe resolverse o quedar inactiva, y `IMPLEMENTATION_ONLY` requiere evidencia de neutralidad estilística.

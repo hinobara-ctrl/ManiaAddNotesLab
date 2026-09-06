@@ -8,7 +8,7 @@ namespace ManiaAddNotesLab.Core;
 
 public static class DecisionDiagnosticVersions
 {
-    public const string Current = "phase-c1-shadow.1";
+    public const string Current = "phase-c1-2-shadow.1";
 }
 
 public readonly record struct OpportunityDiagnosticKey(string Value)
@@ -326,20 +326,47 @@ internal sealed class DecisionDiagnosticsBuilder
     }
 
     public SupportCertificate Certificate(DiagnosticCandidateKey key, ImmutableArray<CandidateEvidencePath> paths,
-        HardValidityResult validity, bool evaluatedEvidence)
+        HardValidityResult validity, bool evaluatedEvidence, int? sourceHeadTime = null,
+        decimal? sourceHeadBeat = null)
     {
         var started = Stopwatch.GetTimestamp();
         var witnesses = paths.GroupBy(x => x.ObservationId).OrderBy(x => x.Key.Value)
             .Select(group => new TransformationWitness($"W-{group.Key}", EvidenceClaimLevel.ObservedValue,
                 [group.Key], group.Select(x => x.EvidenceTag).Distinct().Order().ToImmutableArray()))
             .ToImmutableArray();
-        var certificate = new SupportCertificate(key, evaluatedEvidence ? EvidenceClaimLevel.ObservedValue : EvidenceClaimLevel.Unknown,
+        var observedValues = paths.GroupBy(x => new { x.ObservationId, x.EvidenceTag })
+            .OrderBy(x => x.Key.ObservationId.Value).ThenBy(x => x.Key.EvidenceTag)
+            .Select(group =>
+            {
+                var observation = _profile.Observations[group.Key.ObservationId.Value];
+                var value = group.Key.EvidenceTag == "Duration"
+                    ? observation.DurationBeats.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                    : observation.EndTime?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "";
+                return new CertificateObservedValue(group.Key.ObservationId, group.Key.EvidenceTag, value);
+            }).ToImmutableArray();
+        var sameHead = sourceHeadTime is null || sourceHeadBeat is null ? []
+            : paths.Select(x => x.ObservationId).Distinct().OrderBy(x => x.Value)
+                .Select(id => _profile.Observations[id.Value])
+                .Where(x => x.StartTime == sourceHeadTime && x.StartBeat == sourceHeadBeat).ToArray();
+        var observedRelations = sameHead.Length == 0 ? []
+            : ImmutableArray.Create(new CertificateObservedRelation("ExactHead", sourceHeadTime!.Value,
+                    sourceHeadBeat!.Value, null, null, sameHead.Select(x => x.Id).ToImmutableArray(), ["ExactHead"]))
+                .AddRange(sameHead.GroupBy(x => new { x.EndTime, x.EndBeat })
+                    .OrderBy(x => x.Key.EndTime).ThenBy(x => x.Key.EndBeat)
+                    .Select(group => new CertificateObservedRelation("HeadToRelease", sourceHeadTime.Value,
+                        sourceHeadBeat.Value, group.Key.EndTime, group.Key.EndBeat,
+                        group.Select(x => x.Id).ToImmutableArray(),
+                        group.SelectMany(observation => paths.Where(x => x.ObservationId == observation.Id)
+                                .Select(x => x.EvidenceTag)).Distinct().Order().ToImmutableArray())));
+        var claimLevel = observedRelations.Length > 0 ? EvidenceClaimLevel.ObservedRelation
+            : evaluatedEvidence ? EvidenceClaimLevel.ObservedValue : EvidenceClaimLevel.Unknown;
+        var certificate = new SupportCertificate(key, claimLevel,
             EvidenceScope.Local, evaluatedEvidence && witnesses.Length > 0
                 ? EvidenceResolutionState.ObservedSupport : EvidenceResolutionState.NotEvaluated,
             witnesses,
             evaluatedEvidence && witnesses.Length > 0 ? ["LegacyShapeRoutePresent"] : [],
             evaluatedEvidence ? [] : ["ComparableContext", "CompatibleComposition"],
-            [], witnesses.Length, validity);
+            [], witnesses.Length, validity, observedValues, observedRelations);
         _certificateTicks += Stopwatch.GetTimestamp() - started;
         return certificate;
     }

@@ -15,8 +15,16 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase A — COMPLETE:** infraestructura de evidencia original-only.
 - **Phase B — COMPLETE:** certificados y causas de fallo en shadow mode.
 - **Phase C1 — HOLD:** la autoridad numérica de witnesses LN todavía no tiene una regla suficientemente justificada.
+- **Phase C1.1 — COMPLETE, OUTCOME B:** witness identity y relation agreement son dimensiones distintas.
+- **Phase C1.2 — COMPLETE, OUTCOME A:** relaciones exact-head `H→R` explican la señal C1.1 sin asignar pesos.
 
-La generación activa continúa en `legacy-experimental.1`. Phase A, Phase B y la alternativa C1 observan y explican, pero no gobiernan el selector. C1 no se presenta como un fracaso: confirmó que varias rutas pueden corresponder a un mismo witness independiente, pero la deduplicación ensayada degradó ligeramente la reconstrucción held-out en la única familia humana disponible.
+La generación activa continúa en `legacy-experimental.1`. Phase A, Phase B y la investigación C1–C1.2 observan y explican, pero no gobiernan el selector. En 11 familias humanas únicas —ocho con LNs— C1.2 confirmó que las relaciones exact-head explican los casos donde UniqueWitness perdía señal. D0 es el siguiente candidato shadow; C2 permanece deferred.
+
+<!-- PROJECT-STATE:BEGIN -->
+Current phase: C1.2 — COMPLETE — OUTCOME A<br>
+Next recommended phase: D0 — ChordCompletion Reconstruction / Shadow<br>
+Behavior policy: `legacy-experimental.1`
+<!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.
 
@@ -58,6 +66,7 @@ dotnet run --project src/ManiaAddNotesLab.Cli -- --help
 dotnet restore
 dotnet build -c Release
 dotnet test -c Release
+dotnet run --project tools/DocConsistency -- --check
 ```
 
 ## Leer más
@@ -67,4 +76,3 @@ dotnet test -c Release
 - [Arquitectura](ARCHITECTURE.md)
 - [Índice completo de documentación](DOCUMENTATION_INDEX.md)
 - [Diseño técnico implementado](docs/DESIGN.md)
-

@@ -15,6 +15,7 @@ coverage/
 *.coverage
 *.coveragexml
 publish/
+.artifacts/
 
 # Local experiment outputs; results worth keeping are summarized in docs/
 ab-results/

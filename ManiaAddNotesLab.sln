@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{6A9B4EEF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManiaAddNotesLab.Experiments", "tools\ManiaAddNotesLab.Experiments\ManiaAddNotesLab.Experiments.csproj", "{E3695B22-312D-4788-A221-FA7BBE12CEC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocConsistency", "tools\DocConsistency\DocConsistency.csproj", "{C9772420-CF52-4391-8E44-3C822B87479A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,8 +43,13 @@ Global
 		{E3695B22-312D-4788-A221-FA7BBE12CEC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3695B22-312D-4788-A221-FA7BBE12CEC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3695B22-312D-4788-A221-FA7BBE12CEC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9772420-CF52-4391-8E44-3C822B87479A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9772420-CF52-4391-8E44-3C822B87479A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9772420-CF52-4391-8E44-3C822B87479A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9772420-CF52-4391-8E44-3C822B87479A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E3695B22-312D-4788-A221-FA7BBE12CEC9} = {6A9B4EEF-56C9-48A2-96B3-887C084DCF94}
+		{C9772420-CF52-4391-8E44-3C822B87479A} = {6A9B4EEF-56C9-48A2-96B3-887C084DCF94}
 	EndGlobalSection
 EndGlobal

@@ -564,7 +564,8 @@ public sealed class AddNotesEngine
                     opportunity.Source.Object.StartTime, candidate.EndTime, opportunity.Source.StartBeat,
                     candidate.EndBeat, candidate.Weight, lanes.Count == 0 ? LegacyDecisionOutcome.NoLegalLane
                         : LegacyDecisionOutcome.CandidateNotSelected, null, paths, unique,
-                    Math.Max(0, paths.Length - unique), diagnostics.Certificate(key, paths, validity, true), validity,
+                    Math.Max(0, paths.Length - unique), diagnostics.Certificate(key, paths, validity, true,
+                        opportunity.Source.Object.StartTime, opportunity.Source.StartBeat), validity,
                     ParentId(opportunity, diagnostics), AnchorKind(opportunity, profile, diagnostics),
                     StartInsideParent(opportunity), relation, null,
                     candidate.Evidence.DeduplicatedObservationWeight, contributions, "LegacyPathSum",

@@ -9,7 +9,7 @@ OriginalObjects
     ↓
 Evidence Layer
     ↓
-observations → relations → witnesses → certificates
+observations → witness identity → observed claims → observed relations → certificates
 
 Generation Layer
     ↓
@@ -40,11 +40,24 @@ OriginalObjects ──→ OriginalEvidence ──→ style observations
 
 `StyleEvidence` responde qué valores o relaciones originales respaldan una transformación. Un certificado fuerte nunca puede compensar una colisión. En una policy futura estricta, una transformación legal pero sin evidencia podrá terminar en `SKIP`.
 
+### WITNESS IDENTITY ≠ RELATION COUNT
+
+`ObservationId` deduplica la identidad de un objeto original; no borra las afirmaciones ni las relaciones distintas que ese objeto demuestra. Un witness puede respaldar varias relaciones sin convertirse por ello en varias muestras independientes.
+
+```text
+OriginalObservation O17
+    independent witness: O17
+    observed values: Duration D, ExactRelease R
+    observed relations: ExactHead(H), HeadToRelease(H, R)
+```
+
+O17 cuenta una sola vez en `IndependentWitnessCount`. Sus claims `Duration` y `ExactRelease`, y su relación de head exacto con la query/source, conservan provenance separada. Ninguna cantidad de relaciones se interpreta aquí como weight, bonus, confidence o `MapperSupport`.
+
 ## Evidencia y generación actuales
 
-`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. Phase B y C1 añaden diagnostics sobre candidatos y blockers. Estas estructuras no gobiernan actualmente el selector.
+`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. Phase B, C1 y C1.1 añaden diagnostics/research sobre candidatos, blockers, witness identity y agreement. C1.2 añade `SimultaneousOriginalEventGroup` como primitive general mínima y `ExactHeadEndpointRelation` como especialización LN; cada endpoint agrupa IDs y claims sin producir score. Estas estructuras no gobiernan actualmente el selector.
 
-La generación activa (`legacy-experimental.1`) continúa usando sus analizadores y parámetros históricos para crear oportunidades, calcular chance, construir candidatos y seleccionar lanes. `DecisionDiagnostics` (`phase-c1-shadow.1`) observa la ruta vigente y calcula alternativas de investigación sin consumir RNG ni modificar el `.osu`.
+La generación activa (`legacy-experimental.1`) continúa usando sus analizadores y parámetros históricos para crear oportunidades, calcular chance, construir candidatos y seleccionar lanes. `DecisionDiagnostics` (`phase-c1-2-shadow.1`) observa la ruta vigente y expone values/relations en certificates sin consumir RNG ni modificar el `.osu`. El perfil persistente continúa en `phase-a.1`.
 
 ## Invariantes
 
@@ -69,4 +82,3 @@ observed value
 ```
 
 Si no existe evidencia comparable, el backoff futuro puede ampliar alcance de forma explícita y finalmente abstenerse. `No evidence = SKIP`, no un patrón inventado ni un taxonomy classifier externo.
-

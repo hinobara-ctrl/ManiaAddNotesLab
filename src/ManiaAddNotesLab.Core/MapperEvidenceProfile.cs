@@ -89,6 +89,20 @@ public sealed record TransformationWitness(
     ImmutableArray<OriginalObservationId> ObservationIds,
     ImmutableArray<string> EvidenceTags);
 
+public sealed record CertificateObservedValue(
+    OriginalObservationId ObservationId,
+    string ValueKind,
+    string ExactValue);
+
+public sealed record CertificateObservedRelation(
+    string RelationKind,
+    int HeadTime,
+    decimal HeadBeat,
+    int? EndpointTime,
+    decimal? EndpointBeat,
+    ImmutableArray<OriginalObservationId> WitnessIds,
+    ImmutableArray<string> Claims);
+
 /// <summary>
 /// Explanatory contract only. Phase B populates this in shadow mode; it deliberately contains no scalar
 /// confidence or MapperSupport score and never authorizes generation.
@@ -103,7 +117,9 @@ public sealed record SupportCertificate(
     ImmutableArray<string> MissingRequirements,
     ImmutableArray<string> Generalizations,
     int IndependentWitnessCount,
-    HardValidityResult HardValidity);
+    HardValidityResult HardValidity,
+    ImmutableArray<CertificateObservedValue> ObservedValues = default,
+    ImmutableArray<CertificateObservedRelation> ObservedRelations = default);
 
 public sealed record MapperEvidenceProfile(
     string EvidenceProfileVersion,
