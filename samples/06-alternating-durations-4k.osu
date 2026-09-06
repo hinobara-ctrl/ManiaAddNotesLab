@@ -1,0 +1,16 @@
+osu file format v14
+[General]
+Mode:3
+[Metadata]
+Title:Alternating durations
+Version:Lab 4K
+BeatmapID:6
+[Difficulty]
+CircleSize:4
+[TimingPoints]
+0,500,4,2,0,100,1,0
+[HitObjects]
+64,192,0,128,0,500:0:0:0:0:
+192,192,500,128,0,750:0:0:0:0:
+320,192,1000,128,0,1500:0:0:0:0:
+448,192,1500,128,0,1750:0:0:0:0:

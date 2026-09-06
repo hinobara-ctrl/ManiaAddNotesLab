@@ -1,0 +1,16 @@
+osu file format v14
+[General]
+Mode:3
+[Metadata]
+Title:Basic mixed 7K
+Version:Lab 7K
+BeatmapID:10
+[Difficulty]
+CircleSize:7
+[TimingPoints]
+0,500,4,2,0,100,1,0
+[HitObjects]
+36,192,0,1,0,0:0:0:0:
+109,192,500,128,0,1000:0:0:0:0:
+182,192,1000,1,0,0:0:0:0:
+256,192,1500,128,0,2500:0:0:0:0:

@@ -1,0 +1,15 @@
+osu file format v14
+[General]
+Mode:3
+[Metadata]
+Title:Crossing selected range
+Version:Lab 4K
+BeatmapID:8
+[Difficulty]
+CircleSize:4
+[TimingPoints]
+0,500,4,2,0,100,1,0
+[HitObjects]
+64,192,0,128,0,2000:0:0:0:0:
+192,192,1000,1,0,0:0:0:0:
+320,192,1500,128,0,2500:0:0:0:0:

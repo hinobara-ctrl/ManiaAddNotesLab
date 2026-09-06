@@ -1,0 +1,16 @@
+osu file format v14
+[General]
+Mode:3
+[Metadata]
+Title:Release staircase
+Version:Lab 4K
+BeatmapID:5
+[Difficulty]
+CircleSize:4
+[TimingPoints]
+0,500,4,2,0,100,1,0
+[HitObjects]
+64,192,0,128,0,1000:0:0:0:0:
+192,192,250,128,0,1250:0:0:0:0:
+320,192,500,128,0,1500:0:0:0:0:
+448,192,750,128,0,1750:0:0:0:0:

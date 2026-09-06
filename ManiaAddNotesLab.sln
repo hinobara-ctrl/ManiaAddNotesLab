@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManiaAddNotesLab.Core", "src\ManiaAddNotesLab.Core\ManiaAddNotesLab.Core.csproj", "{B3D03553-C945-4A23-B74D-2222B9BE30B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManiaAddNotesLab.Cli", "src\ManiaAddNotesLab.Cli\ManiaAddNotesLab.Cli.csproj", "{44F36BEC-91BE-4622-A3FE-783291C21FCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManiaAddNotesLab.Tests", "tests\ManiaAddNotesLab.Tests\ManiaAddNotesLab.Tests.csproj", "{3E690AB4-A2D6-40B9-B78C-29DB1729E237}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManiaAddNotesLab.Web", "src\ManiaAddNotesLab.Web\ManiaAddNotesLab.Web.csproj", "{A993AF49-F6C7-44C9-8C06-60D40D04F582}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{6A9B4EEF-56C9-48A2-96B3-887C084DCF94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManiaAddNotesLab.Experiments", "tools\ManiaAddNotesLab.Experiments\ManiaAddNotesLab.Experiments.csproj", "{E3695B22-312D-4788-A221-FA7BBE12CEC9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B3D03553-C945-4A23-B74D-2222B9BE30B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D03553-C945-4A23-B74D-2222B9BE30B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D03553-C945-4A23-B74D-2222B9BE30B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D03553-C945-4A23-B74D-2222B9BE30B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44F36BEC-91BE-4622-A3FE-783291C21FCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44F36BEC-91BE-4622-A3FE-783291C21FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44F36BEC-91BE-4622-A3FE-783291C21FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44F36BEC-91BE-4622-A3FE-783291C21FCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E690AB4-A2D6-40B9-B78C-29DB1729E237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E690AB4-A2D6-40B9-B78C-29DB1729E237}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E690AB4-A2D6-40B9-B78C-29DB1729E237}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E690AB4-A2D6-40B9-B78C-29DB1729E237}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A993AF49-F6C7-44C9-8C06-60D40D04F582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A993AF49-F6C7-44C9-8C06-60D40D04F582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A993AF49-F6C7-44C9-8C06-60D40D04F582}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A993AF49-F6C7-44C9-8C06-60D40D04F582}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3695B22-312D-4788-A221-FA7BBE12CEC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3695B22-312D-4788-A221-FA7BBE12CEC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3695B22-312D-4788-A221-FA7BBE12CEC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3695B22-312D-4788-A221-FA7BBE12CEC9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E3695B22-312D-4788-A221-FA7BBE12CEC9} = {6A9B4EEF-56C9-48A2-96B3-887C084DCF94}
+	EndGlobalSection
+EndGlobal

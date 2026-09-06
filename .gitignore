@@ -1,0 +1,33 @@
+bin/
+obj/
+*.user
+*.suo
+*.osu~
+batch-results/
+
+# IDE, test and build artifacts
+.vs/
+.vscode/
+.idea/
+TestResults/
+coverage/
+*.trx
+*.coverage
+*.coveragexml
+publish/
+
+# Local experiment outputs; results worth keeping are summarized in docs/
+ab-results/
+ab-ln-results/
+phase-*-baseline/
+runs.csv
+experiments.csv
+mapper-profile.json
+decision-diagnostics*.json
+held-out-reconstruction.json
+ManiaAddNotesLab-results.zip
+*.log
+
+# OS metadata
+.DS_Store
+Thumbs.db

@@ -1,0 +1,14 @@
+osu file format v14
+[General]
+Mode:3
+[Metadata]
+Title:High keymode
+Version:Lab 18K
+BeatmapID:11
+[Difficulty]
+CircleSize:18
+[TimingPoints]
+0,500,4,2,0,100,1,0
+[HitObjects]
+14,192,0,1,0,0:0:0:0:
+497,192,500,128,0,1500:0:0:0:0:

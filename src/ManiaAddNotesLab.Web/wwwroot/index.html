@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ManiaAddNotesLab · Batch Bench</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">MANIA ADD NOTES LAB</p>
+        <h1>Batch Bench</h1>
+        <p class="lead">Mueve unas pocas variables, prueba cientos de seeds y compara el comportamiento del algoritmo.</p>
+      </div>
+      <span class="badge">LOCAL · .NET 8</span>
+    </header>
+
+    <form id="batch-form">
+      <section class="panel source-panel">
+        <div class="section-title"><span>01</span><div><h2>Chart</h2><p>El original se copia; nunca se modifica.</p></div></div>
+        <label class="drop-zone" id="drop-zone">
+          <input id="chart" name="chart" type="file" accept=".osu" required>
+          <strong id="file-label">Seleccionar un archivo .osu</strong>
+          <small>También puedes arrastrarlo aquí</small>
+        </label>
+      </section>
+
+      <section class="panel">
+        <div class="section-title"><span>02</span><div><h2>Barrido</h2><p>Cada valor de chance se ejecuta con el número de seeds indicado.</p></div></div>
+        <div class="controls-grid">
+          <label class="control">
+            <span>Chance inicial <output id="chanceStartOut">10%</output></span>
+            <input name="chanceStart" type="range" min="0" max="1" step="0.01" value="0.10">
+          </label>
+          <label class="control">
+            <span>Chance final <output id="chanceEndOut">50%</output></span>
+            <input name="chanceEnd" type="range" min="0" max="1" step="0.01" value="0.50">
+          </label>
+          <label class="control">
+            <span>Paso <output id="chanceStepOut">10%</output></span>
+            <input name="chanceStep" type="range" min="0.01" max="0.5" step="0.01" value="0.10">
+          </label>
+          <label class="control">
+            <span>Seeds por valor <output id="runsOut">20</output></span>
+            <input name="runsPerChance" type="range" min="1" max="500" step="1" value="20">
+          </label>
+          <label class="control">
+            <span>Columnas sin penalización <output id="densityGraceOut">2</output></span>
+            <input name="densityGraceColumns" type="range" min="0" max="8" step="1" value="2">
+          </label>
+          <label class="control">
+            <span>Retención por columna extra <output id="densityDecayOut">65%</output></span>
+            <input name="densityDecayPerColumn" type="range" min="0.20" max="1" step="0.05" value="0.65">
+          </label>
+          <label class="control">
+            <span>Ventana LN <output id="windowOut">±4 beats</output></span>
+            <input name="lnWindowBeats" type="range" min="0.5" max="12" step="0.5" value="4">
+          </label>
+          <label class="control">
+            <span>Afinidad source <output id="affinityOut">×1.25</output></span>
+            <input name="sourceAffinity" type="range" min="0.5" max="3" step="0.05" value="1.25">
+          </label>
+          <label class="control">
+            <span>Caída por beat <output id="decayOut">0.20</output></span>
+            <input name="distanceDecay" type="range" min="0" max="0.5" step="0.01" value="0.20">
+          </label>
+          <label class="control">
+            <span>Peso distante mínimo <output id="minimumWeightOut">0.20</output></span>
+            <input name="minimumDistanceWeight" type="range" min="0.05" max="1" step="0.05" value="0.20">
+          </label>
+          <label class="control">
+            <span>Gap fallback por lane <output id="laneGapOut">⅛ beat</output></span>
+            <input name="fallbackLaneGapBeats" type="range" min="0" max="0.5" step="0.0625" value="0.125">
+          </label>
+          <label class="field">
+            <span>Seed inicial</span>
+            <input name="baseSeed" type="number" value="1" min="-2147483648" max="2147483647">
+          </label>
+        </div>
+
+        <div class="estimate" id="estimate"><strong>100 ejecuciones</strong><span>5 configuraciones × 20 seeds</span></div>
+      </section>
+
+      <section class="panel compact">
+        <div class="section-title"><span>03</span><div><h2>Experimental</h2><p>Interruptores limpios para comparaciones A/B con la misma seed.</p></div></div>
+        <div class="option-grid">
+          <label class="switch"><input name="contextualDensity" type="checkbox" checked><i></i><span>Densidad contextual<small>Reduce bursts breves respecto de su entorno.</small></span></label>
+          <label class="field"><span>Umbral micro/contexto</span><input name="burstRatioThreshold" type="number" min="1.01" max="10" step="0.01" value="1.50"></label>
+          <label class="field"><span>Factor burst 1 beat</span><input name="burstFactor1" type="number" min="0.01" max="1" step="0.01" value="0.45"></label>
+          <label class="field"><span>Factor burst 2 beats</span><input name="burstFactor2" type="number" min="0.01" max="1" step="0.01" value="0.60"></label>
+          <label class="field"><span>Factor burst 3 beats</span><input name="burstFactor3" type="number" min="0.01" max="1" step="0.01" value="0.80"></label>
+          <label class="switch"><input name="useLocalLaneGap" type="checkbox" checked><i></i><span>Gap local aprendido<small>Solo usa objetos originales y exige soporte repetido.</small></span></label>
+          <label class="field"><span>Ventana gap (beats)</span><input name="laneGapWindowBeats" type="number" min="0.5" max="32" step="0.5" value="4"></label>
+          <label class="field"><span>Soporte mínimo gap</span><input name="laneGapMinimumSupport" type="number" min="1" max="20" step="1" value="2"></label>
+          <label class="switch"><input name="mapRelativeSnap" type="checkbox" checked><i></i><span>Vocabulario temporal del mapa<small>Conserva anchors exactos y duraciones no estándar.</small></span></label>
+          <label class="switch"><input name="interiorLnOpportunities" type="checkbox"><i></i><span>Oportunidades dentro de LN<small>Solo LNs largas, apoyadas por anchors originales.</small></span></label>
+          <label class="field"><span>Máximo interiores/LN</span><input name="maxInteriorOpportunities" type="number" min="0" max="2" step="1" value="2"></label>
+          <label class="field"><span>Duración mínima padre (beats)</span><input name="minimumInteriorSourceBeats" type="number" min="0.5" max="32" step="0.5" value="3"></label>
+          <label class="field"><span>Soporte mínimo de anchors</span><input name="minimumInteriorAnchors" type="number" min="1" max="32" step="1" value="2"></label>
+          <label class="field"><span>Densidad vertical</span><select name="verticalDensityMode"><option value="SimultaneousHeads" selected>Heads simultáneos</option><option value="OccupiedColumnsLegacy">Columnas ocupadas (legacy)</option></select></label>
+          <label class="field"><span>Escala vertical</span><select name="verticalDensityScaleMode"><option value="KeymodeRelative" selected>Relativa al keymode</option><option value="AbsoluteLegacy">Absoluta (legacy 7K)</option></select></label>
+          <label class="field"><span>Escala contextual</span><select name="contextualDensityScaleMode"><option value="KeymodeRelative" selected>Relativa al keymode</option><option value="AbsoluteHeadCountLegacy">Heads absolutos (legacy)</option></select></label>
+          <label class="field"><span>Elegibilidad interior</span><select name="interiorEligibilityMode"><option value="AnchorSupported" selected>Anchors originales</option><option value="Legacy">Longitud legacy</option></select></label>
+          <label class="field"><span>Contexto interior</span><select name="interiorContextMode"><option value="OriginalOnly" selected>Solo originales</option><option value="LegacyVirtualSource">Source virtual (legacy)</option></select></label>
+          <label class="switch"><input name="articulation" type="checkbox"><i></i><span>Articulación LN saturada<small>Segunda pasada: corta y re-pulsa el mismo LN padre.</small></span></label>
+          <label class="field"><span>Máximo columnas no sostenidas</span><input name="articulationMaxNonHeldColumns" type="number" min="0" max="18" step="1" value="1"></label>
+          <label class="field"><span>Ventana retrigger (beats)</span><input name="retriggerWindowBeats" type="number" min="0.5" max="32" step="0.5" value="4"></label>
+          <label class="field"><span>Soporte mínimo retrigger</span><input name="retriggerMinimumSupport" type="number" min="1" max="32" step="1" value="2"></label>
+        </div>
+      </section>
+
+      <section class="panel compact">
+        <div class="section-title"><span>04</span><div><h2>Opciones</h2><p>El rango filtra heads; el chart completo conserva contexto y ocupación.</p></div></div>
+        <div class="option-grid">
+          <label class="field"><span>Inicio (ms)</span><input name="startMs" type="number" placeholder="Todo el chart"></label>
+          <label class="field"><span>Final (ms)</span><input name="endMs" type="number" placeholder="Todo el chart"></label>
+          <label class="switch"><input name="writeCharts" type="checkbox"><i></i><span>Guardar cada `.osu`<small>Puede generar muchos archivos.</small></span></label>
+          <label class="switch"><input name="traceFirst" type="checkbox" checked><i></i><span>Trace de la primera seed<small>Útil para inspección rápida.</small></span></label>
+          <label class="switch"><input name="diagnosticsFirst" type="checkbox"><i></i><span>Diagnóstico shadow de la primera seed<small>Exporta certificados y causas sin cambiar la generación.</small></span></label>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button class="primary" type="submit">Iniciar lote <span>→</span></button>
+        <button class="secondary" id="cancel" type="button" hidden>Cancelar</button>
+        <p id="form-error" role="alert"></p>
+      </div>
+    </form>
+
+    <section class="panel results" id="results" hidden>
+      <div class="result-head">
+        <div><p class="eyebrow">EJECUCIÓN</p><h2 id="status-title">Preparando lote</h2><p id="status-detail"></p></div>
+        <a class="download" id="download" hidden>Descargar resultados .zip</a>
+      </div>
+      <div class="progress-track"><div id="progress-bar"></div></div>
+      <div class="summary-cards" id="summary-cards"></div>
+      <div class="table-wrap" id="table-wrap" hidden>
+        <table>
+          <thead><tr><th>Chance</th><th>Chance efectiva</th><th>Interior efectiva</th><th>Runs</th><th>Added μ</th><th>Min–max</th><th>Taps μ</th><th>LN μ</th><th>Interior opp/roll/placed μ</th><th>Articulaciones μ</th><th>Candidates S/M/L</th><th>Impossible μ/%</th><th>Heads/Held μ</th><th>Fallos μ</th><th>Retries μ</th><th>LN ratio</th></tr></thead>
+          <tbody id="summary-body"></tbody>
+        </table>
+      </div>
+      <details id="trace-wrap" hidden><summary>Trace de la primera ejecución</summary><pre id="trace"></pre></details>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

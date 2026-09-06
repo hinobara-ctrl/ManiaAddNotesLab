@@ -1,0 +1,23 @@
+osu file format v14
+
+[General]
+Mode:3
+
+[Metadata]
+Title:Experimental Local Gap
+Artist:ManiaAddNotesLab
+Creator:Codex
+Version:4K
+
+[Difficulty]
+CircleSize:4
+
+[TimingPoints]
+0,500,4,2,0,100,1,0
+
+[HitObjects]
+320,192,0,1,0,0:0:0:0:
+320,192,125,1,0,0:0:0:0:
+320,192,250,1,0,0:0:0:0:
+64,192,400,128,0,900:0:0:0:0:
+192,192,1000,128,0,1500:0:0:0:0:

@@ -1,0 +1,25 @@
+osu file format v14
+
+[General]
+Mode:3
+
+[Metadata]
+Title:Experimental Timing Vocabulary
+Artist:ManiaAddNotesLab
+Creator:Codex
+Version:7K Offset 1-5 1-10 BPM
+
+[Difficulty]
+CircleSize:7
+
+[TimingPoints]
+7,500,4,2,0,100,1,0
+1007,300,4,2,0,100,1,0
+
+[HitObjects]
+36,192,7,128,0,107:0:0:0:0:
+109,192,257,128,0,307:0:0:0:0:
+182,192,507,128,0,607:0:0:0:0:
+256,192,1007,128,0,1067:0:0:0:0:
+329,192,1307,128,0,1337:0:0:0:0:
+402,192,1607,128,0,1667:0:0:0:0:
