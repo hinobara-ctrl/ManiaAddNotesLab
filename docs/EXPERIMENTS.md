@@ -74,7 +74,19 @@ Runner reproducible:
 dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- d0-corpus <corpus-read-only> docs <detail-json-local>
 ```
 
-El runner excluye `[ADD …]`, deduplica SHA-256, deja el detalle grande fuera del repositorio y regenera `d0_chart_summary.csv`, `d0_family_summary.csv` y `d0_global_summary.csv`. La siguiente pregunta D0.1 es cómo describir contexto exacto de completions competidoras; no está autorizada por el cierre D0.
+El runner excluye `[ADD …]`, deduplica SHA-256, deja el detalle grande fuera del repositorio y regenera `d0_chart_summary.csv`, `d0_family_summary.csv` y `d0_global_summary.csv`.
+
+## D0.1 — Exact completion competition context
+
+D0.1 está cerrado en **Outcome A** como research shadow. Evalúa ocho vistas exactas y paralelas sobre los 36.387 targets D0 con completions competidoras. Previous/next inmediato, gaps exactos y held-before discriminan miles de alternatives, pero la cobertura cae al exigir contexto bidireccional. El saneamiento simétrico retira el grupo completo de donors y de held futura; no existe score, probability, ladder ni selección.
+
+Runner reproducible:
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- d0-1-corpus <corpus-read-only> docs <detail-json-local>
+```
+
+Regenera los cuatro CSV `d0_1_*`; el JSON detallado grande permanece local. La siguiente pregunta recomendada es D0.2 sobre estabilidad y desacuerdo entre vistas. D0.2 no está autorizada por este cierre; D1 tampoco.
 
 ## Checklist
 

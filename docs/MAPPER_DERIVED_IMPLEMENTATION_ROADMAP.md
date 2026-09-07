@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. Phase D0: **COMPLETE — OUTCOME A, EXACT CHORD-COMPLETION RELATIONS ARE RECONSTRUCTIBLE AND EXPLANATORY**. D0.1 es el siguiente candidato shadow; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. Phase D0: **COMPLETE — OUTCOME A, EXACT CHORD-COMPLETION RELATIONS ARE RECONSTRUCTIBLE AND EXPLANATORY**. Phase D0.1: **COMPLETE — OUTCOME A, EXACT CONTEXT DISCRIMINATES WITH A COVERAGE BOUNDARY**. D0.2 es el siguiente candidato research-only; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -576,13 +576,23 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 ## Phase D0.1 — Exact Completion Competition Context / Shadow
 
-**Estado: NEXT / NOT AUTHORIZED YET.**
+**Estado: COMPLETE — OUTCOME A.** Ocho vistas paralelas compararon held-before, previous/next heads inmediatos y transiciones con gaps `decimal` exactos. Sobre los 36.387 targets D0 competidores, `ReducedPrevious` resolvió 6.303 y `ReducedNext` 6.264; el contexto bidireccional resolvió 5.292 pero perdió comparabilidad en 29.166. La señal aparece en 11 familias, con cero leakage target/donor y sin alterar generation. Véase `PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md`.
 
 **Goal:** medir qué contexto original exacto separa completion relations competidoras sin score, similarity, mirror, translation ni authority conductual.
 
 **Behavior change?:** no.
 
 **Acceptance criteria:** competencia, exact held context y provenance comparables con denominadores explícitos; no planner ni selección.
+
+## Phase D0.2 — Exact Context Coverage and View Agreement / Shadow
+
+**Estado: NEXT / NOT AUTHORIZED YET.**
+
+**Goal:** estudiar estabilidad, desacuerdo y cobertura conjunta entre las vistas D0.1 sin convertirlas en un ladder, score o selector manual.
+
+**Behavior change?:** no.
+
+**Acceptance criteria:** misma población held-out, abstención explícita, composición justificable y ningún acceso desde generation. D1 sólo puede considerarse después de otro gate independiente.
 
 ## Phase D1 — ChordCompletion resulting-state A/B
 
@@ -924,3 +934,9 @@ Determinismo, provenance, witness dedup, claims múltiples, same/different relea
 Los 25 criterios de representación determinista, original-only, whole-group exclusion, chart isolation, Tap/LN distinction, held safety, lane exactness, provenance, witness deduplication, competition, denominadores, corpus multi-family, multi-key, ausencia de score/`MapperSupport` y regresión conductual: **PASS**. El corpus contiene 11 familias/11 charts, 14.463 chord groups y 40.360 trials. Exact target completion queda soportada en 37.080 trials; 36.387 son target-among-competing.
 
 **D0 COMPLETE — OUTCOME A; D0.1 SHADOW RECOMMENDED NEXT, D1 NOT AUTHORIZED, C2 DEFERRED.**
+
+## Phase D0.1 validation gate
+
+Las 33 condiciones de exactitud, provenance, exclusión de grupo completo, saneamiento simétrico de held futuro, ocho vistas paralelas, outcomes, denominadores, estratos, corpus multi-family, multi-key, performance y regresión conductual pasan. En 36.387 competencias D0, previous/next exactos resuelven 6.303/6.264; el contexto bidireccional resuelve 5.292 con cobertura mucho menor. No se seleccionó una vista ni se introdujo authority.
+
+**D0.1 COMPLETE — OUTCOME A; D0.2 SHADOW RECOMMENDED NEXT, D1 NOT AUTHORIZED, C2 DEFERRED.**

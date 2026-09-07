@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D0 permanece completamente separado de generation como research shadow `phase-d0-research.1`.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D0 y D0.1 permanecen completamente separados de generation como research shadow `phase-d0-research.1` y `phase-d0-1-research.1`.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -15,7 +15,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | C1.2 — Exact-Head Relation Modeling | **COMPLETE — OUTCOME A** | Ninguno; la relación H→R explica agreement C1.1. |
 | C2 — Retrigger-Specific Frequency | **DEFERRED** | Ninguno; hipótesis separada no iniciada. |
 | D0 — ChordCompletion Reconstruction | **COMPLETE — OUTCOME A** | Ninguno; reconstruye relations exactas en shadow. |
-| D0.1 — Exact Completion Competition Context | **NEXT / NOT AUTHORIZED YET** | Ninguno; candidato shadow para estudiar alternatives competidoras. |
+| D0.1 — Exact Completion Competition Context | **COMPLETE — OUTCOME A** | Ninguno; contexto exacto discrimina alternatives con una frontera de cobertura. |
+| D0.2 — Exact Context Coverage and View Agreement | **NEXT / NOT AUTHORIZED YET** | Ninguno; candidato shadow para estudiar estabilidad y desacuerdo entre vistas. |
 
 ## Qué funciona hoy
 
@@ -35,6 +36,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 Con diagnostics desactivados, C1 no materializa su mapa de witnesses. C1.2 añade un modelo research-only de grupos simultáneos y relaciones exact-head, y extiende certificates con values/relations descriptivas. Ningún score, certificate, relation ni peso C1 decide actualmente oportunidades, candidatos, lanes, RNG o articulación.
 
 D0 reutiliza `SimultaneousOriginalEventGroup` y representa `ReducedState → CompletionMember` mediante lane y head type exactos. `HeldBeforeHeadState` conserva tails activas como contexto separado: nunca se convierten en heads. Whole-group holdout excluye todo el target de sus donors. Estas relations tampoco gobiernan generation.
+
+D0.1 añade ocho vistas paralelas de contexto exacto: held-before, previous/next inmediato y sus gaps exactos, además de combinaciones bidireccionales. No son un ladder. Target y donor usan saneamiento simétrico para que una LN del grupo retirado no reaparezca como held futura. `ExactCompletionContextResearch` enumera alternatives y outcomes; no selecciona ninguna.
 
 ## Qué afecta realmente la generación
 
@@ -62,11 +65,17 @@ En 11 familias/11 charts humanos 4K–7K–10K, D0 encontró 14.463 chord groups
 
 Sólo 693 successes fueron unique; 36.387 dejaron el target entre completions competidoras. Esto valida la representación exacta, no una probability ni un selector. Tap/LN heads permanecen distintos, held tails tratados como heads = 0 y ninguna evidence cruza charts.
 
+## Resultado D0.1
+
+En la población primaria de 36.387 competencias, `ReducedPrevious` resolvió 6.303 targets y `ReducedNext` 6.264. Los gaps exactos resolvieron 6.075/5.921; el contexto bidireccional resolvió 5.292, pero perdió comparabilidad en 29.166. La señal aparece en las 11 familias y no depende de un único chart.
+
+D0.1 cierra **OUTCOME A** porque existe poder discriminante exacto, recurrente y libre de leakage. La cobertura cae al aumentar especificidad: por eso el resultado no elige una vista ni autoriza backoff, score, authority, D1 o cambios de generación.
+
 ## Validación actual
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **220 passed, 0 failed, 0 skipped** en el cierre D0.
+- `dotnet test -c Release`: **243 passed, 0 failed, 0 skipped** en el cierre D0.1.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -76,7 +85,7 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 - El corpus tiene 11 familias, pero sólo ocho contienen LNs; 10K no aporta targets LN y no existen charts humanos 1K/18K en esta muestra.
 - `WitnessAgreement` es descriptivo: todavía no existe una regla justificada para convertirlo en autoridad, bonus o score.
-- D0 observa recurrence amplia, pero 36.387 targets soportados tienen completions competidoras; no existe aún una regla autorizada para resolverlas.
+- D0.1 demuestra discriminación exacta, pero existe una frontera fuerte cobertura/resolución y ninguna vista tiene authority autorizada.
 - Muchas decisiones estilísticas siguen siendo thresholds, ventanas, caps, pooling o desempates legacy.
 - La elección uniforme de lane y la composición del estado vertical aún no se derivan del mapa.
 - `LocalMismatch`, contextos comparables, secciones adaptativas y `CompatibleComposition` no gobiernan generación.
@@ -86,15 +95,15 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-La siguiente fase recomendada es **D0.1 — Exact Completion Competition Context / Shadow**, para estudiar qué contexto original exacto separa alternatives sin score, similarity ni cambio conductual. Esta recomendación no autoriza implementarla. D1 no queda NEXT; C2 permanece **DEFERRED** y C1 sigue HOLD respecto de cualquier cambio de weights.
+La siguiente fase recomendada es **D0.2 — Exact Context Coverage and View Agreement / Shadow**, para estudiar estabilidad y desacuerdo entre vistas sin convertirlas en ladder o selector. Esta recomendación no autoriza implementarla. D1 no queda NEXT; C2 permanece **DEFERRED** y C1 sigue HOLD respecto de cualquier cambio de weights.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: D0 — COMPLETE — OUTCOME A<br>
-Next recommended phase: D0.1 — Exact Completion Competition Context / Shadow<br>
+Current phase: D0.1 — COMPLETE — OUTCOME A<br>
+Next recommended phase: D0.2 — Exact Context Coverage and View Agreement / Shadow<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 220 passed / 0 failed / 0 skipped
+Tests: 243 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
-Detalles y evidencia: [Phase D0 report](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md). Los reports [C1.2](docs/PHASE_C1_2_EXACT_HEAD_RELATION_MODELING_REPORT.md), [C1.1](docs/PHASE_C1_1_WITNESS_AGREEMENT_VALIDATION_REPORT.md) y [C1](docs/PHASE_C1_LN_WITNESS_DEDUP_REPORT.md) permanecen como evidencia histórica.
+Detalles y evidencia: [Phase D0.1 report](docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md). Los reports [D0](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md), [C1.2](docs/PHASE_C1_2_EXACT_HEAD_RELATION_MODELING_REPORT.md), [C1.1](docs/PHASE_C1_1_WITNESS_AGREEMENT_VALIDATION_REPORT.md) y [C1](docs/PHASE_C1_LN_WITNESS_DEDUP_REPORT.md) permanecen como evidencia histórica.

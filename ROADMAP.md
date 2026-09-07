@@ -11,7 +11,8 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | C1.2 — Exact-Head Relation Modeling / Shadow | ✅ **COMPLETE — OUTCOME A** | `H → R` explica la población agreement C1.1; no asigna pesos ni activa C1. |
 | C2 — Retrigger-specific frequency | ⏸ **DEFERRED** | Hipótesis separada; no se inicia durante C1.2. |
 | D0 — ChordCompletion reconstruction | ✅ **COMPLETE — OUTCOME A** | Relations exactas reduced-state→completion son reconstruibles; no tienen authority. |
-| D0.1 — Exact completion competition context | ➡️ **NEXT / NOT AUTHORIZED YET** | Estudiar contexto original exacto para alternatives competidoras, sólo en shadow. |
+| D0.1 — Exact completion competition context | ✅ **COMPLETE — OUTCOME A** | Contexto exacto discrimina miles de alternatives, con cobertura decreciente explícita. |
+| D0.2 — Exact Context Coverage and View Agreement | ➡️ **NEXT / NOT AUTHORIZED YET** | Estudiar estabilidad y desacuerdo entre vistas exactas, sin ladder ni selección. |
 | D1 — Resulting-state chords | ⏳ Pending | Validar el estado vertical conjunto y evitar acumulación sin soporte. |
 | E — Adaptive context | ⏳ Pending | Comparar recurrencia y segmentación en shadow antes de elegir secciones. |
 | F1 — Comparable contexts | ⏳ Pending | Definir support, mismatch, no-context y ambigüedad con validación held-out. |

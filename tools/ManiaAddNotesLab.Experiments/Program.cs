@@ -4,6 +4,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 4 && args[0] == "d0-1-corpus")
+{
+    D01CorpusRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]));
+    return;
+}
+
 if (args.Length == 4 && args[0] == "d0-corpus")
 {
     D0CorpusRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),

@@ -67,9 +67,22 @@ CompletionMember(exact lane, exact TapHead | LongNoteHead)
 
 La relation key omite timestamp absoluto para reconocer recurrencia dentro del mismo chart, pero cada witness conserva source group, timestamp/beat y full/reduced/completion observation IDs. Whole-group holdout impide que members del target se donen evidencia entre sí. No hay mirror, translation, similarity, pattern taxonomy ni transferencia cross-chart.
 
+### Exact completion context research
+
+D0.1 envuelve cada occurrence D0 en `ExactCompletionContext`: held-before estricto, previous/next original inmediato y gaps de transición exactos. Sus ocho vistas son índices independientes, no un orden de backoff. La identidad conserva `decimal` exacto; los ms son provenance descriptiva.
+
+```text
+ReducedState + ContextView
+    → exact same-chart donor occurrences
+    → completion set (lane + TapHead/LNHead)
+    → descriptive outcome
+```
+
+Antes de construir el contexto held del siguiente grupo, se retiran todos los IDs del grupo actual. Esta operación se aplica simétricamente a targets y donors, de modo que una LN completion no pueda reintroducirse como evidencia contextual futura. El resultado conserva witness groups y enumera alternatives, pero no elige una completion ni una vista.
+
 ## Evidencia y generación actuales
 
-`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. Phase B, C1 y C1.1 añaden diagnostics/research sobre candidatos, blockers, witness identity y agreement. C1.2 añade `SimultaneousOriginalEventGroup` como primitive general mínima y `ExactHeadEndpointRelation` como especialización LN; D0 añade relaciones exactas de chord completion como research separado `phase-d0-research.1`. Estas estructuras agrupan IDs y claims sin producir score y no gobiernan el selector.
+`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. Phase B, C1 y C1.1 añaden diagnostics/research sobre candidatos, blockers, witness identity y agreement. C1.2 añade `SimultaneousOriginalEventGroup` como primitive general mínima y `ExactHeadEndpointRelation` como especialización LN; D0 añade relaciones exactas de chord completion como `phase-d0-research.1`; D0.1 añade matching de contexto exacto como `phase-d0-1-research.1`. Estas estructuras agrupan IDs, claims y provenance sin producir score y no gobiernan el selector.
 
 La generación activa (`legacy-experimental.1`) continúa usando sus analizadores y parámetros históricos para crear oportunidades, calcular chance, construir candidatos y seleccionar lanes. `DecisionDiagnostics` (`phase-c1-2-shadow.1`) observa la ruta vigente y expone values/relations en certificates sin consumir RNG ni modificar el `.osu`. El perfil persistente continúa en `phase-a.1`.
 

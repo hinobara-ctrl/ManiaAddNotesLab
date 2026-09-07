@@ -87,7 +87,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.Phases.Count(x => x.Status == "NEXT") != 1)
         errors.Add("Exactly one phase must have status NEXT.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -148,6 +148,23 @@ void ValidateFilesAndIndex(ProjectState value)
         {
             RequireFile(artifact, "D0 closure artifact");
             CheckContains("DOCUMENTATION_INDEX.md", artifact, "D0 closure artifact index entry");
+        }
+    }
+
+    var d01 = value.Phases.FirstOrDefault(x => x.Id == "D0.1");
+    if (d01?.Status == "COMPLETE")
+    {
+        foreach (var artifact in new[]
+        {
+            "docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md",
+            "docs/d0_1_chart_summary.csv",
+            "docs/d0_1_family_summary.csv",
+            "docs/d0_1_global_summary.csv",
+            "docs/d0_1_context_view_summary.csv"
+        })
+        {
+            RequireFile(artifact, "D0.1 closure artifact");
+            CheckContains("DOCUMENTATION_INDEX.md", artifact, "D0.1 closure artifact index entry");
         }
     }
 }
@@ -227,7 +244,8 @@ void ValidateObsoletePhrases(ProjectState value)
         "Double-counting witnesses | duration+release duplica autoridad | deduplicación por ObservationId",
         "Deduplicar por `(candidate, ObservationId)`; varias etiquetas no multiplican testigos.",
         "C1.2 — Agreement modeling/shadow | ⏳ Recommended next",
-        "C1.2 SHADOW RECOMMENDED NEXT"
+        "C1.2 SHADOW RECOMMENDED NEXT",
+        "D0.1 — Exact completion competition context | ➡️ **NEXT / NOT AUTHORIZED YET**"
     };
     foreach (var phrase in obsolete)
     foreach (var file in scanned)

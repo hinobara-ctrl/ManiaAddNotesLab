@@ -30,6 +30,8 @@ Los documentos maestros describen sólo el estado actual y se actualizan en cada
 - [C1.2 chart summary](docs/c1_2_chart_summary.csv), [family summary](docs/c1_2_family_summary.csv) y [global summary](docs/c1_2_global_summary.csv) — counts, denominadores y vistas micro/macro.
 - [Phase D0 — Chord Completion Reconstruction](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md) — exact reduced states, held-before safety, whole-group holdout y Outcome A.
 - [D0 chart summary](docs/d0_chart_summary.csv), [family summary](docs/d0_family_summary.csv) y [global summary](docs/d0_global_summary.csv) — recurrence exacta, competition, estratos naturales y micro/macro.
+- [Phase D0.1 — Exact Completion Competition Context](docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md) — ocho vistas exactas paralelas, saneamiento anti-leakage, frontera cobertura/resolución y Outcome A.
+- [D0.1 chart summary](docs/d0_1_chart_summary.csv), [family summary](docs/d0_1_family_summary.csv), [global summary](docs/d0_1_global_summary.csv) y [context-view strata](docs/d0_1_context_view_summary.csv) — outcomes por vista, familia/chart, denominadores primarios y estratos naturales.
 - [Contextual/LN iteration](docs/ITERATION_CONTEXTUAL_LN_REPORT.md) — historial completo del rediseño de densidad, timing e interacción LN previo a Mapper-Derived.
 - [LN occupied-sections diagnosis](docs/DIAGNOSIS_LN_OCCUPIED_SECTIONS.md) — evidencia y causas raíz del bajo efecto ADD en secciones ocupadas por LNs.
 - [LN interior correction](docs/LN_INTERIOR_CORRECTION_REPORT.md) — implementación y A/B de elegibilidad/contexto interior.
