@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. D0 es el siguiente candidato shadow; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. Phase D0: **COMPLETE — OUTCOME A, EXACT CHORD-COMPLETION RELATIONS ARE RECONSTRUCTIBLE AND EXPLANATORY**. D0.1 es el siguiente candidato shadow; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -556,7 +556,7 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 ## Phase C2 — Retrigger-specific frequency A/B
 
-**Estado: DEFERRED durante C1.2.**
+**Estado: DEFERRED durante D0.**
 
 **Goal:** reemplazar el soporte agregado aplicado a cada gap por frecuencia específica por gap y tipo de transición.
 
@@ -566,11 +566,23 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 ## Phase D0 — ChordCompletion reconstruction / Shadow
 
+**Estado: COMPLETE — OUTCOME A.** D0 reutiliza `SimultaneousOriginalEventGroup` para representar exact reduced head state → completion lane/type. Leave-one-head-group-out sobre 11 familias produjo 40.360 trials: 39.596 comparables y 37.080 targets exactos soportados. Held-before permanece contexto separado; Tap/LN heads, lanes y provenance son exactos. La mayoría de los successes (36.387) conserva completions competidoras, por lo que la representación explica recurrence pero no autoriza selection ni D1. Véase `PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md`.
+
 **Goal:** reconstruir miembros ocultos de chords originales y medir capacidad explicativa sin intervenir generación.
 
 **Behavior change?:** no.
 
 **Acceptance criteria:** estados y denominadores reconstruibles en 1K/4K/7K/10K/18K.
+
+## Phase D0.1 — Exact Completion Competition Context / Shadow
+
+**Estado: NEXT / NOT AUTHORIZED YET.**
+
+**Goal:** medir qué contexto original exacto separa completion relations competidoras sin score, similarity, mirror, translation ni authority conductual.
+
+**Behavior change?:** no.
+
+**Acceptance criteria:** competencia, exact held context y provenance comparables con denominadores explícitos; no planner ni selección.
 
 ## Phase D1 — ChordCompletion resulting-state A/B
 
@@ -906,3 +918,9 @@ No se implementó C2 ni ninguna policy conductual C1.
 Determinismo, provenance, witness dedup, claims múltiples, same/different release, corpus multi-family, cross-key y regression conductual: **PASS**. No se añadieron weight, bonus, confidence ni `MapperSupport`. La representación explica todos los exact structural twins y todos los casos worsened-by-UniqueWitness de C1.1.
 
 **C1.2 COMPLETE — OUTCOME A; D0 SHADOW RECOMMENDED NEXT, C2 DEFERRED.**
+
+## Phase D0 validation gate
+
+Los 25 criterios de representación determinista, original-only, whole-group exclusion, chart isolation, Tap/LN distinction, held safety, lane exactness, provenance, witness deduplication, competition, denominadores, corpus multi-family, multi-key, ausencia de score/`MapperSupport` y regresión conductual: **PASS**. El corpus contiene 11 familias/11 charts, 14.463 chord groups y 40.360 trials. Exact target completion queda soportada en 37.080 trials; 36.387 son target-among-competing.
+
+**D0 COMPLETE — OUTCOME A; D0.1 SHADOW RECOMMENDED NEXT, D1 NOT AUTHORIZED, C2 DEFERRED.**

@@ -10,7 +10,8 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | C1.1 — Witness vs agreement | ✅ **COMPLETE — OUTCOME B** | Same-head agreement es señal estructural distinta de independent-witness authority; sin cambio conductual. |
 | C1.2 — Exact-Head Relation Modeling / Shadow | ✅ **COMPLETE — OUTCOME A** | `H → R` explica la población agreement C1.1; no asigna pesos ni activa C1. |
 | C2 — Retrigger-specific frequency | ⏸ **DEFERRED** | Hipótesis separada; no se inicia durante C1.2. |
-| D0 — ChordCompletion reconstruction | ➡️ **NEXT / NOT AUTHORIZED YET** | Siguiente candidato shadow para relaciones simultáneas y composición. |
+| D0 — ChordCompletion reconstruction | ✅ **COMPLETE — OUTCOME A** | Relations exactas reduced-state→completion son reconstruibles; no tienen authority. |
+| D0.1 — Exact completion competition context | ➡️ **NEXT / NOT AUTHORIZED YET** | Estudiar contexto original exacto para alternatives competidoras, sólo en shadow. |
 | D1 — Resulting-state chords | ⏳ Pending | Validar el estado vertical conjunto y evitar acumulación sin soporte. |
 | E — Adaptive context | ⏳ Pending | Comparar recurrencia y segmentación en shadow antes de elegir secciones. |
 | F1 — Comparable contexts | ⏳ Pending | Definir support, mismatch, no-context y ambigüedad con validación held-out. |

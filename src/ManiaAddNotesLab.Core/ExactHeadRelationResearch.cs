@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace ManiaAddNotesLab.Core;
 
 public enum OriginalEventClaim { Duration, ExactRelease, ExactHead, HeadToRelease }
-public enum LnReleaseStructure { OneLongNote, MultipleLongNotesSameRelease, MultipleLongNotesDifferentReleases }
+public enum LnReleaseStructure { NoLongNotes, OneLongNote, MultipleLongNotesSameRelease, MultipleLongNotesDifferentReleases }
 public enum HeldOutRelationState { NoSameHeadEvidence, SingleEndpointRelation, CompetingEndpointRelations }
 
 public sealed record ExactTimingProvenance(
@@ -131,6 +131,13 @@ public static class ExactHeadRelationResearch
     }
 
     public static ImmutableArray<SimultaneousOriginalEventGroup> BuildGroups(MapperEvidenceProfile profile)
+        => BuildAllGroups(profile).Where(x => x.LongNoteMemberCount > 0).ToImmutableArray();
+
+    /// <summary>
+    /// General exact-head primitive shared by C1.2 and D0. Unlike <see cref="BuildGroups"/>, this includes
+    /// tap-only groups; it still reads immutable original evidence and applies no tolerance or taxonomy.
+    /// </summary>
+    public static ImmutableArray<SimultaneousOriginalEventGroup> BuildAllGroups(MapperEvidenceProfile profile)
     {
         ArgumentNullException.ThrowIfNull(profile);
         return profile.Observations.GroupBy(x => new { x.StartTime, x.StartBeat })
@@ -141,10 +148,10 @@ public static class ExactHeadRelationResearch
                 var relations = BuildEndpointRelations(members.Where(x => x.ObjectType == ManiaObjectType.LongNote));
                 return new { members, relations, group.Key.StartTime, group.Key.StartBeat };
             })
-            .Where(x => x.relations.Length > 0)
             .Select(x => new SimultaneousOriginalEventGroup(x.StartTime, x.StartBeat, x.members, x.relations,
                 x.relations.Sum(r => r.IndependentWitnessCount), x.relations.Length,
-                x.relations.Sum(r => r.IndependentWitnessCount) == 1 ? LnReleaseStructure.OneLongNote
+                x.relations.Length == 0 ? LnReleaseStructure.NoLongNotes
+                    : x.relations.Sum(r => r.IndependentWitnessCount) == 1 ? LnReleaseStructure.OneLongNote
                     : x.relations.Length == 1 ? LnReleaseStructure.MultipleLongNotesSameRelease
                     : LnReleaseStructure.MultipleLongNotesDifferentReleases,
                 x.members.Select(m => m.ObjectType).Distinct().Count() > 1))

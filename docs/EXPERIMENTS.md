@@ -64,6 +64,18 @@ Resultados completos y rutas de los CSV: [LN_INTERIOR_CORRECTION_REPORT.md](LN_I
 
 Informes: [KEYMODE_INVARIANCE_REPORT.md](KEYMODE_INVARIANCE_REPORT.md), [RICE_BEHAVIOR_REPORT.md](RICE_BEHAVIOR_REPORT.md) y [LN_ARTICULATION_REPORT.md](LN_ARTICULATION_REPORT.md).
 
+## D0 — Exact chord-completion reconstruction
+
+D0 está cerrado en **Outcome A** como research shadow. Define chord como un exact-head group original con dos o más members, separa `TapHead`, `LongNoteHead` y `HeldBeforeHead`, y aplica leave-one-head-group-out. Un success exige completion lane+type exactos demostrados por otro grupo del mismo chart. No usa score, probability, similarity, mirror ni taxonomy.
+
+Runner reproducible:
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- d0-corpus <corpus-read-only> docs <detail-json-local>
+```
+
+El runner excluye `[ADD …]`, deduplica SHA-256, deja el detalle grande fuera del repositorio y regenera `d0_chart_summary.csv`, `d0_family_summary.csv` y `d0_global_summary.csv`. La siguiente pregunta D0.1 es cómo describir contexto exacto de completions competidoras; no está autorizada por el cierre D0.
+
 ## Checklist
 
 - Context burst: densidad contextual OFF/ON.

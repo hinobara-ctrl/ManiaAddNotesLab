@@ -92,6 +92,9 @@ void ValidateCanonicalState(ProjectState value)
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
         errors.Add("testStatus counts cannot be negative.");
+    if (value.ValidationCorpus.Families < 1 || value.ValidationCorpus.HumanCharts < 1
+        || value.ValidationCorpus.Keymodes.Count == 0)
+        errors.Add("validationCorpus must describe at least one family, chart, and keymode.");
 }
 
 void ValidateFilesAndIndex(ProjectState value)
@@ -129,6 +132,22 @@ void ValidateFilesAndIndex(ProjectState value)
         {
             RequireFile(artifact, "C1.2 closure artifact");
             CheckContains("DOCUMENTATION_INDEX.md", artifact, "C1.2 closure artifact index entry");
+        }
+    }
+
+    var d0 = value.Phases.FirstOrDefault(x => x.Id == "D0");
+    if (d0?.Status == "COMPLETE")
+    {
+        foreach (var artifact in new[]
+        {
+            "docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md",
+            "docs/d0_chart_summary.csv",
+            "docs/d0_family_summary.csv",
+            "docs/d0_global_summary.csv"
+        })
+        {
+            RequireFile(artifact, "D0 closure artifact");
+            CheckContains("DOCUMENTATION_INDEX.md", artifact, "D0 closure artifact index entry");
         }
     }
 }
@@ -182,10 +201,8 @@ void ValidateMasterStateBlocks(ProjectState value)
 
 void ValidatePhaseSummaries(ProjectState value)
 {
-    foreach (var id in new[] { "C1", "C1.1", "C1.2", "C2", "D0" })
+    foreach (var phase in value.Phases)
     {
-        var phase = value.Phases.SingleOrDefault(x => x.Id == id);
-        if (phase is null) continue;
         CheckPhaseRow("PROJECT_STATUS.md", phase);
         CheckPhaseRow("ROADMAP.md", phase);
     }
@@ -328,4 +345,13 @@ sealed record ProjectState(
 
 sealed record PhaseState(string Id, string Name, string Status, string? Outcome, bool? BehaviorChange, string? Report);
 sealed record TestState(int Passed, int Failed, int Skipped);
-sealed record CorpusState(int Families, int HumanCharts, int ChartsWithLn, IReadOnlyList<int> Keymodes, int LnTargets);
+sealed record CorpusState(
+    int Families,
+    int HumanCharts,
+    IReadOnlyList<int> Keymodes,
+    int? ChartsWithLn,
+    int? LnTargets,
+    int? OriginalObjects,
+    int? ExactHeadGroups,
+    int? ChordGroups,
+    int? CompletionTrials);

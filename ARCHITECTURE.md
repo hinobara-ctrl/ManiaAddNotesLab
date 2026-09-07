@@ -53,9 +53,23 @@ OriginalObservation O17
 
 O17 cuenta una sola vez en `IndependentWitnessCount`. Sus claims `Duration` y `ExactRelease`, y su relación de head exacto con la query/source, conservan provenance separada. Ninguna cantidad de relaciones se interpreta aquí como weight, bonus, confidence o `MapperSupport`.
 
+### Exact chord-completion research
+
+D0 reutiliza la primitive C1.2 para incluir todo grupo simultáneo original, también tap-only. Un `OriginalHeadState` separa lanes `TapHead`, lanes `LongNoteHead` y member IDs. `HeldBeforeHeadLanes` es contexto independiente y sólo incluye LNs iniciadas estrictamente antes del head actual.
+
+```text
+SimultaneousOriginalEventGroup
+    ↓ exact members
+OriginalHeadState - one member
+    ↓ ObservedRelation: ChordCompletion
+CompletionMember(exact lane, exact TapHead | LongNoteHead)
+```
+
+La relation key omite timestamp absoluto para reconocer recurrencia dentro del mismo chart, pero cada witness conserva source group, timestamp/beat y full/reduced/completion observation IDs. Whole-group holdout impide que members del target se donen evidencia entre sí. No hay mirror, translation, similarity, pattern taxonomy ni transferencia cross-chart.
+
 ## Evidencia y generación actuales
 
-`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. Phase B, C1 y C1.1 añaden diagnostics/research sobre candidatos, blockers, witness identity y agreement. C1.2 añade `SimultaneousOriginalEventGroup` como primitive general mínima y `ExactHeadEndpointRelation` como especialización LN; cada endpoint agrupa IDs y claims sin producir score. Estas estructuras no gobiernan actualmente el selector.
+`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. Phase B, C1 y C1.1 añaden diagnostics/research sobre candidatos, blockers, witness identity y agreement. C1.2 añade `SimultaneousOriginalEventGroup` como primitive general mínima y `ExactHeadEndpointRelation` como especialización LN; D0 añade relaciones exactas de chord completion como research separado `phase-d0-research.1`. Estas estructuras agrupan IDs y claims sin producir score y no gobiernan el selector.
 
 La generación activa (`legacy-experimental.1`) continúa usando sus analizadores y parámetros históricos para crear oportunidades, calcular chance, construir candidatos y seleccionar lanes. `DecisionDiagnostics` (`phase-c1-2-shadow.1`) observa la ruta vigente y expone values/relations en certificates sin consumir RNG ni modificar el `.osu`. El perfil persistente continúa en `phase-a.1`.
 

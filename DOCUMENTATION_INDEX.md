@@ -28,6 +28,8 @@ Los documentos maestros describen sólo el estado actual y se actualizan en cada
 - [Phase C1.1 corpus inventory](docs/MAP_FAMILY_VALIDATION_INVENTORY.md) — charts humanos deduplicados, familias, keymodes y conteos reproducibles.
 - [Phase C1.2 — Exact-Head Relation Modeling](docs/PHASE_C1_2_EXACT_HEAD_RELATION_MODELING_REPORT.md) — modelo `H→R`, provenance, reconstrucción held-out y Outcome A.
 - [C1.2 chart summary](docs/c1_2_chart_summary.csv), [family summary](docs/c1_2_family_summary.csv) y [global summary](docs/c1_2_global_summary.csv) — counts, denominadores y vistas micro/macro.
+- [Phase D0 — Chord Completion Reconstruction](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md) — exact reduced states, held-before safety, whole-group holdout y Outcome A.
+- [D0 chart summary](docs/d0_chart_summary.csv), [family summary](docs/d0_family_summary.csv) y [global summary](docs/d0_global_summary.csv) — recurrence exacta, competition, estratos naturales y micro/macro.
 - [Contextual/LN iteration](docs/ITERATION_CONTEXTUAL_LN_REPORT.md) — historial completo del rediseño de densidad, timing e interacción LN previo a Mapper-Derived.
 - [LN occupied-sections diagnosis](docs/DIAGNOSIS_LN_OCCUPIED_SECTIONS.md) — evidencia y causas raíz del bajo efecto ADD en secciones ocupadas por LNs.
 - [LN interior correction](docs/LN_INTERIOR_CORRECTION_REPORT.md) — implementación y A/B de elegibilidad/contexto interior.

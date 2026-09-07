@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "lastUpdated": "2026-09-06",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
@@ -11,12 +11,13 @@
     { "id": "C1.1", "name": "Witness vs Agreement Validation", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_C1_1_WITNESS_AGREEMENT_VALIDATION_REPORT.md" },
     { "id": "C1.2", "name": "Exact-Head Relation Modeling / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_C1_2_EXACT_HEAD_RELATION_MODELING_REPORT.md" },
     { "id": "C2", "name": "Retrigger-Specific Frequency", "status": "DEFERRED", "outcome": null, "behaviorChange": null, "report": null },
-    { "id": "D0", "name": "ChordCompletion Reconstruction / Shadow", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null }
+    { "id": "D0", "name": "ChordCompletion Reconstruction / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md" },
+    { "id": "D0.1", "name": "Exact Completion Competition Context / Shadow", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null }
   ],
-  "currentPhase": "C1.2",
-  "nextRecommendedPhase": "D0",
-  "testStatus": { "passed": 204, "failed": 0, "skipped": 0 },
-  "validationCorpus": { "families": 11, "humanCharts": 11, "chartsWithLn": 8, "keymodes": [4, 7, 10], "lnTargets": 12554 },
+  "currentPhase": "D0",
+  "nextRecommendedPhase": "D0.1",
+  "testStatus": { "passed": 220, "failed": 0, "skipped": 0 },
+  "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",
     "PROJECT_STATUS.md",

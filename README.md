@@ -17,16 +17,17 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase C1 — HOLD:** la autoridad numérica de witnesses LN todavía no tiene una regla suficientemente justificada.
 - **Phase C1.1 — COMPLETE, OUTCOME B:** witness identity y relation agreement son dimensiones distintas.
 - **Phase C1.2 — COMPLETE, OUTCOME A:** relaciones exact-head `H→R` explican la señal C1.1 sin asignar pesos.
+- **Phase D0 — COMPLETE, OUTCOME A:** relations exactas de chord completion son reconstruibles y explicativas en shadow.
 
-La generación activa continúa en `legacy-experimental.1`. Phase A, Phase B y la investigación C1–C1.2 observan y explican, pero no gobiernan el selector. En 11 familias humanas únicas —ocho con LNs— C1.2 confirmó que las relaciones exact-head explican los casos donde UniqueWitness perdía señal. D0 es el siguiente candidato shadow; C2 permanece deferred.
+La generación activa continúa en `legacy-experimental.1`. Phase A, Phase B y la investigación C1–D0 observan y explican, pero no gobiernan el selector. En 11 familias humanas, D0 reconstruyó members ocultos desde estados exactos del propio chart, separando Tap/LN heads y held tails. D0.1 es el siguiente candidato shadow para estudiar completions competidoras; D1 no está autorizado y C2 permanece deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: C1.2 — COMPLETE — OUTCOME A<br>
-Next recommended phase: D0 — ChordCompletion Reconstruction / Shadow<br>
+Current phase: D0 — COMPLETE — OUTCOME A<br>
+Next recommended phase: D0.1 — Exact Completion Competition Context / Shadow<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 204 passed / 0 failed / 0 skipped
+Tests: 220 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

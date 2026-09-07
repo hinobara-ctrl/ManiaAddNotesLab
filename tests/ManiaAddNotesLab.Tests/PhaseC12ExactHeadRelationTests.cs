@@ -186,10 +186,12 @@ public sealed class PhaseC12ExactHeadRelationTests
         var status = File.ReadAllText(Path.Combine(root, "PROJECT_STATUS.md"));
 
         Assert.Contains("\"behaviorPolicyVersion\": \"legacy-experimental.1\"", state);
-        Assert.Contains("Current phase: C1.2", readme);
-        Assert.Contains("Current phase: C1.2", status);
-        Assert.Contains("Next recommended phase: D0", readme);
-        Assert.Contains("Next recommended phase: D0", status);
+        Assert.Contains("Current phase: D0", readme);
+        Assert.Contains("Current phase: D0", status);
+        Assert.Contains("Next recommended phase: D0.1", readme);
+        Assert.Contains("Next recommended phase: D0.1", status);
+        Assert.Contains("Tests: 220 passed / 0 failed / 0 skipped", readme);
+        Assert.Contains("Tests: 220 passed / 0 failed / 0 skipped", status);
     }
 
     private static string FindRepositoryRoot()
