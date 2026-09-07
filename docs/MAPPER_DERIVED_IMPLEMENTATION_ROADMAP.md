@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE — OUTCOME B — SHADOW ONLY**. F2.1 queda **NEXT / NOT AUTHORIZED YET**; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2 queda **NEXT / NOT AUTHORIZED YET**; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -674,13 +674,25 @@ F2 v1 usó scope exacto `LocalLane → GlobalChart`, sin Section inventada. Sobr
 
 ## Phase F2.1 — Exact Gap Timing Identity / Shadow Validation
 
-**Estado: NEXT / NOT AUTHORIZED YET.**
+**Estado: COMPLETE — OUTCOME C — SHADOW ONLY.**
 
 **Goal:** investigar si timing-point-relative identity puede representar relaciones musicales exactas sin `Round`, tolerance, frequency authority o behavior.
 
 **Behavior change?:** no.
 
 **Acceptance criteria:** demostrar equivalencia exacta con provenance y separar identity de cuantización antes de reconsiderar A/B.
+
+**Resultado:** FileExact y ExactSegmentTraversal son exactas/auditables, pero producen false splits sobre ground truth 250/249 ms; la traversal también separa una redline redundante. El formato no conserva la coordenada sub-ms ni el divisor nominal. No se ejecutó corpus humano alternativo después del synthetic fail y no existe behavior.
+
+## Phase F2.2 — Quantization Inference Feasibility / Research Design
+
+**Estado: NEXT / NOT AUTHORIZED YET.**
+
+**Goal:** decidir si quantization inference merece una hipótesis explícita y qué ground truth, denominador domain, error model y falsification criteria necesitaría antes de implementar cualquier quantizer.
+
+**Behavior change?:** no autorizado.
+
+**Acceptance criteria:** una propuesta falsable que no use coverage humano como authority ni convierta una heurística de snap en verdad del archivo.
 
 ## Phase G1 — Interior relation semantics A/B
 
@@ -975,4 +987,4 @@ Las 25 condiciones de estados excluyentes, abstención, hechos por vista, identi
 
 La representación shadow pasa identity exacta, transition typing, original-only, whole-group exclusion, provenance, backoff sólo por no-context, SKIP, determinismo, multi-key, corpus y leakage. El behavioral subgate falla: 2/50.762 local support y 0 global support harían degenerado cualquier A/B. No se creó una versión conductual ni se alteró legacy.
 
-**F2 COMPLETE — OUTCOME B — SHADOW ONLY; F2.1 RECOMMENDED NEXT BUT NOT AUTHORIZED, D1 NOT AUTHORIZED, C2 DEFERRED.**
+**F2 COMPLETE/B; F2.1 COMPLETE — OUTCOME C — SHADOW ONLY; F2.2 RECOMMENDED NEXT BUT NOT AUTHORIZED, D1 NOT AUTHORIZED, C2 DEFERRED.**

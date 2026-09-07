@@ -120,6 +120,16 @@ dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f2-corpus 
 
 Regenera nueve CSV `f2_*`. El detail queda ignorado en `.artifacts/f2/`. No existe `f2_ab_summary.csv` porque crear un artifact vacío ocultaría que el behavioral gate falló.
 
+## F2.1 — Exact gap timing identity
+
+F2.1 está cerrado **Outcome C / shadow-only**. `FileExactDecimal` permanece como provenance y `ExactSegmentTraversal` conserva redlines exactas, pero ninguna recupera relaciones nominales perdidas al serializar timestamps enteros. El synthetic gate falló antes del corpus humano alternativo; no existe quantizer ni A/B.
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f2-1-synthetic docs .artifacts/f2-1/f2_1_detail.json
+```
+
+Regenera cinco CSV `f2_1_*` con ground truth, negative controls, timing crossings, modelos y holdout endpoint-aware. El detail pequeño permanece local e ignorado.
+
 ## Checklist
 
 - Context burst: densidad contextual OFF/ON.

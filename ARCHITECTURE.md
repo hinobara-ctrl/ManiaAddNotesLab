@@ -121,9 +121,15 @@ candidate transition kind + exact gap
 
 Esta capa cerró Outcome B y permanece shadow-only. No existe integración con geometry/generation, versión conductual F2, selector de gaps o scope Section. Las occurrences se normalizan una vez y las resoluciones conservan donor keys para evitar duplicación cuadrática.
 
+### Exact gap timing identity research
+
+F2.1 conserva `FileExactDecimal` y añade `ExactSegmentTraversal`: una secuencia exacta de beat length y beat span por cada redline atravesada. También distingue `HeadEventGroup`, `ReleaseEventGroup` y `TransitionEndpointGroup`, de modo que una LN con release compartido no pueda reaparecer como donor del mismo endpoint.
+
+La traversal es provenance, no quantizer. El ground truth demuestra que no puede recuperar una relación nominal que perdió coordenadas sub-ms al serializarse, y que incluso puede separar una redline redundante. F2.1 cerró Outcome C; no hay integración con generation, tolerancia, denominator vocabulary ni behavior.
+
 ## Evidencia y generación actuales
 
-`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. C1.2 añade relaciones exact-head; D0 chord completion; D0.1 matching exacto; D0.2 agreement/joint witness; F1 estados candidate-centric como `phase-f1-research.1`; F2 typed gaps/backoff como `phase-f2-typed-gap-shadow.1`. Estas estructuras agrupan IDs, claims y provenance sin producir score y no gobiernan el selector.
+`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. C1.2 añade relaciones exact-head; D0 chord completion; D0.1 matching exacto; D0.2 agreement/joint witness; F1 estados candidate-centric como `phase-f1-research.1`; F2 typed gaps/backoff como `phase-f2-typed-gap-shadow.1`; F2.1 timing provenance como `phase-f2-1-exact-gap-timing-shadow.1`. Estas estructuras agrupan IDs, claims y provenance sin producir score y no gobiernan el selector.
 
 La generación activa (`legacy-experimental.1`) continúa usando sus analizadores y parámetros históricos para crear oportunidades, calcular chance, construir candidatos y seleccionar lanes. `DecisionDiagnostics` (`phase-c1-2-shadow.1`) observa la ruta vigente y expone values/relations en certificates sin consumir RNG ni modificar el `.osu`. El perfil persistente continúa en `phase-a.1`.
 

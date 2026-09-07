@@ -1,0 +1,9 @@
+scenario,expected_equivalent,negative_control,left_transition,right_transition,left_file_exact_gap,right_file_exact_gap,file_exact_equal,segment_traversal_equal,file_exact_false_split,file_exact_false_merge,traversal_false_split,traversal_false_merge
+alternating_serialized_half_beat,true,false,TapHeadToTapHead,TapHeadToTapHead,0.5010020040080160320641282565,0.4989979959919839679358717435,false,false,true,false,true,false
+cross_bpm_exact_path,true,false,TapHeadToTapHead,TapHeadToTapHead,1.0,1.0,true,true,false,false,false,false
+different_transition_kind,false,true,TapHeadToTapHead,LongNoteReleaseToTapHead,0.5,0.5,false,false,false,false,false,false
+integral_half_beat,true,false,TapHeadToTapHead,TapHeadToTapHead,0.5,0.5,true,true,false,false,false,false
+ln_head_release_cross_bpm,true,false,LongNoteReleaseToTapHead,LongNoteReleaseToTapHead,1.0,1.0,true,true,false,false,false,false
+nearby_intentionally_distinct,false,true,TapHeadToTapHead,TapHeadToTapHead,0.498,0.5,false,false,false,false,false,false
+redundant_redline_same_relation,true,false,TapHeadToTapHead,TapHeadToTapHead,1.0,1.0,true,false,false,false,true,false
+same_ms_different_beat_relation,false,true,TapHeadToTapHead,TapHeadToTapHead,0.5,1,false,false,false,false,false,false

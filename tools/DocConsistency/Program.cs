@@ -108,7 +108,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.Phases.Count(x => x.Status == "NEXT") != 1)
         errors.Add("Exactly one phase must have status NEXT.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "F1", "F2", "F2.1" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "F1", "F2", "F2.1", "F2.2" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -253,6 +253,24 @@ void ValidateFilesAndIndex(ProjectState value)
         {
             RequireFile(artifact, "F2 closure artifact");
             CheckContains("DOCUMENTATION_INDEX.md", artifact, "F2 closure artifact index entry");
+        }
+    }
+
+    var f21 = value.Phases.FirstOrDefault(x => x.Id == "F2.1");
+    if (f21?.Status == "COMPLETE")
+    {
+        foreach (var artifact in new[]
+        {
+            "docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md",
+            "docs/f2_1_identity_model_summary.csv",
+            "docs/f2_1_synthetic_validation_summary.csv",
+            "docs/f2_1_negative_control_summary.csv",
+            "docs/f2_1_timing_segment_summary.csv",
+            "docs/f2_1_endpoint_holdout_summary.csv"
+        })
+        {
+            RequireFile(artifact, "F2.1 closure artifact");
+            CheckContains("DOCUMENTATION_INDEX.md", artifact, "F2.1 closure artifact index entry");
         }
     }
 }

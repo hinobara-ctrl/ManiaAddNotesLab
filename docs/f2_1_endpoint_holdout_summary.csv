@@ -1,0 +1,3 @@
+fixture,holdout,excluded_observations,local_state,global_state,local_donors,global_donors,hypothetical_action,shared_release_targets,additional_endpoint_exclusions,endpoint_leakage
+shared_release_different_next,F2HeadGroup,2,NoComparableContext,LocalMismatch,0,1,SkipGlobalMismatch,2,2,0
+shared_release_different_next,TransitionEndpointGroup,3,NoComparableContext,NoComparableContext,0,0,SkipNoComparableContext,2,2,0

@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D0–F2 permanecen separados de generation con schemas research propios.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D0–F2.1 permanecen separados de generation con schemas research propios.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -19,7 +19,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | D0.2 — Exact Context Coverage and View Agreement | **COMPLETE — OUTCOME A** | Ninguno; separa agreement, donor overlap y joint witness exacto. |
 | F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
 | F2 — Typed gaps and evidence backoff A/B | **COMPLETE — OUTCOME B — SHADOW ONLY** | Ninguno; identity/backoff exactos válidos, coverage insuficiente para A/B. |
-| F2.1 — Exact Gap Timing Identity / Shadow Validation | **NEXT / NOT AUTHORIZED YET** | No iniciado; investigaría identity exacta sin round/tolerance. |
+| F2.1 — Exact Gap Timing Identity / Shadow Validation | **COMPLETE — OUTCOME C — SHADOW ONLY** | Ninguno; demuestra que equivalencia nominal general requiere inferencia ausente del archivo. |
+| F2.2 — Quantization Inference Feasibility / Research Design | **NEXT / NOT AUTHORIZED YET** | No iniciado; decidiría si formular quantization como hipótesis explícita. |
 
 ## Qué funciona hoy
 
@@ -98,11 +99,17 @@ F2 shadow reconstruyó 50.762 transitions y 1.809 gaps exactos. Local produjo 2 
 
 La representación cierra **OUTCOME B**: es exacta y auditable, pero una policy admitiría sólo 2/50.762 candidates y omitiría el resto. No se implementó A/B, no se creó versión F2 conductual y legacy continúa default.
 
+## Resultado F2.1
+
+F2 se reprodujo exactamente sobre el snapshot histórico de 11 charts. F2.1 separó FileExact de una candidate `ExactSegmentTraversal` y construyó ground truth sintético con BPM integral/no integral, crossings, LNs y controles cercanos. FileExact produjo un false split cuando 1/2 beat nominal se serializó 250/249 ms; la traversal produjo ese split y otro al cruzar una redline redundante con el mismo BPM. No hubo false merges en las identities exactas, mientras `ExactMilliseconds` fue descartada porque fusionaría relaciones beat distintas con igual duración ms.
+
+El audit endpoint-aware demostró sintéticamente que dos LNs con release compartido requieren excluir el `ReleaseEventGroup`: el estado cambió de global mismatch a no-context al retirar el endpoint duplicado. Ninguna identity nueva pasó el synthetic gate general, por lo que el corpus humano F2.1 no se ejecutó para buscar una justificación estadística. F2.1 cierra **OUTCOME C**, sin quantizer, behavior ni A/B.
+
 ## Validación actual
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **349 passed, 0 failed, 0 skipped** en el cierre F2.
+- `dotnet test -c Release`: **378 passed, 0 failed, 0 skipped** en el cierre F2.1.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -112,7 +119,7 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 - El corpus tiene 11 familias, pero sólo ocho contienen LNs; 10K no aporta targets LN y no existen charts humanos 1K/18K en esta muestra.
 - `WitnessAgreement` es descriptivo: todavía no existe una regla justificada para convertirlo en autoridad, bonus o score.
-- F2 exacto fragmenta 50.762 targets en 1.809 decimals y sólo dos supports inequívocos; normalizar identity sin round/tolerance queda abierto.
+- F2.1 demuestra que los timestamps enteros no conservan suficiente información para fusionar gaps nominales sin una inferencia de quantization explícita.
 - Muchas decisiones estilísticas siguen siendo thresholds, ventanas, caps, pooling o desempates legacy.
 - La elección uniforme de lane y la composición del estado vertical aún no se derivan del mapa.
 - `LocalMismatch`, contextos comparables, secciones adaptativas y `CompatibleComposition` no gobiernan generación.
@@ -122,15 +129,15 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-La siguiente fase recomendada es **F2.1 — Exact Gap Timing Identity / Shadow Validation**, sólo `NEXT / NOT AUTHORIZED YET`. Debe estudiar una relación timing-point-relative exacta sin round, epsilon, frequency authority ni conducta. D1 sigue sin autorización; C2 permanece **DEFERRED** y no se abren E, MapperSupport o J.
+La siguiente fase recomendada es **F2.2 — Quantization Inference Feasibility / Research Design**, sólo `NEXT / NOT AUTHORIZED YET`. Debe decidir si estudiar quantization como hipótesis explícita y qué ground truth adicional necesitaría; no autoriza denominadores, tolerance, nearest snap ni conducta. D1 sigue sin autorización; C2 permanece **DEFERRED** y no se abren E, MapperSupport o J.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: F2 — COMPLETE — OUTCOME B — SHADOW ONLY<br>
-Next recommended phase: F2.1 — Exact Gap Timing Identity / Shadow Validation<br>
+Current phase: F2.1 — COMPLETE — OUTCOME C — SHADOW ONLY<br>
+Next recommended phase: F2.2 — Quantization Inference Feasibility / Research Design<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 349 passed / 0 failed / 0 skipped
+Tests: 378 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
-Detalles y evidencia: [Phase F2 report](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md). Los reports [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md), [D0.1](docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md), [D0](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md) y anteriores permanecen como evidencia histórica.
+Detalles y evidencia: [Phase F2.1 report](docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md). Los reports [F2](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md), [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md), [D0.1](docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md), [D0](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md) y anteriores permanecen como evidencia histórica.

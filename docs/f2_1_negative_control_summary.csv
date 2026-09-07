@@ -1,0 +1,4 @@
+scenario,file_exact_false_merge,traversal_false_merge,exact_ms_false_merge_risk
+different_transition_kind,false,false,false
+nearby_intentionally_distinct,false,false,false
+same_ms_different_beat_relation,false,false,true

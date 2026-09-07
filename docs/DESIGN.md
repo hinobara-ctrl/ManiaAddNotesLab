@@ -14,7 +14,7 @@ El motor construye un `MapperEvidenceProfile` inmutable exclusivamente desde `Or
 
 Esta capa es puramente observacional: ningún dato del perfil participa todavía en oportunidades, probabilidad, candidates, lane selection o articulación. Web reutiliza un perfil por lote; CLI puede exportarlo con `--profile-output`. `TransformationWitness` y `SupportCertificate` existen solo como contratos extensibles sin confidence ni score. La política de generación continúa identificada como `legacy-experimental.1` y el perfil como `phase-a.1`.
 
-El roadmap y sus límites están en [MAPPER_DERIVED_IMPLEMENTATION_ROADMAP.md](MAPPER_DERIVED_IMPLEMENTATION_ROADMAP.md). Phase B agrega certificados y causas en shadow. C1 permanece HOLD; C1.2 modeló relaciones exact-head; D0–D0.2 reconstruyeron completion/context/agreement; F1 formalizó evidence state; F2 tipó gaps y backoff conservador, pero cerró Outcome B shadow-only por cobertura insuficiente. Generation, RNG y `BehaviorPolicyVersion=legacy-experimental.1` siguen intactos. F2.1 es sólo NEXT y no está autorizado; D1 tampoco está autorizado y C2 permanece deferred.
+El roadmap y sus límites están en [MAPPER_DERIVED_IMPLEMENTATION_ROADMAP.md](MAPPER_DERIVED_IMPLEMENTATION_ROADMAP.md). Phase B agrega certificados y causas en shadow. C1 permanece HOLD; C1.2 modeló relaciones exact-head; D0–D0.2 reconstruyeron completion/context/agreement; F1 formalizó evidence state; F2 tipó gaps/backoff y cerró Outcome B; F2.1 demostró Outcome C porque el archivo no conserva equivalencia nominal sin inferencia de quantization. Generation, RNG y `BehaviorPolicyVersion=legacy-experimental.1` siguen intactos. F2.2 es sólo NEXT y no está autorizado; D1 tampoco está autorizado y C2 permanece deferred.
 
 ## Hipótesis experimentales
 

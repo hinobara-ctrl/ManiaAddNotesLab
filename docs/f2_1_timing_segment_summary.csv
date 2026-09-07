@@ -1,0 +1,9 @@
+scenario,left_same_segment,right_same_segment,left_boundaries_crossed,right_boundaries_crossed,previous_ln_crosses_segment
+alternating_serialized_half_beat,true,true,0,0,false
+cross_bpm_exact_path,false,false,1,1,false
+different_transition_kind,true,true,0,0,false
+integral_half_beat,true,true,0,0,false
+ln_head_release_cross_bpm,true,true,0,0,true
+nearby_intentionally_distinct,true,true,0,0,false
+redundant_redline_same_relation,true,false,0,1,false
+same_ms_different_beat_relation,true,true,0,0,false

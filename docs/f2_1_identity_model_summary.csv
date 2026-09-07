@@ -1,0 +1,9 @@
+identity_model,implemented,exact_file_derivation,equivalence_valid,alternating_nominal_relation,negative_false_merges,general_enough,disposition
+FileExactDecimal,true,true,true,fail,0,false,baseline_only
+ExactSegmentTraversal,true,true,true,fail,0,false,rejected_as_musical_identity
+ExactMillisecondInterval,false,true,true,not_applicable,1,false,rejected_theoretically_false_merge_across_bpm
+ExactRationalDeltaMsOverBeatLength,false,true,true,fail,0,false,equivalent_to_file_exact_same_segment
+EndpointPhaseRelation,false,true,true,not_applicable,0,false,rejected_position_dependent
+NearestSubdivision,false,false,not_applicable,not_applicable,unknown,false,prohibited_requires_quantization_policy
+PairwiseEpsilon,false,false,false,not_applicable,unknown,false,prohibited_non_transitive
+FrequencyChosenClass,false,false,not_applicable,not_applicable,unknown,false,prohibited_frequency_authority

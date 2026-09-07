@@ -16,11 +16,12 @@
     { "id": "D0.2", "name": "Exact Context Coverage and View Agreement / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md" },
     { "id": "F1", "name": "Comparable-context Resolver / Shadow + Validation", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md" },
     { "id": "F2", "name": "Typed gaps and evidence backoff A/B", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md" },
-    { "id": "F2.1", "name": "Exact Gap Timing Identity / Shadow Validation", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null }
+    { "id": "F2.1", "name": "Exact Gap Timing Identity / Shadow Validation", "status": "COMPLETE", "outcome": "C", "behaviorChange": false, "report": "docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md" },
+    { "id": "F2.2", "name": "Quantization Inference Feasibility / Research Design", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null }
   ],
-  "currentPhase": "F2",
-  "nextRecommendedPhase": "F2.1",
-  "testStatus": { "passed": 349, "failed": 0, "skipped": 0 },
+  "currentPhase": "F2.1",
+  "nextRecommendedPhase": "F2.2",
+  "testStatus": { "passed": 378, "failed": 0, "skipped": 0 },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",
