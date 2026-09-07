@@ -1,0 +1,6 @@
+unique_agreement,trials,target_vs_wrong_conflicts
+NoUniqueView,12614,0
+SingleUniqueViewOnly,10438,0
+UniqueViewsAgreeOnTarget,10386,0
+UniqueViewsAgreeOnSameWrongCompletion,3256,0
+UniqueViewsDisagree,3666,2482

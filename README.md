@@ -19,16 +19,17 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase C1.2 — COMPLETE, OUTCOME A:** relaciones exact-head `H→R` explican la señal C1.1 sin asignar pesos.
 - **Phase D0 — COMPLETE, OUTCOME A:** relations exactas de chord completion son reconstruibles y explicativas en shadow.
 - **Phase D0.1 — COMPLETE, OUTCOME A:** contexto exacto separa miles de completions competidoras, con una frontera explícita de cobertura.
+- **Phase D0.2 — COMPLETE, OUTCOME A:** agreement, donor overlap y contexto conjunto observado son reconstruibles sin selection authority.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y la investigación C1–D0.1 observan y explican, pero no gobiernan el selector. En 11 familias humanas, D0.1 comprobó que previous/next exactos discriminan alternativas recurrentes sin leakage, aunque las vistas más específicas pierden cobertura. D0.2 es el siguiente candidato shadow; D1 no está autorizado y C2 permanece deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y la investigación C1–D0.2 observan y explican, pero no gobiernan el selector. En 11 familias humanas, D0.2 comprobó que agreement marginal, donor overlap y coocurrencia joint son magnitudes distintas: existen 8.245 confirmations Previous/Next, pero también 6.478 completion references marginales sin confirmación conjunta. F1 es el siguiente candidato shadow; D1 no está autorizado y C2 permanece deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: D0.1 — COMPLETE — OUTCOME A<br>
-Next recommended phase: D0.2 — Exact Context Coverage and View Agreement / Shadow<br>
+Current phase: D0.2 — COMPLETE — OUTCOME A<br>
+Next recommended phase: F1 — Comparable-context Resolver / Shadow + Validation<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 243 passed / 0 failed / 0 skipped
+Tests: 278 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

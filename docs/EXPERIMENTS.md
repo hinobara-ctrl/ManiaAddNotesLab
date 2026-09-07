@@ -86,7 +86,19 @@ Runner reproducible:
 dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- d0-1-corpus <corpus-read-only> docs <detail-json-local>
 ```
 
-Regenera los cuatro CSV `d0_1_*`; el JSON detallado grande permanece local. La siguiente pregunta recomendada es D0.2 sobre estabilidad y desacuerdo entre vistas. D0.2 no está autorizada por este cierre; D1 tampoco.
+Regenera los cuatro CSV `d0_1_*`; el JSON detallado grande permanece local. Su report histórico conserva la recomendación que abrió D0.2.
+
+## D0.2 — Exact context coverage and view agreement
+
+D0.2 está cerrado en **Outcome A** como research shadow. Conserva completion sets y donor group IDs por vista, compara los 28 pares, registra 22 coverage signatures y preserva conflictos unique sin resolverlos. Las conjunciones `ReducedPrevNext` y `ReducedHeldPrevNext` distinguen una intersección marginal de una occurrence conjunta real.
+
+Runner reproducible:
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- d0-2-corpus <corpus-read-only> docs <detail-json-local>
+```
+
+Regenera summaries chart/family/global, pairwise, joint, coverage, conflicts y estratos naturales. El detalle target-level permanece local e ignorado. F1 es la siguiente pregunta recomendada, todavía no autorizada; D1 sigue sin autorización y C2 deferred.
 
 ## Checklist
 

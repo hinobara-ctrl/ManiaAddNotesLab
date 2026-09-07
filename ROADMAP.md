@@ -12,10 +12,10 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | C2 — Retrigger-specific frequency | ⏸ **DEFERRED** | Hipótesis separada; no se inicia durante C1.2. |
 | D0 — ChordCompletion reconstruction | ✅ **COMPLETE — OUTCOME A** | Relations exactas reduced-state→completion son reconstruibles; no tienen authority. |
 | D0.1 — Exact completion competition context | ✅ **COMPLETE — OUTCOME A** | Contexto exacto discrimina miles de alternatives, con cobertura decreciente explícita. |
-| D0.2 — Exact Context Coverage and View Agreement | ➡️ **NEXT / NOT AUTHORIZED YET** | Estudiar estabilidad y desacuerdo entre vistas exactas, sin ladder ni selección. |
+| D0.2 — Exact Context Coverage and View Agreement | ✅ **COMPLETE — OUTCOME A** | Agreement, conflict, donor overlap y joint witness exactos son reconstruibles; sin authority. |
 | D1 — Resulting-state chords | ⏳ Pending | Validar el estado vertical conjunto y evitar acumulación sin soporte. |
 | E — Adaptive context | ⏳ Pending | Comparar recurrencia y segmentación en shadow antes de elegir secciones. |
-| F1 — Comparable contexts | ⏳ Pending | Definir support, mismatch, no-context y ambigüedad con validación held-out. |
+| F1 — Comparable-context Resolver / Shadow + Validation | ➡️ **NEXT / NOT AUTHORIZED YET** | Definir support, mismatch, no-context y ambigüedad sin selection conductual. |
 | F2 — Typed gaps/backoff | ⏳ Pending | Gaps por transición y backoff local/estructural/global/SKIP versionado. |
 | G1 — Interior relations | ⏳ Pending | Separar y validar relaciones contained, crossing y equal-end. |
 | G2 — Causal articulation | ⏳ Pending | Articular sólo cuando blockers originales y evidencia retrigger lo justifiquen. |

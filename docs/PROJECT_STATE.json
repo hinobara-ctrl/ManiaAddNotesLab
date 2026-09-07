@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "lastUpdated": "2026-09-06",
+  "lastUpdated": "2026-09-07",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -13,11 +13,12 @@
     { "id": "C2", "name": "Retrigger-Specific Frequency", "status": "DEFERRED", "outcome": null, "behaviorChange": null, "report": null },
     { "id": "D0", "name": "ChordCompletion Reconstruction / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md" },
     { "id": "D0.1", "name": "Exact Completion Competition Context / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md" },
-    { "id": "D0.2", "name": "Exact Context Coverage and View Agreement / Shadow", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null }
+    { "id": "D0.2", "name": "Exact Context Coverage and View Agreement / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md" },
+    { "id": "F1", "name": "Comparable-context Resolver / Shadow + Validation", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null }
   ],
-  "currentPhase": "D0.1",
-  "nextRecommendedPhase": "D0.2",
-  "testStatus": { "passed": 243, "failed": 0, "skipped": 0 },
+  "currentPhase": "D0.2",
+  "nextRecommendedPhase": "F1",
+  "testStatus": { "passed": 278, "failed": 0, "skipped": 0 },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",

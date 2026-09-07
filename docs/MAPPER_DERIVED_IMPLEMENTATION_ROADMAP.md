@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. Phase D0: **COMPLETE — OUTCOME A, EXACT CHORD-COMPLETION RELATIONS ARE RECONSTRUCTIBLE AND EXPLANATORY**. Phase D0.1: **COMPLETE — OUTCOME A, EXACT CONTEXT DISCRIMINATES WITH A COVERAGE BOUNDARY**. D0.2 es el siguiente candidato research-only; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. Phase D0: **COMPLETE — OUTCOME A, EXACT CHORD-COMPLETION RELATIONS ARE RECONSTRUCTIBLE AND EXPLANATORY**. Phase D0.1: **COMPLETE — OUTCOME A, EXACT CONTEXT DISCRIMINATES WITH A COVERAGE BOUNDARY**. Phase D0.2: **COMPLETE — OUTCOME A, VIEW AGREEMENT AND JOINT-WITNESS STRUCTURE ARE RECONSTRUCTIBLE**. F1 es el siguiente candidato research-only; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -586,13 +586,13 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 ## Phase D0.2 — Exact Context Coverage and View Agreement / Shadow
 
-**Estado: NEXT / NOT AUTHORIZED YET.**
+**Estado: COMPLETE — OUTCOME A.** Las ocho vistas D0.1 produjeron 22 coverage signatures, 3.666 conflictos unique y donor overlap exacto. Previous/Next registró 8.245 completion references con joint witness, 4.972 acuerdos sin joint comparable y 1.506 acuerdos no soportados por el joint. Held/PrevNext confirmó 7.603 y preservó 249 excepciones marginales. Los dos fenómenos aparecen en las 11 familias, con cero leakage y sin cambio conductual. Véase `PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md`.
 
 **Goal:** estudiar estabilidad, desacuerdo y cobertura conjunta entre las vistas D0.1 sin convertirlas en un ladder, score o selector manual.
 
 **Behavior change?:** no.
 
-**Acceptance criteria:** misma población held-out, abstención explícita, composición justificable y ningún acceso desde generation. D1 sólo puede considerarse después de otro gate independiente.
+**Acceptance criteria:** PASS. Misma población held-out, abstención explícita, dependency graph, conflicts y composición sólo cuando existe vista joint original; ningún acceso desde generation. D1 sigue sin autorización.
 
 ## Phase D1 — ChordCompletion resulting-state A/B
 
@@ -636,11 +636,15 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 ## Phase F1 — Comparable-context resolver / Shadow + validation
 
+**Estado: NEXT / NOT AUTHORIZED YET.**
+
 **Goal:** definir y validar `ObservedSupport`, `LocalMismatch`, `NoComparableContext` y `AmbiguousEvidence` antes de que alteren generación.
 
 **Behavior change?:** no.
 
 **Acceptance criteria:** resolución explicable y validación held-out sin backoff conductual.
+
+La entrada evidence-driven de F1 es la distinción D0.2 entre coverage, marginal agreement, donor overlap y observed joint context. F1 debe conservar `AmbiguousEvidence` y abstención; no puede sumar views, hacer majority vote ni promover `CompatibleComposition` por intersección marginal.
 
 ## Phase F2 — Typed gaps and evidence backoff A/B
 
@@ -940,3 +944,7 @@ Los 25 criterios de representación determinista, original-only, whole-group exc
 Las 33 condiciones de exactitud, provenance, exclusión de grupo completo, saneamiento simétrico de held futuro, ocho vistas paralelas, outcomes, denominadores, estratos, corpus multi-family, multi-key, performance y regresión conductual pasan. En 36.387 competencias D0, previous/next exactos resuelven 6.303/6.264; el contexto bidireccional resuelve 5.292 con cobertura mucho menor. No se seleccionó una vista ni se introdujo authority.
 
 **D0.1 COMPLETE — OUTCOME A; D0.2 SHADOW RECOMMENDED NEXT, D1 NOT AUTHORIZED, C2 DEFERRED.**
+
+## Phase D0.2 validation gate
+
+**D0.2 COMPLETE — OUTCOME A; F1 SHADOW RECOMMENDED NEXT, D1 NOT AUTHORIZED, C2 DEFERRED.**
