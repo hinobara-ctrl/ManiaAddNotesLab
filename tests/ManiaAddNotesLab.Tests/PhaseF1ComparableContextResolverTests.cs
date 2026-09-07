@@ -172,18 +172,19 @@ public sealed class PhaseF1ComparableContextResolverTests
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void HeldPrevNextRequiresItsOwnObservedJointWitness(bool jointSupports)
+    [InlineData(true, true, CandidateJointEvidenceState.ObservedJointContext)]
+    [InlineData(false, false, CandidateJointEvidenceState.MarginalWithoutJointComparable)]
+    [InlineData(true, false, CandidateJointEvidenceState.MarginalContradictedByJoint)]
+    public void HeldPrevNextRequiresItsOwnObservedJointWitness(bool jointComparable, bool jointSupports,
+        CandidateJointEvidenceState expected)
     {
         var resolution = Target(Resolve(
             View(ExactCompletionContextView.ReducedHeld, true, (A, "h")),
             View(ExactCompletionContextView.ReducedPrevNext, true, (A, "pn")),
-            View(ExactCompletionContextView.ReducedHeldPrevNext, jointSupports,
+            View(ExactCompletionContextView.ReducedHeldPrevNext, jointComparable,
                 jointSupports ? new[] { (A, "joint") } : Array.Empty<(ExactCompletionIdentity, string)>()))) ;
         var evidence = resolution.JointEvidence.Single(x => x.Kind == ObservedJointContextKind.HeldPrevNext);
-        Assert.Equal(jointSupports ? CandidateJointEvidenceState.ObservedJointContext
-            : CandidateJointEvidenceState.MarginalWithoutJointComparable, evidence.State);
+        Assert.Equal(expected, evidence.State);
     }
 
     [Fact]

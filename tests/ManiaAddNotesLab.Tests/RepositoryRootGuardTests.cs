@@ -11,7 +11,7 @@ public sealed class RepositoryRootGuardTests
         var root = RepositoryRoot();
         var declared = RepositoryRootGuard.ReadAllowlist(Path.Combine(root,
             "tools", "DocConsistency", "repository-root-allowlist.txt"));
-        var tracked = RepositoryRootGuard.GetTrackedTopLevelEntries(root);
+        var tracked = RepositoryRootGuard.GetVisibleTopLevelEntries(root);
 
         Assert.True(RepositoryRootGuard.Validate(declared, tracked).Passed);
     }
@@ -22,7 +22,7 @@ public sealed class RepositoryRootGuardTests
         var result = RepositoryRootGuard.Validate(["README.md", "src"],
             ["README.md", "src", "terminal-output.txt"]);
 
-        Assert.Equal(new[] { "terminal-output.txt" }, result.UnexpectedTrackedEntries.ToArray());
+        Assert.Equal(new[] { "terminal-output.txt" }, result.UnexpectedEntries.ToArray());
         Assert.Empty(result.MissingDeclaredEntries);
     }
 
@@ -33,19 +33,41 @@ public sealed class RepositoryRootGuardTests
             ["README.md", "src"]);
 
         Assert.Equal(new[] { "tests" }, result.MissingDeclaredEntries.ToArray());
-        Assert.Empty(result.UnexpectedTrackedEntries);
+        Assert.Empty(result.UnexpectedEntries);
     }
 
     [Fact]
-    public void LocalUntrackedArtifactIsNotPartOfGitEnumeration()
+    public void UnexpectedUntrackedRootEntryIsEnumeratedAndFails()
     {
         var root = RepositoryRoot();
         var path = Path.Combine(root, $"root-guard-local-{Guid.NewGuid():N}.tmp");
         File.WriteAllText(path, "local-only");
         try
         {
-            Assert.DoesNotContain(Path.GetFileName(path),
-                RepositoryRootGuard.GetTrackedTopLevelEntries(root));
+            var visible = RepositoryRootGuard.GetVisibleTopLevelEntries(root);
+            Assert.Contains(Path.GetFileName(path), visible);
+            var declared = RepositoryRootGuard.ReadAllowlist(Path.Combine(root,
+                "tools", "DocConsistency", "repository-root-allowlist.txt"));
+            Assert.Contains(Path.GetFileName(path),
+                RepositoryRootGuard.Validate(declared, visible).UnexpectedEntries);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void IgnoredArtifactIsNotEnumerated()
+    {
+        var root = RepositoryRoot();
+        var directory = Path.Combine(root, ".artifacts");
+        var path = Path.Combine(directory, $"root-guard-{Guid.NewGuid():N}.tmp");
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(path, "ignored");
+        try
+        {
+            Assert.DoesNotContain(".artifacts", RepositoryRootGuard.GetVisibleTopLevelEntries(root));
         }
         finally
         {

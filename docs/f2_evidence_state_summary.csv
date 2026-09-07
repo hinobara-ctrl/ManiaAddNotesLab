@@ -1,0 +1,37 @@
+scope,family_key,evidence_scope,evidence_state,resolutions
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LocalLane,LocalMismatch,112
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LocalLane,NoComparableContext,16
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LocalLane,AmbiguousEvidence,4762
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",GlobalChart,LocalMismatch,13
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",GlobalChart,AmbiguousEvidence,3
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",LocalLane,LocalMismatch,222
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",LocalLane,AmbiguousEvidence,3769
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",LocalLane,LocalMismatch,116
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",LocalLane,AmbiguousEvidence,2121
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",LocalLane,LocalMismatch,61
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",LocalLane,AmbiguousEvidence,1868
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",LocalLane,LocalMismatch,1891
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",LocalLane,AmbiguousEvidence,8244
+family,"MORO | HOLY BITCH | ITZBENJA616",LocalLane,LocalMismatch,119
+family,"MORO | HOLY BITCH | ITZBENJA616",LocalLane,AmbiguousEvidence,8158
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",LocalLane,LocalMismatch,462
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",LocalLane,AmbiguousEvidence,4139
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LocalLane,ObservedSupport,2
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LocalLane,LocalMismatch,143
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LocalLane,NoComparableContext,1
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LocalLane,AmbiguousEvidence,2945
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",GlobalChart,AmbiguousEvidence,1
+family,"NOWISEE | KO INU | RUKA",LocalLane,LocalMismatch,452
+family,"NOWISEE | KO INU | RUKA",LocalLane,AmbiguousEvidence,4941
+family,"ORGT | DESTINY | BAIO",LocalLane,LocalMismatch,235
+family,"ORGT | DESTINY | BAIO",LocalLane,AmbiguousEvidence,1411
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",LocalLane,LocalMismatch,238
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",LocalLane,NoComparableContext,1
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",LocalLane,AmbiguousEvidence,4333
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",GlobalChart,AmbiguousEvidence,1
+global,"GLOBAL",LocalLane,ObservedSupport,2
+global,"GLOBAL",LocalLane,LocalMismatch,4051
+global,"GLOBAL",LocalLane,NoComparableContext,18
+global,"GLOBAL",LocalLane,AmbiguousEvidence,46691
+global,"GLOBAL",GlobalChart,LocalMismatch,13
+global,"GLOBAL",GlobalChart,AmbiguousEvidence,5

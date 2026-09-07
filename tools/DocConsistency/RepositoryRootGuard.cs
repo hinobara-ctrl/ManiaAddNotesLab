@@ -5,10 +5,10 @@ using System.Text;
 namespace DocConsistencyTool;
 
 public sealed record RepositoryRootGuardResult(
-    ImmutableArray<string> UnexpectedTrackedEntries,
+    ImmutableArray<string> UnexpectedEntries,
     ImmutableArray<string> MissingDeclaredEntries)
 {
-    public bool Passed => UnexpectedTrackedEntries.Length == 0 && MissingDeclaredEntries.Length == 0;
+    public bool Passed => UnexpectedEntries.Length == 0 && MissingDeclaredEntries.Length == 0;
 }
 
 public static class RepositoryRootGuard
@@ -20,7 +20,7 @@ public static class RepositoryRootGuard
         .Order(StringComparer.Ordinal)
         .ToImmutableArray();
 
-    public static ImmutableArray<string> GetTrackedTopLevelEntries(string repositoryRoot)
+    public static ImmutableArray<string> GetVisibleTopLevelEntries(string repositoryRoot)
     {
         var start = new ProcessStartInfo("git")
         {
@@ -34,15 +34,25 @@ public static class RepositoryRootGuard
         start.ArgumentList.Add("-c");
         start.ArgumentList.Add("core.quotePath=false");
         start.ArgumentList.Add("ls-files");
+        start.ArgumentList.Add("--cached");
+        start.ArgumentList.Add("--others");
+        start.ArgumentList.Add("--exclude-standard");
         start.ArgumentList.Add("-z");
         using var process = Process.Start(start)
-            ?? throw new InvalidOperationException("Could not start git ls-files.");
+            ?? throw new InvalidOperationException("Could not start git ls-files for tracked and untracked entries.");
         var output = process.StandardOutput.ReadToEnd();
         var error = process.StandardError.ReadToEnd();
         process.WaitForExit();
         if (process.ExitCode != 0)
-            throw new InvalidOperationException($"git ls-files failed: {error.Trim()}");
-        return TopLevelEntries(output.Split('\0', StringSplitOptions.RemoveEmptyEntries));
+            throw new InvalidOperationException($"git ls-files --cached --others --exclude-standard failed: {error.Trim()}");
+        var presentPaths = output.Split('\0', StringSplitOptions.RemoveEmptyEntries)
+            .Where(path =>
+            {
+                var local = Path.Combine(repositoryRoot,
+                    path.Replace('/', Path.DirectorySeparatorChar));
+                return File.Exists(local) || Directory.Exists(local);
+            });
+        return TopLevelEntries(presentPaths);
     }
 
     public static ImmutableArray<string> TopLevelEntries(IEnumerable<string> trackedPaths) => trackedPaths

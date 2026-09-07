@@ -1,0 +1,90 @@
+scope,family_key,transition_kind,local_state,final_action,resolutions
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,103
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,4760
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",TapHeadToLongNoteHead,LocalMismatch,SkipLocalMismatch,5
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",TapHeadToLongNoteHead,NoComparableContext,SkipGlobalMismatch,1
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LongNoteReleaseToTapHead,LocalMismatch,SkipLocalMismatch,4
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LongNoteReleaseToTapHead,NoComparableContext,SkipGlobalMismatch,4
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LongNoteReleaseToTapHead,NoComparableContext,SkipGlobalAmbiguity,1
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LongNoteReleaseToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,2
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LongNoteReleaseToLongNoteHead,NoComparableContext,SkipGlobalMismatch,8
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LongNoteReleaseToLongNoteHead,NoComparableContext,SkipGlobalAmbiguity,2
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,222
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,3769
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,116
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,2121
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,12
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,168
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",TapHeadToLongNoteHead,LocalMismatch,SkipLocalMismatch,17
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",TapHeadToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,166
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",LongNoteReleaseToTapHead,LocalMismatch,SkipLocalMismatch,16
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",LongNoteReleaseToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,167
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",LongNoteReleaseToLongNoteHead,LocalMismatch,SkipLocalMismatch,16
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",LongNoteReleaseToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,1367
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,876
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,3802
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",TapHeadToLongNoteHead,LocalMismatch,SkipLocalMismatch,355
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",TapHeadToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,1149
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",LongNoteReleaseToTapHead,LocalMismatch,SkipLocalMismatch,328
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",LongNoteReleaseToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,1175
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",LongNoteReleaseToLongNoteHead,LocalMismatch,SkipLocalMismatch,332
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",LongNoteReleaseToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,2118
+family,"MORO | HOLY BITCH | ITZBENJA616",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,119
+family,"MORO | HOLY BITCH | ITZBENJA616",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,8158
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,110
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,490
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",TapHeadToLongNoteHead,LocalMismatch,SkipLocalMismatch,64
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",TapHeadToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,351
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",LongNoteReleaseToTapHead,LocalMismatch,SkipLocalMismatch,90
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",LongNoteReleaseToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,331
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",LongNoteReleaseToLongNoteHead,LocalMismatch,SkipLocalMismatch,198
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",LongNoteReleaseToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,2967
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,83
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,2909
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",TapHeadToLongNoteHead,LocalMismatch,SkipLocalMismatch,23
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",TapHeadToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,14
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LongNoteReleaseToTapHead,LocalMismatch,SkipLocalMismatch,19
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LongNoteReleaseToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,11
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LongNoteReleaseToLongNoteHead,ObservedSupport,AdmitLocalSupport,2
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LongNoteReleaseToLongNoteHead,LocalMismatch,SkipLocalMismatch,18
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LongNoteReleaseToLongNoteHead,NoComparableContext,SkipGlobalAmbiguity,1
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",LongNoteReleaseToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,11
+family,"NOWISEE | KO INU | RUKA",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,133
+family,"NOWISEE | KO INU | RUKA",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,886
+family,"NOWISEE | KO INU | RUKA",TapHeadToLongNoteHead,LocalMismatch,SkipLocalMismatch,110
+family,"NOWISEE | KO INU | RUKA",TapHeadToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,1265
+family,"NOWISEE | KO INU | RUKA",LongNoteReleaseToTapHead,LocalMismatch,SkipLocalMismatch,97
+family,"NOWISEE | KO INU | RUKA",LongNoteReleaseToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,1281
+family,"NOWISEE | KO INU | RUKA",LongNoteReleaseToLongNoteHead,LocalMismatch,SkipLocalMismatch,112
+family,"NOWISEE | KO INU | RUKA",LongNoteReleaseToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,1509
+family,"ORGT | DESTINY | BAIO",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,87
+family,"ORGT | DESTINY | BAIO",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,1091
+family,"ORGT | DESTINY | BAIO",TapHeadToLongNoteHead,LocalMismatch,SkipLocalMismatch,53
+family,"ORGT | DESTINY | BAIO",TapHeadToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,119
+family,"ORGT | DESTINY | BAIO",LongNoteReleaseToTapHead,LocalMismatch,SkipLocalMismatch,59
+family,"ORGT | DESTINY | BAIO",LongNoteReleaseToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,113
+family,"ORGT | DESTINY | BAIO",LongNoteReleaseToLongNoteHead,LocalMismatch,SkipLocalMismatch,36
+family,"ORGT | DESTINY | BAIO",LongNoteReleaseToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,88
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,175
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,4317
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",TapHeadToLongNoteHead,LocalMismatch,SkipLocalMismatch,24
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",TapHeadToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,3
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",LongNoteReleaseToTapHead,LocalMismatch,SkipLocalMismatch,25
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",LongNoteReleaseToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,2
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",LongNoteReleaseToLongNoteHead,LocalMismatch,SkipLocalMismatch,14
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",LongNoteReleaseToLongNoteHead,NoComparableContext,SkipGlobalAmbiguity,1
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",LongNoteReleaseToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,11
+global,"GLOBAL",TapHeadToTapHead,LocalMismatch,SkipLocalMismatch,2036
+global,"GLOBAL",TapHeadToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,32471
+global,"GLOBAL",TapHeadToLongNoteHead,LocalMismatch,SkipLocalMismatch,651
+global,"GLOBAL",TapHeadToLongNoteHead,NoComparableContext,SkipGlobalMismatch,1
+global,"GLOBAL",TapHeadToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,3067
+global,"GLOBAL",LongNoteReleaseToTapHead,LocalMismatch,SkipLocalMismatch,638
+global,"GLOBAL",LongNoteReleaseToTapHead,NoComparableContext,SkipGlobalMismatch,4
+global,"GLOBAL",LongNoteReleaseToTapHead,NoComparableContext,SkipGlobalAmbiguity,1
+global,"GLOBAL",LongNoteReleaseToTapHead,AmbiguousEvidence,SkipLocalAmbiguity,3082
+global,"GLOBAL",LongNoteReleaseToLongNoteHead,ObservedSupport,AdmitLocalSupport,2
+global,"GLOBAL",LongNoteReleaseToLongNoteHead,LocalMismatch,SkipLocalMismatch,726
+global,"GLOBAL",LongNoteReleaseToLongNoteHead,NoComparableContext,SkipGlobalMismatch,8
+global,"GLOBAL",LongNoteReleaseToLongNoteHead,NoComparableContext,SkipGlobalAmbiguity,4
+global,"GLOBAL",LongNoteReleaseToLongNoteHead,AmbiguousEvidence,SkipLocalAmbiguity,8071

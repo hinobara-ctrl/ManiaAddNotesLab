@@ -1,0 +1,2 @@
+family_key,relative_path,version,key_count,charts,typed_gap_candidates,local_support,local_mismatch,local_no_context,local_ambiguous,backoff_attempts,admit_local,admit_global,final_skip,supporting_donor_references,contradicting_donor_references,target_group_leakage,synthetic_teaching,held_tail_as_head
+"GLOBAL","","ALL",0,11,50762,2,4051,18,46691,18,2,0,50760,3704556,24425309,0,0,0

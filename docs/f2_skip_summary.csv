@@ -1,0 +1,31 @@
+scope,family_key,skip_reason,resolutions
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",SkipLocalMismatch,112
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",SkipLocalAmbiguity,4762
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",SkipGlobalMismatch,13
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",SkipGlobalAmbiguity,3
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",SkipLocalMismatch,222
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",SkipLocalAmbiguity,3769
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",SkipLocalMismatch,116
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",SkipLocalAmbiguity,2121
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",SkipLocalMismatch,61
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",SkipLocalAmbiguity,1868
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",SkipLocalMismatch,1891
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",SkipLocalAmbiguity,8244
+family,"MORO | HOLY BITCH | ITZBENJA616",SkipLocalMismatch,119
+family,"MORO | HOLY BITCH | ITZBENJA616",SkipLocalAmbiguity,8158
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",SkipLocalMismatch,462
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",SkipLocalAmbiguity,4139
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",SkipLocalMismatch,143
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",SkipLocalAmbiguity,2945
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",SkipGlobalAmbiguity,1
+family,"NOWISEE | KO INU | RUKA",SkipLocalMismatch,452
+family,"NOWISEE | KO INU | RUKA",SkipLocalAmbiguity,4941
+family,"ORGT | DESTINY | BAIO",SkipLocalMismatch,235
+family,"ORGT | DESTINY | BAIO",SkipLocalAmbiguity,1411
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",SkipLocalMismatch,238
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",SkipLocalAmbiguity,4333
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",SkipGlobalAmbiguity,1
+global,"GLOBAL",SkipLocalMismatch,4051
+global,"GLOBAL",SkipLocalAmbiguity,46691
+global,"GLOBAL",SkipGlobalMismatch,13
+global,"GLOBAL",SkipGlobalAmbiguity,5

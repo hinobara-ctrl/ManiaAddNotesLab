@@ -21,16 +21,17 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase D0.1 — COMPLETE, OUTCOME A:** contexto exacto separa miles de completions competidoras, con una frontera explícita de cobertura.
 - **Phase D0.2 — COMPLETE, OUTCOME A:** agreement, donor overlap y contexto conjunto observado son reconstruibles sin selection authority.
 - **Phase F1 — COMPLETE, OUTCOME A:** support, mismatch, no-context y ambiguity son reconstruibles por candidate sin gobernar el selector.
+- **Phase F2 — COMPLETE, OUTCOME B, SHADOW ONLY:** typed gaps/backoff exactos son auditables, pero la cobertura no permite conectar A/B.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y la investigación C1–F1 observan y explican, pero no gobiernan el selector. En 11 familias humanas, F1 clasificó 40.360 targets: 44,45% support, 9,96% mismatch, 8,09% no-context y 37,49% ambiguous, con leakage/nesting en cero. F2 es sólo el siguiente candidato y no está autorizado; D1 tampoco está autorizado y C2 permanece deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–F2 no gobiernan el selector. F2 reconstruyó 50.762 typed-gap targets: sólo 2 support inequívocos, 46.691 ambiguous y ningún support global después de backoff. Por ello no se creó policy conductual. F2.1 es sólo una recomendación no autorizada; D1 tampoco está autorizado y C2 permanece deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: F1 — COMPLETE — OUTCOME A<br>
-Next recommended phase: F2 — Typed gaps and evidence backoff A/B<br>
+Current phase: F2 — COMPLETE — OUTCOME B — SHADOW ONLY<br>
+Next recommended phase: F2.1 — Exact Gap Timing Identity / Shadow Validation<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 319 passed / 0 failed / 0 skipped
+Tests: 349 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

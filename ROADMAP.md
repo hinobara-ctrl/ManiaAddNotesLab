@@ -16,7 +16,8 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | D1 — Resulting-state chords | ⏳ Pending | Validar el estado vertical conjunto y evitar acumulación sin soporte. |
 | E — Adaptive context | ⏳ Pending | Comparar recurrencia y segmentación en shadow antes de elegir secciones. |
 | F1 — Comparable-context Resolver / Shadow + Validation | ✅ **COMPLETE — OUTCOME A** | Support, mismatch, no-context y ambiguity son reconstruibles por candidate sin selection conductual. |
-| F2 — Typed gaps and evidence backoff A/B | ➡️ **NEXT / NOT AUTHORIZED YET** | Gaps por transición y backoff local/estructural/global/SKIP exigirían nueva versión conductual. |
+| F2 — Typed gaps and evidence backoff A/B | ✅ **COMPLETE — OUTCOME B — SHADOW ONLY** | Identity/backoff exactos son auditables, pero 2/50.762 support y cero global impiden conectar A/B. |
+| F2.1 — Exact Gap Timing Identity / Shadow Validation | ➡️ **NEXT / NOT AUTHORIZED YET** | Investigar identity timing-point-relative exacta sin round, tolerance ni authority. |
 | G1 — Interior relations | ⏳ Pending | Separar y validar relaciones contained, crossing y equal-end. |
 | G2 — Causal articulation | ⏳ Pending | Articular sólo cuando blockers originales y evidencia retrigger lo justifiquen. |
 | H — ParentArticulationPlan | ⏳ Pending | Investigar múltiples cortes como un plan atómico y válido. |

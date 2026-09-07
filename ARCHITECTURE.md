@@ -108,9 +108,22 @@ candidate + exact contextual views
 
 Los flags view-local, occurrences, donor IDs y dependency edges sobreviven al estado combinado. Dependency describe nesting y no multiplica evidencia; donors disjoint no prueban independencia. `ComparableContextResolverResearch` no es consumido por generation, no acepta RNG y no ordena ni elige candidates.
 
+### Typed-gap shadow y backoff conservador
+
+F2 modela transitions same-lane originales mediante endpoints exactos `TapHead`, `LongNoteHead` y `LongNoteRelease`. Una LN previa aporta release→next-head; un tail nunca se convierte en head. `TypedGapBackoffResearch` usa gap `decimal` exacto y provenance de ambos objetos.
+
+```text
+candidate transition kind + exact gap
+    → LocalLane evidence
+    → GlobalChart sólo si LocalLane = NoComparableContext
+    → descriptive ADMIT o SKIP
+```
+
+Esta capa cerró Outcome B y permanece shadow-only. No existe integración con geometry/generation, versión conductual F2, selector de gaps o scope Section. Las occurrences se normalizan una vez y las resoluciones conservan donor keys para evitar duplicación cuadrática.
+
 ## Evidencia y generación actuales
 
-`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. Phase B, C1 y C1.1 añaden diagnostics/research sobre candidatos, blockers, witness identity y agreement. C1.2 añade `SimultaneousOriginalEventGroup` como primitive general mínima y `ExactHeadEndpointRelation` como especialización LN; D0 añade chord completion como `phase-d0-research.1`; D0.1 matching exacto como `phase-d0-1-research.1`; D0.2 agreement/joint witness como `phase-d0-2-research.2` después del hardening de nesting; F1 añade estados candidate-centric como `phase-f1-research.1`. Estas estructuras agrupan IDs, claims y provenance sin producir score y no gobiernan el selector.
+`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. C1.2 añade relaciones exact-head; D0 chord completion; D0.1 matching exacto; D0.2 agreement/joint witness; F1 estados candidate-centric como `phase-f1-research.1`; F2 typed gaps/backoff como `phase-f2-typed-gap-shadow.1`. Estas estructuras agrupan IDs, claims y provenance sin producir score y no gobiernan el selector.
 
 La generación activa (`legacy-experimental.1`) continúa usando sus analizadores y parámetros históricos para crear oportunidades, calcular chance, construir candidatos y seleccionar lanes. `DecisionDiagnostics` (`phase-c1-2-shadow.1`) observa la ruta vigente y expone values/relations en certificates sin consumir RNG ni modificar el `.osu`. El perfil persistente continúa en `phase-a.1`.
 

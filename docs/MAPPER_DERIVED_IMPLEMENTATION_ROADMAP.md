@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. Phase D0: **COMPLETE — OUTCOME A, EXACT CHORD-COMPLETION RELATIONS ARE RECONSTRUCTIBLE AND EXPLANATORY**. Phase D0.1: **COMPLETE — OUTCOME A, EXACT CONTEXT DISCRIMINATES WITH A COVERAGE BOUNDARY**. Phase D0.2: **COMPLETE — OUTCOME A, VIEW AGREEMENT AND JOINT-WITNESS STRUCTURE ARE RECONSTRUCTIBLE**. Phase F1: **COMPLETE — OUTCOME A, COMPARABLE EVIDENCE STATES ARE RECONSTRUCTIBLE**. F2 queda **NEXT / NOT AUTHORIZED YET**; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE — OUTCOME B — SHADOW ONLY**. F2.1 queda **NEXT / NOT AUTHORIZED YET**; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -650,7 +650,7 @@ F1 emitió 249.202 resoluciones candidate-centric sobre 40.360 targets y separó
 
 ## Phase F2 — Typed gaps and evidence backoff A/B
 
-**Estado: NEXT / NOT AUTHORIZED YET.**
+**Estado: COMPLETE — OUTCOME B — SHADOW ONLY.**
 
 **Goal:** local/structural/global/SKIP con mismatch explícito y gaps por transición.
 
@@ -669,6 +669,18 @@ F1 emitió 249.202 resoluciones candidate-centric sobre 40.360 targets y separó
 **Rollback:** fallback legacy.
 
 **Acceptance criteria:** ningún fallback oculto; skips explicados.
+
+F2 v1 usó scope exacto `LocalLane → GlobalChart`, sin Section inventada. Sobre 50.762 transitions sólo dos candidates recibieron support local inequívoco; 46.691 fueron ambiguous, 4.051 mismatch y los 18 backoffs carecieron de support global. La representation pasa; el behavioral gate falla y no existe opt-in ni policy version F2.
+
+## Phase F2.1 — Exact Gap Timing Identity / Shadow Validation
+
+**Estado: NEXT / NOT AUTHORIZED YET.**
+
+**Goal:** investigar si timing-point-relative identity puede representar relaciones musicales exactas sin `Round`, tolerance, frequency authority o behavior.
+
+**Behavior change?:** no.
+
+**Acceptance criteria:** demostrar equivalencia exacta con provenance y separar identity de cuantización antes de reconsiderar A/B.
 
 ## Phase G1 — Interior relation semantics A/B
 
@@ -958,3 +970,9 @@ Las 33 condiciones de exactitud, provenance, exclusión de grupo completo, sanea
 Las 25 condiciones de estados excluyentes, abstención, hechos por vista, identidad/provenance exactas, whole-group exclusion, chart locality, nueve dependency edges, marginal/joint separation, conflictos sin ganador, cero authority/RNG, regresión productiva, multi-key, corpus micro/macro y artifacts deterministas pasan. Sobre 40.360 targets: 17.942 support, 4.021 mismatch, 3.266 no-context y 15.131 ambiguous; todas las invariantes de leakage/nesting quedan en cero.
 
 **F1 COMPLETE — OUTCOME A; F2 RECOMMENDED NEXT BUT NOT AUTHORIZED, D1 NOT AUTHORIZED, C2 DEFERRED.**
+
+## Phase F2 validation gate
+
+La representación shadow pasa identity exacta, transition typing, original-only, whole-group exclusion, provenance, backoff sólo por no-context, SKIP, determinismo, multi-key, corpus y leakage. El behavioral subgate falla: 2/50.762 local support y 0 global support harían degenerado cualquier A/B. No se creó una versión conductual ni se alteró legacy.
+
+**F2 COMPLETE — OUTCOME B — SHADOW ONLY; F2.1 RECOMMENDED NEXT BUT NOT AUTHORIZED, D1 NOT AUTHORIZED, C2 DEFERRED.**

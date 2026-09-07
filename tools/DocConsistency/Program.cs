@@ -54,10 +54,10 @@ void ValidateRepositoryRootLayout()
     try
     {
         var declared = RepositoryRootGuard.ReadAllowlist(allowlistPath);
-        var tracked = RepositoryRootGuard.GetTrackedTopLevelEntries(root);
-        var result = RepositoryRootGuard.Validate(declared, tracked);
-        foreach (var entry in result.UnexpectedTrackedEntries)
-            errors.Add($"Unexpected tracked repository root entry: {entry}");
+        var visible = RepositoryRootGuard.GetVisibleTopLevelEntries(root);
+        var result = RepositoryRootGuard.Validate(declared, visible);
+        foreach (var entry in result.UnexpectedEntries)
+            errors.Add($"Unexpected tracked or untracked repository root entry: {entry}");
         foreach (var entry in result.MissingDeclaredEntries)
             errors.Add($"Declared repository root entry is not tracked: {entry}");
     }
@@ -108,7 +108,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.Phases.Count(x => x.Status == "NEXT") != 1)
         errors.Add("Exactly one phase must have status NEXT.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "F1", "F2" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "F1", "F2", "F2.1" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -231,6 +231,28 @@ void ValidateFilesAndIndex(ProjectState value)
         {
             RequireFile(artifact, "F1 closure artifact");
             CheckContains("DOCUMENTATION_INDEX.md", artifact, "F1 closure artifact index entry");
+        }
+    }
+
+    var f2 = value.Phases.FirstOrDefault(x => x.Id == "F2");
+    if (f2?.Status == "COMPLETE")
+    {
+        foreach (var artifact in new[]
+        {
+            "docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md",
+            "docs/f2_chart_summary.csv",
+            "docs/f2_family_summary.csv",
+            "docs/f2_global_summary.csv",
+            "docs/f2_transition_summary.csv",
+            "docs/f2_gap_summary.csv",
+            "docs/f2_evidence_state_summary.csv",
+            "docs/f2_backoff_summary.csv",
+            "docs/f2_skip_summary.csv",
+            "docs/f2_stratification_summary.csv"
+        })
+        {
+            RequireFile(artifact, "F2 closure artifact");
+            CheckContains("DOCUMENTATION_INDEX.md", artifact, "F2 closure artifact index entry");
         }
     }
 }

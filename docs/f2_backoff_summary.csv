@@ -1,0 +1,7 @@
+scope,family_key,global_state,final_action,resolutions
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",LocalMismatch,SkipGlobalMismatch,13
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",AmbiguousEvidence,SkipGlobalAmbiguity,3
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",AmbiguousEvidence,SkipGlobalAmbiguity,1
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",AmbiguousEvidence,SkipGlobalAmbiguity,1
+global,"GLOBAL",LocalMismatch,SkipGlobalMismatch,13
+global,"GLOBAL",AmbiguousEvidence,SkipGlobalAmbiguity,5

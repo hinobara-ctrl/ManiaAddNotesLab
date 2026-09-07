@@ -108,7 +108,17 @@ F1 está cerrado en **Outcome A** como research shadow. Resuelve cada completion
 dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f1-corpus <corpus-read-only> docs <detail-json-local>
 ```
 
-Regenera once CSV `f1_*`: chart/family/global, estados, coverage, conflictos, joint, estratos, evidencia por vista, unique support y dependency. El JSON de provenance completo se escribe por streaming y permanece local/ignorado. F2 es sólo `NEXT / NOT AUTHORIZED YET`; F1 no activa backoff, D1 ni C2.
+Regenera once CSV `f1_*`: chart/family/global, estados, coverage, conflictos, joint, estratos, evidencia por vista, unique support y dependency. El JSON de provenance completo se escribe por streaming y permanece local/ignorado. F1 no activa backoff, D1 ni C2; su sucesora F2 ya cerró por separado como Outcome B shadow-only.
+
+## F2 — Typed gaps and evidence backoff
+
+F2 está cerrado **Outcome B / shadow-only**. Tipa transitions exactas, consulta misma lane y sólo amplía a chart-global cuando falta contexto. No existe A/B conductual: 2/50.762 candidates tuvieron support local inequívoco y ninguno obtuvo support global.
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f2-corpus <corpus-read-only> docs <detail-json-local>
+```
+
+Regenera nueve CSV `f2_*`. El detail queda ignorado en `.artifacts/f2/`. No existe `f2_ab_summary.csv` porque crear un artifact vacío ocultaría que el behavioral gate falló.
 
 ## Checklist
 
