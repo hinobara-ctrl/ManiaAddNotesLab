@@ -1,4 +1,5 @@
 using System.Text.Json;
+using DocConsistencyTool;
 
 if (args.Length != 1 || args[0] != "--check")
 {
@@ -9,6 +10,7 @@ if (args.Length != 1 || args[0] != "--check")
 var root = FindRoot(AppContext.BaseDirectory);
 var statePath = Path.Combine(root, "docs", "PROJECT_STATE.json");
 var errors = new List<string>();
+ValidateRepositoryRootLayout();
 ProjectState? state = null;
 try
 {
@@ -45,6 +47,25 @@ if (errors.Count > 0)
 
 Console.WriteLine("DOCUMENTATION CONSISTENCY: PASS");
 return 0;
+
+void ValidateRepositoryRootLayout()
+{
+    var allowlistPath = Path.Combine(root, "tools", "DocConsistency", "repository-root-allowlist.txt");
+    try
+    {
+        var declared = RepositoryRootGuard.ReadAllowlist(allowlistPath);
+        var tracked = RepositoryRootGuard.GetTrackedTopLevelEntries(root);
+        var result = RepositoryRootGuard.Validate(declared, tracked);
+        foreach (var entry in result.UnexpectedTrackedEntries)
+            errors.Add($"Unexpected tracked repository root entry: {entry}");
+        foreach (var entry in result.MissingDeclaredEntries)
+            errors.Add($"Declared repository root entry is not tracked: {entry}");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"Repository root layout cannot be validated: {exception.Message}");
+    }
+}
 
 void ValidateCanonicalState(ProjectState value)
 {

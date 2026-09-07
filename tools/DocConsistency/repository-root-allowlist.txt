@@ -1,0 +1,13 @@
+.gitignore
+ARCHITECTURE.md
+DOCUMENTATION_INDEX.md
+INICIAR_INTERFAZ.cmd
+ManiaAddNotesLab.sln
+PROJECT_STATUS.md
+README.md
+ROADMAP.md
+docs
+samples
+src
+tests
+tools
