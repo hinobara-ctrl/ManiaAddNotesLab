@@ -108,7 +108,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.Phases.Count(x => x.Status == "NEXT") != 1)
         errors.Add("Exactly one phase must have status NEXT.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "F1" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "F1", "F2" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -207,6 +207,30 @@ void ValidateFilesAndIndex(ProjectState value)
         {
             RequireFile(artifact, "D0.2 closure artifact");
             CheckContains("DOCUMENTATION_INDEX.md", artifact, "D0.2 closure artifact index entry");
+        }
+    }
+
+    var f1 = value.Phases.FirstOrDefault(x => x.Id == "F1");
+    if (f1?.Status == "COMPLETE")
+    {
+        foreach (var artifact in new[]
+        {
+            "docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md",
+            "docs/f1_chart_summary.csv",
+            "docs/f1_family_summary.csv",
+            "docs/f1_global_summary.csv",
+            "docs/f1_evidence_state_summary.csv",
+            "docs/f1_coverage_summary.csv",
+            "docs/f1_conflict_summary.csv",
+            "docs/f1_joint_context_summary.csv",
+            "docs/f1_stratification_summary.csv",
+            "docs/f1_view_evidence_summary.csv",
+            "docs/f1_unique_support_summary.csv",
+            "docs/f1_dependency_summary.csv"
+        })
+        {
+            RequireFile(artifact, "F1 closure artifact");
+            CheckContains("DOCUMENTATION_INDEX.md", artifact, "F1 closure artifact index entry");
         }
     }
 }

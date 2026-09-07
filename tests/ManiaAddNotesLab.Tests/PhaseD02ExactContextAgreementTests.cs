@@ -81,6 +81,47 @@ public sealed class PhaseD02ExactContextAgreementTests
             ExactCompletionContextView.ReducedHeldPrevNext), ExactContextAgreementResearch.DependencyGraph);
     }
 
+    [Theory]
+    [MemberData(nameof(StabilityBranches))]
+    public void SpecificityStabilityNamesEverySemanticBranch(bool lessHasTarget, bool moreComparable,
+        ExactCompletionIdentity[] moreCompletions, SpecificityStability expected)
+    {
+        var less = Observation(ExactCompletionContextView.ReducedPrevious, true,
+            lessHasTarget ? [A, B] : [B]);
+        var more = Observation(ExactCompletionContextView.ReducedPreviousTransition,
+            moreComparable, moreCompletions);
+        Assert.Equal(expected, ExactContextAgreementResearch.ClassifySpecificityStability(less, more, A));
+    }
+
+    public static TheoryData<bool, bool, ExactCompletionIdentity[], SpecificityStability> StabilityBranches => new()
+    {
+        { true, false, [], SpecificityStability.NoComparableAtNextLevel },
+        { true, true, [B, C], SpecificityStability.TargetLost },
+        { true, true, [A], SpecificityStability.BecomesUniqueTarget },
+        { false, true, [B], SpecificityStability.BecomesUniqueWrong },
+        { true, true, [A, B], SpecificityStability.StillCompeting },
+        { false, true, [B, C], SpecificityStability.TargetStillUnsupported }
+    };
+
+    [Fact]
+    public void EveryDeclaredDependencyEdgeIsAuditedAsDonorCompletionNesting()
+    {
+        Assert.Equal(9, ExactContextViewDependencies.Graph.Length);
+        var result = ExactContextAgreementResearch.Evaluate(Chart(4,
+            Tap(1, 0), Tap(0, 500), Tap(2, 500),
+            Tap(1, 1000), Tap(0, 1500), Tap(2, 1500),
+            Tap(1, 2000), Tap(0, 2500), Tap(2, 2500)));
+
+        foreach (var certificate in result.Certificates)
+        foreach (var edge in ExactContextViewDependencies.Graph)
+        {
+            var parent = DonorCompletions(certificate.Views.Single(x => x.ViewId == edge.Parent));
+            var child = DonorCompletions(certificate.Views.Single(x => x.ViewId == edge.Child));
+            Assert.True(child.IsSubsetOf(parent), $"{edge.Child} must refine {edge.Parent}.");
+        }
+        Assert.Equal(0, result.DonorNestingViolationCount);
+    }
+
     [Fact]
     public void IntegratedResultKeepsCompletionAndDonorProvenanceWithoutTargetLeakage()
     {
@@ -88,7 +129,7 @@ public sealed class PhaseD02ExactContextAgreementTests
             Tap(1, 0), Tap(0, 500), Tap(2, 500),
             Tap(1, 1000), Tap(0, 1500), Tap(2, 1500)));
 
-        Assert.Equal("phase-d0-2-research.1", result.ResearchSchemaVersion);
+        Assert.Equal("phase-d0-2-research.2", result.ResearchSchemaVersion);
         Assert.Equal(0, result.TargetGroupLeakageCount);
         Assert.Equal(0, result.FutureHeldLeakageCount);
         Assert.Equal(0, result.HeldTailEncodedAsHeadCount);
@@ -215,6 +256,9 @@ public sealed class PhaseD02ExactContextAgreementTests
         completions.Select(x => new CompletionDonorGroups(x, ["donor"])).ToImmutableArray(),
         completions.Contains(A), completions.Length == 1 ? completions[0] : null,
         comparable ? 1 : 0);
+    private static HashSet<string> DonorCompletions(ContextViewObservation view) => view.CompletionSet
+        .SelectMany(x => x.DonorGroupIds.Select(donor => $"{donor}|{x.Completion.Lane}|{x.Completion.HeadType}"))
+        .ToHashSet(StringComparer.Ordinal);
     private static ManiaObject Tap(int lane, int time) => ManiaObject.Tap(lane, time);
     private static ManiaObject Ln(int lane, int start, int end) => ManiaObject.Ln(lane, start, end);
     private static ManiaChart Chart(int keys, params ManiaObject[] objects) => new()

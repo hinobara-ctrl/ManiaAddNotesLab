@@ -40,7 +40,8 @@ public enum ComparableTargetSupportState
 }
 public enum SpecificityStability
 {
-    NoComparableAtNextLevel, TargetLost, StillCompeting, BecomesUniqueTarget, BecomesUniqueWrong, TargetPreserved
+    NoComparableAtNextLevel, TargetLost, StillCompeting, BecomesUniqueTarget, BecomesUniqueWrong,
+    TargetStillUnsupported
 }
 public enum ObservedJointContextKind { PreviousNext, HeldPrevNext }
 public enum JointCompletionSupport
@@ -160,20 +161,9 @@ public sealed record ExactContextAgreementResearchResult(
 /// </summary>
 public static class ExactContextAgreementResearch
 {
-    public const string ResearchSchemaVersion = "phase-d0-2-research.1";
+    public const string ResearchSchemaVersion = "phase-d0-2-research.2";
     public static readonly ImmutableArray<(ExactCompletionContextView Parent, ExactCompletionContextView Child)>
-        DependencyGraph =
-        [
-            (ExactCompletionContextView.ReducedOnly, ExactCompletionContextView.ReducedHeld),
-            (ExactCompletionContextView.ReducedOnly, ExactCompletionContextView.ReducedPrevious),
-            (ExactCompletionContextView.ReducedPrevious, ExactCompletionContextView.ReducedPreviousTransition),
-            (ExactCompletionContextView.ReducedOnly, ExactCompletionContextView.ReducedNext),
-            (ExactCompletionContextView.ReducedNext, ExactCompletionContextView.ReducedNextTransition),
-            (ExactCompletionContextView.ReducedPreviousTransition, ExactCompletionContextView.ReducedPrevNext),
-            (ExactCompletionContextView.ReducedNextTransition, ExactCompletionContextView.ReducedPrevNext),
-            (ExactCompletionContextView.ReducedHeld, ExactCompletionContextView.ReducedHeldPrevNext),
-            (ExactCompletionContextView.ReducedPrevNext, ExactCompletionContextView.ReducedHeldPrevNext)
-        ];
+        DependencyGraph = ExactContextViewDependencies.Graph;
 
     public static ExactContextAgreementResearchResult Evaluate(ManiaChart chart)
     {
@@ -268,6 +258,16 @@ public static class ExactContextAgreementResearch
             : UniqueViewAgreement.UniqueViewsAgreeOnSameWrongCompletion;
     }
 
+    public static SpecificityStability ClassifySpecificityStability(
+        ContextViewObservation lessSpecific, ContextViewObservation moreSpecific,
+        ExactCompletionIdentity target) =>
+        !moreSpecific.Comparable ? SpecificityStability.NoComparableAtNextLevel
+        : lessSpecific.TargetInSet && !moreSpecific.TargetInSet ? SpecificityStability.TargetLost
+        : moreSpecific.UniqueCompletion == target ? SpecificityStability.BecomesUniqueTarget
+        : moreSpecific.UniqueCompletion is not null ? SpecificityStability.BecomesUniqueWrong
+        : moreSpecific.TargetInSet ? SpecificityStability.StillCompeting
+        : SpecificityStability.TargetStillUnsupported;
+
     private static ContextViewObservation Observe(ExactCompletionCompetitionTrial trial,
         ExactCompletionContextView view,
         IReadOnlyDictionary<string, ImmutableArray<ExactCompletionOccurrence>> index)
@@ -313,7 +313,8 @@ public static class ExactContextAgreementResearch
                     right.CompletionSet.SingleOrDefault(x => x.Completion == completion)?.DonorGroupIds ?? []))
                 .ToImmutableArray();
             yield return new ViewPairAgreement(left.ViewId, right.ViewId,
-                IsDependent(left.ViewId, right.ViewId) ? ViewPairKind.DependencyOrNesting : ViewPairKind.CrossDimension,
+                ExactContextViewDependencies.IsDependent(left.ViewId, right.ViewId)
+                    ? ViewPairKind.DependencyOrNesting : ViewPairKind.CrossDimension,
                 CompareCompletionSets(left.Comparable, leftSet, right.Comparable, rightSet),
                 left.TargetInSet && right.TargetInSet ? PairTargetSupport.TargetSupportedByBoth
                     : left.TargetInSet ? PairTargetSupport.TargetSupportedLeftOnly
@@ -343,12 +344,7 @@ public static class ExactContextAgreementResearch
             var less = views.Single(x => x.ViewId == chain[i]);
             var more = views.Single(x => x.ViewId == chain[i + 1]);
             var target = Target(trial);
-            var state = !more.Comparable ? SpecificityStability.NoComparableAtNextLevel
-                : less.TargetInSet && !more.TargetInSet ? SpecificityStability.TargetLost
-                : more.UniqueCompletion == target ? SpecificityStability.BecomesUniqueTarget
-                : more.UniqueCompletion is not null ? SpecificityStability.BecomesUniqueWrong
-                : more.TargetInSet ? SpecificityStability.StillCompeting
-                : SpecificityStability.TargetPreserved;
+            var state = ClassifySpecificityStability(less, more, target);
             yield return new SpecificityStabilityRecord(less.ViewId, more.ViewId, state);
         }
     }
@@ -416,18 +412,6 @@ public static class ExactContextAgreementResearch
                 : comparable.Length == 1 ? InformativeViewMultiplicity.OneInformativeView
                 : InformativeViewMultiplicity.MultipleInformativeViews,
             consensus, uniqueAgreement, support, views, pairs, stability, joints, conflict);
-    }
-
-    private static bool IsDependent(ExactCompletionContextView left, ExactCompletionContextView right)
-    {
-        bool Reachable(ExactCompletionContextView from, ExactCompletionContextView to,
-            HashSet<ExactCompletionContextView> visited)
-        {
-            if (!visited.Add(from)) return false;
-            return DependencyGraph.Where(x => x.Parent == from)
-                .Any(edge => edge.Child == to || Reachable(edge.Child, to, visited));
-        }
-        return Reachable(left, right, []) || Reachable(right, left, []);
     }
 
     private static ExactCompletionIdentity Target(ExactCompletionCompetitionTrial trial) =>

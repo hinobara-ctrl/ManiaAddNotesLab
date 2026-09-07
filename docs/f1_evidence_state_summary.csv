@@ -1,0 +1,88 @@
+scope,family_key,is_target_candidate,evidence_state,resolutions
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,AmbiguousEvidence,16015
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,LocalMismatch,245
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,NoComparableContext,1
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,ObservedSupport,1238
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,AmbiguousEvidence,2156
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,LocalMismatch,32
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,NoComparableContext,16
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,ObservedSupport,2014
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",no,AmbiguousEvidence,13472
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",no,ObservedSupport,1665
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,AmbiguousEvidence,632
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,LocalMismatch,92
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,NoComparableContext,44
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,ObservedSupport,1815
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",no,AmbiguousEvidence,1350
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",no,ObservedSupport,189
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",yes,AmbiguousEvidence,402
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",yes,ObservedSupport,519
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,AmbiguousEvidence,3554
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,LocalMismatch,2407
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,NoComparableContext,3
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,ObservedSupport,114
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,AmbiguousEvidence,421
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,LocalMismatch,23
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,NoComparableContext,5
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,ObservedSupport,1056
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,AmbiguousEvidence,19159
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,LocalMismatch,30266
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,NoComparableContext,3224
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,ObservedSupport,4645
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,AmbiguousEvidence,2442
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,LocalMismatch,1410
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,NoComparableContext,957
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,ObservedSupport,3109
+family,"MORO | HOLY BITCH | ITZBENJA616",no,AmbiguousEvidence,20935
+family,"MORO | HOLY BITCH | ITZBENJA616",no,ObservedSupport,3717
+family,"MORO | HOLY BITCH | ITZBENJA616",yes,AmbiguousEvidence,3567
+family,"MORO | HOLY BITCH | ITZBENJA616",yes,LocalMismatch,18
+family,"MORO | HOLY BITCH | ITZBENJA616",yes,ObservedSupport,3435
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,AmbiguousEvidence,6351
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,LocalMismatch,12630
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,NoComparableContext,1961
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,ObservedSupport,1756
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,AmbiguousEvidence,1293
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,LocalMismatch,753
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,NoComparableContext,873
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,ObservedSupport,688
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,AmbiguousEvidence,7097
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,LocalMismatch,613
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,NoComparableContext,17
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,ObservedSupport,1635
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,AmbiguousEvidence,1027
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,LocalMismatch,65
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,NoComparableContext,43
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,ObservedSupport,1525
+family,"NOWISEE | KO INU | RUKA",no,AmbiguousEvidence,4572
+family,"NOWISEE | KO INU | RUKA",no,LocalMismatch,19685
+family,"NOWISEE | KO INU | RUKA",no,NoComparableContext,4024
+family,"NOWISEE | KO INU | RUKA",no,ObservedSupport,1918
+family,"NOWISEE | KO INU | RUKA",yes,AmbiguousEvidence,814
+family,"NOWISEE | KO INU | RUKA",yes,LocalMismatch,1318
+family,"NOWISEE | KO INU | RUKA",yes,NoComparableContext,1146
+family,"NOWISEE | KO INU | RUKA",yes,ObservedSupport,1321
+family,"ORGT | DESTINY | BAIO",no,AmbiguousEvidence,3269
+family,"ORGT | DESTINY | BAIO",no,LocalMismatch,3518
+family,"ORGT | DESTINY | BAIO",no,NoComparableContext,302
+family,"ORGT | DESTINY | BAIO",no,ObservedSupport,773
+family,"ORGT | DESTINY | BAIO",yes,AmbiguousEvidence,390
+family,"ORGT | DESTINY | BAIO",yes,LocalMismatch,225
+family,"ORGT | DESTINY | BAIO",yes,NoComparableContext,121
+family,"ORGT | DESTINY | BAIO",yes,ObservedSupport,566
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,AmbiguousEvidence,13107
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,LocalMismatch,1285
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,NoComparableContext,25
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,ObservedSupport,2105
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,AmbiguousEvidence,1987
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,LocalMismatch,85
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,NoComparableContext,61
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,ObservedSupport,1894
+global,"GLOBAL",no,AmbiguousEvidence,108881
+global,"GLOBAL",no,LocalMismatch,70649
+global,"GLOBAL",no,NoComparableContext,9557
+global,"GLOBAL",no,ObservedSupport,19755
+global,"GLOBAL",yes,AmbiguousEvidence,15131
+global,"GLOBAL",yes,LocalMismatch,4021
+global,"GLOBAL",yes,NoComparableContext,3266
+global,"GLOBAL",yes,ObservedSupport,17942

@@ -20,16 +20,17 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase D0 — COMPLETE, OUTCOME A:** relations exactas de chord completion son reconstruibles y explicativas en shadow.
 - **Phase D0.1 — COMPLETE, OUTCOME A:** contexto exacto separa miles de completions competidoras, con una frontera explícita de cobertura.
 - **Phase D0.2 — COMPLETE, OUTCOME A:** agreement, donor overlap y contexto conjunto observado son reconstruibles sin selection authority.
+- **Phase F1 — COMPLETE, OUTCOME A:** support, mismatch, no-context y ambiguity son reconstruibles por candidate sin gobernar el selector.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y la investigación C1–D0.2 observan y explican, pero no gobiernan el selector. En 11 familias humanas, D0.2 comprobó que agreement marginal, donor overlap y coocurrencia joint son magnitudes distintas: existen 8.245 confirmations Previous/Next, pero también 6.478 completion references marginales sin confirmación conjunta. F1 es el siguiente candidato shadow; D1 no está autorizado y C2 permanece deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y la investigación C1–F1 observan y explican, pero no gobiernan el selector. En 11 familias humanas, F1 clasificó 40.360 targets: 44,45% support, 9,96% mismatch, 8,09% no-context y 37,49% ambiguous, con leakage/nesting en cero. F2 es sólo el siguiente candidato y no está autorizado; D1 tampoco está autorizado y C2 permanece deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: D0.2 — COMPLETE — OUTCOME A<br>
-Next recommended phase: F1 — Comparable-context Resolver / Shadow + Validation<br>
+Current phase: F1 — COMPLETE — OUTCOME A<br>
+Next recommended phase: F2 — Typed gaps and evidence backoff A/B<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 278 passed / 0 failed / 0 skipped
+Tests: 319 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

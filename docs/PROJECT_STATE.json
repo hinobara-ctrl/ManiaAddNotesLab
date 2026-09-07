@@ -14,11 +14,12 @@
     { "id": "D0", "name": "ChordCompletion Reconstruction / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md" },
     { "id": "D0.1", "name": "Exact Completion Competition Context / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md" },
     { "id": "D0.2", "name": "Exact Context Coverage and View Agreement / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md" },
-    { "id": "F1", "name": "Comparable-context Resolver / Shadow + Validation", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null }
+    { "id": "F1", "name": "Comparable-context Resolver / Shadow + Validation", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md" },
+    { "id": "F2", "name": "Typed gaps and evidence backoff A/B", "status": "NEXT", "outcome": null, "behaviorChange": true, "report": null }
   ],
-  "currentPhase": "D0.2",
-  "nextRecommendedPhase": "F1",
-  "testStatus": { "passed": 278, "failed": 0, "skipped": 0 },
+  "currentPhase": "F1",
+  "nextRecommendedPhase": "F2",
+  "testStatus": { "passed": 319, "failed": 0, "skipped": 0 },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",

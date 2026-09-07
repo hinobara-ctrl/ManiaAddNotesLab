@@ -329,20 +329,17 @@ public static class ExactCompletionContextResearch
         var violations = 0;
         foreach (var trial in trials)
         {
-            HashSet<string> Donors(ExactCompletionContextView view)
+            HashSet<string> DonorCompletions(ExactCompletionContextView view)
             {
                 var signature = trial.Views.Single(x => x.View == view).ExactContextSignature;
                 return Match(indexes, view, signature).Where(x =>
                         x.Witness.SourceGroupId != trial.TargetSourceGroupId)
-                    .Select(x => x.Witness.SourceGroupId).ToHashSet(StringComparer.Ordinal);
+                    .Select(x => $"{x.Witness.SourceGroupId}|{x.Relation.CompletionLane}|{x.Relation.CompletionType}")
+                    .ToHashSet(StringComparer.Ordinal);
             }
-            var held = Donors(ExactCompletionContextView.ReducedHeld);
-            var previous = Donors(ExactCompletionContextView.ReducedPrevious);
-            var previousTransition = Donors(ExactCompletionContextView.ReducedPreviousTransition);
-            var prevNext = Donors(ExactCompletionContextView.ReducedPrevNext);
-            var heldPrevNext = Donors(ExactCompletionContextView.ReducedHeldPrevNext);
-            if (!previousTransition.IsSubsetOf(previous)) violations++;
-            if (!heldPrevNext.IsSubsetOf(held) || !heldPrevNext.IsSubsetOf(prevNext)) violations++;
+            var byView = Views.ToDictionary(x => x, DonorCompletions);
+            foreach (var edge in ExactContextViewDependencies.Graph)
+                if (!byView[edge.Child].IsSubsetOf(byView[edge.Parent])) violations++;
         }
         return violations;
     }

@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D0, D0.1 y D0.2 permanecen completamente separados de generation con schemas research propios.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D0–F1 permanecen completamente separados de generation con schemas research propios.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -17,7 +17,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | D0 — ChordCompletion Reconstruction | **COMPLETE — OUTCOME A** | Ninguno; reconstruye relations exactas en shadow. |
 | D0.1 — Exact Completion Competition Context | **COMPLETE — OUTCOME A** | Ninguno; contexto exacto discrimina alternatives con una frontera de cobertura. |
 | D0.2 — Exact Context Coverage and View Agreement | **COMPLETE — OUTCOME A** | Ninguno; separa agreement, donor overlap y joint witness exacto. |
-| F1 — Comparable-context Resolver | **NEXT / NOT AUTHORIZED YET** | Ninguno; candidato shadow para formalizar support, mismatch, ausencia y ambigüedad. |
+| F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
+| F2 — Typed gaps and evidence backoff A/B | **NEXT / NOT AUTHORIZED YET** | No iniciado; sería conductual y exigiría versión/autorización propias. |
 
 ## Qué funciona hoy
 
@@ -41,6 +42,8 @@ D0 reutiliza `SimultaneousOriginalEventGroup` y representa `ReducedState → Com
 D0.1 añade ocho vistas paralelas de contexto exacto: held-before, previous/next inmediato y sus gaps exactos, además de combinaciones bidireccionales. No son un ladder. Target y donor usan saneamiento simétrico para que una LN del grupo retirado no reaparezca como held futura. `ExactCompletionContextResearch` enumera alternatives y outcomes; no selecciona ninguna.
 
 D0.2 conserva por separado identidad de vista, completion exacta y grupos donor. Clasifica coverage, completion-set relations, donor overlap, conflictos unique y estabilidad de refinamientos. `ReducedPrevNext` y `ReducedHeldPrevNext` funcionan como pruebas de contexto conjunto observado: una intersección marginal nunca se rebautiza como joint evidence.
+
+F1 resuelve cada completion candidate como `ObservedSupport`, `LocalMismatch`, `NoComparableContext` o `AmbiguousEvidence`. Conserva support/mismatch view-local, abstenciones, dependency edges, donors y dos assessments marginal-vs-joint. Ningún estado, número de vistas o donor count gobierna generación.
 
 ## Qué afecta realmente la generación
 
@@ -80,11 +83,17 @@ Sobre los mismos 40.360 trials y 36.387 casos primarios, D0.2 observó 22 covera
 
 Previous/Next aportó 8.245 completion references confirmadas por la vista conjunta, pero también 4.972 acuerdos sin joint comparable y 1.506 sin soporte de esa completion en el joint. Held/PrevNext confirmó 7.603 y preservó 249 excepciones. Ambos patrones aparecen en las 11 familias. D0.2 cierra **OUTCOME A** porque agreement, conflicto, donor overlap y joint witness son reconstruibles con provenance; no porque exista una selection policy.
 
+## Resultado F1
+
+Sobre 249.202 candidate resolutions y los mismos 40.360 targets, F1 clasificó el target en 17.942 `ObservedSupport` (44,45%), 4.021 `LocalMismatch` (9,96%), 3.266 `NoComparableContext` (8,09%) y 15.131 `AmbiguousEvidence` (37,49%). Support y ambiguity aparecen en las 11 familias; las 22 coverage signatures siguen visibles.
+
+F1 preserva por separado support/contradiction, candidates no-target, conflictos y joint occurrence. Target-group leakage, future-held leakage, held-tail-as-head y los nueve nesting audits terminaron en cero. Por ello cierra **OUTCOME A** como lenguaje research-only auditable, no como selector ni backoff autorizado.
+
 ## Validación actual
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **278 passed, 0 failed, 0 skipped** en el cierre D0.2.
+- `dotnet test -c Release`: **319 passed, 0 failed, 0 skipped** en el cierre F1.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -94,7 +103,7 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 - El corpus tiene 11 familias, pero sólo ocho contienen LNs; 10K no aporta targets LN y no existen charts humanos 1K/18K en esta muestra.
 - `WitnessAgreement` es descriptivo: todavía no existe una regla justificada para convertirlo en autoridad, bonus o score.
-- D0.2 demuestra que acuerdo marginal y joint witness divergen; ninguna vista, número de vistas ni intersección tiene authority autorizada.
+- F1 demuestra que los estados son reconstruibles, pero 37,49% de los targets son ambiguous y 8,09% no-context; ninguna vista, estado o donor count tiene authority autorizada.
 - Muchas decisiones estilísticas siguen siendo thresholds, ventanas, caps, pooling o desempates legacy.
 - La elección uniforme de lane y la composición del estado vertical aún no se derivan del mapa.
 - `LocalMismatch`, contextos comparables, secciones adaptativas y `CompatibleComposition` no gobiernan generación.
@@ -104,15 +113,15 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-La siguiente fase recomendada es **F1 — Comparable-context Resolver / Shadow + Validation**, para formalizar `ObservedSupport`, `LocalMismatch`, `NoComparableContext` y `AmbiguousEvidence` sobre la provenance exacta. Esta recomendación no autoriza implementarla ni permite sumar vistas o activar backoff. D1 sigue sin autorización; C2 permanece **DEFERRED** y C1 sigue HOLD respecto de cualquier cambio de weights.
+La siguiente fase recomendada es **F2 — Typed gaps and evidence backoff A/B**. Es sólo `NEXT / NOT AUTHORIZED YET`: abrirla requiere autorización separada, nueva `BehaviorPolicyVersion`, rollback y un diseño que conserve mismatch, no-context y SKIP. F1 no autoriza sumar vistas ni convertir support en authority. D1 sigue sin autorización; C2 permanece **DEFERRED** y C1 sigue HOLD respecto de cualquier cambio de weights.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: D0.2 — COMPLETE — OUTCOME A<br>
-Next recommended phase: F1 — Comparable-context Resolver / Shadow + Validation<br>
+Current phase: F1 — COMPLETE — OUTCOME A<br>
+Next recommended phase: F2 — Typed gaps and evidence backoff A/B<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 278 passed / 0 failed / 0 skipped
+Tests: 319 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
-Detalles y evidencia: [Phase D0.2 report](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md). Los reports [D0.1](docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md), [D0](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md), [C1.2](docs/PHASE_C1_2_EXACT_HEAD_RELATION_MODELING_REPORT.md), [C1.1](docs/PHASE_C1_1_WITNESS_AGREEMENT_VALIDATION_REPORT.md) y [C1](docs/PHASE_C1_LN_WITNESS_DEDUP_REPORT.md) permanecen como evidencia histórica.
+Detalles y evidencia: [Phase F1 report](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md). Los reports [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md), [D0.1](docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md), [D0](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md), [C1.2](docs/PHASE_C1_2_EXACT_HEAD_RELATION_MODELING_REPORT.md), [C1.1](docs/PHASE_C1_1_WITNESS_AGREEMENT_VALIDATION_REPORT.md) y [C1](docs/PHASE_C1_LN_WITNESS_DEDUP_REPORT.md) permanecen como evidencia histórica.

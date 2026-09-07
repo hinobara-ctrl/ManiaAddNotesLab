@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. Phase D0: **COMPLETE — OUTCOME A, EXACT CHORD-COMPLETION RELATIONS ARE RECONSTRUCTIBLE AND EXPLANATORY**. Phase D0.1: **COMPLETE — OUTCOME A, EXACT CONTEXT DISCRIMINATES WITH A COVERAGE BOUNDARY**. Phase D0.2: **COMPLETE — OUTCOME A, VIEW AGREEMENT AND JOINT-WITNESS STRUCTURE ARE RECONSTRUCTIBLE**. F1 es el siguiente candidato research-only; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. Phase C1.1: **COMPLETE — OUTCOME B, WITNESS AGREEMENT IS A DISTINCT SIGNAL**. Phase C1.2: **COMPLETE — OUTCOME A, RELATION MODEL EXPLAINS AGREEMENT**. Phase D0: **COMPLETE — OUTCOME A, EXACT CHORD-COMPLETION RELATIONS ARE RECONSTRUCTIBLE AND EXPLANATORY**. Phase D0.1: **COMPLETE — OUTCOME A, EXACT CONTEXT DISCRIMINATES WITH A COVERAGE BOUNDARY**. Phase D0.2: **COMPLETE — OUTCOME A, VIEW AGREEMENT AND JOINT-WITNESS STRUCTURE ARE RECONSTRUCTIBLE**. Phase F1: **COMPLETE — OUTCOME A, COMPARABLE EVIDENCE STATES ARE RECONSTRUCTIBLE**. F2 queda **NEXT / NOT AUTHORIZED YET**; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -636,7 +636,7 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 ## Phase F1 — Comparable-context resolver / Shadow + validation
 
-**Estado: NEXT / NOT AUTHORIZED YET.**
+**Estado: COMPLETE — OUTCOME A.**
 
 **Goal:** definir y validar `ObservedSupport`, `LocalMismatch`, `NoComparableContext` y `AmbiguousEvidence` antes de que alteren generación.
 
@@ -646,7 +646,11 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 La entrada evidence-driven de F1 es la distinción D0.2 entre coverage, marginal agreement, donor overlap y observed joint context. F1 debe conservar `AmbiguousEvidence` y abstención; no puede sumar views, hacer majority vote ni promover `CompatibleComposition` por intersección marginal.
 
+F1 emitió 249.202 resoluciones candidate-centric sobre 40.360 targets y separó support, mismatch, no-context y ambiguity con provenance completa. Las cuatro categorías aparecen en múltiples familias; leakage, held-tail y nueve audits de nesting quedan en cero. El resultado valida la representación, no authority ni selección.
+
 ## Phase F2 — Typed gaps and evidence backoff A/B
+
+**Estado: NEXT / NOT AUTHORIZED YET.**
 
 **Goal:** local/structural/global/SKIP con mismatch explícito y gaps por transición.
 
@@ -948,3 +952,9 @@ Las 33 condiciones de exactitud, provenance, exclusión de grupo completo, sanea
 ## Phase D0.2 validation gate
 
 **D0.2 COMPLETE — OUTCOME A; F1 SHADOW RECOMMENDED NEXT, D1 NOT AUTHORIZED, C2 DEFERRED.**
+
+## Phase F1 validation gate
+
+Las 25 condiciones de estados excluyentes, abstención, hechos por vista, identidad/provenance exactas, whole-group exclusion, chart locality, nueve dependency edges, marginal/joint separation, conflictos sin ganador, cero authority/RNG, regresión productiva, multi-key, corpus micro/macro y artifacts deterministas pasan. Sobre 40.360 targets: 17.942 support, 4.021 mismatch, 3.266 no-context y 15.131 ambiguous; todas las invariantes de leakage/nesting quedan en cero.
+
+**F1 COMPLETE — OUTCOME A; F2 RECOMMENDED NEXT BUT NOT AUTHORIZED, D1 NOT AUTHORIZED, C2 DEFERRED.**

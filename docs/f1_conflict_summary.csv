@@ -1,0 +1,9 @@
+is_target_candidate,ambiguity_cause,resolutions
+no,CandidateInUniqueCompletionConflict,4960
+no,MarginalAgreementContradictedByJoint,1088
+no,MarginalAgreementWithoutJointComparable,1965
+no,SupportAndLocalMismatch,107246
+yes,CandidateInUniqueCompletionConflict,2482
+yes,MarginalAgreementContradictedByJoint,442
+yes,MarginalAgreementWithoutJointComparable,3232
+yes,SupportAndLocalMismatch,11939

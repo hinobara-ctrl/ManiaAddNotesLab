@@ -1,0 +1,145 @@
+scope,family_key,is_target_candidate,parent_view,child_view,resolutions
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,ReducedHeld,ReducedHeldPrevNext,315
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,ReducedNext,ReducedNextTransition,3841
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,ReducedNextTransition,ReducedPrevNext,315
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,ReducedPrevious,ReducedPreviousTransition,3756
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,ReducedPreviousTransition,ReducedPrevNext,315
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",no,ReducedPrevNext,ReducedHeldPrevNext,315
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,ReducedHeld,ReducedHeldPrevNext,1351
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,ReducedNext,ReducedNextTransition,2986
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,ReducedNextTransition,ReducedPrevNext,1351
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,ReducedPrevious,ReducedPreviousTransition,3086
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,ReducedPreviousTransition,ReducedPrevNext,1351
+family,"-45 | MIDORIGO QUEEN BEE | ITZBENJA616",yes,ReducedPrevNext,ReducedHeldPrevNext,1351
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",no,ReducedHeld,ReducedHeldPrevNext,181
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",no,ReducedNext,ReducedNextTransition,1421
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",no,ReducedNextTransition,ReducedPrevNext,181
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",no,ReducedPrevious,ReducedPreviousTransition,1185
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",no,ReducedPreviousTransition,ReducedPrevNext,181
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",no,ReducedPrevNext,ReducedHeldPrevNext,181
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,ReducedHeld,ReducedHeldPrevNext,1064
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,ReducedNext,ReducedNextTransition,1496
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,ReducedNextTransition,ReducedPrevNext,1064
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,ReducedPrevious,ReducedPreviousTransition,1546
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,ReducedPreviousTransition,ReducedPrevNext,1064
+family,"A-ONE | SIDE BY SIDE | KURISU MAKISE",yes,ReducedPrevNext,ReducedHeldPrevNext,1064
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",no,ReducedHeld,ReducedHeldPrevNext,40
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",no,ReducedNext,ReducedNextTransition,472
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",no,ReducedNextTransition,ReducedPrevNext,40
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",no,ReducedPrevious,ReducedPreviousTransition,471
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",no,ReducedPreviousTransition,ReducedPrevNext,40
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",no,ReducedPrevNext,ReducedHeldPrevNext,40
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",yes,ReducedHeld,ReducedHeldPrevNext,239
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",yes,ReducedNext,ReducedNextTransition,592
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",yes,ReducedNextTransition,ReducedPrevNext,239
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",yes,ReducedPrevious,ReducedPreviousTransition,613
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",yes,ReducedPreviousTransition,ReducedPrevNext,239
+family,"AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",yes,ReducedPrevNext,ReducedHeldPrevNext,239
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,ReducedHeld,ReducedHeldPrevNext,13
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,ReducedNext,ReducedNextTransition,1208
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,ReducedNextTransition,ReducedPrevNext,58
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,ReducedPrevious,ReducedPreviousTransition,906
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,ReducedPreviousTransition,ReducedPrevNext,58
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",no,ReducedPrevNext,ReducedHeldPrevNext,13
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,ReducedHeld,ReducedHeldPrevNext,813
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,ReducedNext,ReducedNextTransition,1168
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,ReducedNextTransition,ReducedPrevNext,843
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,ReducedPrevious,ReducedPreviousTransition,1123
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,ReducedPreviousTransition,ReducedPrevNext,843
+family,"BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",yes,ReducedPrevNext,ReducedHeldPrevNext,813
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,ReducedHeld,ReducedHeldPrevNext,29
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,ReducedNext,ReducedNextTransition,1148
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,ReducedNextTransition,ReducedPrevNext,106
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,ReducedPrevious,ReducedPreviousTransition,768
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,ReducedPreviousTransition,ReducedPrevNext,106
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",no,ReducedPrevNext,ReducedHeldPrevNext,29
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,ReducedHeld,ReducedHeldPrevNext,334
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,ReducedNext,ReducedNextTransition,1193
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,ReducedNextTransition,ReducedPrevNext,436
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,ReducedPrevious,ReducedPreviousTransition,1033
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,ReducedPreviousTransition,ReducedPrevNext,436
+family,"KIKUO | KARA KARA KARA NO KARA | XNETT",yes,ReducedPrevNext,ReducedHeldPrevNext,334
+family,"MORO | HOLY BITCH | ITZBENJA616",no,ReducedHeld,ReducedHeldPrevNext,821
+family,"MORO | HOLY BITCH | ITZBENJA616",no,ReducedNext,ReducedNextTransition,6300
+family,"MORO | HOLY BITCH | ITZBENJA616",no,ReducedNextTransition,ReducedPrevNext,821
+family,"MORO | HOLY BITCH | ITZBENJA616",no,ReducedPrevious,ReducedPreviousTransition,6290
+family,"MORO | HOLY BITCH | ITZBENJA616",no,ReducedPreviousTransition,ReducedPrevNext,821
+family,"MORO | HOLY BITCH | ITZBENJA616",no,ReducedPrevNext,ReducedHeldPrevNext,821
+family,"MORO | HOLY BITCH | ITZBENJA616",yes,ReducedHeld,ReducedHeldPrevNext,1417
+family,"MORO | HOLY BITCH | ITZBENJA616",yes,ReducedNext,ReducedNextTransition,3730
+family,"MORO | HOLY BITCH | ITZBENJA616",yes,ReducedNextTransition,ReducedPrevNext,1417
+family,"MORO | HOLY BITCH | ITZBENJA616",yes,ReducedPrevious,ReducedPreviousTransition,3798
+family,"MORO | HOLY BITCH | ITZBENJA616",yes,ReducedPreviousTransition,ReducedPrevNext,1417
+family,"MORO | HOLY BITCH | ITZBENJA616",yes,ReducedPrevNext,ReducedHeldPrevNext,1417
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,ReducedHeld,ReducedHeldPrevNext,8
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,ReducedNext,ReducedNextTransition,2311
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,ReducedNextTransition,ReducedPrevNext,182
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,ReducedPrevious,ReducedPreviousTransition,2124
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,ReducedPreviousTransition,ReducedPrevNext,182
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",no,ReducedPrevNext,ReducedHeldPrevNext,8
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,ReducedHeld,ReducedHeldPrevNext,74
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,ReducedNext,ReducedNextTransition,756
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,ReducedNextTransition,ReducedPrevNext,150
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,ReducedPrevious,ReducedPreviousTransition,779
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,ReducedPreviousTransition,ReducedPrevNext,150
+family,"NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",yes,ReducedPrevNext,ReducedHeldPrevNext,74
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,ReducedHeld,ReducedHeldPrevNext,134
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,ReducedNext,ReducedNextTransition,1187
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,ReducedNextTransition,ReducedPrevNext,201
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,ReducedPrevious,ReducedPreviousTransition,1124
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,ReducedPreviousTransition,ReducedPrevNext,201
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",no,ReducedPrevNext,ReducedHeldPrevNext,134
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,ReducedHeld,ReducedHeldPrevNext,228
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,ReducedNext,ReducedNextTransition,958
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,ReducedNextTransition,ReducedPrevNext,244
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,ReducedPrevious,ReducedPreviousTransition,912
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,ReducedPreviousTransition,ReducedPrevNext,244
+family,"NMK&WATHUE | CELESTIAL AXES | WONKI",yes,ReducedPrevNext,ReducedHeldPrevNext,228
+family,"NOWISEE | KO INU | RUKA",no,ReducedHeld,ReducedHeldPrevNext,8
+family,"NOWISEE | KO INU | RUKA",no,ReducedNext,ReducedNextTransition,625
+family,"NOWISEE | KO INU | RUKA",no,ReducedNextTransition,ReducedPrevNext,34
+family,"NOWISEE | KO INU | RUKA",no,ReducedPrevious,ReducedPreviousTransition,550
+family,"NOWISEE | KO INU | RUKA",no,ReducedPreviousTransition,ReducedPrevNext,34
+family,"NOWISEE | KO INU | RUKA",no,ReducedPrevNext,ReducedHeldPrevNext,8
+family,"NOWISEE | KO INU | RUKA",yes,ReducedHeld,ReducedHeldPrevNext,140
+family,"NOWISEE | KO INU | RUKA",yes,ReducedNext,ReducedNextTransition,421
+family,"NOWISEE | KO INU | RUKA",yes,ReducedNextTransition,ReducedPrevNext,144
+family,"NOWISEE | KO INU | RUKA",yes,ReducedPrevious,ReducedPreviousTransition,375
+family,"NOWISEE | KO INU | RUKA",yes,ReducedPreviousTransition,ReducedPrevNext,144
+family,"NOWISEE | KO INU | RUKA",yes,ReducedPrevNext,ReducedHeldPrevNext,140
+family,"ORGT | DESTINY | BAIO",no,ReducedHeld,ReducedHeldPrevNext,17
+family,"ORGT | DESTINY | BAIO",no,ReducedNext,ReducedNextTransition,290
+family,"ORGT | DESTINY | BAIO",no,ReducedNextTransition,ReducedPrevNext,32
+family,"ORGT | DESTINY | BAIO",no,ReducedPrevious,ReducedPreviousTransition,371
+family,"ORGT | DESTINY | BAIO",no,ReducedPreviousTransition,ReducedPrevNext,32
+family,"ORGT | DESTINY | BAIO",no,ReducedPrevNext,ReducedHeldPrevNext,17
+family,"ORGT | DESTINY | BAIO",yes,ReducedHeld,ReducedHeldPrevNext,88
+family,"ORGT | DESTINY | BAIO",yes,ReducedNext,ReducedNextTransition,292
+family,"ORGT | DESTINY | BAIO",yes,ReducedNextTransition,ReducedPrevNext,98
+family,"ORGT | DESTINY | BAIO",yes,ReducedPrevious,ReducedPreviousTransition,319
+family,"ORGT | DESTINY | BAIO",yes,ReducedPreviousTransition,ReducedPrevNext,98
+family,"ORGT | DESTINY | BAIO",yes,ReducedPrevNext,ReducedHeldPrevNext,88
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,ReducedHeld,ReducedHeldPrevNext,82
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,ReducedNext,ReducedNextTransition,1086
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,ReducedNextTransition,ReducedPrevNext,82
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,ReducedPrevious,ReducedPreviousTransition,1125
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,ReducedPreviousTransition,ReducedPrevNext,82
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",no,ReducedPrevNext,ReducedHeldPrevNext,82
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,ReducedHeld,ReducedHeldPrevNext,207
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,ReducedNext,ReducedNextTransition,1063
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,ReducedNextTransition,ReducedPrevNext,207
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,ReducedPrevious,ReducedPreviousTransition,1041
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,ReducedPreviousTransition,ReducedPrevNext,207
+family,"SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",yes,ReducedPrevNext,ReducedHeldPrevNext,207
+global,"GLOBAL",no,ReducedHeld,ReducedHeldPrevNext,1648
+global,"GLOBAL",no,ReducedNext,ReducedNextTransition,19889
+global,"GLOBAL",no,ReducedNextTransition,ReducedPrevNext,2052
+global,"GLOBAL",no,ReducedPrevious,ReducedPreviousTransition,18670
+global,"GLOBAL",no,ReducedPreviousTransition,ReducedPrevNext,2052
+global,"GLOBAL",no,ReducedPrevNext,ReducedHeldPrevNext,1648
+global,"GLOBAL",yes,ReducedHeld,ReducedHeldPrevNext,5955
+global,"GLOBAL",yes,ReducedNext,ReducedNextTransition,14655
+global,"GLOBAL",yes,ReducedNextTransition,ReducedPrevNext,6193
+global,"GLOBAL",yes,ReducedPrevious,ReducedPreviousTransition,14625
+global,"GLOBAL",yes,ReducedPreviousTransition,ReducedPrevNext,6193
+global,"GLOBAL",yes,ReducedPrevNext,ReducedHeldPrevNext,5955

@@ -98,7 +98,17 @@ Runner reproducible:
 dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- d0-2-corpus <corpus-read-only> docs <detail-json-local>
 ```
 
-Regenera summaries chart/family/global, pairwise, joint, coverage, conflicts y estratos naturales. El detalle target-level permanece local e ignorado. F1 es la siguiente pregunta recomendada, todavía no autorizada; D1 sigue sin autorización y C2 deferred.
+Regenera summaries chart/family/global, pairwise, joint, coverage, conflicts y estratos naturales. El detalle target-level permanece local e ignorado. El report histórico conserva la recomendación que abrió F1.
+
+## F1 — Comparable-context resolver
+
+F1 está cerrado en **Outcome A** como research shadow. Resuelve cada completion candidate en `ObservedSupport`, `LocalMismatch`, `NoComparableContext` o `AmbiguousEvidence`, conservando disposiciones por vista, donors, dependency y marginal-vs-joint sin score ni selection authority.
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f1-corpus <corpus-read-only> docs <detail-json-local>
+```
+
+Regenera once CSV `f1_*`: chart/family/global, estados, coverage, conflictos, joint, estratos, evidencia por vista, unique support y dependency. El JSON de provenance completo se escribe por streaming y permanece local/ignorado. F2 es sólo `NEXT / NOT AUTHORIZED YET`; F1 no activa backoff, D1 ni C2.
 
 ## Checklist
 
