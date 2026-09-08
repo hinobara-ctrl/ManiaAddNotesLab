@@ -127,9 +127,24 @@ F2.1 conserva `FileExactDecimal` y añade `ExactSegmentTraversal`: una secuencia
 
 La traversal es provenance, no quantizer. El ground truth demuestra que no puede recuperar una relación nominal que perdió coordenadas sub-ms al serializarse, y que incluso puede separar una redline redundante. F2.1 cerró Outcome C; no hay integración con generation, tolerancia, denominator vocabulary ni behavior.
 
+El hardening pre-F2.2 elevó el schema de código F2.1 a `phase-f2-1-exact-gap-timing-shadow.2`: `TargetEndpointLeakageCount` deriva ahora de violations medidas con provenance. El report histórico `.1` no se reescribe.
+
+### Quantization inference feasibility research
+
+F2.2 añade una capa separada que modela únicamente el forward path:
+
+```text
+explicit latent domain + positive-redline timing map
+    → integer-ms serialization away from zero
+    → exact compatibility set for an observed timestamp
+    → unsupported / unique-under-model / ambiguous-under-model
+```
+
+`QuantizationHypothesisDomain` no tiene vocabulario default: el caller debe declarar ID, source, justification y candidates. Cada salida conserva un assumption certificate con domain, circularity, serializer version y timing-map hash. Distintas posiciones latentes pueden colisionar en un mismo timestamp; el modelo preserva todas y nunca elige una. No se referencia desde generation, CLI o Web productivos.
+
 ## Evidencia y generación actuales
 
-`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. C1.2 añade relaciones exact-head; D0 chord completion; D0.1 matching exacto; D0.2 agreement/joint witness; F1 estados candidate-centric como `phase-f1-research.1`; F2 typed gaps/backoff como `phase-f2-typed-gap-shadow.1`; F2.1 timing provenance como `phase-f2-1-exact-gap-timing-shadow.1`. Estas estructuras agrupan IDs, claims y provenance sin producir score y no gobiernan el selector.
+`MapperEvidenceProfile` (`phase-a.1`) congela observations, chords, duraciones/releases LN, transiciones, retriggers, anchors, provenance y fingerprint. C1.2 añade relaciones exact-head; D0 chord completion; D0.1 matching exacto; D0.2 agreement/joint witness; F1 estados candidate-centric como `phase-f1-research.1`; F2 typed gaps/backoff como `phase-f2-typed-gap-shadow.1`; F2.1 timing provenance hardened como `phase-f2-1-exact-gap-timing-shadow.2`; F2.2 compatibility condicional como `phase-f2-2-quantization-feasibility.1`. Estas estructuras agrupan IDs, claims, assumptions y provenance sin producir score y no gobiernan el selector.
 
 La generación activa (`legacy-experimental.1`) continúa usando sus analizadores y parámetros históricos para crear oportunidades, calcular chance, construir candidatos y seleccionar lanes. `DecisionDiagnostics` (`phase-c1-2-shadow.1`) observa la ruta vigente y expone values/relations en certificates sin consumir RNG ni modificar el `.osu`. El perfil persistente continúa en `phase-a.1`.
 

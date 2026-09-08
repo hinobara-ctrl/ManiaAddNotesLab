@@ -20,7 +20,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
 | F2 — Typed gaps and evidence backoff A/B | **COMPLETE — OUTCOME B — SHADOW ONLY** | Ninguno; identity/backoff exactos válidos, coverage insuficiente para A/B. |
 | F2.1 — Exact Gap Timing Identity / Shadow Validation | **COMPLETE — OUTCOME C — SHADOW ONLY** | Ninguno; demuestra que equivalencia nominal general requiere inferencia ausente del archivo. |
-| F2.2 — Quantization Inference Feasibility / Research Design | **NEXT / NOT AUTHORIZED YET** | No iniciado; decidiría si formular quantization como hipótesis explícita. |
+| F2.2 — Quantization Inference Feasibility / Research Design | **COMPLETE — OUTCOME B — RESEARCH/SHADOW ONLY** | Ninguno; formaliza compatibility condicional y demuestra el problema del domain. |
+| F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design | **NEXT / NOT AUTHORIZED YET** | No iniciado; resolvería domain/ground truth sin quantizer productivo. |
 
 ## Qué funciona hoy
 
@@ -48,6 +49,8 @@ D0.2 conserva por separado identidad de vista, completion exacta y grupos donor.
 F1 resuelve cada completion candidate como `ObservedSupport`, `LocalMismatch`, `NoComparableContext` o `AmbiguousEvidence`. Conserva support/mismatch view-local, abstenciones, dependency edges, donors y dos assessments marginal-vs-joint. Ningún estado, número de vistas o donor count gobierna generación.
 
 F2 shadow tipa spacing same-lane como TapHead/LongNoteRelease → TapHead/LongNoteHead con gap `decimal` exacto. Local significa misma lane y transition kind; sólo no-context consulta Global chart-local. El gate conductual falló y no existe policy F2 productiva ni opt-in.
+
+F2.2 añade un forward serializer research-only y domains finitos obligatoriamente explícitos. Cada resultado conserva assumption certificate y cardinalidad `UnsupportedUnderModel`, `UniqueUnderModel` o `AmbiguousUnderModel`; nunca selecciona un snap. El hardening previo reemplazó el leakage literal F2.1 por violations medidas con provenance.
 
 ## Qué afecta realmente la generación
 
@@ -105,11 +108,19 @@ F2 se reprodujo exactamente sobre el snapshot histórico de 11 charts. F2.1 sepa
 
 El audit endpoint-aware demostró sintéticamente que dos LNs con release compartido requieren excluir el `ReleaseEventGroup`: el estado cambió de global mismatch a no-context al retirar el endpoint duplicado. Ninguna identity nueva pasó el synthetic gate general, por lo que el corpus humano F2.1 no se ejecutó para buscar una justificación estadística. F2.1 cierra **OUTCOME C**, sin quantizer, behavior ni A/B.
 
+## Resultado F2.2
+
+El contador F2.1 `TargetEndpointLeakageCount` era un cero literal. Ahora deriva de una lista de violations auditadas; un donor deliberadamente sin filtrar produce leakage 1 y el holdout endpoint-aware correcto produce 0. El schema de código F2.1 sube a `.2` sin reescribir su report histórico.
+
+El forward model confirma el redondeo integer-ms away-from-zero y demuestra que `0,5 beat` y `250/499 beat` producen el mismo timestamp 250 ms bajo beat length 499. Un domain estrecho devuelve unique; al añadir la segunda historia, el mismo observable queda ambiguous. Por tanto la inferencia es formalizable sólo bajo un domain externo visible, no recuperable como observation ni justificado actualmente por el mapper.
+
+F2.2 cierra **OUTCOME B**. El corpus humano no se ejecutó: sin latent labels no puede medir accuracy ni autorizar denominadores. No existe quantizer ni cambio conductual.
+
 ## Validación actual
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **378 passed, 0 failed, 0 skipped** en el cierre F2.1.
+- `dotnet test -c Release`: **415 passed, 0 failed, 0 skipped** en el cierre F2.2.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -119,7 +130,7 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 - El corpus tiene 11 familias, pero sólo ocho contienen LNs; 10K no aporta targets LN y no existen charts humanos 1K/18K en esta muestra.
 - `WitnessAgreement` es descriptivo: todavía no existe una regla justificada para convertirlo en autoridad, bonus o score.
-- F2.1 demuestra que los timestamps enteros no conservan suficiente información para fusionar gaps nominales sin una inferencia de quantization explícita.
+- F2.2 demuestra que una inferencia exact-forward sólo es unique bajo un domain asumido; el domain mapper-derived y el ground truth humano siguen ausentes.
 - Muchas decisiones estilísticas siguen siendo thresholds, ventanas, caps, pooling o desempates legacy.
 - La elección uniforme de lane y la composición del estado vertical aún no se derivan del mapa.
 - `LocalMismatch`, contextos comparables, secciones adaptativas y `CompatibleComposition` no gobiernan generación.
@@ -129,15 +140,15 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-La siguiente fase recomendada es **F2.2 — Quantization Inference Feasibility / Research Design**, sólo `NEXT / NOT AUTHORIZED YET`. Debe decidir si estudiar quantization como hipótesis explícita y qué ground truth adicional necesitaría; no autoriza denominadores, tolerance, nearest snap ni conducta. D1 sigue sin autorización; C2 permanece **DEFERRED** y no se abren E, MapperSupport o J.
+La siguiente fase recomendada es **F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design**, sólo `NEXT / NOT AUTHORIZED YET`. Debe resolver la dependencia de domain y ground truth independiente sin elegir vocabulario por coverage ni implementar un quantizer. D1 sigue sin autorización; C2 permanece **DEFERRED** y no se abren E, MapperSupport o J.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: F2.1 — COMPLETE — OUTCOME C — SHADOW ONLY<br>
-Next recommended phase: F2.2 — Quantization Inference Feasibility / Research Design<br>
+Current phase: F2.2 — COMPLETE — OUTCOME B — RESEARCH/SHADOW ONLY<br>
+Next recommended phase: F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 378 passed / 0 failed / 0 skipped
+Tests: 415 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
-Detalles y evidencia: [Phase F2.1 report](docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md). Los reports [F2](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md), [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md), [D0.1](docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md), [D0](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md) y anteriores permanecen como evidencia histórica.
+Detalles y evidencia: [Phase F2.2 report](docs/PHASE_F2_2_QUANTIZATION_INFERENCE_FEASIBILITY_REPORT.md). Los reports [F2.1](docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md), [F2](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md), [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md), [D0.1](docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md), [D0](docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md) y anteriores permanecen como evidencia histórica.

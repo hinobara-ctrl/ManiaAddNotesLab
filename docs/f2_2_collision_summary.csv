@@ -1,0 +1,3 @@
+scenario,beat_length,position,candidate_ids,latent_class_size,serialized_timestamp,collision
+same_observable_distinct_latent,499,origin,half|exact_250_over_499,2,250,true
+integral_control,500,origin,quarter|half,1,250,false

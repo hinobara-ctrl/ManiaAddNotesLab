@@ -1,0 +1,5 @@
+scenario,source_beat,destination_beat,source_timestamp,destination_timestamp,serialized_gap,latent_gap,timing_change
+same_segment,0.5,1,250,500,250,0.5,false
+redundant_redline,1.5,2.5,750,1250,500,1.0,true
+real_bpm_change,1.5,3,750,1250,500,1.5,true
+ln_crossing_bpm,1.5,3,750,1250,500,1.5,true

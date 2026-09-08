@@ -1,0 +1,5 @@
+scenario,beat_length,latent_beat,predicted_timestamp,expected_timestamp,exact_match
+integral,500,1,500,500,true
+fractional_midpoint,499,0.5,250,250,true
+offset,500,0.5,350,350,true
+real_bpm_change,variable,3,1250,1250,true

@@ -4,6 +4,12 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 3 && args[0] == "f2-2-synthetic")
+{
+    F22SyntheticRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));
+    return;
+}
+
 if (args.Length == 3 && args[0] == "f2-1-synthetic")
 {
     F21SyntheticRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));

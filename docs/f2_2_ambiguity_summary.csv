@@ -1,0 +1,5 @@
+domain_id,unsupported,singleton,multiple,max_class_size,winner_selected
+external-expanded-v1,0,0,1,2,false
+external-narrow-v1,0,2,0,1,false
+misspecified-collision-v1,0,0,1,2,false
+unsupported-control-v1,1,0,0,0,false

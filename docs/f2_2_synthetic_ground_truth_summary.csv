@@ -1,0 +1,8 @@
+scenario,known_latent_truth,model_result,truth_state,synthetic_only
+ambiguous_contains_truth,half,AmbiguousUnderModel,AmbiguousContainsTruth,true
+ambiguous_excludes_truth,half,AmbiguousUnderModel,AmbiguousExcludesTruth,true
+unique_correct,half,UniqueUnderModel,UniqueCorrect,true
+unsupported_under_model,half,UnsupportedUnderModel,UnsupportedUnderModel,true
+vocabulary_narrow_unique,half,UniqueUnderModel,UniqueCorrect,true
+f2_1_false_split,half_beat,FileExactDecimalDistinct,FalseSplit,true
+observable_collision,half_vs_exact_250_over_499,SameTimestamp,FalseMerge,true

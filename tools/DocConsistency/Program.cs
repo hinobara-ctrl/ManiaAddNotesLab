@@ -108,7 +108,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.Phases.Count(x => x.Status == "NEXT") != 1)
         errors.Add("Exactly one phase must have status NEXT.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "F1", "F2", "F2.1", "F2.2" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "F1", "F2", "F2.1", "F2.2", "F2.3" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)

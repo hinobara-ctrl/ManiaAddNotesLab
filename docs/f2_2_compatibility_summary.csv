@@ -1,0 +1,6 @@
+scenario,domain_id,transition_kind,observed_timestamp,state,compatible_count,compatible_candidate_ids
+ambiguous_contains_truth,external-expanded-v1,TapHeadToLongNoteHead,250,AmbiguousUnderModel,2,half|exact_250_over_499
+ambiguous_excludes_truth,misspecified-collision-v1,LongNoteReleaseToTapHead,250,AmbiguousUnderModel,2,left|right
+unique_correct,external-narrow-v1,TapHeadToTapHead,250,UniqueUnderModel,1,half
+unsupported_under_model,unsupported-control-v1,LongNoteReleaseToLongNoteHead,250,UnsupportedUnderModel,0,
+vocabulary_narrow_unique,external-narrow-v1,TapHeadToTapHead,250,UniqueUnderModel,1,half

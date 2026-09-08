@@ -130,6 +130,16 @@ dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f2-1-synth
 
 Regenera cinco CSV `f2_1_*` con ground truth, negative controls, timing crossings, modelos y holdout endpoint-aware. El detail pequeño permanece local e ignorado.
 
+## F2.2 — Quantization inference feasibility
+
+F2.2 está cerrado **Outcome B / research-shadow-only**. Modela la serialización forward exacta y enumera todas las latent hypotheses compatibles dentro de un domain finito declarado. El hardening previo convierte endpoint leakage en una auditoría real. No existe quantizer, denominator default, nearest, epsilon, score ni integración con generation.
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f2-2-synthetic docs .artifacts/f2-2/f2_2_detail.json
+```
+
+Regenera diez CSV `f2_2_*`: modelos, serializer, collisions, domains, compatibility, truth, ambiguity, timing, endpoint holdout y rice sentinel. El detail permanece local e ignorado. El corpus humano quedó NOT RUN porque carece de latent labels y no puede validar intent accuracy ni autorizar el vocabulario.
+
 ## Checklist
 
 - Context burst: densidad contextual OFF/ON.

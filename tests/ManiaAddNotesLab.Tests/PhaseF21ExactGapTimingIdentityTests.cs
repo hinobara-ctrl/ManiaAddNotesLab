@@ -211,6 +211,41 @@ CircleSize:4
         Assert.Equal(ComparableEvidenceState.LocalMismatch, oldAssessment.GlobalState);
         Assert.Equal(ComparableEvidenceState.NoComparableContext, endpointAssessment.GlobalState);
         Assert.Equal(0, result.TargetEndpointLeakageCount);
+        Assert.Empty(result.TargetEndpointLeakageViolations);
+    }
+
+    [Fact]
+    public void EndpointLeakageAuditDetectsAnIntentionallyUnfilteredDonorWithProvenance()
+    {
+        var result = Evaluate(4, [new(0, 500)],
+            Ln(0, 0, 1000), Tap(0, 1250), Ln(1, 500, 1000), Tap(1, 1500));
+        var target = result.Occurrences.Single(x => x.Lane == 0);
+        var invalidDonor = result.Occurrences.Single(x => x.Lane == 1);
+
+        var violations = ExactGapTimingIdentityResearch.AuditEndpointLeakage(target,
+            GapTimingIdentityKind.FileExactDecimal, GapTimingHoldoutKind.TransitionEndpointGroup,
+            TypedGapEvidenceScope.GlobalChart, [invalidDonor]);
+
+        var violation = Assert.Single(violations);
+        Assert.Equal(invalidDonor.PreviousObservationId, violation.DonorPreviousObservationId);
+        Assert.Equal(invalidDonor.NextObservationId, violation.DonorNextObservationId);
+        Assert.Contains(new OriginalObservationId(2), violation.LeakedObservationIds);
+        Assert.Equal(TypedGapEvidenceScope.GlobalChart, violation.Scope);
+    }
+
+    [Fact]
+    public void EndpointLeakageAuditAcceptsCorrectlyFilteredDonors()
+    {
+        var result = Evaluate(4, [new(0, 500)],
+            Ln(0, 0, 1000), Tap(0, 1250), Ln(1, 500, 1000), Tap(1, 1500));
+        var target = result.Occurrences.Single(x => x.Lane == 0);
+        var eligible = result.Occurrences.Where(donor =>
+            !target.TransitionEndpointGroupExclusion.Contains(donor.PreviousObservationId)
+            && !target.TransitionEndpointGroupExclusion.Contains(donor.NextObservationId));
+
+        Assert.Empty(ExactGapTimingIdentityResearch.AuditEndpointLeakage(target,
+            GapTimingIdentityKind.FileExactDecimal, GapTimingHoldoutKind.TransitionEndpointGroup,
+            TypedGapEvidenceScope.GlobalChart, eligible));
     }
 
     [Fact]

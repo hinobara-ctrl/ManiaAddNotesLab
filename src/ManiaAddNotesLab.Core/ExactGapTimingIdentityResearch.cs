@@ -56,6 +56,16 @@ public sealed record GapTimingEvidenceAssessment(
     int GlobalComparableDonors,
     int GlobalSupportingDonors);
 
+public sealed record GapTimingEndpointLeakageViolation(
+    OriginalObservationId TargetPreviousObservationId,
+    OriginalObservationId TargetNextObservationId,
+    OriginalObservationId DonorPreviousObservationId,
+    OriginalObservationId DonorNextObservationId,
+    GapTimingIdentityKind IdentityKind,
+    GapTimingHoldoutKind HoldoutKind,
+    TypedGapEvidenceScope Scope,
+    ImmutableArray<OriginalObservationId> LeakedObservationIds);
+
 public sealed record ExactGapTimingIdentityResearchResult(
     string ResearchSchemaVersion,
     string ChartFingerprint,
@@ -65,9 +75,12 @@ public sealed record ExactGapTimingIdentityResearchResult(
     ImmutableArray<GapTimingEvidenceAssessment> Assessments,
     int SharedReleaseEndpointTargets,
     int EndpointHoldoutAdditionalExcludedReferences,
-    int TargetEndpointLeakageCount,
+    ImmutableArray<GapTimingEndpointLeakageViolation> TargetEndpointLeakageViolations,
     int SyntheticTeachingCount,
-    int HeldTailEncodedAsHeadCount);
+    int HeldTailEncodedAsHeadCount)
+{
+    public int TargetEndpointLeakageCount => TargetEndpointLeakageViolations.Length;
+}
 
 /// <summary>
 /// F2.1 research-only representation. It preserves F2 file-exact gaps and adds an exact
@@ -75,7 +88,7 @@ public sealed record ExactGapTimingIdentityResearchResult(
 /// </summary>
 public static class ExactGapTimingIdentityResearch
 {
-    public const string ResearchSchemaVersion = "phase-f2-1-exact-gap-timing-shadow.1";
+    public const string ResearchSchemaVersion = "phase-f2-1-exact-gap-timing-shadow.2";
 
     public static ExactGapTimingIdentityResearchResult Evaluate(ManiaChart chart)
     {
@@ -99,25 +112,58 @@ public static class ExactGapTimingIdentityResearch
         var byLaneKind = entries.GroupBy(x => (x.Lane, x.TransitionKind))
             .ToDictionary(x => x.Key, x => x.ToArray());
 
-        var assessments = entries.SelectMany(target =>
-            Enum.GetValues<GapTimingIdentityKind>().SelectMany(identity =>
-                Enum.GetValues<GapTimingHoldoutKind>().Select(holdout =>
-                    Assess(target, identity, holdout, byKind, byLaneKind)))).ToImmutableArray();
+        var assessments = ImmutableArray.CreateBuilder<GapTimingEvidenceAssessment>();
+        var leakage = ImmutableArray.CreateBuilder<GapTimingEndpointLeakageViolation>();
+        foreach (var target in entries)
+        foreach (var identity in Enum.GetValues<GapTimingIdentityKind>())
+        foreach (var holdout in Enum.GetValues<GapTimingHoldoutKind>())
+        {
+            var assessed = Assess(target, identity, holdout, byKind, byLaneKind);
+            assessments.Add(assessed.Assessment);
+            leakage.AddRange(assessed.LeakageViolations);
+        }
 
         var additionalExclusions = entries.Sum(x => x.TransitionEndpointGroupExclusion
             .Except(x.F2HeadGroupExclusion).Count());
-        var endpointLeakage = 0;
         var heldAsHead = entries.Count(x =>
             x.SourceEndpoint.Type == TypedGapEndpointType.LongNoteRelease
             && observations[x.PreviousObservationId].Type != ManiaObjectType.LongNote);
         return new ExactGapTimingIdentityResearchResult(ResearchSchemaVersion, profile.ChartFingerprint,
-            profile.KeyCount, profile.OriginalObjectCount, entries.ToImmutableArray(), assessments,
-            entries.Count(x => x.SourceReleaseEventShared), additionalExclusions, endpointLeakage, 0, heldAsHead);
+            profile.KeyCount, profile.OriginalObjectCount, entries.ToImmutableArray(), assessments.ToImmutable(),
+            entries.Count(x => x.SourceReleaseEventShared), additionalExclusions, leakage.ToImmutable(), 0, heldAsHead);
     }
 
     public static bool Equivalent(GapTimingIdentityValue left, GapTimingIdentityValue right) => left == right;
 
-    private static GapTimingEvidenceAssessment Assess(GapTimingIdentityOccurrence target,
+    /// <summary>
+    /// Audits a concrete set of donors that a caller claims are valid for a target. This is public so
+    /// research tests can prove that an intentionally broken holdout is detected rather than merely
+    /// asserting a pre-filled zero counter.
+    /// </summary>
+    public static ImmutableArray<GapTimingEndpointLeakageViolation> AuditEndpointLeakage(
+        GapTimingIdentityOccurrence target,
+        GapTimingIdentityKind identityKind,
+        GapTimingHoldoutKind holdoutKind,
+        TypedGapEvidenceScope scope,
+        IEnumerable<GapTimingIdentityOccurrence> consideredDonors)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(consideredDonors);
+        var excluded = holdoutKind == GapTimingHoldoutKind.F2HeadGroup
+            ? target.F2HeadGroupExclusion : target.TransitionEndpointGroupExclusion;
+        return consideredDonors.Select(donor => (Donor: donor, Leaked: Ids(
+                new[] { donor.PreviousObservationId, donor.NextObservationId }.Where(excluded.Contains))))
+            .Where(x => !x.Leaked.IsEmpty)
+            .Select(x => new GapTimingEndpointLeakageViolation(
+                target.PreviousObservationId, target.NextObservationId,
+                x.Donor.PreviousObservationId, x.Donor.NextObservationId,
+                identityKind, holdoutKind, scope, x.Leaked))
+            .OrderBy(x => x.DonorPreviousObservationId.Value)
+            .ThenBy(x => x.DonorNextObservationId.Value)
+            .ToImmutableArray();
+    }
+
+    private static AssessmentAudit Assess(GapTimingIdentityOccurrence target,
         GapTimingIdentityKind identityKind, GapTimingHoldoutKind holdoutKind,
         IReadOnlyDictionary<TypedGapTransitionKind, GapTimingIdentityOccurrence[]> byKind,
         IReadOnlyDictionary<(int Lane, TypedGapTransitionKind Kind), GapTimingIdentityOccurrence[]> byLaneKind)
@@ -142,9 +188,13 @@ public static class ExactGapTimingIdentityResearch
         }
         var action = TypedGapBackoffResearch.ResolveBackoff(localState,
             globalState ?? ComparableEvidenceState.NoComparableContext).Action;
-        return new GapTimingEvidenceAssessment(target.PreviousObservationId, target.NextObservationId,
+        var assessment = new GapTimingEvidenceAssessment(target.PreviousObservationId, target.NextObservationId,
             identityKind, holdoutKind, localState, globalState, action, local.Length, localSupport,
             global.Length, globalSupport);
+        var violations = AuditEndpointLeakage(target, identityKind, holdoutKind,
+            TypedGapEvidenceScope.LocalLane, local).AddRange(AuditEndpointLeakage(target, identityKind,
+            holdoutKind, TypedGapEvidenceScope.GlobalChart, global));
+        return new AssessmentAudit(assessment, violations);
     }
 
     private static GapTimingIdentityOccurrence BuildOccurrence(string fingerprint,
@@ -249,6 +299,8 @@ public static class ExactGapTimingIdentityResearch
     private static ImmutableArray<OriginalObservationId> Ids(IEnumerable<OriginalObservationId> source) =>
         source.Distinct().OrderBy(x => x.Value).ToImmutableArray();
     private static string D(decimal value) => value.ToString(CultureInfo.InvariantCulture);
+    private sealed record AssessmentAudit(GapTimingEvidenceAssessment Assessment,
+        ImmutableArray<GapTimingEndpointLeakageViolation> LeakageViolations);
     private sealed record TimingSegment(int Index, decimal StartTime, decimal BeatLength, decimal StartBeat);
 }
 

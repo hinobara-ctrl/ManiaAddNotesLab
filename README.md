@@ -23,16 +23,17 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase F1 — COMPLETE, OUTCOME A:** support, mismatch, no-context y ambiguity son reconstruibles por candidate sin gobernar el selector.
 - **Phase F2 — COMPLETE, OUTCOME B, SHADOW ONLY:** typed gaps/backoff exactos son auditables, pero la cobertura no permite conectar A/B.
 - **Phase F2.1 — COMPLETE, OUTCOME C, SHADOW ONLY:** no existe una equivalencia temporal nominal general recuperable sin inferir quantization ausente del archivo.
+- **Phase F2.2 — COMPLETE, OUTCOME B, RESEARCH/SHADOW ONLY:** la inferencia forward es falsable bajo un domain finito explícito, pero el proyecto no puede justificar ese domain desde el mapper ni medir accuracy humana sin labels.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–F2.1 no gobiernan el selector. F2.1 conservó FileExact y probó una traversal exacta: ambas separan una relación nominal que se serializa 250/249 ms, y la traversal también separa un boundary BPM redundante. Fusionarlas requeriría una hipótesis de quantization no codificada en `.osu`; no existe policy conductual. F2.2 es sólo una recomendación no autorizada; D1 tampoco está autorizado y C2 permanece deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–F2.2 no gobiernan el selector. F2.2 formalizó `Serialize(latent, timingMap) == timestamp` y conserva conjuntos empty/singleton/multiple bajo un domain visible. Dos posiciones latentes distintas pueden producir el mismo timestamp; cambiar el vocabulario puede cambiar unique a ambiguous. No existe policy de quantization. F2.3 es sólo una recomendación para resolver domain/ground truth; D1 tampoco está autorizado y C2 permanece deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: F2.1 — COMPLETE — OUTCOME C — SHADOW ONLY<br>
-Next recommended phase: F2.2 — Quantization Inference Feasibility / Research Design<br>
+Current phase: F2.2 — COMPLETE — OUTCOME B — RESEARCH/SHADOW ONLY<br>
+Next recommended phase: F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 378 passed / 0 failed / 0 skipped
+Tests: 415 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

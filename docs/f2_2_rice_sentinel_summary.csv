@@ -1,0 +1,5 @@
+scenario,latent_beats,serialized_timestamps,distinct_under_truth,pattern_classifier
+repeated_fast_stream,0|0.125|0.25|0.375,0|63|125|188,true,none
+close_neighbor,0.124|0.125,62|63,true,none
+jack_like_same_lane,0|0.125|0.25,0|63|125,true,none
+alternating_lanes,0|0.125|0.25,0|63|125,true,none
