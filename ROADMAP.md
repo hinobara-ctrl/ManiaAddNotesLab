@@ -9,11 +9,12 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | C1 — LN witness authority | ⏸ **HOLD — HYPOTHESIS REFRAMED** | La deduplicación conductual fue rechazada; witness identity y relation agreement deben modelarse por separado. |
 | C1.1 — Witness vs agreement | ✅ **COMPLETE — OUTCOME B** | Same-head agreement es señal estructural distinta de independent-witness authority; sin cambio conductual. |
 | C1.2 — Exact-Head Relation Modeling / Shadow | ✅ **COMPLETE — OUTCOME A** | `H → R` explica la población agreement C1.1; no asigna pesos ni activa C1. |
-| C2 — Retrigger-specific frequency | ⏸ **DEFERRED** | Hipótesis separada; no se inicia durante C1.2. |
+| C2 — Retrigger-specific frequency | ⏸ **DEFERRED** | Hipótesis separada; no iniciada ni autorizada. |
 | D0 — ChordCompletion reconstruction | ✅ **COMPLETE — OUTCOME A** | Relations exactas reduced-state→completion son reconstruibles; no tienen authority. |
 | D0.1 — Exact completion competition context | ✅ **COMPLETE — OUTCOME A** | Contexto exacto discrimina miles de alternatives, con cobertura decreciente explícita. |
 | D0.2 — Exact Context Coverage and View Agreement | ✅ **COMPLETE — OUTCOME A** | Agreement, conflict, donor overlap y joint witness exactos son reconstruibles; sin authority. |
-| D1 — Resulting-State Chords / Shadow | ➡️ **NEXT / NOT_AUTHORIZED** | Reevaluar el estado vertical conjunto en una fase separada; no iniciada. |
+| D1.0 — Resulting-State Composition Feasibility / Shadow | ➡️ **NEXT / NOT_AUTHORIZED** | Auditar soporte conjunto exacto frente a soporte marginal; research-only, sin conducta. |
+| D1 — ChordCompletion Resulting-State A/B | ⏳ **FUTURE / NOT_AUTHORIZED** | Fase conductual versionada; requiere D1.0/prerequisites satisfactorios y autorización separada. |
 | E — Adaptive Context Prototypes / Shadow | ✅ **COMPLETE — OUTCOME B** | Recurrence exacta muestra señal restringida; boundaries son estables bajo holdout pero parameter-sensitive. |
 | E.1 — Exact Recurrence Failure Stratification / Shadow | ✅ **COMPLETE — OUTCOME B** | Exact absence domina NoContext; spacing refinement destruye coverage y la rama se aparca. |
 | F1 — Comparable-context Resolver / Shadow + Validation | ✅ **COMPLETE — OUTCOME A** | Support, mismatch, no-context y ambiguity son reconstruibles por candidate sin selection conductual. |

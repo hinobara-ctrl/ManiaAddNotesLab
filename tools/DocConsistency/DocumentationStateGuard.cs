@@ -9,6 +9,9 @@ public sealed record DocumentationStateExpectation(
     string NextActionablePhaseId,
     string NextActionablePhaseName,
     string NextActionableAuthorization,
+    string NextBehavioralPhaseId,
+    string NextBehavioralPhaseName,
+    string NextBehavioralAuthorization,
     string BlockedPrerequisiteId,
     string BlockedPrerequisiteStatus,
     string BranchId,
@@ -19,8 +22,53 @@ public sealed record DocumentationStateExpectation(
     int TestsFailed,
     int TestsSkipped);
 
+public sealed record PhaseContractProjection(
+    string Id,
+    string ContractKind,
+    bool? BehaviorChange,
+    string Status,
+    string? Authorization);
+
 public static class DocumentationStateGuard
 {
+    public static ImmutableArray<string> ValidatePhaseContracts(
+        IEnumerable<PhaseContractProjection> phases)
+    {
+        var errors = ImmutableArray.CreateBuilder<string>();
+        var values = phases.ToArray();
+        foreach (var duplicate in values.GroupBy(x => x.Id, StringComparer.Ordinal)
+                     .Where(x => x.Count() > 1))
+            errors.Add($"Duplicate phase contract: {duplicate.Key}.");
+
+        foreach (var phase in values)
+        {
+            switch (phase.ContractKind)
+            {
+                case "ResearchShadow":
+                    if (phase.BehaviorChange is not false)
+                        errors.Add($"ResearchShadow phase {phase.Id} must declare behaviorChange=false.");
+                    break;
+                case "BehaviorChanging":
+                    if (phase.BehaviorChange is not true)
+                        errors.Add($"BehaviorChanging phase {phase.Id} must declare behaviorChange=true.");
+                    break;
+                case "BlockedPrerequisite":
+                    if (phase.Status != "BLOCKED")
+                        errors.Add($"BlockedPrerequisite phase {phase.Id} must have status BLOCKED.");
+                    break;
+                case "Deferred":
+                    if (phase.Status != "DEFERRED")
+                        errors.Add($"Deferred phase {phase.Id} must have status DEFERRED.");
+                    break;
+                default:
+                    errors.Add($"Phase {phase.Id} has unknown contract kind {phase.ContractKind}.");
+                    break;
+            }
+        }
+
+        return errors.ToImmutable();
+    }
+
     public static ImmutableArray<string> ValidateStateBlock(string documentName, string markdown,
         DocumentationStateExpectation expected)
     {
@@ -35,6 +83,11 @@ public static class DocumentationStateGuard
             "next actionable phase");
         Equal("Next actionable authorization", expected.NextActionableAuthorization,
             "next actionable authorization");
+        EqualNormalized("Next behavioral phase",
+            $"{expected.NextBehavioralPhaseId} — {expected.NextBehavioralPhaseName}",
+            "next behavioral phase");
+        Equal("Next behavioral authorization", expected.NextBehavioralAuthorization,
+            "next behavioral authorization");
         EqualNormalized("Blocked prerequisite",
             $"{expected.BlockedPrerequisiteId} — {expected.BlockedPrerequisiteStatus}",
             "blocked prerequisite");
@@ -68,6 +121,8 @@ public static class DocumentationStateGuard
             "current phase");
         CheckRow(expected.NextActionablePhaseId, "NEXT", expected.NextActionableAuthorization,
             "next actionable phase");
+        CheckRow(expected.NextBehavioralPhaseId, "FUTURE", expected.NextBehavioralAuthorization,
+            "next behavioral phase");
         CheckRow(expected.BlockedPrerequisiteId, expected.BlockedPrerequisiteStatus, null,
             "blocked prerequisite");
         return errors.ToImmutable();

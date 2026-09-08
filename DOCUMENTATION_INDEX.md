@@ -9,7 +9,7 @@ Los documentos maestros describen sólo el estado actual y se actualizan en cada
 - [ROADMAP](ROADMAP.md) — secuencia A–K resumida para lectura humana.
 - [ARCHITECTURE](ARCHITECTURE.md) — fronteras estables entre evidencia, generación, geometría y validez.
 - [DOCUMENTATION_INDEX](DOCUMENTATION_INDEX.md) — mapa de la documentación del repositorio.
-- [PROJECT_STATE](docs/PROJECT_STATE.json) — resumen machine-readable del estado verificable; los reports históricos prevalecen si existe divergencia.
+- [PROJECT_STATE](docs/PROJECT_STATE.json) — resumen machine-readable del estado verificable y contratos separados de fase research/conductual; los reports históricos prevalecen si existe divergencia.
 - [Phase closure protocol](docs/PHASE_CLOSURE_PROTOCOL.md) — orden obligatorio para iniciar y cerrar fases.
 
 ## Current Technical Docs

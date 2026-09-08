@@ -34,6 +34,15 @@ El schema `phase-e-adaptive-context-shadow.1` conserva IDs de chart, método, pa
 
 E.1 añade `ExactRecurrenceFailureResearch` sobre esa serie, sin alterar `exact-neighbor-recurrence.1`. Conserva candidatos pre-holdout, exclusions, donors válidos, multiplicidad semántica, flags observables y counterfactuals exactos bajo `phase-e-1-exact-recurrence-failure-shadow.1`. Los counterfactuals sólo filtran donors ya saneados y distinguen support de coverage destruction; no forman un resolver alternativo.
 
+### Resulting-state phase contracts
+
+D1.0 y D1 son contratos distintos. **D1.0 — Resulting-State Composition Feasibility / Shadow** es investigación diagnóstica sin conducta: debe comprobar si múltiples completion members poseen un mismo joint witness original, porque soporte individual no implica soporte de composición. **D1 — ChordCompletion Resulting-State A/B** conserva el contrato histórico conductual, versionado y con rollback legacy. D1.0 es un prerequisite de factibilidad; aun si concluye favorablemente, no autoriza D1 ni conecta su evidencia a generation.
+
+```text
+member support (marginal) != completion-set support (joint occurrence)
+research resulting-state validation != selection
+```
+
 ## Fronteras principales
 
 ### OriginalEvidence y CurrentGeometry

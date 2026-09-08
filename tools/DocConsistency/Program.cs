@@ -31,6 +31,7 @@ if (state is null)
 else
 {
     ValidateCanonicalState(state);
+    ValidatePhaseContracts(state);
     ValidateFilesAndIndex(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
@@ -77,9 +78,10 @@ void ValidateCanonicalState(ProjectState value)
     if (value.BehaviorChange) errors.Add("behaviorChange must remain false for the current documented state.");
     RequireValue(value.CurrentPhase, "currentPhase");
     RequireValue(value.NextRecommendedPhase, "nextRecommendedPhase");
+    RequireValue(value.NextBehavioralPhase, "nextBehavioralPhase");
 
     var validStatuses = new HashSet<string>(StringComparer.Ordinal)
-        { "COMPLETE", "HOLD", "REJECTED", "NEXT", "DEFERRED", "PENDING", "BLOCKED" };
+        { "COMPLETE", "HOLD", "REJECTED", "NEXT", "FUTURE", "DEFERRED", "PENDING", "BLOCKED" };
     var duplicateIds = value.Phases.GroupBy(x => x.Id, StringComparer.Ordinal)
         .Where(x => x.Count() > 1).Select(x => x.Key);
     foreach (var id in duplicateIds) errors.Add($"Duplicate phase id: {id}.");
@@ -93,8 +95,10 @@ void ValidateCanonicalState(ProjectState value)
 
     var current = value.Phases.FirstOrDefault(x => x.Id == value.CurrentPhase);
     var next = value.Phases.FirstOrDefault(x => x.Id == value.NextRecommendedPhase);
+    var nextBehavioral = value.Phases.FirstOrDefault(x => x.Id == value.NextBehavioralPhase);
     if (current is null) errors.Add("currentPhase does not exist in phases.");
     if (next is null) errors.Add("nextRecommendedPhase does not exist in phases.");
+    if (nextBehavioral is null) errors.Add("nextBehavioralPhase does not exist in phases.");
     if (value.CurrentPhase == value.NextRecommendedPhase)
         errors.Add("currentPhase and nextRecommendedPhase must be different.");
 
@@ -124,6 +128,10 @@ void ValidateCanonicalState(ProjectState value)
     }
     if (next?.Authorization != "NOT_AUTHORIZED")
         errors.Add($"Next actionable phase {next?.Id} must be explicitly NOT_AUTHORIZED.");
+    if (nextBehavioral?.Authorization != "NOT_AUTHORIZED")
+        errors.Add($"Next behavioral phase {nextBehavioral?.Id} must be explicitly NOT_AUTHORIZED.");
+    if (value.NextRecommendedPhase == value.NextBehavioralPhase)
+        errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
     foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
@@ -133,6 +141,52 @@ void ValidateCanonicalState(ProjectState value)
     if (value.ValidationCorpus.Families < 1 || value.ValidationCorpus.HumanCharts < 1
         || value.ValidationCorpus.Keymodes.Count == 0)
         errors.Add("validationCorpus must describe at least one family, chart, and keymode.");
+}
+
+void ValidatePhaseContracts(ProjectState value)
+{
+    var duplicateContracts = value.PhaseContracts.GroupBy(x => x.Id, StringComparer.Ordinal)
+        .Where(x => x.Count() > 1).Select(x => x.Key);
+    foreach (var id in duplicateContracts) errors.Add($"Duplicate phase contract: {id}.");
+
+    foreach (var contract in value.PhaseContracts)
+    {
+        var phase = value.Phases.FirstOrDefault(x => x.Id == contract.Id);
+        if (phase is null)
+        {
+            errors.Add($"Phase contract {contract.Id} has no matching phase.");
+            continue;
+        }
+        if (phase.BehaviorChange != contract.BehaviorChange)
+            errors.Add($"Phase {contract.Id} behaviorChange disagrees with its canonical contract.");
+        if (contract.Authorization is not null && phase.Authorization != contract.Authorization)
+            errors.Add($"Phase {contract.Id} authorization disagrees with its canonical contract.");
+
+        errors.AddRange(DocumentationStateGuard.ValidatePhaseContracts([
+            new PhaseContractProjection(phase.Id, contract.Kind, phase.BehaviorChange,
+                phase.Status, phase.Authorization)
+        ]));
+
+        var behaviorMarker = contract.BehaviorChange is null
+            ? "null"
+            : contract.BehaviorChange.Value.ToString().ToLowerInvariant();
+        var marker = $"<!-- PHASE-CONTRACT:{contract.Id};kind={contract.Kind};" +
+            $"behaviorChange={behaviorMarker};" +
+            $"authorization={contract.Authorization ?? "N/A"} -->";
+        CheckContains("docs/MAPPER_DERIVED_IMPLEMENTATION_ROADMAP.md", marker,
+            $"canonical phase contract {contract.Id}");
+    }
+
+    foreach (var required in new[] { "D1.0", "D1", "F2.ACQ", "C2" })
+        if (value.PhaseContracts.All(x => x.Id != required))
+            errors.Add($"Required canonical phase contract is absent: {required}.");
+
+    var research = value.PhaseContracts.FirstOrDefault(x => x.Id == value.NextRecommendedPhase);
+    if (research?.Kind != "ResearchShadow")
+        errors.Add("nextRecommendedPhase must reference a ResearchShadow contract.");
+    var behavioral = value.PhaseContracts.FirstOrDefault(x => x.Id == value.NextBehavioralPhase);
+    if (behavioral?.Kind != "BehaviorChanging")
+        errors.Add("nextBehavioralPhase must reference a BehaviorChanging contract.");
 }
 
 void ValidateFilesAndIndex(ProjectState value)
@@ -315,11 +369,14 @@ void ValidateMasterStateBlocks(ProjectState value)
 {
     var current = value.Phases.FirstOrDefault(x => x.Id == value.CurrentPhase);
     var next = value.Phases.FirstOrDefault(x => x.Id == value.NextRecommendedPhase);
+    var nextBehavioral = value.Phases.FirstOrDefault(x => x.Id == value.NextBehavioralPhase);
     var branch = (value.ResearchBranches ?? []).FirstOrDefault(x => x.Id == "F2");
     var blocker = value.Phases.FirstOrDefault(x => x.Id == branch?.BlockedBy);
-    if (current is null || next is null || branch is null || blocker is null) return;
+    if (current is null || next is null || nextBehavioral is null || branch is null || blocker is null) return;
     var expectation = new DocumentationStateExpectation(current.Id, current.Status, current.Outcome,
-        next.Id, next.Name, next.Authorization ?? string.Empty, blocker.Id, blocker.Status,
+        next.Id, next.Name, next.Authorization ?? string.Empty,
+        nextBehavioral?.Id ?? string.Empty, nextBehavioral?.Name ?? string.Empty,
+        nextBehavioral?.Authorization ?? string.Empty, blocker.Id, blocker.Status,
         branch.Id, branch.Decision, value.BehaviorPolicyVersion,
         value.BehaviorChange ? "true" : "none", value.TestStatus.Passed,
         value.TestStatus.Failed, value.TestStatus.Skipped);
@@ -471,8 +528,10 @@ sealed record ProjectState(
     bool BehaviorChange,
     IReadOnlyList<PhaseState> Phases,
     IReadOnlyList<BranchState> ResearchBranches,
+    IReadOnlyList<PhaseContractState> PhaseContracts,
     string CurrentPhase,
     string NextRecommendedPhase,
+    string NextBehavioralPhase,
     TestState TestStatus,
     CorpusState ValidationCorpus,
     IReadOnlyList<string> MasterDocuments);
@@ -480,6 +539,7 @@ sealed record ProjectState(
 sealed record PhaseState(string Id, string Name, string Status, string? Outcome, bool? BehaviorChange,
     string? Report, string? Authorization, string? BlockedReason);
 sealed record BranchState(string Id, string Decision, string BlockedBy);
+sealed record PhaseContractState(string Id, string Kind, bool? BehaviorChange, string? Authorization);
 sealed record TestState(int Passed, int Failed, int Skipped);
 sealed record CorpusState(
     int Families,

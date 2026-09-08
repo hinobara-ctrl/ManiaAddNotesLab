@@ -158,7 +158,7 @@ E está cerrado **Outcome B / research-shadow-only**. Separa recurrence exacta n
 dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- phase-e-adaptive-context <corpus-read-only> docs .artifacts/e/e_detail.json
 ```
 
-Regenera once CSV `e_*`; el detail con provenance target/donor queda local e ignorado. Recurrence cerró B por señal multi-family con mismatch/no-context altos; segmentation cerró B por estabilidad local con sensibilidad 288→89 boundaries. E.1 es una recomendación no autorizada, no una continuación automática.
+Regenera once CSV `e_*`; el detail con provenance target/donor queda local e ignorado. Recurrence cerró B por señal multi-family con mismatch/no-context altos; segmentation cerró B por estabilidad local con sensibilidad 288→89 boundaries. Al cierre de E, E.1 fue recomendada como `NEXT / NOT_AUTHORIZED`; esa frase es el snapshot histórico que precedió a su ejecución y cierre posterior.
 
 ## E.1 — Exact recurrence failure stratification
 
@@ -169,6 +169,10 @@ dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- phase-e-1-
 ```
 
 Regenera trece CSV `e1_*`; el detail de provenance queda local e ignorado. Exact recurrence refinement queda aparcado. No hay fuzzy fallback, feature selection, vote, score, Section ni behavior.
+
+## D1.0 / D1 — contratos separados
+
+D1.0 es la siguiente candidata de investigación, todavía `NOT_AUTHORIZED` en este estado: sólo puede auditar `ReducedState → CompletionSet` mediante occurrences originales conjuntas y nunca usar intersecciones marginales como joint witness. D1 es otra fase: el A/B conductual histórico de resulting-state, versionado y futuro. Completar D1.0 no autoriza D1.
 
 ## Checklist
 

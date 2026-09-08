@@ -19,7 +19,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | D0.2 — Exact Context Coverage and View Agreement | **COMPLETE — OUTCOME A** | Ninguno; separa agreement, donor overlap y joint witness exacto. |
 | E — Adaptive Context Prototypes / Shadow | **COMPLETE — OUTCOME B** | Ninguno; recurrence y boundaries son research-only y no gobiernan contexto. |
 | E.1 — Exact Recurrence Failure Stratification / Shadow | **COMPLETE — OUTCOME B** | Ninguno; explica exact absence, multiplicity y refinements sin cambiar el resolver. |
-| D1 — Resulting-State Chords / Shadow | **NEXT / NOT_AUTHORIZED** | Ninguno; recomendación de reevaluación del roadmap, no iniciada. |
+| D1.0 — Resulting-State Composition Feasibility / Shadow | **NEXT / NOT_AUTHORIZED** | Ninguno; prerequisite research-only para auditar soporte conjunto. |
+| D1 — ChordCompletion Resulting-State A/B | **FUTURE / NOT_AUTHORIZED** | Sí cuando se autorice: fase conductual versionada separada de D1.0. |
 | F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
 | F2 — Typed gaps and evidence backoff A/B | **COMPLETE — OUTCOME B — SHADOW ONLY** | Ninguno; identity/backoff exactos válidos, coverage insuficiente para A/B. |
 | F2.1 — Exact Gap Timing Identity / Shadow Validation | **COMPLETE — OUTCOME C — SHADOW ONLY** | Ninguno; demuestra que equivalencia nominal general requiere inferencia ausente del archivo. |
@@ -146,7 +147,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **512 passed, 0 failed, 0 skipped** en el cierre E.1; el baseline E tenía 487.
+- `dotnet test -c Release`: **518 passed, 0 failed, 0 skipped** tras el hardening pre-D1.0; E.1 cerró con 512 y el baseline E tenía 487.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -166,19 +167,21 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. E.1 cerró Outcome B y aparca exact recurrence refinement. Se recomienda reevaluar **D1 — Resulting-State Chords / Shadow** como `NEXT / NOT_AUTHORIZED`; esta recomendación no lo inicia ni le transfiere authority desde E.1. C2 permanece **DEFERRED** y MapperSupport no está autorizado.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. E.1 cerró Outcome B y aparca exact recurrence refinement. Se recomienda **D1.0 — Resulting-State Composition Feasibility / Shadow** como `NEXT / NOT_AUTHORIZED`: debe distinguir soporte marginal de evidencia conjunta sin cambiar generación. La fase histórica **D1 — ChordCompletion Resulting-State A/B** permanece `FUTURE / NOT_AUTHORIZED`, requiere prerequisites satisfactorios y autorización separada. C2 permanece **DEFERRED** y MapperSupport no está autorizado.
 
 <!-- PROJECT-STATE:BEGIN -->
 Current phase: E.1 — COMPLETE — OUTCOME B<br>
-Next actionable research candidate: D1 — Resulting-State Chords / Shadow<br>
+Next actionable research candidate: D1.0 — Resulting-State Composition Feasibility / Shadow<br>
 Next actionable authorization: NOT_AUTHORIZED<br>
+Next behavioral phase: D1 — ChordCompletion Resulting-State A/B<br>
+Next behavioral authorization: NOT_AUTHORIZED<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 512 passed / 0 failed / 0 skipped
+Tests: 518 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
-Detalles y evidencia: [Phase F2.3 report](docs/PHASE_F2_3_QUANTIZATION_DOMAIN_GROUND_TRUTH_REPORT.md). Los reports [F2.2](docs/PHASE_F2_2_QUANTIZATION_INFERENCE_FEASIBILITY_REPORT.md), [F2.1](docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md), [F2](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md), [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md) y anteriores permanecen como evidencia histórica.
+Detalles y evidencia: [E.1](docs/PHASE_E_1_EXACT_RECURRENCE_FAILURE_STRATIFICATION_REPORT.md) y [E](docs/PHASE_E_ADAPTIVE_CONTEXT_PROTOTYPES_REPORT.md) describen los cierres más recientes. Los reports [F2.3](docs/PHASE_F2_3_QUANTIZATION_DOMAIN_GROUND_TRUTH_REPORT.md), [F2.2](docs/PHASE_F2_2_QUANTIZATION_INFERENCE_FEASIBILITY_REPORT.md), [F2.1](docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md), [F2](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md), [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md) y anteriores permanecen como evidencia histórica.

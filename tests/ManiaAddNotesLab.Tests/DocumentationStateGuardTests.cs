@@ -47,7 +47,7 @@ public sealed class DocumentationStateGuardTests
     public void RoadmapStaleNextActionablePhaseFails()
     {
         var errors = DocumentationStateGuard.ValidateRoadmap(
-            Roadmap().Replace("D1 — Adaptive", "E.2 — Adaptive"), Expected);
+            Roadmap().Replace("D1.0 — Composition research", "E.2 — Adaptive"), Expected);
 
         Assert.Contains(errors, error => error.Contains("next actionable phase D1", StringComparison.Ordinal));
     }
@@ -71,10 +71,65 @@ public sealed class DocumentationStateGuardTests
     }
 
     [Fact]
+    public void NextResearchCandidateDoesNotAuthorizeBehavioralPhase()
+    {
+        var errors = DocumentationStateGuard.ValidateStateBlock("README.md",
+            StateBlock().Replace("Next behavioral authorization: NOT_AUTHORIZED",
+                "Next behavioral authorization: AUTHORIZED"), Expected);
+
+        Assert.Contains(errors, error => error.Contains("behavioral authorization", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ResearchShadowContractWithNoBehaviorChangePasses()
+    {
+        Assert.Empty(DocumentationStateGuard.ValidatePhaseContracts([
+            new PhaseContractProjection("D1.0", "ResearchShadow", false, "NEXT", "NOT_AUTHORIZED")
+        ]));
+    }
+
+    [Fact]
+    public void BehavioralContractWithBehaviorChangePasses()
+    {
+        Assert.Empty(DocumentationStateGuard.ValidatePhaseContracts([
+            new PhaseContractProjection("D1", "BehaviorChanging", true, "FUTURE", "NOT_AUTHORIZED")
+        ]));
+    }
+
+    [Fact]
+    public void BehavioralContractMarkedNoBehaviorChangeFails()
+    {
+        var errors = DocumentationStateGuard.ValidatePhaseContracts([
+            new PhaseContractProjection("D1", "BehaviorChanging", false, "FUTURE", "NOT_AUTHORIZED")
+        ]);
+
+        Assert.Contains(errors, error => error.Contains("behaviorChange=true", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ResearchShadowContractMarkedBehaviorChangeFails()
+    {
+        var errors = DocumentationStateGuard.ValidatePhaseContracts([
+            new PhaseContractProjection("D1.0", "ResearchShadow", true, "NEXT", "NOT_AUTHORIZED")
+        ]);
+
+        Assert.Contains(errors, error => error.Contains("behaviorChange=false", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void BlockedAndDeferredContractsRemainDistinct()
+    {
+        Assert.Empty(DocumentationStateGuard.ValidatePhaseContracts([
+            new PhaseContractProjection("F2.ACQ", "BlockedPrerequisite", false, "BLOCKED", "CONDITIONAL_ON_EXTERNAL_DATA"),
+            new PhaseContractProjection("C2", "Deferred", null, "DEFERRED", null)
+        ]));
+    }
+
+    [Fact]
     public void TestSnapshotMismatchFails()
     {
         var errors = DocumentationStateGuard.ValidateStateBlock("README.md",
-            StateBlock().Replace("512 passed", "511 passed"), Expected);
+            StateBlock().Replace("518 passed", "517 passed"), Expected);
 
         Assert.Contains(errors, error => error.Contains("test snapshot", StringComparison.Ordinal));
     }
@@ -85,27 +140,31 @@ public sealed class DocumentationStateGuardTests
         var roadmap = Roadmap() + "\n| F2 — Parent | COMPLETE | Historical branch row. |";
 
         Assert.Empty(DocumentationStateGuard.ValidateRoadmap(roadmap, Expected));
-        Assert.Contains("D1 — Adaptive", DocumentationStateGuard.FindPhaseRow(roadmap, "D1"));
+        Assert.Contains("D1.0 — Composition research", DocumentationStateGuard.FindPhaseRow(roadmap, "D1.0"));
+        Assert.Contains("D1 — ChordCompletion", DocumentationStateGuard.FindPhaseRow(roadmap, "D1"));
         Assert.Contains("F2.ACQ — Acquisition", DocumentationStateGuard.FindPhaseRow(roadmap, "F2.ACQ"));
         Assert.Contains("F2 — Parent", DocumentationStateGuard.FindPhaseRow(roadmap, "F2"));
     }
 
     private static DocumentationStateExpectation Expected => new(
-        "E.1", "COMPLETE", "B", "D1", "Resulting-State Chords / Shadow",
-        "NOT_AUTHORIZED", "F2.ACQ", "BLOCKED", "F2", "CONTINUE_CONDITIONALLY",
-        "legacy-experimental.1", "none", 512, 0, 0);
+        "E.1", "COMPLETE", "B", "D1.0", "Resulting-State Composition Feasibility / Shadow",
+        "NOT_AUTHORIZED", "D1", "ChordCompletion Resulting-State A/B", "NOT_AUTHORIZED",
+        "F2.ACQ", "BLOCKED", "F2", "CONTINUE_CONDITIONALLY",
+        "legacy-experimental.1", "none", 518, 0, 0);
 
     private static string StateBlock() => """
         Historical reports are deliberately outside this living-state projection.
         <!-- PROJECT-STATE:BEGIN -->
         Current phase: E.1 — COMPLETE — OUTCOME B<br>
-        Next actionable research candidate: D1 — Resulting-State Chords / Shadow<br>
+        Next actionable research candidate: D1.0 — Resulting-State Composition Feasibility / Shadow<br>
         Next actionable authorization: NOT_AUTHORIZED<br>
+        Next behavioral phase: D1 — ChordCompletion Resulting-State A/B<br>
+        Next behavioral authorization: NOT_AUTHORIZED<br>
         Blocked prerequisite: F2.ACQ — BLOCKED<br>
         Research branch: F2 — CONTINUE CONDITIONALLY<br>
         Behavior policy: `legacy-experimental.1`<br>
         Behavior change: none<br>
-        Tests: 512 passed / 0 failed / 0 skipped
+        Tests: 518 passed / 0 failed / 0 skipped
         <!-- PROJECT-STATE:END -->
         """;
 
@@ -113,7 +172,8 @@ public sealed class DocumentationStateGuardTests
         | Fase | Estado | Propósito |
         |---|---|---|
         | E.1 — Current | COMPLETE — OUTCOME B | Closed. |
-        | D1 — Adaptive | NEXT / NOT_AUTHORIZED | Actionable candidate. |
+        | D1.0 — Composition research | NEXT / NOT_AUTHORIZED | Actionable candidate. |
+        | D1 — ChordCompletion Resulting-State A/B | FUTURE / NOT_AUTHORIZED | Behavioral phase. |
         | F2.ACQ — Acquisition | BLOCKED / CONDITIONAL | External dependency. |
         """;
 }
