@@ -4,6 +4,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 4 && args[0] == "phase-e-1-recurrence-failures")
+{
+    E1RecurrenceFailureRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]));
+    return;
+}
+
 if (args.Length == 4 && args[0] == "phase-e-adaptive-context")
 {
     EAdaptiveContextRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),

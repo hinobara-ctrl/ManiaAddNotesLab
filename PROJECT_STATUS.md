@@ -18,7 +18,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | D0.1 — Exact Completion Competition Context | **COMPLETE — OUTCOME A** | Ninguno; contexto exacto discrimina alternatives con una frontera de cobertura. |
 | D0.2 — Exact Context Coverage and View Agreement | **COMPLETE — OUTCOME A** | Ninguno; separa agreement, donor overlap y joint witness exacto. |
 | E — Adaptive Context Prototypes / Shadow | **COMPLETE — OUTCOME B** | Ninguno; recurrence y boundaries son research-only y no gobiernan contexto. |
-| E.1 — Exact Recurrence Failure Stratification / Shadow | **NEXT / NOT_AUTHORIZED** | Ninguno; recomendación estrecha para explicar mismatch/no-context de E. |
+| E.1 — Exact Recurrence Failure Stratification / Shadow | **COMPLETE — OUTCOME B** | Ninguno; explica exact absence, multiplicity y refinements sin cambiar el resolver. |
+| D1 — Resulting-State Chords / Shadow | **NEXT / NOT_AUTHORIZED** | Ninguno; recomendación de reevaluación del roadmap, no iniciada. |
 | F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
 | F2 — Typed gaps and evidence backoff A/B | **COMPLETE — OUTCOME B — SHADOW ONLY** | Ninguno; identity/backoff exactos válidos, coverage insuficiente para A/B. |
 | F2.1 — Exact Gap Timing Identity / Shadow Validation | **COMPLETE — OUTCOME C — SHADOW ONLY** | Ninguno; demuestra que equivalencia nominal general requiere inferencia ausente del archivo. |
@@ -135,11 +136,17 @@ Phase E cerró **OUTCOME B** con dos resultados internos separados. Recurrence e
 
 `AdaptiveContextResearch` permanece original-only, chart-local y desconectado de generation/RNG/F2/D1. No existe Section productiva, selector de contexto ni fuzzy fallback. El report completo y los artifacts públicos preservan provenance y configuraciones por separado.
 
+## Resultado E.1
+
+E.1 cerró **OUTCOME B**. De 16.224 NoContext, 16.145 (99,51%) son ausencia literal del par exacto en otra ubicación y sólo 79 provienen de occurrences eliminadas por hygiene. Los 1.451 mismatch muestran spacing divergence en 71,19%/75,81% (ms/beat file-derived), pero también aparece en 61,74%/69,39% de Reconstructed. El refinement spacing convierte 1.065 mismatch y 1.716 reconstructed a NoContext; no convierte ningún mismatch a support. Held divergence fue cero.
+
+La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir exact features sólo filtra evidence y destruye coverage. No se añadió fuzzy similarity, vote, score, probability, resolver nuevo ni behavior.
+
 ## Validación actual
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **487 passed, 0 failed, 0 skipped** en el cierre Phase E; el baseline pre-E tenía 455.
+- `dotnet test -c Release`: **512 passed, 0 failed, 0 skipped** en el cierre E.1; el baseline E tenía 487.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -159,11 +166,11 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece como prerequisite condicional **BLOCKED ON EXTERNAL DATA** y no es la siguiente fase de coding. E cerró Outcome B: recurrence exacta reconstruyó 4.143 targets, pero tuvo 1.451 mismatch y 16.224 no-context; boundaries cayeron de 288 a 89 al cambiar el mínimo estable 2→3. Se recomienda **E.1 — Exact Recurrence Failure Stratification / Shadow**, únicamente `NEXT / NOT_AUTHORIZED`. Si el package F2.ACQ aparece, F2 podrá reevaluarse. D1 sigue sin autorización; C2 permanece **DEFERRED** y MapperSupport no está autorizado.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. E.1 cerró Outcome B y aparca exact recurrence refinement. Se recomienda reevaluar **D1 — Resulting-State Chords / Shadow** como `NEXT / NOT_AUTHORIZED`; esta recomendación no lo inicia ni le transfiere authority desde E.1. C2 permanece **DEFERRED** y MapperSupport no está autorizado.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: E — COMPLETE — OUTCOME B<br>
-Next actionable research candidate: E.1 — Exact Recurrence Failure Stratification / Shadow<br>
+Current phase: E.1 — COMPLETE — OUTCOME B<br>
+Next actionable research candidate: D1 — Resulting-State Chords / Shadow<br>
 Next actionable authorization: NOT_AUTHORIZED<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
@@ -171,7 +178,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 487 passed / 0 failed / 0 skipped
+Tests: 512 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [Phase F2.3 report](docs/PHASE_F2_3_QUANTIZATION_DOMAIN_GROUND_TRUTH_REPORT.md). Los reports [F2.2](docs/PHASE_F2_2_QUANTIZATION_INFERENCE_FEASIBILITY_REPORT.md), [F2.1](docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md), [F2](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md), [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md) y anteriores permanecen como evidencia histórica.

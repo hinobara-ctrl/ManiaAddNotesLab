@@ -190,23 +190,23 @@ public sealed class PhaseC12ExactHeadRelationTests
         var stateRoot = state.RootElement;
         Assert.Equal("legacy-experimental.1", stateRoot.GetProperty("behaviorPolicyVersion").GetString());
         Assert.False(stateRoot.GetProperty("behaviorChange").GetBoolean());
-        Assert.Equal("E", stateRoot.GetProperty("currentPhase").GetString());
-        Assert.Equal("E.1", stateRoot.GetProperty("nextRecommendedPhase").GetString());
+        Assert.Equal("E.1", stateRoot.GetProperty("currentPhase").GetString());
+        Assert.Equal("D1", stateRoot.GetProperty("nextRecommendedPhase").GetString());
         var phases = stateRoot.GetProperty("phases").EnumerateArray().ToArray();
         Assert.Equal("BLOCKED", phases.Single(x => x.GetProperty("id").GetString() == "F2.ACQ")
             .GetProperty("status").GetString());
-        Assert.Equal("NOT_AUTHORIZED", phases.Single(x => x.GetProperty("id").GetString() == "E.1")
+        Assert.Equal("NOT_AUTHORIZED", phases.Single(x => x.GetProperty("id").GetString() == "D1")
             .GetProperty("authorization").GetString());
         Assert.Equal("CONTINUE_CONDITIONALLY", stateRoot.GetProperty("researchBranches")[0]
             .GetProperty("decision").GetString());
-        Assert.Contains("Current phase: E", readme);
-        Assert.Contains("Current phase: E", status);
-        Assert.Contains("Next actionable research candidate: E.1", readme);
-        Assert.Contains("Next actionable research candidate: E.1", status);
+        Assert.Contains("Current phase: E.1", readme);
+        Assert.Contains("Current phase: E.1", status);
+        Assert.Contains("Next actionable research candidate: D1", readme);
+        Assert.Contains("Next actionable research candidate: D1", status);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", readme);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", status);
-        Assert.Contains("Tests: 487 passed / 0 failed / 0 skipped", readme);
-        Assert.Contains("Tests: 487 passed / 0 failed / 0 skipped", status);
+        Assert.Contains("Tests: 512 passed / 0 failed / 0 skipped", readme);
+        Assert.Contains("Tests: 512 passed / 0 failed / 0 skipped", status);
     }
 
     private static string FindRepositoryRoot([CallerFilePath] string sourceFile = "")

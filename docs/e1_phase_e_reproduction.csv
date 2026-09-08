@@ -1,0 +1,15 @@
+metric,expected,observed,match
+charts,11,11,true
+families,11,11,true
+original_objects,50836,50836,true
+event_groups,28312,28312,true
+eligible,28290,28290,true
+comparable,12066,12066,true
+reconstructed,4143,4143,true
+ambiguous,6472,6472,true
+mismatch,1451,1451,true
+no_context,16224,16224,true
+block_relation_links,10980,10980,true
+non_contiguous_links,10764,10764,true
+min_run_2_boundaries,288,288,true
+min_run_3_boundaries,89,89,true

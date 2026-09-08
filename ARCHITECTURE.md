@@ -32,6 +32,8 @@ OriginalObjects → OriginalTemporalEventSeries
 
 El schema `phase-e-adaptive-context-shadow.1` conserva IDs de chart, método, parámetros, target exclusions y donors. AddedObjects, RNG, F2 scopes y selección nunca entran en esta capa.
 
+E.1 añade `ExactRecurrenceFailureResearch` sobre esa serie, sin alterar `exact-neighbor-recurrence.1`. Conserva candidatos pre-holdout, exclusions, donors válidos, multiplicidad semántica, flags observables y counterfactuals exactos bajo `phase-e-1-exact-recurrence-failure-shadow.1`. Los counterfactuals sólo filtran donors ya saneados y distinguen support de coverage destruction; no forman un resolver alternativo.
+
 ## Fronteras principales
 
 ### OriginalEvidence y CurrentGeometry

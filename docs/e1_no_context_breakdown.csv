@@ -1,0 +1,5 @@
+primary_reason,mutually_exclusive,denominator,count,fraction,charts_present,families_present,keymodes_present
+"EdgeIneligible",true,16224,0,0.000000,0,0,""
+"NoExactNeighborPairElsewhere",true,16224,16145,0.995131,11,11,"4;7;10"
+"OnlyExcludedOccurrences",true,16224,79,0.004869,7,7,"4;7"
+"OtherExactAbsence",true,16224,0,0.000000,0,0,""

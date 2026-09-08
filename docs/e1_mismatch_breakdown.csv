@@ -1,0 +1,9 @@
+diagnostic_property,categories_overlap,denominator,count,fraction,charts_present,families_present,keymodes_present
+"serialized_spacing_disagreement",true,1451,1033,0.711923,11,11,"4;7;10"
+"exact_file_beat_spacing_disagreement",true,1451,1100,0.758098,11,11,"4;7;10"
+"held_disagreement",true,1451,0,0.000000,0,0,""
+"type_disagreement",true,1451,935,0.644383,11,11,"4;7;10"
+"head_count_disagreement",true,1451,935,0.644383,11,11,"4;7;10"
+"lane_occupancy_disagreement",true,1451,1451,1.000000,11,11,"4;7;10"
+"multiple_diagnostic_differences",true,1451,1300,0.895934,11,11,"4;7;10"
+"none_of_measured_differences",true,1451,0,0.000000,0,0,""

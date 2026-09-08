@@ -160,6 +160,16 @@ dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- phase-e-ad
 
 Regenera once CSV `e_*`; el detail con provenance target/donor queda local e ignorado. Recurrence cerró B por señal multi-family con mismatch/no-context altos; segmentation cerró B por estabilidad local con sensibilidad 288→89 boundaries. E.1 es una recomendación no autorizada, no una continuación automática.
 
+## E.1 — Exact recurrence failure stratification
+
+E.1 está cerrado **Outcome B / research-shadow-only**. Reproduce Phase E byte a byte y explica el resolver exact-neighbor sin modificar su identity. La matriz separa absence, sanitation, spacing, held/type composition, donor multiplicity y cuatro counterfactuals exactos. El 99,51% de NoContext carece del par exacto elsewhere; spacing filtering elimina mismatch principalmente convirtiéndolo en NoContext y también destruye controles reconstructed.
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- phase-e-1-recurrence-failures .artifacts/f2-1-corpus docs .artifacts/e1/e1_detail.json
+```
+
+Regenera trece CSV `e1_*`; el detail de provenance queda local e ignorado. Exact recurrence refinement queda aparcado. No hay fuzzy fallback, feature selection, vote, score, Section ni behavior.
+
 ## Checklist
 
 - Context burst: densidad contextual OFF/ON.
