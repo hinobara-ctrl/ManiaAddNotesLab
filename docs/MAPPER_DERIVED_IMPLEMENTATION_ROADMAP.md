@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2: **COMPLETE/B RESEARCH/SHADOW ONLY**. F2.3: **COMPLETE/B — CONTINUE CONDITIONALLY**. F2.ACQ queda **NEXT / NOT AUTHORIZED YET**; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2: **COMPLETE/B RESEARCH/SHADOW ONLY**. F2.3: **COMPLETE/B — CONTINUE CONDITIONALLY**. F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**; Phase E es la siguiente candidata de investigación accionable, **NOT AUTHORIZED YET / NOT STARTED**; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -616,6 +616,8 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 ## Phase E — Adaptive context prototypes / Shadow
 
+**Estado: NEXT ACTIONABLE RESEARCH CANDIDATE / NOT AUTHORIZED YET / NOT STARTED.**
+
 **Goal:** comparar recurrencia y segmentación.
 
 **Files likely affected:** Evidence analysis y diagnostics; no engine selection.
@@ -710,7 +712,7 @@ F2 v1 usó scope exacto `LocalLane → GlobalChart`, sin Section inventada. Sobr
 
 ## Phase F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite
 
-**Estado: NEXT / NOT AUTHORIZED YET.**
+**Estado: BLOCKED / CONDITIONAL ON EXTERNAL DATA / NOT ACTIONABLE.**
 
 **Goal:** obtener packages mapper-authored autorizados con coordinates source/destination previas al export, timing map, LN head/release y `.osu`, separando DomainDesignSet de IndependentValidationSet.
 
@@ -1011,4 +1013,4 @@ Las 25 condiciones de estados excluyentes, abstención, hechos por vista, identi
 
 La representación shadow pasa identity exacta, transition typing, original-only, whole-group exclusion, provenance, backoff sólo por no-context, SKIP, determinismo, multi-key, corpus y leakage. El behavioral subgate falla: 2/50.762 local support y 0 global support harían degenerado cualquier A/B. No se creó una versión conductual ni se alteró legacy.
 
-**F2 COMPLETE/B; F2.1 COMPLETE — OUTCOME C — SHADOW ONLY; F2.2 COMPLETE OUTCOME B — RESEARCH/SHADOW ONLY; F2.3 COMPLETE OUTCOME B — CONTINUE CONDITIONALLY; F2.ACQ RECOMMENDED NEXT BUT NOT AUTHORIZED, D1 NOT AUTHORIZED, C2 DEFERRED.**
+**F2 COMPLETE/B; F2.1 COMPLETE — OUTCOME C — SHADOW ONLY; F2.2 COMPLETE OUTCOME B — RESEARCH/SHADOW ONLY; F2.3 COMPLETE OUTCOME B — CONTINUE CONDITIONALLY; F2.ACQ BLOCKED ON EXTERNAL DATA; PHASE E NEXT ACTIONABLE RESEARCH CANDIDATE BUT NOT AUTHORIZED OR STARTED; D1 NOT AUTHORIZED, C2 DEFERRED.**

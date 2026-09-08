@@ -17,12 +17,13 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | D0 — ChordCompletion Reconstruction | **COMPLETE — OUTCOME A** | Ninguno; reconstruye relations exactas en shadow. |
 | D0.1 — Exact Completion Competition Context | **COMPLETE — OUTCOME A** | Ninguno; contexto exacto discrimina alternatives con una frontera de cobertura. |
 | D0.2 — Exact Context Coverage and View Agreement | **COMPLETE — OUTCOME A** | Ninguno; separa agreement, donor overlap y joint witness exacto. |
+| E — Adaptive Context Prototypes / Shadow | **NEXT / NOT_AUTHORIZED** | Ninguno; candidata de investigación accionable sólo tras autorización separada, todavía no iniciada. |
 | F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
 | F2 — Typed gaps and evidence backoff A/B | **COMPLETE — OUTCOME B — SHADOW ONLY** | Ninguno; identity/backoff exactos válidos, coverage insuficiente para A/B. |
 | F2.1 — Exact Gap Timing Identity / Shadow Validation | **COMPLETE — OUTCOME C — SHADOW ONLY** | Ninguno; demuestra que equivalencia nominal general requiere inferencia ausente del archivo. |
 | F2.2 — Quantization Inference Feasibility / Research Design | **COMPLETE — OUTCOME B — RESEARCH/SHADOW ONLY** | Ninguno; formaliza compatibility condicional y demuestra el problema del domain. |
 | F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design | **COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY** | Ninguno; formaliza domain/truth y localiza el recurso externo faltante. |
-| F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite | **NEXT / NOT AUTHORIZED YET** | Ninguno; recolectaría packages mapper-authored antes de cualquier quantizer. |
+| F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite | **BLOCKED / CONDITIONAL ON EXTERNAL DATA** | Ninguno; no es accionable hasta que exista el package mapper-authored autorizado. |
 
 ## Qué funciona hoy
 
@@ -131,7 +132,7 @@ F2.3 cierra **OUTCOME B** y la rama queda **CONTINUE CONDITIONALLY**. `F2.ACQ` e
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **446 passed, 0 failed, 0 skipped** en el cierre F2.3.
+- `dotnet test -c Release`: **455 passed, 0 failed, 0 skipped** tras el hardening documental pre-Phase E; el cierre histórico F2.3 tenía 446.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -151,15 +152,19 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-El siguiente paso recomendado es **F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite**, sólo `NEXT / NOT AUTHORIZED YET`. No es F2.4 ni una quantizer phase: debe obtener el recurso externo exacto y congelar design/validation sets. Si no puede conseguirse, la rama F2 debe aparcarse. D1 sigue sin autorización; C2 permanece **DEFERRED** y no se abren E, MapperSupport o J.
+`F2.ACQ` permanece como prerequisite condicional **BLOCKED ON EXTERNAL DATA** y no es la siguiente fase de coding. La siguiente línea potencialmente accionable es **Phase E — Adaptive Context Prototypes / Shadow**, únicamente como candidata `NEXT / NOT AUTHORIZED YET`; esta sincronización no la inicia ni implementa. Si el package F2.ACQ aparece, F2 podrá reevaluarse. D1 sigue sin autorización; C2 permanece **DEFERRED** y MapperSupport no está autorizado.
 
 <!-- PROJECT-STATE:BEGIN -->
 Current phase: F2.3 — COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY<br>
-Next recommended phase: F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite<br>
+Next actionable research candidate: E — Adaptive Context Prototypes / Shadow<br>
+Next actionable authorization: NOT_AUTHORIZED<br>
+Blocked prerequisite: F2.ACQ — BLOCKED<br>
+Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
+Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 446 passed / 0 failed / 0 skipped
+Tests: 455 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [Phase F2.3 report](docs/PHASE_F2_3_QUANTIZATION_DOMAIN_GROUND_TRUTH_REPORT.md). Los reports [F2.2](docs/PHASE_F2_2_QUANTIZATION_INFERENCE_FEASIBILITY_REPORT.md), [F2.1](docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md), [F2](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md), [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md) y anteriores permanecen como evidencia histórica.

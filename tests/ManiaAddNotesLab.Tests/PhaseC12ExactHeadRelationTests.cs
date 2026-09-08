@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using ManiaAddNotesLab.Core;
 
 namespace ManiaAddNotesLab.Tests;
@@ -182,17 +183,30 @@ public sealed class PhaseC12ExactHeadRelationTests
     public void ProjectStateAndMasterStateBlocksAreConsistent()
     {
         var root = FindRepositoryRoot();
-        var state = File.ReadAllText(Path.Combine(root, "docs", "PROJECT_STATE.json"));
+        using var state = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "docs", "PROJECT_STATE.json")));
         var readme = File.ReadAllText(Path.Combine(root, "README.md"));
         var status = File.ReadAllText(Path.Combine(root, "PROJECT_STATUS.md"));
 
-        Assert.Contains("\"behaviorPolicyVersion\": \"legacy-experimental.1\"", state);
+        var stateRoot = state.RootElement;
+        Assert.Equal("legacy-experimental.1", stateRoot.GetProperty("behaviorPolicyVersion").GetString());
+        Assert.False(stateRoot.GetProperty("behaviorChange").GetBoolean());
+        Assert.Equal("F2.3", stateRoot.GetProperty("currentPhase").GetString());
+        Assert.Equal("E", stateRoot.GetProperty("nextRecommendedPhase").GetString());
+        var phases = stateRoot.GetProperty("phases").EnumerateArray().ToArray();
+        Assert.Equal("BLOCKED", phases.Single(x => x.GetProperty("id").GetString() == "F2.ACQ")
+            .GetProperty("status").GetString());
+        Assert.Equal("NOT_AUTHORIZED", phases.Single(x => x.GetProperty("id").GetString() == "E")
+            .GetProperty("authorization").GetString());
+        Assert.Equal("CONTINUE_CONDITIONALLY", stateRoot.GetProperty("researchBranches")[0]
+            .GetProperty("decision").GetString());
         Assert.Contains("Current phase: F2.3", readme);
         Assert.Contains("Current phase: F2.3", status);
-        Assert.Contains("Next recommended phase: F2.ACQ", readme);
-        Assert.Contains("Next recommended phase: F2.ACQ", status);
-        Assert.Contains("Tests: 446 passed / 0 failed / 0 skipped", readme);
-        Assert.Contains("Tests: 446 passed / 0 failed / 0 skipped", status);
+        Assert.Contains("Next actionable research candidate: E", readme);
+        Assert.Contains("Next actionable research candidate: E", status);
+        Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", readme);
+        Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", status);
+        Assert.Contains("Tests: 455 passed / 0 failed / 0 skipped", readme);
+        Assert.Contains("Tests: 455 passed / 0 failed / 0 skipped", status);
     }
 
     private static string FindRepositoryRoot([CallerFilePath] string sourceFile = "")

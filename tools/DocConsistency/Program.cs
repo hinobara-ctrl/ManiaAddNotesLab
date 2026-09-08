@@ -74,11 +74,12 @@ void ValidateCanonicalState(ProjectState value)
     RequireValue(value.BehaviorPolicyVersion, "behaviorPolicyVersion");
     RequireValue(value.EvidenceProfileVersion, "evidenceProfileVersion");
     RequireValue(value.DiagnosticVersion, "diagnosticVersion");
+    if (value.BehaviorChange) errors.Add("behaviorChange must remain false for the current documented state.");
     RequireValue(value.CurrentPhase, "currentPhase");
     RequireValue(value.NextRecommendedPhase, "nextRecommendedPhase");
 
     var validStatuses = new HashSet<string>(StringComparer.Ordinal)
-        { "COMPLETE", "HOLD", "REJECTED", "NEXT", "DEFERRED", "PENDING" };
+        { "COMPLETE", "HOLD", "REJECTED", "NEXT", "DEFERRED", "PENDING", "BLOCKED" };
     var duplicateIds = value.Phases.GroupBy(x => x.Id, StringComparer.Ordinal)
         .Where(x => x.Count() > 1).Select(x => x.Key);
     foreach (var id in duplicateIds) errors.Add($"Duplicate phase id: {id}.");
@@ -108,7 +109,23 @@ void ValidateCanonicalState(ProjectState value)
     if (value.Phases.Count(x => x.Status == "NEXT") != 1)
         errors.Add("Exactly one phase must have status NEXT.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
+    var f2Branches = (value.ResearchBranches ?? []).Where(x => x.Id == "F2").ToArray();
+    var branch = f2Branches.SingleOrDefault();
+    if (f2Branches.Length != 1) errors.Add("researchBranches must describe F2 exactly once.");
+    else if (branch is not null)
+    {
+        if (branch.Decision != "CONTINUE_CONDITIONALLY")
+            errors.Add("F2 branch decision must be CONTINUE_CONDITIONALLY.");
+        var blocker = value.Phases.FirstOrDefault(x => x.Id == branch.BlockedBy);
+        if (blocker?.Status != "BLOCKED")
+            errors.Add($"F2 blocker {branch.BlockedBy} must exist with status BLOCKED.");
+        if (value.NextRecommendedPhase == branch.BlockedBy)
+            errors.Add("A blocked prerequisite cannot also be the next actionable research phase.");
+    }
+    if (next?.Authorization != "NOT_AUTHORIZED")
+        errors.Add($"Next actionable phase {next?.Id} must be explicitly NOT_AUTHORIZED.");
+
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "E", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -298,28 +315,26 @@ void ValidateMasterStateBlocks(ProjectState value)
 {
     var current = value.Phases.FirstOrDefault(x => x.Id == value.CurrentPhase);
     var next = value.Phases.FirstOrDefault(x => x.Id == value.NextRecommendedPhase);
-    var testSnapshot = $"Tests: {value.TestStatus.Passed} passed / {value.TestStatus.Failed} failed / {value.TestStatus.Skipped} skipped";
+    var branch = (value.ResearchBranches ?? []).FirstOrDefault(x => x.Id == "F2");
+    var blocker = value.Phases.FirstOrDefault(x => x.Id == branch?.BlockedBy);
+    if (current is null || next is null || branch is null || blocker is null) return;
+    var expectation = new DocumentationStateExpectation(current.Id, current.Status, current.Outcome,
+        next.Id, next.Name, next.Authorization ?? string.Empty, blocker.Id, blocker.Status,
+        branch.Id, branch.Decision, value.BehaviorPolicyVersion,
+        value.BehaviorChange ? "true" : "none", value.TestStatus.Passed,
+        value.TestStatus.Failed, value.TestStatus.Skipped);
     foreach (var document in new[] { "README.md", "PROJECT_STATUS.md" })
     {
+        var markdown = File.Exists(Path.Combine(root, document))
+            ? File.ReadAllText(Path.Combine(root, document)) : string.Empty;
+        errors.AddRange(DocumentationStateGuard.ValidateStateBlock(document, markdown, expectation));
         var block = ReadStateBlock(document);
         if (block is null) continue;
-        if (current is not null)
-        {
-            CheckBlockContains(document, block, $"Current phase: {current.Id}", "currentPhase value");
-            CheckBlockContains(document, block, current.Status, "current phase status");
-            if (current.Outcome is not null)
-                CheckNormalizedBlockContains(document, block, current.Outcome, "current phase outcome");
-        }
-        if (next is not null)
-        {
-            CheckBlockContains(document, block, $"Next recommended phase: {next.Id}", "nextRecommendedPhase value");
-            CheckBlockContains(document, block, next.Name, "next recommended phase name");
-        }
-        CheckBlockContains(document, block, $"Behavior policy: `{value.BehaviorPolicyVersion}`", "behavior policy value");
         CheckBlockContains(document, block, $"Evidence profile: `{value.EvidenceProfileVersion}`", "evidence profile value");
         CheckBlockContains(document, block, $"Diagnostic schema: `{value.DiagnosticVersion}`", "diagnostic value");
-        CheckBlockContains(document, block, testSnapshot, "testStatus value");
     }
+    errors.AddRange(DocumentationStateGuard.ValidateRoadmap(
+        File.ReadAllText(Path.Combine(root, "ROADMAP.md")), expectation));
 }
 
 void ValidatePhaseSummaries(ProjectState value)
@@ -367,8 +382,7 @@ void CheckPhaseRow(string relative, PhaseState phase)
         errors.Add($"Missing phase summary: {relative}");
         return;
     }
-    var row = File.ReadLines(path).FirstOrDefault(line =>
-        line.StartsWith('|') && line.Contains($"{phase.Id} —", StringComparison.Ordinal));
+    var row = DocumentationStateGuard.FindPhaseRow(File.ReadAllText(path), phase.Id);
     if (row is null)
     {
         errors.Add($"{relative} has no summary row for phase {phase.Id}.");
@@ -438,12 +452,6 @@ void CheckBlockContains(string relative, string block, string expected, string m
         errors.Add($"{relative} PROJECT-STATE block does not reflect {meaning}: {expected}");
 }
 
-void CheckNormalizedBlockContains(string relative, string block, string expected, string meaning)
-{
-    if (!Normalize(block).Contains(Normalize(expected), StringComparison.Ordinal))
-        errors.Add($"{relative} PROJECT-STATE block does not reflect {meaning}: {expected}");
-}
-
 static string Normalize(string value) => new(value.Where(char.IsLetterOrDigit)
     .Select(char.ToUpperInvariant).ToArray());
 
@@ -460,14 +468,18 @@ sealed record ProjectState(
     string BehaviorPolicyVersion,
     string EvidenceProfileVersion,
     string DiagnosticVersion,
+    bool BehaviorChange,
     IReadOnlyList<PhaseState> Phases,
+    IReadOnlyList<BranchState> ResearchBranches,
     string CurrentPhase,
     string NextRecommendedPhase,
     TestState TestStatus,
     CorpusState ValidationCorpus,
     IReadOnlyList<string> MasterDocuments);
 
-sealed record PhaseState(string Id, string Name, string Status, string? Outcome, bool? BehaviorChange, string? Report);
+sealed record PhaseState(string Id, string Name, string Status, string? Outcome, bool? BehaviorChange,
+    string? Report, string? Authorization, string? BlockedReason);
+sealed record BranchState(string Id, string Decision, string BlockedBy);
 sealed record TestState(int Passed, int Failed, int Skipped);
 sealed record CorpusState(
     int Families,

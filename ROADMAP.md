@@ -14,13 +14,13 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | D0.1 — Exact completion competition context | ✅ **COMPLETE — OUTCOME A** | Contexto exacto discrimina miles de alternatives, con cobertura decreciente explícita. |
 | D0.2 — Exact Context Coverage and View Agreement | ✅ **COMPLETE — OUTCOME A** | Agreement, conflict, donor overlap y joint witness exactos son reconstruibles; sin authority. |
 | D1 — Resulting-state chords | ⏳ Pending | Validar el estado vertical conjunto y evitar acumulación sin soporte. |
-| E — Adaptive context | ⏳ Pending | Comparar recurrencia y segmentación en shadow antes de elegir secciones. |
+| E — Adaptive Context Prototypes / Shadow | ➡️ **NEXT ACTIONABLE CANDIDATE / NOT_AUTHORIZED** | Comparar recurrencia y segmentación en shadow sólo tras autorización separada; no iniciada. |
 | F1 — Comparable-context Resolver / Shadow + Validation | ✅ **COMPLETE — OUTCOME A** | Support, mismatch, no-context y ambiguity son reconstruibles por candidate sin selection conductual. |
 | F2 — Typed gaps and evidence backoff A/B | ✅ **COMPLETE — OUTCOME B — SHADOW ONLY** | Identity/backoff exactos son auditables, pero 2/50.762 support y cero global impiden conectar A/B. |
 | F2.1 — Exact Gap Timing Identity / Shadow Validation | ✅ **COMPLETE — OUTCOME C — SHADOW ONLY** | El archivo no permite recuperar equivalencia nominal general sin inferencia de quantization; sin conducta. |
 | F2.2 — Quantization Inference Feasibility / Research Design | ✅ **COMPLETE — OUTCOME B — RESEARCH/SHADOW ONLY** | Forward compatibility es formalizable bajo domain explícito; domain mapper-derived y labels humanos siguen ausentes. |
 | F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design | ✅ **COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY** | Domain/truth methodology válida; falta un package mapper-authored pre-export independiente. |
-| F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite | ➡️ **NEXT / NOT AUTHORIZED YET** | Obtener y congelar design/validation packages antes de cualquier quantizer phase. |
+| F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite | ⛔ **BLOCKED / CONDITIONAL ON EXTERNAL DATA** | Requiere package pre-export mapper-authored autorizado; no es trabajo accionable actual. |
 | G1 — Interior relations | ⏳ Pending | Separar y validar relaciones contained, crossing y equal-end. |
 | G2 — Causal articulation | ⏳ Pending | Articular sólo cuando blockers originales y evidencia retrigger lo justifiquen. |
 | H — ParentArticulationPlan | ⏳ Pending | Investigar múltiples cortes como un plan atómico y válido. |

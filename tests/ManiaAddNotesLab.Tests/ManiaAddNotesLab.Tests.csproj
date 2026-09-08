@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ManiaAddNotesLab.Core\ManiaAddNotesLab.Core.csproj" />
     <Compile Include="..\..\tools\DocConsistency\RepositoryRootGuard.cs" Link="RepositoryRootGuard.cs" />
+    <Compile Include="..\..\tools\DocConsistency\DocumentationStateGuard.cs" Link="DocumentationStateGuard.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\samples\*.osu" Link="samples\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
