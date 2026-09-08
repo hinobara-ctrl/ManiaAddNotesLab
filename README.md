@@ -24,16 +24,17 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase F2 — COMPLETE, OUTCOME B, SHADOW ONLY:** typed gaps/backoff exactos son auditables, pero la cobertura no permite conectar A/B.
 - **Phase F2.1 — COMPLETE, OUTCOME C, SHADOW ONLY:** no existe una equivalencia temporal nominal general recuperable sin inferir quantization ausente del archivo.
 - **Phase F2.2 — COMPLETE, OUTCOME B, RESEARCH/SHADOW ONLY:** la inferencia forward es falsable bajo un domain finito explícito, pero el proyecto no puede justificar ese domain desde el mapper ni medir accuracy humana sin labels.
+- **Phase F2.3 — COMPLETE, OUTCOME B, CONTINUE CONDITIONALLY:** domain hashing y truth completa son auditables, pero falta un package mapper-authored pre-export independiente.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–F2.2 no gobiernan el selector. F2.2 formalizó `Serialize(latent, timingMap) == timestamp` y conserva conjuntos empty/singleton/multiple bajo un domain visible. Dos posiciones latentes distintas pueden producir el mismo timestamp; cambiar el vocabulario puede cambiar unique a ambiguous. No existe policy de quantization. F2.3 es sólo una recomendación para resolver domain/ground truth; D1 tampoco está autorizado y C2 permanece deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–F2.3 no gobiernan el selector. F2.3 hace estable el contenido de un domain, evita ambiguity por aliases y define truth completa source→destination. La rama F2 sólo puede continuar si se obtiene un package pre-export mapper-authored y se separan design/validation sets. No existe policy de quantization. `F2.ACQ` es un prerequisite recomendado, no autorizado; D1 tampoco está autorizado y C2 permanece deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: F2.2 — COMPLETE — OUTCOME B — RESEARCH/SHADOW ONLY<br>
-Next recommended phase: F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design<br>
+Current phase: F2.3 — COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY<br>
+Next recommended phase: F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite<br>
 Behavior policy: `legacy-experimental.1`<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 415 passed / 0 failed / 0 skipped
+Tests: 446 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

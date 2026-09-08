@@ -114,6 +114,10 @@ public sealed class PhaseF22QuantizationInferenceFeasibilityTests
     {
         var set = Evaluate(250, Domain("external-finite-v1", C("half", .5m)), Model(500));
         Assert.Equal("external-finite-v1", set.Assumptions.HypothesisDomainId);
+        Assert.Equal(set.Assumptions.HypothesisDomainHash,
+            Domain("external-finite-v1", C("half", .5m)).ContentHash);
+        Assert.Equal(QuantizationHypothesisDomain.CanonicalizationVersion,
+            set.Assumptions.HypothesisDomainCanonicalizationVersion);
         Assert.Equal(QuantizationHypothesisDomainSource.ExplicitExternalFiniteVocabulary,
             set.Assumptions.HypothesisDomainSource);
         Assert.Equal(QuantizationSerializationForwardModel.ModelVersion,
@@ -150,6 +154,59 @@ public sealed class PhaseF22QuantizationInferenceFeasibilityTests
             "Would require snaps to derive the snap vocabulary.");
         Assert.True(domain.IsCircular);
         Assert.True(Evaluate(250, domain, Model(500)).Assumptions.HypothesisDomainIsCircular);
+    }
+
+    [Fact]
+    public void DomainHashIsOrderIndependentAndDeterministic()
+    {
+        var left = Domain("same", C("half", .5m), C("quarter", .25m));
+        var right = Domain("same", C("quarter", .25m), C("half", .5m));
+        Assert.Equal(left.ContentHash, right.ContentHash);
+        Assert.Equal(left.ContentHash, Domain("same", C("half", .5m), C("quarter", .25m)).ContentHash);
+    }
+
+    [Fact]
+    public void SameDomainIdWithChangedSemanticContentHasDifferentHash()
+    {
+        Assert.NotEqual(Domain("foo", C("half", .5m)).ContentHash,
+            Domain("foo", C("half", .5m), C("quarter", .25m)).ContentHash);
+    }
+
+    [Fact]
+    public void AliasOnlyChangesDoNotChangeSemanticContentHash()
+    {
+        Assert.Equal(Domain("left", C("half", .5m)).ContentHash,
+            Domain("right", C("two_quarters", .5m)).ContentHash);
+    }
+
+    [Fact]
+    public void DuplicateAliasesAtSameBeatDoNotCreateFakeAmbiguity()
+    {
+        var domain = Domain("aliases", C("half", .5m), C("two_quarters", .5m));
+        var candidate = Assert.Single(domain.Candidates);
+        Assert.Equal(new[] { "half", "two_quarters" }, candidate.Aliases);
+        Assert.Equal(QuantizationCompatibilityState.UniqueUnderModel,
+            Evaluate(250, domain, Model(500)).State);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void DomainJustificationMustContainText(string? justification)
+    {
+        Assert.Throws<ArgumentException>(() => new QuantizationHypothesisDomain("invalid",
+            QuantizationHypothesisDomainSource.ExplicitExternalFiniteVocabulary,
+            [C("half", .5m)], justification!));
+    }
+
+    [Fact]
+    public void ValidDomainJustificationIsPreserved()
+    {
+        var domain = new QuantizationHypothesisDomain("valid",
+            QuantizationHypothesisDomainSource.ExplicitExternalFiniteVocabulary,
+            [C("half", .5m)], "A declared external research condition.");
+        Assert.Equal("A declared external research condition.", domain.Justification);
     }
 
     [Fact]

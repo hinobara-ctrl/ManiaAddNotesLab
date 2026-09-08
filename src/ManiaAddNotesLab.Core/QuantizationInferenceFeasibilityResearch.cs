@@ -33,32 +33,59 @@ public enum SyntheticCompatibilityTruthState
     UnsupportedUnderModel
 }
 
-public sealed record LatentTimingCandidate(string Id, decimal BeatPosition);
+public sealed record LatentTimingCandidate(
+    string Id,
+    decimal BeatPosition,
+    ImmutableArray<string> Aliases = default);
 
 /// <summary>An explicit, finite research assumption. There is deliberately no default vocabulary.</summary>
 public sealed class QuantizationHypothesisDomain
 {
+    public const string CanonicalizationVersion = "latent-beat-coordinate.1";
+
     public QuantizationHypothesisDomain(string id, QuantizationHypothesisDomainSource source,
         IEnumerable<LatentTimingCandidate> candidates, string justification)
     {
         if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("A domain id is required.", nameof(id));
         ArgumentNullException.ThrowIfNull(candidates);
+        if (string.IsNullOrWhiteSpace(justification))
+            throw new ArgumentException("A non-empty domain justification is required.", nameof(justification));
+        var supplied = candidates.ToArray();
+        if (supplied.Any(x => string.IsNullOrWhiteSpace(x.Id)))
+            throw new ArgumentException("Every latent candidate requires a label.", nameof(candidates));
+        var conflictingAliases = supplied.GroupBy(x => x.Id, StringComparer.Ordinal)
+            .Where(group => group.Select(x => x.BeatPosition).Distinct().Count() > 1)
+            .Select(group => group.Key).ToArray();
+        if (conflictingAliases.Length > 0)
+            throw new ArgumentException("A candidate label cannot identify multiple latent coordinates.",
+                nameof(candidates));
         Id = id;
         Source = source;
-        Justification = justification ?? string.Empty;
-        Candidates = candidates.OrderBy(x => x.BeatPosition).ThenBy(x => x.Id, StringComparer.Ordinal)
+        Justification = justification;
+        Candidates = supplied.GroupBy(x => x.BeatPosition)
+            .Select(group =>
+            {
+                var aliases = group.SelectMany(x => x.Aliases.IsDefaultOrEmpty
+                        ? [x.Id] : x.Aliases.Add(x.Id))
+                    .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToImmutableArray();
+                return new LatentTimingCandidate(aliases[0], group.Key, aliases);
+            })
+            .OrderBy(x => x.BeatPosition).ThenBy(x => x.Id, StringComparer.Ordinal)
             .ToImmutableArray();
-        if (Candidates.Any(x => string.IsNullOrWhiteSpace(x.Id)))
-            throw new ArgumentException("Every latent candidate requires an id.", nameof(candidates));
-        if (Candidates.Select(x => x.Id).Distinct(StringComparer.Ordinal).Count() != Candidates.Length)
-            throw new ArgumentException("Latent candidate ids must be unique within a domain.", nameof(candidates));
+        var canonical = string.Join(";", Candidates.Select(x => CanonicalBeat(x.BeatPosition)));
+        ContentHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(
+            $"{CanonicalizationVersion}|{canonical}"))).ToLowerInvariant();
     }
 
     public string Id { get; }
     public QuantizationHypothesisDomainSource Source { get; }
     public string Justification { get; }
     public ImmutableArray<LatentTimingCandidate> Candidates { get; }
+    public string ContentHash { get; }
     public bool IsCircular => Source == QuantizationHypothesisDomainSource.ObservedDenominatorsCircular;
+
+    public static string SemanticIdentity(decimal beatPosition) => $"beat:{CanonicalBeat(beatPosition)}";
+    private static string CanonicalBeat(decimal value) => value.ToString("G29", CultureInfo.InvariantCulture);
 }
 
 public sealed record QuantizationObservedEndpoint(
@@ -70,6 +97,8 @@ public sealed record QuantizationObservedEndpoint(
 
 public sealed record QuantizationInferenceAssumptionCertificate(
     string HypothesisDomainId,
+    string HypothesisDomainHash,
+    string HypothesisDomainCanonicalizationVersion,
     QuantizationHypothesisDomainSource HypothesisDomainSource,
     bool HypothesisDomainIsCircular,
     string SerializationModelVersion,
@@ -77,6 +106,8 @@ public sealed record QuantizationInferenceAssumptionCertificate(
 
 public sealed record QuantizationModelCompatibility(
     string CandidateId,
+    string SemanticIdentity,
+    ImmutableArray<string> CandidateAliases,
     decimal AssumedLatentBeatPosition,
     int ForwardSerializedTimestamp);
 
@@ -141,7 +172,7 @@ public sealed class QuantizationSerializationForwardModel
 /// </summary>
 public static class QuantizationInferenceFeasibilityResearch
 {
-    public const string ResearchSchemaVersion = "phase-f2-2-quantization-feasibility.1";
+    public const string ResearchSchemaVersion = "phase-f2-2-quantization-feasibility.2";
 
     public static QuantizationCompatibilitySet Evaluate(QuantizationObservedEndpoint observation,
         QuantizationHypothesisDomain domain, QuantizationSerializationForwardModel serializer)
@@ -149,13 +180,15 @@ public static class QuantizationInferenceFeasibilityResearch
         ArgumentNullException.ThrowIfNull(observation);
         ArgumentNullException.ThrowIfNull(domain);
         ArgumentNullException.ThrowIfNull(serializer);
-        var certificate = new QuantizationInferenceAssumptionCertificate(domain.Id, domain.Source,
-            domain.IsCircular, QuantizationSerializationForwardModel.ModelVersion, serializer.TimingMapVersion);
+        var certificate = new QuantizationInferenceAssumptionCertificate(domain.Id, domain.ContentHash,
+            QuantizationHypothesisDomain.CanonicalizationVersion, domain.Source, domain.IsCircular,
+            QuantizationSerializationForwardModel.ModelVersion, serializer.TimingMapVersion);
         if (!observation.InferenceApplicable)
             return new QuantizationCompatibilitySet(observation, certificate,
                 QuantizationCompatibilityState.InferenceNotApplicable, []);
         var compatible = domain.Candidates.Select(candidate => new QuantizationModelCompatibility(
-                candidate.Id, candidate.BeatPosition, serializer.Serialize(candidate.BeatPosition)))
+                candidate.Id, QuantizationHypothesisDomain.SemanticIdentity(candidate.BeatPosition),
+                candidate.Aliases, candidate.BeatPosition, serializer.Serialize(candidate.BeatPosition)))
             .Where(x => x.ForwardSerializedTimestamp == observation.SerializedTimestamp)
             .OrderBy(x => x.AssumedLatentBeatPosition).ThenBy(x => x.CandidateId, StringComparer.Ordinal)
             .ToImmutableArray();
@@ -173,7 +206,9 @@ public static class QuantizationInferenceFeasibilityResearch
     {
         ArgumentNullException.ThrowIfNull(compatibility);
         var contains = compatibility.CompatibleHypotheses.Any(x =>
-            string.Equals(x.CandidateId, latentTruthCandidateId, StringComparison.Ordinal));
+            string.Equals(x.CandidateId, latentTruthCandidateId, StringComparison.Ordinal)
+            || string.Equals(x.SemanticIdentity, latentTruthCandidateId, StringComparison.Ordinal)
+            || x.CandidateAliases.Contains(latentTruthCandidateId, StringComparer.Ordinal));
         return compatibility.State switch
         {
             QuantizationCompatibilityState.UnsupportedUnderModel =>

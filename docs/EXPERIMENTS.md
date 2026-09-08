@@ -140,6 +140,16 @@ dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f2-2-synth
 
 Regenera diez CSV `f2_2_*`: modelos, serializer, collisions, domains, compatibility, truth, ambiguity, timing, endpoint holdout y rice sentinel. El detail permanece local e ignorado. El corpus humano quedó NOT RUN porque carece de latent labels y no puede validar intent accuracy ni autorizar el vocabulario.
 
+## F2.3 — Domain and labeled ground truth
+
+F2.3 está cerrado **Outcome B / CONTINUE CONDITIONALLY**. Canoniza domains, deduplica aliases semánticos, exige justification y modela truth completa source→destination. El pilot es programmatic synthetic y queda etiquetado como construido desde truth; no se usa como human validation.
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f2-3-synthetic docs .artifacts/f2-3/f2_3_detail.json
+```
+
+Regenera diez CSV `f2_3_*`: catalog, hashes, truth sources/schema, circularity, validation, acquisition, transitions, rice y branch decision. El corpus humano quedó NOT RUN. La rama sólo puede continuar mediante el prerequisite F2.ACQ y un package mapper-authored pre-export autorizado; no existe F2.4 ni quantizer.
+
 ## Checklist
 
 - Context burst: densidad contextual OFF/ON.

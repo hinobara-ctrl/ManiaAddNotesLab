@@ -1,0 +1,9 @@
+fixture,transition_kind,keymode,timing_condition,source_endpoint,destination_endpoint,source_latent,destination_latent,latent_gap,source_ms,destination_ms
+tap_tap_integral,TapHeadToTapHead,1K,single_redline,TapHead,TapHead,0.5,1,0.5,250,500
+tap_ln_non_integral,TapHeadToLongNoteHead,4K,single_redline,TapHead,LongNoteHead,0.5,1,0.5,250,499
+release_tap,LongNoteReleaseToTapHead,7K,single_redline,LongNoteRelease,TapHead,0.5,1,0.5,250,500
+release_ln,LongNoteReleaseToLongNoteHead,10K,single_redline,LongNoteRelease,LongNoteHead,0.5,1,0.5,250,499
+release_ln_18k,LongNoteReleaseToLongNoteHead,18K,single_redline,LongNoteRelease,LongNoteHead,0.5,1,0.5,250,500
+redundant_redline,TapHeadToTapHead,4K,redundant_redline,TapHead,TapHead,1.5,2.5,1.0,750,1250
+real_bpm_change,TapHeadToTapHead,7K,real_bpm_change,TapHead,TapHead,1.5,3,1.5,750,1250
+ln_crossing_bpm,LongNoteReleaseToTapHead,7K,ln_crossing_bpm,LongNoteRelease,TapHead,2.5,3,0.5,1125,1250
