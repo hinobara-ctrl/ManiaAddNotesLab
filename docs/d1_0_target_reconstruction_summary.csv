@@ -1,0 +1,9 @@
+view,eligible,comparable,target_joint_unique,target_joint_among_alternatives,target_absent,no_comparable
+ReducedOnly,42048,41474,484,36628,4362,574
+ReducedHeld,42048,38382,1957,30029,6396,3666
+ReducedPrevious,42048,31741,4110,17574,10057,10307
+ReducedPreviousTransition,42048,22727,4500,10229,7998,19321
+ReducedNext,42048,31828,4172,17587,10069,10220
+ReducedNextTransition,42048,22837,4137,10487,8213,19211
+ReducedPrevNext,42048,8452,4911,1331,2210,33596
+ReducedHeldPrevNext,42048,7900,4828,1241,1831,34148

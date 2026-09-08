@@ -28,11 +28,11 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase E — COMPLETE, OUTCOME B, SHADOW ONLY:** existe recurrencia exacta útil y boundaries localmente estables, pero mismatch, abstención y sensibilidad impiden promover una representación.
 - **Phase E.1 — COMPLETE, OUTCOME B, SHADOW ONLY:** 99,51% de NoContext es ausencia exacta; spacing correlaciona débilmente y su refinement destruye coverage, por lo que la rama recurrence queda aparcada.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–E.1 no gobiernan el selector. La rama F2 sigue `CONTINUE_CONDITIONALLY` y `F2.ACQ` continúa bloqueado. E.1 aparca el refinamiento de recurrence sin fuzzy fallback. La siguiente recomendación de investigación es **D1.0 — Resulting-State Composition Feasibility / Shadow**, sólo `NEXT / NOT_AUTHORIZED` y sin cambio conductual. La fase histórica **D1 — ChordCompletion Resulting-State A/B** permanece futura, conductual, versionada y también `NOT_AUTHORIZED`; D1.0 no la autoriza. C2 permanece deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–D1.0 no gobiernan el selector. D1.0 cerró Outcome A: un par soportado marginalmente no siempre posee un joint witness en una misma occurrence original. La siguiente recomendación research-only es **D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow**, `NEXT / NOT_AUTHORIZED`. La fase histórica **D1 — ChordCompletion Resulting-State A/B** permanece futura, conductual y también `NOT_AUTHORIZED`; ningún cierre research la autoriza. F2.ACQ sigue bloqueado y C2 deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: E.1 — COMPLETE — OUTCOME B<br>
-Next actionable research candidate: D1.0 — Resulting-State Composition Feasibility / Shadow<br>
+Current phase: D1.0 — COMPLETE — OUTCOME A<br>
+Next actionable research candidate: D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow<br>
 Next actionable authorization: NOT_AUTHORIZED<br>
 Next behavioral phase: D1 — ChordCompletion Resulting-State A/B<br>
 Next behavioral authorization: NOT_AUTHORIZED<br>
@@ -42,7 +42,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 518 passed / 0 failed / 0 skipped
+Tests: 550 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

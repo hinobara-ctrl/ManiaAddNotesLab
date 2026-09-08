@@ -36,7 +36,7 @@ E.1 añade `ExactRecurrenceFailureResearch` sobre esa serie, sin alterar `exact-
 
 ### Resulting-state phase contracts
 
-D1.0 y D1 son contratos distintos. **D1.0 — Resulting-State Composition Feasibility / Shadow** es investigación diagnóstica sin conducta: debe comprobar si múltiples completion members poseen un mismo joint witness original, porque soporte individual no implica soporte de composición. **D1 — ChordCompletion Resulting-State A/B** conserva el contrato histórico conductual, versionado y con rollback legacy. D1.0 es un prerequisite de factibilidad; aun si concluye favorablemente, no autoriza D1 ni conecta su evidencia a generation.
+D1.0 y D1 son contratos distintos. **D1.0 — Resulting-State Composition Feasibility / Shadow** cerró Outcome A sin conducta: `CompletionSetIdentity` y `ResultingHeadStateIdentity` representan composiciones canónicas, mientras `ObservedJointCompletionSet` exige una misma occurrence original elegible. El pair holdout excluye el grupo target completo y separa hard invalidity, abstención, soporte marginal y joint evidence. **D1.GATE** queda como siguiente investigación no autorizada para diseñar el contrato de un experimento; **D1 — ChordCompletion Resulting-State A/B** conserva el contrato histórico conductual, versionado y con rollback legacy. Ninguna de estas capas conecta evidencia a generation.
 
 ```text
 member support (marginal) != completion-set support (joint occurrence)

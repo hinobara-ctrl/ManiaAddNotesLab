@@ -1,0 +1,9 @@
+view,marginal_pair_candidates,eligible_marginal_pairs,hard_invalid_pairs,joint_observed_pairs,marginal_only_pairs
+ReducedOnly,1387156,1283958,103198,909438,374520
+ReducedHeld,678384,640390,37994,415005,225385
+ReducedPrevious,284578,270302,14276,132961,137341
+ReducedPreviousTransition,100775,99235,1540,63547,35688
+ReducedNext,283401,269447,13954,136150,133297
+ReducedNextTransition,106995,105146,1849,66033,39113
+ReducedPrevNext,13808,13781,27,11084,2697
+ReducedHeldPrevNext,12534,12523,11,10234,2289

@@ -133,7 +133,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -177,7 +177,7 @@ void ValidatePhaseContracts(ProjectState value)
             $"canonical phase contract {contract.Id}");
     }
 
-    foreach (var required in new[] { "D1.0", "D1", "F2.ACQ", "C2" })
+    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "F2.ACQ", "C2" })
         if (value.PhaseContracts.All(x => x.Id != required))
             errors.Add($"Required canonical phase contract is absent: {required}.");
 
@@ -278,6 +278,33 @@ void ValidateFilesAndIndex(ProjectState value)
         {
             RequireFile(artifact, "D0.2 closure artifact");
             CheckContains("DOCUMENTATION_INDEX.md", artifact, "D0.2 closure artifact index entry");
+        }
+    }
+
+    var d10 = value.Phases.FirstOrDefault(x => x.Id == "D1.0");
+    if (d10?.Status == "COMPLETE")
+    {
+        foreach (var artifact in new[]
+        {
+            "docs/PHASE_D1_0_PRE_HUMAN_DESIGN.md",
+            "docs/PHASE_D1_0_RESULTING_STATE_COMPOSITION_FEASIBILITY_REPORT.md",
+            "docs/d1_0_phase_d0_reproduction.csv",
+            "docs/d1_0_synthetic_gate_summary.csv",
+            "docs/d1_0_target_reconstruction_summary.csv",
+            "docs/d1_0_marginal_joint_summary.csv",
+            "docs/d1_0_composition_trap_summary.csv",
+            "docs/d1_0_context_view_summary.csv",
+            "docs/d1_0_chart_summary.csv",
+            "docs/d1_0_family_summary.csv",
+            "docs/d1_0_stratification_summary.csv",
+            "docs/d1_0_pair_type_summary.csv",
+            "docs/d1_0_reduced_state_summary.csv",
+            "docs/d1_0_leakage_summary.csv",
+            "docs/d1_0_order_invariance_summary.csv"
+        })
+        {
+            RequireFile(artifact, "D1.0 closure artifact");
+            CheckContains("DOCUMENTATION_INDEX.md", artifact, "D1.0 closure artifact index entry");
         }
     }
 

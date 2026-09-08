@@ -1,0 +1,8 @@
+audit,correct_count,positive_control_count
+target_whole_group_leakage,0,1
+target_observation_leakage,0,N/A
+future_held_leakage,0,N/A
+synthetic_teaching,0,N/A
+cross_chart_evidence,0,N/A
+held_tail_as_head,0,N/A
+joint_witness_cross_occurrence_leakage,0,1

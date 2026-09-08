@@ -1,0 +1,7 @@
+reduced_head_count,trials,reduced_only_comparable,reduced_only_joint_unique,reduced_only_joint_alternatives,reduced_only_absent,reduced_only_no_context
+0,6912,6912,0,6861,51,0
+1,13143,13143,5,12238,900,0
+2,15330,15302,114,13152,2036,28
+3,5400,5143,77,3903,1163,257
+4,780,583,118,287,178,197
+5,483,391,170,187,34,92

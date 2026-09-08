@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D0–F2.1 permanecen separados de generation con schemas research propios.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D0–D1.0 y las ramas F/E permanecen separados de generation con schemas research propios.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -19,7 +19,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | D0.2 — Exact Context Coverage and View Agreement | **COMPLETE — OUTCOME A** | Ninguno; separa agreement, donor overlap y joint witness exacto. |
 | E — Adaptive Context Prototypes / Shadow | **COMPLETE — OUTCOME B** | Ninguno; recurrence y boundaries son research-only y no gobiernan contexto. |
 | E.1 — Exact Recurrence Failure Stratification / Shadow | **COMPLETE — OUTCOME B** | Ninguno; explica exact absence, multiplicity y refinements sin cambiar el resolver. |
-| D1.0 — Resulting-State Composition Feasibility / Shadow | **NEXT / NOT_AUTHORIZED** | Ninguno; prerequisite research-only para auditar soporte conjunto. |
+| D1.0 — Resulting-State Composition Feasibility / Shadow | **COMPLETE — OUTCOME A / NOT_AUTHORIZED** | Ninguno; distingue joint witness de soporte marginal. |
+| D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow | **NEXT / NOT_AUTHORIZED** | Ninguno; sólo pre-registra un eventual A/B y su rollback. |
 | D1 — ChordCompletion Resulting-State A/B | **FUTURE / NOT_AUTHORIZED** | Sí cuando se autorice: fase conductual versionada separada de D1.0. |
 | F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
 | F2 — Typed gaps and evidence backoff A/B | **COMPLETE — OUTCOME B — SHADOW ONLY** | Ninguno; identity/backoff exactos válidos, coverage insuficiente para A/B. |
@@ -58,6 +59,12 @@ F2 shadow tipa spacing same-lane como TapHead/LongNoteRelease → TapHead/LongNo
 F2.2 añade un forward serializer research-only y domains finitos obligatoriamente explícitos. Cada resultado conserva assumption certificate y cardinalidad `UnsupportedUnderModel`, `UniqueUnderModel` o `AmbiguousUnderModel`; nunca selecciona un snap. El hardening previo reemplazó el leakage literal F2.1 por violations medidas con provenance.
 
 F2.3 endurece domains con content hash, identidad semántica por coordinate y justification obligatoria. Añade truth completa source→destination con LN head/release separados, taxonomías de source/circularity y un evaluator descriptivo. El pilot es exclusivamente sintético; no existen human latent labels.
+
+### Resultado D1.0
+
+D1.0 evaluó 42.048 pair holdouts exhaustivos en los mismos 11 charts/familias 4K–7K–10K. En `ReducedOnly`, 37.112 targets tuvieron el par exacto observado conjuntamente; 2.913 tuvieron ambos members soportados marginalmente pero nunca juntos en una occurrence donor válida. Entre 1.283.958 pares hipotéticos estructuralmente elegibles, 374.520 fueron marginal-only. La diferencia aparece en 10/11 familias y el joint support en todas.
+
+Whole-group, target-observation, future-held, synthetic, cross-chart, held-tail-as-head y cross-occurrence leakage midieron cero. Dos controles positivos inválidos dispararon como estaba previsto, el orden canónico tuvo cero violaciones y una repetición completa produjo artifacts byte-identical. Es **OUTCOME A de factibilidad representacional**, no una recomendación de aceptar o rechazar candidatos.
 
 ## Qué afecta realmente la generación
 
@@ -147,7 +154,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **518 passed, 0 failed, 0 skipped** tras el hardening pre-D1.0; E.1 cerró con 512 y el baseline E tenía 487.
+- `dotnet test -c Release`: **550 passed, 0 failed, 0 skipped** con D1.0; el hardening pre-D1.0 cerró con 518.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -167,11 +174,11 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. E.1 cerró Outcome B y aparca exact recurrence refinement. Se recomienda **D1.0 — Resulting-State Composition Feasibility / Shadow** como `NEXT / NOT_AUTHORIZED`: debe distinguir soporte marginal de evidencia conjunta sin cambiar generación. La fase histórica **D1 — ChordCompletion Resulting-State A/B** permanece `FUTURE / NOT_AUTHORIZED`, requiere prerequisites satisfactorios y autorización separada. C2 permanece **DEFERRED** y MapperSupport no está autorizado.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. D1.0 cerró Outcome A sin conducta. Se recomienda **D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow** como `NEXT / NOT_AUTHORIZED`: sólo puede pre-registrar semántica, métricas, rollback y stopping criteria de un eventual A/B. La fase histórica **D1 — ChordCompletion Resulting-State A/B** permanece `FUTURE / NOT_AUTHORIZED` y requiere autorización separada. C2 permanece **DEFERRED** y MapperSupport no está autorizado.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: E.1 — COMPLETE — OUTCOME B<br>
-Next actionable research candidate: D1.0 — Resulting-State Composition Feasibility / Shadow<br>
+Current phase: D1.0 — COMPLETE — OUTCOME A<br>
+Next actionable research candidate: D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow<br>
 Next actionable authorization: NOT_AUTHORIZED<br>
 Next behavioral phase: D1 — ChordCompletion Resulting-State A/B<br>
 Next behavioral authorization: NOT_AUTHORIZED<br>
@@ -181,7 +188,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 518 passed / 0 failed / 0 skipped
+Tests: 550 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
-Detalles y evidencia: [E.1](docs/PHASE_E_1_EXACT_RECURRENCE_FAILURE_STRATIFICATION_REPORT.md) y [E](docs/PHASE_E_ADAPTIVE_CONTEXT_PROTOTYPES_REPORT.md) describen los cierres más recientes. Los reports [F2.3](docs/PHASE_F2_3_QUANTIZATION_DOMAIN_GROUND_TRUTH_REPORT.md), [F2.2](docs/PHASE_F2_2_QUANTIZATION_INFERENCE_FEASIBILITY_REPORT.md), [F2.1](docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md), [F2](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md), [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md) y anteriores permanecen como evidencia histórica.
+Detalles y evidencia: [D1.0](docs/PHASE_D1_0_RESULTING_STATE_COMPOSITION_FEASIBILITY_REPORT.md) describe el cierre actual; [E.1](docs/PHASE_E_1_EXACT_RECURRENCE_FAILURE_STRATIFICATION_REPORT.md), [E](docs/PHASE_E_ADAPTIVE_CONTEXT_PROTOTYPES_REPORT.md) y los reports anteriores permanecen como evidencia histórica.

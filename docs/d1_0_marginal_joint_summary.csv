@@ -1,0 +1,9 @@
+view,pair_holdout_targets,both_target_members_marginal,target_set_joint,target_marginal_only
+ReducedOnly,42048,40025,37112,2913
+ReducedHeld,42048,33958,31986,1972
+ReducedPrevious,42048,24964,21684,3280
+ReducedPreviousTransition,42048,16636,14729,1907
+ReducedNext,42048,25016,21759,3257
+ReducedNextTransition,42048,16705,14624,2081
+ReducedPrevNext,42048,6581,6242,339
+ReducedHeldPrevNext,42048,6370,6069,301
