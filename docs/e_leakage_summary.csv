@@ -1,0 +1,2 @@
+scope,charts,target_observation_leakage,target_event_group_leakage,target_block_leakage,synthetic_teaching,cross_chart_evidence,bad_positive_control
+global,11,0,0,0,0,0,1

@@ -28,8 +28,7 @@ public static class DocumentationStateGuard
         var fields = ParseStateBlock(documentName, markdown, errors);
         if (fields is null) return errors.ToImmutable();
         var currentValue = $"{expected.CurrentPhaseId} — {expected.CurrentPhaseStatus}"
-            + (expected.CurrentPhaseOutcome is null ? string.Empty : $" — OUTCOME {expected.CurrentPhaseOutcome}")
-            + $" — {expected.BranchDecision}";
+            + (expected.CurrentPhaseOutcome is null ? string.Empty : $" — OUTCOME {expected.CurrentPhaseOutcome}");
         EqualNormalized("Current phase", currentValue, "current phase");
         EqualNormalized("Next actionable research candidate",
             $"{expected.NextActionablePhaseId} — {expected.NextActionablePhaseName}",

@@ -8,9 +8,9 @@ public sealed class DocumentationStateGuardTests
     public void ConsistentLivingStateBlockPassesRegardlessOfFieldOrder()
     {
         var reordered = StateBlock()
-            .Replace("Current phase: F2.3 — COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY<br>\n", string.Empty)
+            .Replace("Current phase: E — COMPLETE — OUTCOME B<br>\n", string.Empty)
             .Replace("<!-- PROJECT-STATE:END -->",
-                "Current phase: F2.3 — COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY<br>\n<!-- PROJECT-STATE:END -->");
+                "Current phase: E — COMPLETE — OUTCOME B<br>\n<!-- PROJECT-STATE:END -->");
 
         var errors = DocumentationStateGuard.ValidateStateBlock("README.md", reordered, Expected);
         Assert.True(errors.IsEmpty, string.Join(Environment.NewLine, errors));
@@ -20,7 +20,7 @@ public sealed class DocumentationStateGuardTests
     public void StaleReadmeCurrentPhaseFails()
     {
         var errors = DocumentationStateGuard.ValidateStateBlock("README.md",
-            StateBlock().Replace("Current phase: F2.3", "Current phase: F2.2"), Expected);
+            StateBlock().Replace("Current phase: E", "Current phase: F2.3"), Expected);
 
         Assert.Contains(errors, error => error.Contains("current phase", StringComparison.Ordinal));
     }
@@ -38,18 +38,18 @@ public sealed class DocumentationStateGuardTests
     public void RoadmapStaleCurrentPhaseFails()
     {
         var errors = DocumentationStateGuard.ValidateRoadmap(
-            Roadmap().Replace("F2.3 — Current", "F2.2 — Current"), Expected);
+            Roadmap().Replace("E — Current", "F2.3 — Current"), Expected);
 
-        Assert.Contains(errors, error => error.Contains("current phase F2.3", StringComparison.Ordinal));
+        Assert.Contains(errors, error => error.Contains("current phase E", StringComparison.Ordinal));
     }
 
     [Fact]
     public void RoadmapStaleNextActionablePhaseFails()
     {
         var errors = DocumentationStateGuard.ValidateRoadmap(
-            Roadmap().Replace("E — Adaptive", "D1 — Adaptive"), Expected);
+            Roadmap().Replace("E.1 — Adaptive", "D1 — Adaptive"), Expected);
 
-        Assert.Contains(errors, error => error.Contains("next actionable phase E", StringComparison.Ordinal));
+        Assert.Contains(errors, error => error.Contains("next actionable phase E.1", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public sealed class DocumentationStateGuardTests
     public void TestSnapshotMismatchFails()
     {
         var errors = DocumentationStateGuard.ValidateStateBlock("README.md",
-            StateBlock().Replace("455 passed", "454 passed"), Expected);
+            StateBlock().Replace("487 passed", "486 passed"), Expected);
 
         Assert.Contains(errors, error => error.Contains("test snapshot", StringComparison.Ordinal));
     }
@@ -85,35 +85,35 @@ public sealed class DocumentationStateGuardTests
         var roadmap = Roadmap() + "\n| F2 — Parent | COMPLETE | Historical branch row. |";
 
         Assert.Empty(DocumentationStateGuard.ValidateRoadmap(roadmap, Expected));
-        Assert.Contains("E — Adaptive", DocumentationStateGuard.FindPhaseRow(roadmap, "E"));
+        Assert.Contains("E.1 — Adaptive", DocumentationStateGuard.FindPhaseRow(roadmap, "E.1"));
         Assert.Contains("F2.ACQ — Acquisition", DocumentationStateGuard.FindPhaseRow(roadmap, "F2.ACQ"));
         Assert.Contains("F2 — Parent", DocumentationStateGuard.FindPhaseRow(roadmap, "F2"));
     }
 
     private static DocumentationStateExpectation Expected => new(
-        "F2.3", "COMPLETE", "B", "E", "Adaptive Context Prototypes / Shadow",
+        "E", "COMPLETE", "B", "E.1", "Exact Recurrence Failure Stratification / Shadow",
         "NOT_AUTHORIZED", "F2.ACQ", "BLOCKED", "F2", "CONTINUE_CONDITIONALLY",
-        "legacy-experimental.1", "none", 455, 0, 0);
+        "legacy-experimental.1", "none", 487, 0, 0);
 
     private static string StateBlock() => """
         Historical reports are deliberately outside this living-state projection.
         <!-- PROJECT-STATE:BEGIN -->
-        Current phase: F2.3 — COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY<br>
-        Next actionable research candidate: E — Adaptive Context Prototypes / Shadow<br>
+        Current phase: E — COMPLETE — OUTCOME B<br>
+        Next actionable research candidate: E.1 — Exact Recurrence Failure Stratification / Shadow<br>
         Next actionable authorization: NOT_AUTHORIZED<br>
         Blocked prerequisite: F2.ACQ — BLOCKED<br>
         Research branch: F2 — CONTINUE CONDITIONALLY<br>
         Behavior policy: `legacy-experimental.1`<br>
         Behavior change: none<br>
-        Tests: 455 passed / 0 failed / 0 skipped
+        Tests: 487 passed / 0 failed / 0 skipped
         <!-- PROJECT-STATE:END -->
         """;
 
     private static string Roadmap() => """
         | Fase | Estado | Propósito |
         |---|---|---|
-        | F2.3 — Current | COMPLETE — OUTCOME B | Closed. |
-        | E — Adaptive | NEXT / NOT_AUTHORIZED | Actionable candidate. |
+        | E — Current | COMPLETE — OUTCOME B | Closed. |
+        | E.1 — Adaptive | NEXT / NOT_AUTHORIZED | Actionable candidate. |
         | F2.ACQ — Acquisition | BLOCKED / CONDITIONAL | External dependency. |
         """;
 }

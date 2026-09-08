@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "lastUpdated": "2026-09-07",
+  "lastUpdated": "2026-09-08",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -15,20 +15,21 @@
     { "id": "D0", "name": "ChordCompletion Reconstruction / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md" },
     { "id": "D0.1", "name": "Exact Completion Competition Context / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_1_EXACT_COMPLETION_COMPETITION_CONTEXT_REPORT.md" },
     { "id": "D0.2", "name": "Exact Context Coverage and View Agreement / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md" },
-    { "id": "E", "name": "Adaptive Context Prototypes / Shadow", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "F1", "name": "Comparable-context Resolver / Shadow + Validation", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md" },
     { "id": "F2", "name": "Typed gaps and evidence backoff A/B", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md" },
     { "id": "F2.1", "name": "Exact Gap Timing Identity / Shadow Validation", "status": "COMPLETE", "outcome": "C", "behaviorChange": false, "report": "docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md" },
     { "id": "F2.2", "name": "Quantization Inference Feasibility / Research Design", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_F2_2_QUANTIZATION_INFERENCE_FEASIBILITY_REPORT.md" },
     { "id": "F2.3", "name": "Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_F2_3_QUANTIZATION_DOMAIN_GROUND_TRUTH_REPORT.md" },
-    { "id": "F2.ACQ", "name": "Controlled Pre-Serialization Ground Truth Acquisition Prerequisite", "status": "BLOCKED", "outcome": null, "behaviorChange": false, "report": null, "authorization": "CONDITIONAL_ON_EXTERNAL_DATA", "blockedReason": "Requires an authorized pre-serialization mapper-authored transition package that does not currently exist." }
+    { "id": "F2.ACQ", "name": "Controlled Pre-Serialization Ground Truth Acquisition Prerequisite", "status": "BLOCKED", "outcome": null, "behaviorChange": false, "report": null, "authorization": "CONDITIONAL_ON_EXTERNAL_DATA", "blockedReason": "Requires an authorized pre-serialization mapper-authored transition package that does not currently exist." },
+    { "id": "E", "name": "Adaptive Context Prototypes / Shadow", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_E_ADAPTIVE_CONTEXT_PROTOTYPES_REPORT.md" },
+    { "id": "E.1", "name": "Exact Recurrence Failure Stratification / Shadow", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null, "authorization": "NOT_AUTHORIZED" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
   ],
-  "currentPhase": "F2.3",
-  "nextRecommendedPhase": "E",
-  "testStatus": { "passed": 455, "failed": 0, "skipped": 0 },
+  "currentPhase": "E",
+  "nextRecommendedPhase": "E.1",
+  "testStatus": { "passed": 487, "failed": 0, "skipped": 0 },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",

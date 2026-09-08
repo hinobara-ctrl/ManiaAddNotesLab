@@ -1,6 +1,6 @@
 # Project Status
 
-Última actualización: 2026-09-07. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
+Última actualización: 2026-09-08. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
 
 ## Resumen
 
@@ -17,7 +17,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | D0 — ChordCompletion Reconstruction | **COMPLETE — OUTCOME A** | Ninguno; reconstruye relations exactas en shadow. |
 | D0.1 — Exact Completion Competition Context | **COMPLETE — OUTCOME A** | Ninguno; contexto exacto discrimina alternatives con una frontera de cobertura. |
 | D0.2 — Exact Context Coverage and View Agreement | **COMPLETE — OUTCOME A** | Ninguno; separa agreement, donor overlap y joint witness exacto. |
-| E — Adaptive Context Prototypes / Shadow | **NEXT / NOT_AUTHORIZED** | Ninguno; candidata de investigación accionable sólo tras autorización separada, todavía no iniciada. |
+| E — Adaptive Context Prototypes / Shadow | **COMPLETE — OUTCOME B** | Ninguno; recurrence y boundaries son research-only y no gobiernan contexto. |
+| E.1 — Exact Recurrence Failure Stratification / Shadow | **NEXT / NOT_AUTHORIZED** | Ninguno; recomendación estrecha para explicar mismatch/no-context de E. |
 | F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
 | F2 — Typed gaps and evidence backoff A/B | **COMPLETE — OUTCOME B — SHADOW ONLY** | Ninguno; identity/backoff exactos válidos, coverage insuficiente para A/B. |
 | F2.1 — Exact Gap Timing Identity / Shadow Validation | **COMPLETE — OUTCOME C — SHADOW ONLY** | Ninguno; demuestra que equivalencia nominal general requiere inferencia ausente del archivo. |
@@ -128,11 +129,17 @@ Las fuentes auditadas separan external convention, synthetic truth, editor metad
 
 F2.3 cierra **OUTCOME B** y la rama queda **CONTINUE CONDITIONALLY**. `F2.ACQ` es un prerequisite recomendado únicamente si puede obtenerse el package pre-export y congelarse DomainDesignSet/IndependentValidationSet. No se abrió F2.4 ni behavior.
 
+## Resultado E
+
+Phase E cerró **OUTCOME B** con dos resultados internos separados. Recurrence es **B**: 10.980 relations exactas, 10.764 no contiguas y 4.143 reconstrucciones held-out demuestran señal en las 11 familias, pero 1.451 mismatch y 16.224 no-context impiden promoción. Segmentation es **B**: las boundaries son estables bajo 187 holdouts por configuración, pero cambian de 288 a 89 al variar `min-run-2`→`min-run-3`.
+
+`AdaptiveContextResearch` permanece original-only, chart-local y desconectado de generation/RNG/F2/D1. No existe Section productiva, selector de contexto ni fuzzy fallback. El report completo y los artifacts públicos preservan provenance y configuraciones por separado.
+
 ## Validación actual
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **455 passed, 0 failed, 0 skipped** tras el hardening documental pre-Phase E; el cierre histórico F2.3 tenía 446.
+- `dotnet test -c Release`: **487 passed, 0 failed, 0 skipped** en el cierre Phase E; el baseline pre-E tenía 455.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -152,11 +159,11 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece como prerequisite condicional **BLOCKED ON EXTERNAL DATA** y no es la siguiente fase de coding. La siguiente línea potencialmente accionable es **Phase E — Adaptive Context Prototypes / Shadow**, únicamente como candidata `NEXT / NOT AUTHORIZED YET`; esta sincronización no la inicia ni implementa. Si el package F2.ACQ aparece, F2 podrá reevaluarse. D1 sigue sin autorización; C2 permanece **DEFERRED** y MapperSupport no está autorizado.
+`F2.ACQ` permanece como prerequisite condicional **BLOCKED ON EXTERNAL DATA** y no es la siguiente fase de coding. E cerró Outcome B: recurrence exacta reconstruyó 4.143 targets, pero tuvo 1.451 mismatch y 16.224 no-context; boundaries cayeron de 288 a 89 al cambiar el mínimo estable 2→3. Se recomienda **E.1 — Exact Recurrence Failure Stratification / Shadow**, únicamente `NEXT / NOT_AUTHORIZED`. Si el package F2.ACQ aparece, F2 podrá reevaluarse. D1 sigue sin autorización; C2 permanece **DEFERRED** y MapperSupport no está autorizado.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: F2.3 — COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY<br>
-Next actionable research candidate: E — Adaptive Context Prototypes / Shadow<br>
+Current phase: E — COMPLETE — OUTCOME B<br>
+Next actionable research candidate: E.1 — Exact Recurrence Failure Stratification / Shadow<br>
 Next actionable authorization: NOT_AUTHORIZED<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
@@ -164,7 +171,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 455 passed / 0 failed / 0 skipped
+Tests: 487 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [Phase F2.3 report](docs/PHASE_F2_3_QUANTIZATION_DOMAIN_GROUND_TRUTH_REPORT.md). Los reports [F2.2](docs/PHASE_F2_2_QUANTIZATION_INFERENCE_FEASIBILITY_REPORT.md), [F2.1](docs/PHASE_F2_1_EXACT_GAP_TIMING_IDENTITY_REPORT.md), [F2](docs/PHASE_F2_TYPED_GAPS_EVIDENCE_BACKOFF_REPORT.md), [F1](docs/PHASE_F1_COMPARABLE_CONTEXT_RESOLVER_REPORT.md), [D0.2](docs/PHASE_D0_2_EXACT_CONTEXT_COVERAGE_VIEW_AGREEMENT_REPORT.md) y anteriores permanecen como evidencia histórica.

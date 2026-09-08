@@ -14,7 +14,8 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | D0.1 — Exact completion competition context | ✅ **COMPLETE — OUTCOME A** | Contexto exacto discrimina miles de alternatives, con cobertura decreciente explícita. |
 | D0.2 — Exact Context Coverage and View Agreement | ✅ **COMPLETE — OUTCOME A** | Agreement, conflict, donor overlap y joint witness exactos son reconstruibles; sin authority. |
 | D1 — Resulting-state chords | ⏳ Pending | Validar el estado vertical conjunto y evitar acumulación sin soporte. |
-| E — Adaptive Context Prototypes / Shadow | ➡️ **NEXT ACTIONABLE CANDIDATE / NOT_AUTHORIZED** | Comparar recurrencia y segmentación en shadow sólo tras autorización separada; no iniciada. |
+| E — Adaptive Context Prototypes / Shadow | ✅ **COMPLETE — OUTCOME B** | Recurrence exacta muestra señal restringida; boundaries son estables bajo holdout pero parameter-sensitive. |
+| E.1 — Exact Recurrence Failure Stratification / Shadow | ➡️ **NEXT / NOT_AUTHORIZED** | Explicar mismatch y no-context exactos antes de proponer otra representación. |
 | F1 — Comparable-context Resolver / Shadow + Validation | ✅ **COMPLETE — OUTCOME A** | Support, mismatch, no-context y ambiguity son reconstruibles por candidate sin selection conductual. |
 | F2 — Typed gaps and evidence backoff A/B | ✅ **COMPLETE — OUTCOME B — SHADOW ONLY** | Identity/backoff exactos son auditables, pero 2/50.762 support y cero global impiden conectar A/B. |
 | F2.1 — Exact Gap Timing Identity / Shadow Validation | ✅ **COMPLETE — OUTCOME C — SHADOW ONLY** | El archivo no permite recuperar equivalencia nominal general sin inferencia de quantization; sin conducta. |

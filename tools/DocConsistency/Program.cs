@@ -125,7 +125,7 @@ void ValidateCanonicalState(ProjectState value)
     if (next?.Authorization != "NOT_AUTHORIZED")
         errors.Add($"Next actionable phase {next?.Id} must be explicitly NOT_AUTHORIZED.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "E", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)

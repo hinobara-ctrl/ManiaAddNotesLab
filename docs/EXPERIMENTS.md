@@ -150,6 +150,16 @@ dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- f2-3-synth
 
 Regenera diez CSV `f2_3_*`: catalog, hashes, truth sources/schema, circularity, validation, acquisition, transitions, rice y branch decision. El corpus humano quedó NOT RUN. La rama sólo puede continuar mediante el prerequisite F2.ACQ y un package mapper-authored pre-export autorizado; no existe F2.4 ni quantizer.
 
+## E — Adaptive context prototypes
+
+E está cerrado **Outcome B / research-shadow-only**. Separa recurrence exacta no contigua de boundaries contiguas inferidas, compara Global y la referencia histórica ±4 beats, y reconstruye bajo target/block holdout sin usar AddedObjects ni evidencia cross-chart. Los criterios y parámetros quedaron congelados antes del corpus humano en `PHASE_E_PRE_HUMAN_DESIGN.md`.
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- phase-e-adaptive-context <corpus-read-only> docs .artifacts/e/e_detail.json
+```
+
+Regenera once CSV `e_*`; el detail con provenance target/donor queda local e ignorado. Recurrence cerró B por señal multi-family con mismatch/no-context altos; segmentation cerró B por estabilidad local con sensibilidad 288→89 boundaries. E.1 es una recomendación no autorizada, no una continuación automática.
+
 ## Checklist
 
 - Context burst: densidad contextual OFF/ON.

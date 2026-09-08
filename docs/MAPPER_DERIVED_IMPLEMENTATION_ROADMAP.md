@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2: **COMPLETE/B RESEARCH/SHADOW ONLY**. F2.3: **COMPLETE/B — CONTINUE CONDITIONALLY**. F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**; Phase E es la siguiente candidata de investigación accionable, **NOT AUTHORIZED YET / NOT STARTED**; D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2: **COMPLETE/B RESEARCH/SHADOW ONLY**. F2.3: **COMPLETE/B — CONTINUE CONDITIONALLY**. F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. Phase E: **COMPLETE/B SHADOW ONLY**; E.1 es la siguiente recomendación **NEXT / NOT AUTHORIZED**. D1 no está autorizado; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -616,7 +616,7 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 ## Phase E — Adaptive context prototypes / Shadow
 
-**Estado: NEXT ACTIONABLE RESEARCH CANDIDATE / NOT AUTHORIZED YET / NOT STARTED.**
+**Estado: COMPLETE — OUTCOME B — RESEARCH/SHADOW ONLY.**
 
 **Goal:** comparar recurrencia y segmentación.
 
@@ -630,11 +630,19 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 **Tests:** intro/clímax, A/B/A distante, BPM variable, chart corto.
 
-**Artifacts:** prototype report.
+**Artifacts:** pre-human certificate, prototype report y once summaries `e_*`; detail target/donor local e ignorado.
 
 **Rollback:** eliminar prototipo/caches.
 
 **Acceptance criteria:** método seleccionado solo si supera baseline simple y sensibilidad queda documentada.
+
+Resultado: recurrence exacta encontró 10.980 relations y reconstruyó 4.143 targets en las 11 familias, pero introdujo 1.451 mismatch y 16.224 no-context. Stable-run boundaries fueron muy estables bajo holdout, aunque cayeron 288→89 al cambiar el mínimo 2→3. Por eso recurrence y segmentation cierran B por separado; no se selecciona ningún método ni se crea Section.
+
+### Phase E.1 — Exact Recurrence Failure Stratification / Shadow
+
+**Estado: NEXT / NOT AUTHORIZED.**
+
+Recomendación estrecha: explicar por estratos observables los mismatch y no-context de exact-neighbor antes de considerar otra representación. No autoriza fuzzy similarity, hyperparameter search, F2 integration ni behavior.
 
 ## Phase F1 — Comparable-context resolver / Shadow + validation
 
@@ -1013,4 +1021,4 @@ Las 25 condiciones de estados excluyentes, abstención, hechos por vista, identi
 
 La representación shadow pasa identity exacta, transition typing, original-only, whole-group exclusion, provenance, backoff sólo por no-context, SKIP, determinismo, multi-key, corpus y leakage. El behavioral subgate falla: 2/50.762 local support y 0 global support harían degenerado cualquier A/B. No se creó una versión conductual ni se alteró legacy.
 
-**F2 COMPLETE/B; F2.1 COMPLETE — OUTCOME C — SHADOW ONLY; F2.2 COMPLETE OUTCOME B — RESEARCH/SHADOW ONLY; F2.3 COMPLETE OUTCOME B — CONTINUE CONDITIONALLY; F2.ACQ BLOCKED ON EXTERNAL DATA; PHASE E NEXT ACTIONABLE RESEARCH CANDIDATE BUT NOT AUTHORIZED OR STARTED; D1 NOT AUTHORIZED, C2 DEFERRED.**
+**F2 COMPLETE/B; F2.1 COMPLETE — OUTCOME C — SHADOW ONLY; F2.2 COMPLETE OUTCOME B — RESEARCH/SHADOW ONLY; F2.3 COMPLETE OUTCOME B — CONTINUE CONDITIONALLY; F2.ACQ BLOCKED ON EXTERNAL DATA; PHASE E COMPLETE OUTCOME B — SHADOW ONLY; E.1 NEXT / NOT AUTHORIZED; D1 NOT AUTHORIZED, C2 DEFERRED.**

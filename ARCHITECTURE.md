@@ -18,6 +18,20 @@ opportunities → candidates → geometry → selection → output
 
 El destino mapper-derived es que las estructuras recurrentes futuras nazcan de valores y relaciones demostrados por el mapa, sin una taxonomía externa de jack/trill/stream. El estado actual todavía conserva selección y heurísticas legacy; la Evidence Layer nueva opera en shadow.
 
+### Adaptive context research
+
+Phase E añade `AdaptiveContextResearch` como capa totalmente separada de generation. Construye una serie temporal exacta desde grupos originales, indexa recurrence no contigua y propone boundaries contiguas explícitamente inferidas. Recurrence y segmentation poseen resultados, métodos y parámetros distintos; ninguna region tiene autoridad de Section.
+
+```text
+OriginalObjects → OriginalTemporalEventSeries
+                     ├─ exact recurrence relations
+                     └─ inferred stable-run boundaries/regions
+                              ↓
+                    held-out diagnostics only
+```
+
+El schema `phase-e-adaptive-context-shadow.1` conserva IDs de chart, método, parámetros, target exclusions y donors. AddedObjects, RNG, F2 scopes y selección nunca entran en esta capa.
+
 ## Fronteras principales
 
 ### OriginalEvidence y CurrentGeometry

@@ -25,12 +25,13 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase F2.1 — COMPLETE, OUTCOME C, SHADOW ONLY:** no existe una equivalencia temporal nominal general recuperable sin inferir quantization ausente del archivo.
 - **Phase F2.2 — COMPLETE, OUTCOME B, RESEARCH/SHADOW ONLY:** la inferencia forward es falsable bajo un domain finito explícito, pero el proyecto no puede justificar ese domain desde el mapper ni medir accuracy humana sin labels.
 - **Phase F2.3 — COMPLETE, OUTCOME B, CONTINUE CONDITIONALLY:** domain hashing y truth completa son auditables, pero falta un package mapper-authored pre-export independiente.
+- **Phase E — COMPLETE, OUTCOME B, SHADOW ONLY:** existe recurrencia exacta útil y boundaries localmente estables, pero mismatch, abstención y sensibilidad impiden promover una representación.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–F2.3 no gobiernan el selector. La rama F2 sigue `CONTINUE_CONDITIONALLY`, pero `F2.ACQ` está bloqueado hasta que exista un package pre-export mapper-authored autorizado. La siguiente investigación potencialmente accionable es Phase E, sólo como candidata no autorizada ni iniciada. No existe policy de quantization; D1 tampoco está autorizado y C2 permanece deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–E no gobiernan el selector. La rama F2 sigue `CONTINUE_CONDITIONALLY`, pero `F2.ACQ` está bloqueado hasta que exista un package pre-export mapper-authored autorizado. La siguiente recomendación es E.1, sólo como candidata no autorizada para estratificar los fallos de recurrencia exacta. No existe policy de quantization; D1 tampoco está autorizado y C2 permanece deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: F2.3 — COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY<br>
-Next actionable research candidate: E — Adaptive Context Prototypes / Shadow<br>
+Current phase: E — COMPLETE — OUTCOME B<br>
+Next actionable research candidate: E.1 — Exact Recurrence Failure Stratification / Shadow<br>
 Next actionable authorization: NOT_AUTHORIZED<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
@@ -38,7 +39,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 455 passed / 0 failed / 0 skipped
+Tests: 487 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.
