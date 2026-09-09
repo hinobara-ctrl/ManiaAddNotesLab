@@ -226,7 +226,8 @@ public sealed record VerticalDensitySnapshot(int Columns, double Ratio, double E
 public sealed record LaneGapDecision(double GapBeats, bool IsLocal, int EvidenceCount);
 
 public sealed record AddNotesResult(ManiaChart ModifiedChart, AddNotesStatistics Statistics, string? Trace,
-    MapperEvidenceProfile EvidenceProfile, DecisionDiagnostics? DecisionDiagnostics);
+    MapperEvidenceProfile EvidenceProfile, DecisionDiagnostics? DecisionDiagnostics,
+    D1BehavioralRunDiagnostics? D1BehavioralDiagnostics = null);
 
 public interface IRandomSource
 {

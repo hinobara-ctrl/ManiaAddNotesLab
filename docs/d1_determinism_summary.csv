@@ -1,0 +1,3 @@
+arm,paired_output_comparisons,byte_mismatches,byte_identical
+"control",220,0,true
+"treatment",220,0,true

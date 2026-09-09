@@ -198,18 +198,19 @@ public sealed class PhaseD1GateBehavioralExperimentContractTests
     }
 
     [Fact]
-    public void ResearchContractHasNoProductionCallsite()
+    public void AuthorizedTreatmentHasOnlyTheExplicitEngineIntegrationAndNoNormalProductExposure()
     {
         var root = FindRepositoryRoot();
+        Assert.Contains("D1BehavioralExperimentContractResearch.FrozenContractContentHash",
+            File.ReadAllText(Path.Combine(root, "src/ManiaAddNotesLab.Core/AddNotesEngine.cs")));
+        Assert.DoesNotContain("D1", File.ReadAllText(Path.Combine(root,
+            "src/ManiaAddNotesLab.Core/Model.cs")).Split("public sealed record AddNotesOptions", 2)[1]
+            .Split("public sealed class AddNotesStatistics", 2)[0], StringComparison.Ordinal);
         foreach (var relative in new[]
-                 {
-                     "src/ManiaAddNotesLab.Core/AddNotesEngine.cs",
-                     "src/ManiaAddNotesLab.Core/Model.cs",
-                     "src/ManiaAddNotesLab.Cli/Program.cs",
-                     "src/ManiaAddNotesLab.Web/Program.cs"
-                 })
+                 { "src/ManiaAddNotesLab.Cli/Program.cs", "src/ManiaAddNotesLab.Web/Program.cs" })
             Assert.DoesNotContain("D1BehavioralExperimentContractResearch",
                 File.ReadAllText(Path.Combine(root, relative)), StringComparison.Ordinal);
+        Assert.Equal("legacy-experimental.1", MapperEvidenceProfileBuilder.BehaviorPolicyVersion);
     }
 
     [Fact]

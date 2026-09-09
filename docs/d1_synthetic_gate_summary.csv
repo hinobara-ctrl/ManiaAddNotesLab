@@ -1,0 +1,13 @@
+case,passed,measured
+"focused_engine_contract_tests",true,"15/15"
+"full_pre_run_tests",true,"599/599"
+"contract_hash",true,"D574631B3E713AC3D08C159B605A742D50C907B1BB4589D7FCADCFA8027A7824"
+"manifest_hash",true,"4C87F8B98B5B22B81CD903F26E3EF861B608893B50B46DBC20AF13158E8A4F00"
+"joint_unique_admit",true,"ExperimentAdmittable"
+"joint_alternative_admit",true,"ExperimentAdmittable"
+"cross_donor_marginal_abstain",true,"ExperimentAbstainMarginalOnly"
+"no_comparable_abstain",true,"ExperimentAbstainNoComparable"
+"not_observed_abstain",true,"ExperimentAbstainNotObserved"
+"gate_rng_zero",true,"0"
+"no_retry",true,"false"
+"default_policy",true,"legacy-experimental.1"

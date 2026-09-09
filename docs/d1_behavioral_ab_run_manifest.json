@@ -1,0 +1,171 @@
+{
+  "manifest": {
+    "schemaVersion": "phase-d1-behavioral-ab-manifest.1",
+    "contractContentHash": "D574631B3E713AC3D08C159B605A742D50C907B1BB4589D7FCADCFA8027A7824",
+    "corpusContentHash": "DDB14C468FB657B24D2A63BC77382526B8D10C3BA8748133F3E4F6068BD43887",
+    "charts": [
+      {
+        "chartId": "02D9D1781418E7442956D4D901C8C611E58256556AE9A828E72128C3B5B8E3EB",
+        "familyId": "NOWISEE | KO INU | RUKA",
+        "keyCount": 7,
+        "objectCount": 5400,
+        "tapCount": 2400,
+        "longNoteCount": 3000
+      },
+      {
+        "chartId": "0338ADEB4CDBB086D7819736292CB932608EA53DAD840AD3B8BBEAA605AC8349",
+        "familyId": "BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",
+        "keyCount": 4,
+        "objectCount": 1933,
+        "tapCount": 363,
+        "longNoteCount": 1570
+      },
+      {
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "familyId": "KIKUO | KARA KARA KARA NO KARA | XNETT",
+        "keyCount": 7,
+        "objectCount": 10142,
+        "tapCount": 6184,
+        "longNoteCount": 3958
+      },
+      {
+        "chartId": "322F995448A73713DCBECE3D140F4D516EF687DBC43CC140CFF14948566F906B",
+        "familyId": "ORGT | DESTINY | BAIO",
+        "keyCount": 7,
+        "objectCount": 1653,
+        "tapCount": 1357,
+        "longNoteCount": 296
+      },
+      {
+        "chartId": "B1F847192EBB07C44024AA8A4BA570FCCF04EAA03F92D5FC4DBA1EAF40C42249",
+        "familyId": "-45 | MIDORIGO QUEEN BEE | ITZBENJA616",
+        "keyCount": 7,
+        "objectCount": 4897,
+        "tapCount": 4876,
+        "longNoteCount": 21
+      },
+      {
+        "chartId": "BC0401B460251A3CD37EBB8FB6BCDE3D75B619F692C7E9373BF8FC84D089AD95",
+        "familyId": "MORO | HOLY BITCH | ITZBENJA616",
+        "keyCount": 7,
+        "objectCount": 8284,
+        "tapCount": 8284,
+        "longNoteCount": 0
+      },
+      {
+        "chartId": "BEF3BB94655D3F4749FA91C3C535FD5CFB8387AB19B951DDA3D3877B705677D4",
+        "familyId": "AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",
+        "keyCount": 4,
+        "objectCount": 2241,
+        "tapCount": 2241,
+        "longNoteCount": 0
+      },
+      {
+        "chartId": "DAC0347BBDC54E15A080316356E2E9A0CC2002927FF4B031D5F995C6C832F5AF",
+        "familyId": "A-ONE | SIDE BY SIDE | KURISU MAKISE",
+        "keyCount": 10,
+        "objectCount": 4001,
+        "tapCount": 4001,
+        "longNoteCount": 0
+      },
+      {
+        "chartId": "DD5D885E5A72729DF913D1010A32D145596DB465F94271AE54E5ECDD7A3C5C20",
+        "familyId": "NMK\u0026WATHUE | CELESTIAL AXES | WONKI",
+        "keyCount": 7,
+        "objectCount": 3098,
+        "tapCount": 3029,
+        "longNoteCount": 69
+      },
+      {
+        "chartId": "E73B098AA0CB6FA3BECE45E9551EF225412F5E01F6398184093A40B944F0AAE0",
+        "familyId": "NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",
+        "keyCount": 7,
+        "objectCount": 4608,
+        "tapCount": 1021,
+        "longNoteCount": 3587
+      },
+      {
+        "chartId": "F0E7AD21B536EC13F9EE2F8C09913100A35BA2DFE1338C86F78452AA4391BE7E",
+        "familyId": "SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",
+        "keyCount": 7,
+        "objectCount": 4579,
+        "tapCount": 4526,
+        "longNoteCount": 53
+      }
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "options": {
+      "chance": 0.5,
+      "startMs": null,
+      "endMs": null,
+      "lnWindowBeats": 4,
+      "sourceAffinityMultiplier": 1.25,
+      "distanceDecayPerBeat": 0.2,
+      "minimumDistanceWeight": 0.2,
+      "densityGraceColumns": 2,
+      "densityDecayPerColumn": 0.65,
+      "verticalDensityMode": "simultaneousHeads",
+      "verticalDensityScaleMode": "keymodeRelative",
+      "contextualDensityNormalizationEnabled": true,
+      "contextualDensityScaleMode": "keymodeRelative",
+      "microDensityWindowBeats": 1,
+      "contextDensityWindowBeats": 4,
+      "burstDensityRatioThreshold": 1.5,
+      "burstSpanOneBeatFactor": 0.45,
+      "burstSpanTwoBeatFactor": 0.6,
+      "burstSpanThreeBeatFactor": 0.8,
+      "useLocalLaneGap": true,
+      "laneGapWindowBeats": 4,
+      "laneGapMinimumSupport": 2,
+      "fallbackMinimumLaneGapBeats": 0.125,
+      "mapRelativeSnapEnabled": true,
+      "interiorLnOpportunitiesEnabled": true,
+      "maxInteriorOpportunitiesPerSource": 2,
+      "interiorMinimumSourceBeats": 3,
+      "interiorLengthRatio": 1.5,
+      "interiorAbsoluteLongBeats": 8,
+      "interiorMinimumContextLnCount": 3,
+      "interiorMinimumSupportedAnchors": 2,
+      "interiorEligibilityMode": "anchorSupported",
+      "interiorContextMode": "originalOnly",
+      "articulationEnabled": true,
+      "articulationMaxNonHeldColumns": 1,
+      "maxArticulationsPerOriginalLn": 1,
+      "retriggerGapWindowBeats": 4,
+      "retriggerGapMinimumSupport": 2,
+      "trace": false,
+      "diagnosticsEnabled": false
+    },
+    "rangeSemantics": "FullChart; range filters opportunity source heads only; evidence remains chart-global original-only",
+    "controlPolicyVersion": "legacy-experimental.1",
+    "treatmentPolicyVersion": "d1-resulting-state-ab.1",
+    "expectedPairedRunCount": 220,
+    "creationSemantics": "Explicit deterministic replication set; not a random population sample",
+    "behaviorChange": true,
+    "defaultPromotion": false,
+    "primaryDenominator": "D1EligibleDecisions"
+  },
+  "contentHash": "4C87F8B98B5B22B81CD903F26E3EF861B608893B50B46DBC20AF13158E8A4F00",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; no indentation for hash; fixed record order; charts sorted by chartId; seeds ascending; no timestamp or runtime path"
+}

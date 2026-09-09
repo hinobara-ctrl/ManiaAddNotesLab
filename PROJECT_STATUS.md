@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D0–D1.GATE y las ramas F/E permanecen separados de generation con schemas research propios.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D1 se ejecutó sólo como treatment A/B explícito, cerró Outcome C y no fue promovido.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -21,7 +21,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | E.1 — Exact Recurrence Failure Stratification / Shadow | **COMPLETE — OUTCOME B** | Ninguno; explica exact absence, multiplicity y refinements sin cambiar el resolver. |
 | D1.0 — Resulting-State Composition Feasibility / Shadow | **COMPLETE — OUTCOME A / NOT_AUTHORIZED** | Ninguno; distingue joint witness de soporte marginal. |
 | D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow | **COMPLETE — OUTCOME READY / NOT_AUTHORIZED** | Ninguno; congeló el contrato de un eventual A/B y su rollback sin ejecutarlo. |
-| D1 — ChordCompletion Resulting-State A/B | **FUTURE / NOT_AUTHORIZED** | Sí cuando se autorice: fase conductual versionada separada de D1.0. |
+| D1 — ChordCompletion Resulting-State A/B | **COMPLETE — OUTCOME C / NO PROMOTION** | Sí, sólo en el A/B explícito; hard abort de seguridad, rollback legacy y rama PARKED. |
 | F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
 | F2 — Typed gaps and evidence backoff A/B | **COMPLETE — OUTCOME B — SHADOW ONLY** | Ninguno; identity/backoff exactos válidos, coverage insuficiente para A/B. |
 | F2.1 — Exact Gap Timing Identity / Shadow Validation | **COMPLETE — OUTCOME C — SHADOW ONLY** | Ninguno; demuestra que equivalencia nominal general requiere inferencia ausente del archivo. |
@@ -71,6 +71,12 @@ Whole-group, target-observation, future-held, synthetic, cross-chart, held-tail-
 D1.GATE cerró **OUTCOME READY / NOT_AUTHORIZED**. Congeló `phase-d1-gate-behavioral-experiment-contract.1` con hash `D574631B3E713AC3D08C159B605A742D50C907B1BB4589D7FCADCFA8027A7824`: un eventual treatment sólo gobernaría la transición de una a dos notas añadidas en un timestamp, usando exclusivamente evidencia conjunta exacta `ReducedOnly`; marginal-only, no-context y not-observed producen abstención sin reroll.
 
 El gate futuro se insertaría después de que legacy construya una propuesta legal y antes de `added.Add`/`geometry.Insert`. No consumiría RNG: el chance y la elección de lane/forma ya habrían ocurrido. La preregistración separa decisión directa de divergencia downstream, conserva identidad Tap/LN por lane, contempla 1K–18K y fija stopping criteria, métricas, denominadores y rollback exacto. No se ejecutó corpus A/B, no se añadió toggle y ningún callsite productivo referencia el evaluador research.
+
+### Resultado D1
+
+D1 ejecutó el contrato congelado como `d1-resulting-state-ab.1` exclusivamente desde el runner. El manifest fijó C11 (11 charts/familias, 4K/7K/10K), seeds 1–20, AddChance 0,50 y chart completo: 220 pares, repetidos una segunda vez. Control y treatment fueron byte-identical entre repeticiones (0/220 mismatches cada uno), el gate consumió cero RNG y las pruebas sintéticas cerraron 15/15; la suite completa quedó 599/599.
+
+El chequeo post-run de seguridad produjo hard abort porque contó intersections crudas de todos los objetos del output (control: 200 en 39/220; treatment: 171 en 40/220), incluyendo estructuras preexistentes, sin demostrar cuáles eran causadas por D1. Esto vuelve la safety attribution insuficiente bajo el contrato congelado. No se reejecutó, ajustó ni reinterpretó el ensayo; las métricas conductuales agregadas quedaron retenidas. Resultado: **COMPLETE — OUTCOME C**, rollback/default `legacy-experimental.1`, treatment no expuesto y rama D1 PARKED.
 
 ## Qué afecta realmente la generación
 
@@ -160,7 +166,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **584 passed, 0 failed, 0 skipped** con D1.GATE; D1.0 cerró con 550.
+- `dotnet test -c Release`: **599 passed, 0 failed, 0 skipped** con D1; D1.GATE cerró con 584.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -180,21 +186,21 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. D1.GATE cerró `READY` sin conducta y no queda una fase research accionable recomendada. La fase histórica **D1 — ChordCompletion Resulting-State A/B** es el próximo candidato conductual, permanece `FUTURE / NOT_AUTHORIZED` y sólo puede comenzar con autorización separada. C2 permanece **DEFERRED** y MapperSupport no está autorizado.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. D1 cerró **OUTCOME C**, sin promoción, y su rama está PARKED. No queda una fase research o conductual accionable; cualquier revisión futura requiere autorización separada. C2 permanece **DEFERRED** y MapperSupport no está autorizado.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: D1.GATE — COMPLETE — OUTCOME READY<br>
+Current phase: D1 — COMPLETE — OUTCOME C<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
-Next behavioral phase: D1 — ChordCompletion Resulting-State A/B<br>
-Next behavioral authorization: NOT_AUTHORIZED<br>
+Next behavioral phase: none<br>
+Next behavioral authorization: N/A<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
-Behavior change: none<br>
+Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 584 passed / 0 failed / 0 skipped
+Tests: 599 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
-Detalles y evidencia: [D1.GATE](docs/PHASE_D1_GATE_BEHAVIORAL_EXPERIMENT_GATE_REPORT.md) describe el cierre actual y enlaza el contrato congelado; [D1.0](docs/PHASE_D1_0_RESULTING_STATE_COMPOSITION_FEASIBILITY_REPORT.md) conserva la evidencia de factibilidad; los reports anteriores permanecen como evidencia histórica.
+Detalles y evidencia: [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) documenta el hard abort y Outcome C; [D1.GATE](docs/PHASE_D1_GATE_BEHAVIORAL_EXPERIMENT_GATE_REPORT.md) conserva el contrato congelado; [D1.0](docs/PHASE_D1_0_RESULTING_STATE_COMPOSITION_FEASIBILITY_REPORT.md) conserva la evidencia de factibilidad.

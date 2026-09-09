@@ -11,10 +11,14 @@ public sealed class AddNotesEngine
     private const decimal Epsilon = 0.000001m;
 
     public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng) =>
-        Apply(chart, options, rng, null);
+        Apply(chart, options, rng, null, null);
 
     public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng,
-        MapperEvidenceProfile? preparedEvidenceProfile)
+        MapperEvidenceProfile? preparedEvidenceProfile) =>
+        Apply(chart, options, rng, preparedEvidenceProfile, null);
+
+    public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng,
+        MapperEvidenceProfile? preparedEvidenceProfile, D1BehavioralExperimentConfiguration? d1Experiment)
     {
         Validate(chart, options, rng);
         MapperEvidenceProfile evidenceProfile;
@@ -30,6 +34,16 @@ public sealed class AddNotesEngine
             ValidateEvidenceProfile(chart, preparedEvidenceProfile);
             evidenceProfile = preparedEvidenceProfile;
             profileBuildMs = 0;
+        }
+        if (d1Experiment is not null)
+        {
+            if (d1Experiment.ContractContentHash !=
+                D1BehavioralExperimentContractResearch.FrozenContractContentHash)
+                throw new InvalidOperationException("D1 contract hash does not match the frozen D1.GATE contract.");
+            if (d1Experiment.EvidenceIndex.ChartFingerprint != evidenceProfile.ChartFingerprint)
+                throw new InvalidOperationException("D1 evidence index belongs to a different chart.");
+            if (rng is not IRandomPositionSource)
+                throw new InvalidOperationException("D1 treatment requires an auditable RNG position source.");
         }
         var timeline = new BeatTimeline(chart.TimingPoints);
         var analysis = new OriginalChartAnalysis(chart, timeline);
@@ -48,6 +62,7 @@ public sealed class AddNotesEngine
         stats.ProfileObservationCount = evidenceProfile.ObservationCount;
         stats.ProfileRelationCount = evidenceProfile.RelationCount;
         var added = new List<ManiaObject>();
+        var d1Diagnostics = d1Experiment is null ? null : new D1BehavioralRunDiagnosticsBuilder(d1Experiment);
         var opportunities = BuildOpportunities(analysis, options, stats, trace);
         var articulationIntents = new List<ArticulationIntent>();
         var effectiveChanceSum = 0d;
@@ -128,6 +143,31 @@ public sealed class AddNotesEngine
                 }
                 continue;
             }
+            if (d1Experiment is not null)
+            {
+                var alreadyAdded = added.Where(x => x.StartTime == placed.Object.StartTime).ToArray();
+                if (alreadyAdded.Length == 1)
+                {
+                    var rngPosition = ((IRandomPositionSource)rng).CallCount;
+                    var existingMember = D1BehavioralExperimentContractResearch.CandidateIdentity(alreadyAdded[0]);
+                    var candidate = D1BehavioralExperimentContractResearch.CandidateIdentity(placed.Object);
+                    var prospectiveSet = CompletionSetIdentity.Create([existingMember, candidate]);
+                    var evidence = d1Experiment.EvidenceIndex.Query(placed.Object.StartTime, prospectiveSet);
+                    var disposition = D1BehavioralExperimentContractResearch.Evaluate(new(true, true, 1,
+                        candidate, evidence.EvidenceState));
+                    var afterGate = ((IRandomPositionSource)rng).CallCount;
+                    if (afterGate != rngPosition || disposition.GateRngCalls != 0)
+                        throw new InvalidOperationException("The frozen D1 gate consumed RNG.");
+                    var mutate = disposition.Disposition == FutureD1ExperimentalDisposition.ExperimentAdmittable;
+                    d1Diagnostics!.Add(new D1DirectDecision(
+                        D1OpportunityKey(opportunity), opportunity.Kind, opportunity.Order,
+                        placed.Object.StartTime, evidence.OriginalBaseState, existingMember, candidate,
+                        prospectiveSet, PairType(existingMember, candidate), evidence.EvidenceState,
+                        disposition.Disposition, evidence.JointDonorOccurrenceIds, "Place",
+                        mutate ? "Place" : "Abstain", rngPosition, 0, mutate));
+                    if (!mutate) continue;
+                }
+            }
             added.Add(placed.Object);
             geometry.Insert(placed);
             if (placed.Object.Type == ManiaObjectType.Tap)
@@ -177,6 +217,10 @@ public sealed class AddNotesEngine
             AppendShadowTrace(trace, decisionDiagnostics);
         }
         AppendPerformanceTrace(trace, stats);
+        var d1RunDiagnostics = d1Diagnostics?.Build(added);
+        if (d1RunDiagnostics is not null &&
+            d1RunDiagnostics.EvidenceIndexHashBefore != d1RunDiagnostics.EvidenceIndexHashAfter)
+            throw new InvalidOperationException("D1 original-only evidence index mutated during generation.");
         return new AddNotesResult(new ManiaChart
         {
             KeyCount = chart.KeyCount,
@@ -185,8 +229,21 @@ public sealed class AddNotesEngine
             TimingPoints = chart.TimingPoints,
             AddedObjects = added,
             ArticulationReplacements = replacements
-        }, stats, trace?.ToString(), evidenceProfile, decisionDiagnostics);
+        }, stats, trace?.ToString(), evidenceProfile, decisionDiagnostics, d1RunDiagnostics);
     }
+
+    private static string D1OpportunityKey(AddNoteOpportunity opportunity) =>
+        $"OP-{opportunity.Order:D8}-{opportunity.Kind}-S{opportunity.Source.Object.Sequence}-" +
+        $"T{opportunity.Source.Object.StartTime}-A{opportunity.InteriorAnchor?.Time.ToString() ?? "NA"}";
+
+    private static CompletionPairType PairType(CompletionMemberIdentity first,
+        CompletionMemberIdentity second) => (first.HeadType, second.HeadType) switch
+        {
+            (OriginalHeadMemberType.TapHead, OriginalHeadMemberType.TapHead) => CompletionPairType.TapTap,
+            (OriginalHeadMemberType.LongNoteHead, OriginalHeadMemberType.LongNoteHead) =>
+                CompletionPairType.LongNoteLongNote,
+            _ => CompletionPairType.TapLongNote
+        };
 
     public DensitySnapshot AnalyzeDensity(ManiaChart chart, AddNotesOptions options, int time)
     {

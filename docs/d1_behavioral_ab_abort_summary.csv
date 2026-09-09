@@ -1,0 +1,2 @@
+stage,status,reason,paired_runs_completed,repeat_pairs_completed,public_behavioral_aggregates_published,outcome
+"post_repeat_safety_gate","HARD_ABORT","Raw overlap counter included pre-existing/control intersections and could not attribute D1-introduced failures",220,220,false,"C"

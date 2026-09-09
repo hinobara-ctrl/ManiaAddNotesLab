@@ -9,8 +9,8 @@ public sealed record DocumentationStateExpectation(
     string? NextActionablePhaseId,
     string? NextActionablePhaseName,
     string NextActionableAuthorization,
-    string NextBehavioralPhaseId,
-    string NextBehavioralPhaseName,
+    string? NextBehavioralPhaseId,
+    string? NextBehavioralPhaseName,
     string NextBehavioralAuthorization,
     string BlockedPrerequisiteId,
     string BlockedPrerequisiteStatus,
@@ -86,7 +86,9 @@ public static class DocumentationStateGuard
         Equal("Next actionable authorization", expected.NextActionableAuthorization,
             "next actionable authorization");
         EqualNormalized("Next behavioral phase",
-            $"{expected.NextBehavioralPhaseId} — {expected.NextBehavioralPhaseName}",
+            expected.NextBehavioralPhaseId is null
+                ? "none"
+                : $"{expected.NextBehavioralPhaseId} — {expected.NextBehavioralPhaseName}",
             "next behavioral phase");
         Equal("Next behavioral authorization", expected.NextBehavioralAuthorization,
             "next behavioral authorization");
@@ -124,8 +126,9 @@ public static class DocumentationStateGuard
         if (expected.NextActionablePhaseId is not null)
             CheckRow(expected.NextActionablePhaseId, "NEXT", expected.NextActionableAuthorization,
                 "next actionable phase");
-        CheckRow(expected.NextBehavioralPhaseId, "FUTURE", expected.NextBehavioralAuthorization,
-            "next behavioral phase");
+        if (expected.NextBehavioralPhaseId is not null)
+            CheckRow(expected.NextBehavioralPhaseId, "FUTURE", expected.NextBehavioralAuthorization,
+                "next behavioral phase");
         CheckRow(expected.BlockedPrerequisiteId, expected.BlockedPrerequisiteStatus, null,
             "blocked prerequisite");
         return errors.ToImmutable();

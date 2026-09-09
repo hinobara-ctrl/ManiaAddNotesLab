@@ -1,0 +1,3 @@
+arm,outputs,raw_interval_intersections,outputs_with_raw_intersection,attributable_d1_overlap_failures,interpretation
+"control",220,200,39,"NOT_ESTABLISHED","raw count includes original/control structure"
+"treatment",220,171,40,"NOT_ESTABLISHED","cannot be interpreted as D1 safety delta under frozen metric"
