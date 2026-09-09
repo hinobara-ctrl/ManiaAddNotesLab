@@ -33,6 +33,7 @@ else
     ValidateCanonicalState(state);
     ValidatePhaseContracts(state);
     ValidateFilesAndIndex(state);
+    ValidateD1GateContract(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -77,7 +78,6 @@ void ValidateCanonicalState(ProjectState value)
     RequireValue(value.DiagnosticVersion, "diagnosticVersion");
     if (value.BehaviorChange) errors.Add("behaviorChange must remain false for the current documented state.");
     RequireValue(value.CurrentPhase, "currentPhase");
-    RequireValue(value.NextRecommendedPhase, "nextRecommendedPhase");
     RequireValue(value.NextBehavioralPhase, "nextBehavioralPhase");
 
     var validStatuses = new HashSet<string>(StringComparer.Ordinal)
@@ -97,9 +97,10 @@ void ValidateCanonicalState(ProjectState value)
     var next = value.Phases.FirstOrDefault(x => x.Id == value.NextRecommendedPhase);
     var nextBehavioral = value.Phases.FirstOrDefault(x => x.Id == value.NextBehavioralPhase);
     if (current is null) errors.Add("currentPhase does not exist in phases.");
-    if (next is null) errors.Add("nextRecommendedPhase does not exist in phases.");
+    if (value.NextRecommendedPhase is not null && next is null)
+        errors.Add("nextRecommendedPhase does not exist in phases.");
     if (nextBehavioral is null) errors.Add("nextBehavioralPhase does not exist in phases.");
-    if (value.CurrentPhase == value.NextRecommendedPhase)
+    if (value.NextRecommendedPhase is not null && value.CurrentPhase == value.NextRecommendedPhase)
         errors.Add("currentPhase and nextRecommendedPhase must be different.");
 
     var closedStatuses = new HashSet<string>(StringComparer.Ordinal) { "COMPLETE", "HOLD", "REJECTED" };
@@ -110,8 +111,9 @@ void ValidateCanonicalState(ProjectState value)
         errors.Add($"currentPhase must be the latest closed phase ({latestClosed.Id}), not {value.CurrentPhase}.");
     if (next is not null && next.Status != "NEXT")
         errors.Add($"nextRecommendedPhase {next.Id} must have status NEXT, not {next.Status}.");
-    if (value.Phases.Count(x => x.Status == "NEXT") != 1)
-        errors.Add("Exactly one phase must have status NEXT.");
+    var expectedNextCount = value.NextRecommendedPhase is null ? 0 : 1;
+    if (value.Phases.Count(x => x.Status == "NEXT") != expectedNextCount)
+        errors.Add($"Exactly {expectedNextCount} phase(s) must have status NEXT.");
 
     var f2Branches = (value.ResearchBranches ?? []).Where(x => x.Id == "F2").ToArray();
     var branch = f2Branches.SingleOrDefault();
@@ -126,11 +128,11 @@ void ValidateCanonicalState(ProjectState value)
         if (value.NextRecommendedPhase == branch.BlockedBy)
             errors.Add("A blocked prerequisite cannot also be the next actionable research phase.");
     }
-    if (next?.Authorization != "NOT_AUTHORIZED")
+    if (next is not null && next.Authorization != "NOT_AUTHORIZED")
         errors.Add($"Next actionable phase {next?.Id} must be explicitly NOT_AUTHORIZED.");
     if (nextBehavioral?.Authorization != "NOT_AUTHORIZED")
         errors.Add($"Next behavioral phase {nextBehavioral?.Id} must be explicitly NOT_AUTHORIZED.");
-    if (value.NextRecommendedPhase == value.NextBehavioralPhase)
+    if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
     foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
@@ -181,12 +183,98 @@ void ValidatePhaseContracts(ProjectState value)
         if (value.PhaseContracts.All(x => x.Id != required))
             errors.Add($"Required canonical phase contract is absent: {required}.");
 
-    var research = value.PhaseContracts.FirstOrDefault(x => x.Id == value.NextRecommendedPhase);
-    if (research?.Kind != "ResearchShadow")
+    var research = value.NextRecommendedPhase is null
+        ? null
+        : value.PhaseContracts.FirstOrDefault(x => x.Id == value.NextRecommendedPhase);
+    if (value.NextRecommendedPhase is not null && research?.Kind != "ResearchShadow")
         errors.Add("nextRecommendedPhase must reference a ResearchShadow contract.");
     var behavioral = value.PhaseContracts.FirstOrDefault(x => x.Id == value.NextBehavioralPhase);
     if (behavioral?.Kind != "BehaviorChanging")
         errors.Add("nextBehavioralPhase must reference a BehaviorChanging contract.");
+}
+
+void ValidateD1GateContract(ProjectState value)
+{
+    var gate = value.Phases.FirstOrDefault(x => x.Id == "D1.GATE");
+    if (gate?.Status != "COMPLETE") return;
+
+    var required = new[]
+    {
+        "docs/D1_BEHAVIORAL_EXPERIMENT_CONTRACT.md",
+        "docs/PHASE_D1_GATE_BEHAVIORAL_EXPERIMENT_GATE_REPORT.md",
+        "docs/d1_gate_behavioral_experiment_contract.json",
+        "docs/d1_gate_contract_validation_summary.csv",
+        "docs/d1_gate_engine_insertion_audit.csv",
+        "docs/d1_gate_scope_audit.csv",
+        "docs/d1_gate_d1_0_reproduction.csv"
+    };
+    foreach (var artifact in required)
+    {
+        RequireFile(artifact, "D1.GATE closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "D1.GATE closure artifact index entry");
+    }
+
+    const string frozenHash = "D574631B3E713AC3D08C159B605A742D50C907B1BB4589D7FCADCFA8027A7824";
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "d1_gate_behavioral_experiment_contract.json")));
+        var contract = document.RootElement.GetProperty("contract");
+        Equal(contract, "gatePhase", "D1.GATE");
+        Equal(contract, "gateDecision", "READY");
+        Equal(contract, "baselineCommit", "77638edad9b41c8d6e3a361ce68c296ed12c90bc");
+        Equal(contract, "controlPolicyVersion", value.BehaviorPolicyVersion);
+        Equal(contract, "proposedTreatmentPolicyVersion", "d1-resulting-state-ab.1");
+        Equal(contract, "evidenceView", "ReducedOnly");
+        Equal(contract, "futureD1Authorization", "NOT_AUTHORIZED");
+        if (contract.GetProperty("behaviorChangeCurrent").GetBoolean())
+            errors.Add("D1.GATE contract must keep currentBehaviorChange=false.");
+        if (!contract.GetProperty("futureBehaviorChange").GetBoolean())
+            errors.Add("D1.GATE contract must declare futureD1BehaviorChange=true.");
+        if (contract.GetProperty("rngContract").GetProperty("gateRngCalls").GetInt32() != 0)
+            errors.Add("D1.GATE contract must consume zero RNG calls.");
+        if (contract.GetProperty("scopeCardinality").GetInt32() != 2)
+            errors.Add("D1.GATE contract must govern only the k=1 to k=2 transition.");
+        if (contract.GetProperty("proposedTreatmentPolicyVersion").GetString() == value.BehaviorPolicyVersion)
+            errors.Add("D1.GATE proposed treatment must differ from the active behavior policy.");
+        if (contract.GetProperty("rollbackPolicy").GetProperty("disabledBehavior").GetString()
+            != value.BehaviorPolicyVersion)
+            errors.Add("D1.GATE rollback must point exactly to the active legacy behavior policy.");
+        if (!contract.GetProperty("noRerollRule").GetString()!.Contains("no lane, shape, candidate, chance, or RNG retry", StringComparison.Ordinal))
+            errors.Add("D1.GATE contract must explicitly forbid retrying the same opportunity.");
+        if (document.RootElement.GetProperty("contractContentHash").GetString() != frozenHash)
+            errors.Add("D1.GATE contract hash differs from the frozen preregistration.");
+        CheckContains("docs/PHASE_D1_GATE_BEHAVIORAL_EXPERIMENT_GATE_REPORT.md", frozenHash,
+            "D1.GATE frozen contract hash");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"D1.GATE machine contract cannot be validated: {exception.Message}");
+    }
+
+    if (gate.Outcome != "READY" || gate.BehaviorChange is not false)
+        errors.Add("D1.GATE must close COMPLETE/READY with behaviorChange=false.");
+    var behavioral = value.Phases.FirstOrDefault(x => x.Id == "D1");
+    if (behavioral is null || behavioral.BehaviorChange is not true
+        || behavioral.Authorization != "NOT_AUTHORIZED")
+        errors.Add("D1 must remain behavior-changing and NOT_AUTHORIZED after D1.GATE.");
+
+    foreach (var productionFile in new[]
+    {
+        "src/ManiaAddNotesLab.Core/AddNotesEngine.cs",
+        "src/ManiaAddNotesLab.Core/Model.cs",
+        "src/ManiaAddNotesLab.Cli/Program.cs",
+        "src/ManiaAddNotesLab.Web/Program.cs"
+    })
+        if (File.ReadAllText(Path.Combine(root, productionFile.Replace('/', Path.DirectorySeparatorChar)))
+            .Contains("D1BehavioralExperimentContractResearch", StringComparison.Ordinal))
+            errors.Add($"D1.GATE research contract is connected to production: {productionFile}");
+
+    void Equal(JsonElement contract, string property, string expected)
+    {
+        if (contract.GetProperty(property).GetString() != expected)
+            errors.Add($"D1.GATE contract {property} must be {expected}.");
+    }
 }
 
 void ValidateFilesAndIndex(ProjectState value)
@@ -399,9 +487,9 @@ void ValidateMasterStateBlocks(ProjectState value)
     var nextBehavioral = value.Phases.FirstOrDefault(x => x.Id == value.NextBehavioralPhase);
     var branch = (value.ResearchBranches ?? []).FirstOrDefault(x => x.Id == "F2");
     var blocker = value.Phases.FirstOrDefault(x => x.Id == branch?.BlockedBy);
-    if (current is null || next is null || nextBehavioral is null || branch is null || blocker is null) return;
+    if (current is null || nextBehavioral is null || branch is null || blocker is null) return;
     var expectation = new DocumentationStateExpectation(current.Id, current.Status, current.Outcome,
-        next.Id, next.Name, next.Authorization ?? string.Empty,
+        next?.Id, next?.Name, next?.Authorization ?? "N/A",
         nextBehavioral?.Id ?? string.Empty, nextBehavioral?.Name ?? string.Empty,
         nextBehavioral?.Authorization ?? string.Empty, blocker.Id, blocker.Status,
         branch.Id, branch.Decision, value.BehaviorPolicyVersion,
@@ -557,7 +645,7 @@ sealed record ProjectState(
     IReadOnlyList<BranchState> ResearchBranches,
     IReadOnlyList<PhaseContractState> PhaseContracts,
     string CurrentPhase,
-    string NextRecommendedPhase,
+    string? NextRecommendedPhase,
     string NextBehavioralPhase,
     TestState TestStatus,
     CorpusState ValidationCorpus,

@@ -27,13 +27,15 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase F2.3 — COMPLETE, OUTCOME B, CONTINUE CONDITIONALLY:** domain hashing y truth completa son auditables, pero falta un package mapper-authored pre-export independiente.
 - **Phase E — COMPLETE, OUTCOME B, SHADOW ONLY:** existe recurrencia exacta útil y boundaries localmente estables, pero mismatch, abstención y sensibilidad impiden promover una representación.
 - **Phase E.1 — COMPLETE, OUTCOME B, SHADOW ONLY:** 99,51% de NoContext es ausencia exacta; spacing correlaciona débilmente y su refinement destruye coverage, por lo que la rama recurrence queda aparcada.
+- **Phase D1.0 — COMPLETE, OUTCOME A, SHADOW ONLY:** confirmó que soporte marginal no equivale a una composición conjunta observada.
+- **Phase D1.GATE — COMPLETE, OUTCOME READY, SHADOW ONLY:** dejó congelado y verificable el contrato de un posible D1, sin ejecutar el A/B ni cambiar generación.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–D1.0 no gobiernan el selector. D1.0 cerró Outcome A: un par soportado marginalmente no siempre posee un joint witness en una misma occurrence original. La siguiente recomendación research-only es **D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow**, `NEXT / NOT_AUTHORIZED`. La fase histórica **D1 — ChordCompletion Resulting-State A/B** permanece futura, conductual y también `NOT_AUTHORIZED`; ningún cierre research la autoriza. F2.ACQ sigue bloqueado y C2 deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. Phase A, Phase B y C1–D1.GATE no gobiernan el selector. D1.GATE cerró `READY`: existe una preregistración exacta para un experimento acotado sobre la transición de una a dos notas añadidas, pero no existe una siguiente fase research accionable. La fase histórica **D1 — ChordCompletion Resulting-State A/B** es el próximo candidato conductual, permanece `FUTURE / NOT_AUTHORIZED` y requiere una autorización separada. F2.ACQ sigue bloqueado y C2 deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: D1.0 — COMPLETE — OUTCOME A<br>
-Next actionable research candidate: D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow<br>
-Next actionable authorization: NOT_AUTHORIZED<br>
+Current phase: D1.GATE — COMPLETE — OUTCOME READY<br>
+Next actionable research candidate: none<br>
+Next actionable authorization: N/A<br>
 Next behavioral phase: D1 — ChordCompletion Resulting-State A/B<br>
 Next behavioral authorization: NOT_AUTHORIZED<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
@@ -42,7 +44,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 550 passed / 0 failed / 0 skipped
+Tests: 584 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

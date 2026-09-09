@@ -1,0 +1,7 @@
+metric,expected,observed,matches
+"pair_targets","42048","42048",true
+"target_marginal_only","2913","2913",true
+"hypothetical_marginal_only","374520","374520",true
+"target_whole_group_leakage","0","0",true
+"joint_cross_occurrence_leakage","0","0",true
+"order_invariance_violations","0","0",true

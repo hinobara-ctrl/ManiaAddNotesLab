@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2: **COMPLETE/B RESEARCH/SHADOW ONLY**. F2.3: **COMPLETE/B — CONTINUE CONDITIONALLY**. F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. Phase E: **COMPLETE/B SHADOW ONLY**; E.1: **COMPLETE/B SHADOW ONLY**, recurrence refinement PARKED. D1.0: **COMPLETE/A SHADOW ONLY**. D1.GATE es la siguiente recomendación research-only **NEXT / NOT AUTHORIZED**. D1 conserva el contrato histórico A/B conductual como **FUTURE / NOT AUTHORIZED**; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2: **COMPLETE/B RESEARCH/SHADOW ONLY**. F2.3: **COMPLETE/B — CONTINUE CONDITIONALLY**. F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. Phase E: **COMPLETE/B SHADOW ONLY**; E.1: **COMPLETE/B SHADOW ONLY**, recurrence refinement PARKED. D1.0: **COMPLETE/A SHADOW ONLY**. D1.GATE: **COMPLETE/READY SHADOW ONLY**. No hay siguiente candidata research. D1 es el próximo candidato conductual, conserva **FUTURE / NOT AUTHORIZED** y requiere autorización separada; C2 permanece **DEFERRED**; generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -614,11 +614,11 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 
 <!-- PHASE-CONTRACT:D1.GATE;kind=ResearchShadow;behaviorChange=false;authorization=NOT_AUTHORIZED -->
 
-**Estado: NEXT RESEARCH CANDIDATE / NOT AUTHORIZED.** Esta fase futura sólo podría pre-registrar un eventual D1: semántica exacta de admisión/abstención, denominadores, métricas, stopping criteria, versionado y rollback. No ejecutará A/B ni conectará D1.0 a generation.
+**Estado: COMPLETE — OUTCOME READY / NOT AUTHORIZED.** El contrato `phase-d1-gate-behavioral-experiment-contract.1` quedó congelado con hash `D574631B3E713AC3D08C159B605A742D50C907B1BB4589D7FCADCFA8027A7824`. Define un único experimento futuro para `k=1 → k=2`, evidencia `ReducedOnly`, admisión sólo con joint witness exacto, abstención sin reroll, cero RNG del gate y rollback a `legacy-experimental.1`. Auditó el punto de inserción posterior a una propuesta legal y anterior a `added.Add`/`geometry.Insert`. No ejecutó A/B ni conectó evidencia a generation.
 
 **Behavior change?:** no.
 
-**Acceptance criteria:** contrato falsable y revisable antes de cualquier autorización conductual; cero selector, score, fallback o policy activa.
+**Acceptance criteria:** PASS. Contrato falsable machine-readable, evaluator puro, taxonomías y métricas congeladas, engine/RNG auditado, reproducción D1.0 exacta y regresión legacy; cero selector, score, fallback o policy activa. D1 sigue `NOT_AUTHORIZED`.
 
 ## Phase D1 — ChordCompletion resulting-state A/B
 
@@ -1053,4 +1053,4 @@ Las 25 condiciones de estados excluyentes, abstención, hechos por vista, identi
 
 La representación shadow pasa identity exacta, transition typing, original-only, whole-group exclusion, provenance, backoff sólo por no-context, SKIP, determinismo, multi-key, corpus y leakage. El behavioral subgate falla: 2/50.762 local support y 0 global support harían degenerado cualquier A/B. No se creó una versión conductual ni se alteró legacy.
 
-**F2 COMPLETE/B; F2.1 COMPLETE — OUTCOME C — SHADOW ONLY; F2.2 COMPLETE OUTCOME B — RESEARCH/SHADOW ONLY; F2.3 COMPLETE OUTCOME B — CONTINUE CONDITIONALLY; F2.ACQ BLOCKED ON EXTERNAL DATA; PHASE E COMPLETE/B; E.1 COMPLETE OUTCOME B — RECURRENCE REFINEMENT PARKED; D1.0 COMPLETE OUTCOME A — SHADOW ONLY; D1.GATE NEXT / NOT AUTHORIZED; D1 BEHAVIORAL FUTURE / NOT AUTHORIZED; C2 DEFERRED.**
+**F2 COMPLETE/B; F2.1 COMPLETE — OUTCOME C — SHADOW ONLY; F2.2 COMPLETE OUTCOME B — RESEARCH/SHADOW ONLY; F2.3 COMPLETE OUTCOME B — CONTINUE CONDITIONALLY; F2.ACQ BLOCKED ON EXTERNAL DATA; PHASE E COMPLETE/B; E.1 COMPLETE OUTCOME B — RECURRENCE REFINEMENT PARKED; D1.0 COMPLETE OUTCOME A — SHADOW ONLY; D1.GATE COMPLETE OUTCOME READY — SHADOW ONLY; NO NEXT RESEARCH CANDIDATE; D1 NEXT BEHAVIORAL CANDIDATE / FUTURE / NOT AUTHORIZED; C2 DEFERRED.**

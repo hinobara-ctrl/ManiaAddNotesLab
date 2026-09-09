@@ -172,7 +172,15 @@ Regenera trece CSV `e1_*`; el detail de provenance queda local e ignorado. Exact
 
 ## D1.0 / D1.GATE / D1 — contratos separados
 
-D1.0 cerró `OUTCOME A / NOT_AUTHORIZED`: auditó `ReducedState → CompletionSet` mediante occurrences originales conjuntas y demostró una clase material marginal-only sin usar intersecciones marginales como joint witness. D1.GATE es la siguiente candidata research-only y únicamente puede pre-registrar un eventual experimento. D1 es otra fase: el A/B conductual histórico de resulting-state, versionado y futuro. Completar D1.0 o D1.GATE no autoriza D1.
+D1.0 cerró `OUTCOME A / NOT_AUTHORIZED`: auditó `ReducedState → CompletionSet` mediante occurrences originales conjuntas y demostró una clase material marginal-only sin usar intersecciones marginales como joint witness. D1.GATE cerró `OUTCOME READY / NOT_AUTHORIZED` y congeló, sin ejecutarlo, un eventual experimento `k=1 → k=2`: `ReducedOnly`, joint witness exacto para admitir y abstención sin reroll para marginal-only/no-context/not-observed. El gate consume cero RNG y se ubicaría después de la propuesta legacy legal, antes de mutar output/geometry. D1 es otra fase: el A/B conductual histórico de resulting-state, versionado y futuro. Completar D1.0 o D1.GATE no autoriza D1.
+
+El contrato humano está en `D1_BEHAVIORAL_EXPERIMENT_CONTRACT.md` y su contraparte machine-readable en `d1_gate_behavioral_experiment_contract.json`, hash `D574631B3E713AC3D08C159B605A742D50C907B1BB4589D7FCADCFA8027A7824`. El runner research-only reproduce los hechos congelados de D1.0 y los artifacts de validación:
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- phase-d1-gate-contract docs
+```
+
+Este comando no procesa charts, no llama generation y no ejecuta el A/B. No existe seed population autorizada ni toggle D1 activo.
 
 ## Checklist
 

@@ -1,0 +1,200 @@
+{
+  "contract": {
+    "schemaVersion": "phase-d1-gate-behavioral-experiment-contract.1",
+    "gatePhase": "D1.GATE",
+    "gateDecision": "READY",
+    "baselineCommit": "77638edad9b41c8d6e3a361ce68c296ed12c90bc",
+    "controlPolicyVersion": "legacy-experimental.1",
+    "proposedTreatmentPolicyVersion": "d1-resulting-state-ab.1",
+    "behaviorChangeCurrent": false,
+    "futureBehaviorChange": true,
+    "futureD1Authorization": "NOT_AUTHORIZED",
+    "behavioralQuestion": "Can one bounded second-addition admission experiment isolate exact same-occurrence joint evidence?",
+    "singleHypothesis": "For one otherwise legacy-valid proposal that would change the added set from cardinality 1 to 2, require an exact ReducedOnly same-occurrence joint witness; otherwise abstain without reroll.",
+    "evidenceView": "ReducedOnly",
+    "scopeCardinality": 2,
+    "eligibilityRule": "Hard validity passed; exactly one previously accepted pass-1 completion member exists at the timestamp; the already-selected legacy proposal would make the exact added CompletionSet cardinality two.",
+    "eligibleOpportunityKinds": [
+      "BaseHead",
+      "LnInterior"
+    ],
+    "excludedOpportunityKinds": [
+      "AddedSetCardinality0To1",
+      "AddedSetCardinality2OrMoreTo3OrMore",
+      "ArticulationReplacement"
+    ],
+    "evidenceStates": [
+      "HardInvalidExcluded",
+      "JointObservedAmongAlternatives",
+      "JointObservedUnique",
+      "MarginalOnly",
+      "NoComparableCompositionContext",
+      "NotMarginallySupported",
+      "OutsideScope"
+    ],
+    "admissionStates": [
+      "JointObservedAmongAlternatives",
+      "JointObservedUnique"
+    ],
+    "abstentionStates": [
+      "MarginalOnly",
+      "NoComparableCompositionContext",
+      "NotMarginallySupported"
+    ],
+    "outsideScopeStates": [
+      "AddedSetCardinality0To1",
+      "AddedSetCardinality2OrMoreTo3OrMore",
+      "ArticulationReplacement"
+    ],
+    "hardInvalidHandling": "Existing geometry and format validity run first. Hard-invalid proposals are excluded from D1EligibleDecisions and are never D1 abstentions.",
+    "noRerollRule": "One legacy proposal produces one disposition. Abstention advances to the next pre-existing opportunity with no lane, shape, candidate, chance, or RNG retry caused by D1.",
+    "originalEvidenceRule": "The immutable index is built only from OriginalObjects. Synthetic objects may never become donors, witnesses, frequency, context, or support.",
+    "currentStateRule": "OriginalBaseState, AlreadyAddedCompletionMembers, ProspectiveCandidate, ProspectiveCompletionSet, ProspectiveResultingState, and OriginalEvidenceIndex remain separate. Accepted synthetic heads describe current state only.",
+    "candidateIdentity": "lane \u002B TapHead|LongNoteHead; releases and held tails are not completion members",
+    "selectedRangeSemantics": "The inclusive range filters opportunity source heads only. Evidence remains full-chart original-only and may come from outside the selected range.",
+    "addChanceSemantics": "The existing Bernoulli/chance path runs before D1 eligibility. D1 neither changes chance nor compensates for abstentions elsewhere.",
+    "seedProtocol": "No population seed claim is frozen. Future D1 must declare an explicit deterministic paired seed list before running; fixture seeds are implementation coverage only.",
+    "rngContract": {
+      "gateRngCalls": 0,
+      "identicalTranscriptBeforeFirstBehavioralDivergence": true,
+      "downstreamDivergenceAllowedAfterRejection": true,
+      "requiredInstrumentation": [
+        "DirectD1Decision",
+        "DownstreamRngDivergence",
+        "FirstBehavioralDivergence",
+        "RngCallsBeforeGate",
+        "RngCallsByGate"
+      ]
+    },
+    "insertionPoint": {
+      "method": "AddNotesEngine.Apply",
+      "semanticAnchor": "after PlaceTap/PlaceLongNote returns a non-null TimedManiaObject and before added.Add/geometry.Insert",
+      "beforeOperation": "added.Add(placed.Object), geometry.Insert(placed), placement statistics, and output mutation",
+      "afterOperation": "chance roll, exact tap lane or LN shape/lane selection, and existing legal-geometry validation",
+      "candidateIdentityAvailable": true,
+      "currentOriginalBaseStateAvailable": true,
+      "alreadyAddedSetAvailable": true,
+      "hardValidityKnown": true,
+      "outputNotYetMutated": true,
+      "gateRngCalls": 0,
+      "rngAlreadyConsumed": "The chance roll and proposal-specific lane/shape RNG have already been consumed by legacy.",
+      "diagnosticCaveat": "Legacy diagnostics currently label the proposal Placed inside PlaceTap/PlaceLongNote; future D1 must record a separate direct disposition or revise that label atomically before mutation."
+    },
+    "denominators": [
+      "AllLegacyOpportunities",
+      "ChartsWithD1EligibleDecision",
+      "D1EligibleDecisions",
+      "IndependentFamiliesAffected",
+      "OtherwiseLegalCandidateProposals",
+      "TimestampsWithD1EligibleDecision"
+    ],
+    "primaryDenominator": "D1EligibleDecisions",
+    "directMetrics": [
+      "D1EligibleDecisions",
+      "DirectGateAdmissions",
+      "DirectGateRejections",
+      "JointAlternativeAdmissions",
+      "JointObservedAdmissions",
+      "JointUniqueAdmissions",
+      "MarginalOnlyAbstentions",
+      "NoComparableAbstentions",
+      "NotObservedAbstentions"
+    ],
+    "outputMetrics": [
+      "AddedHeadCount",
+      "AddedHeadsPerTimestampDistribution",
+      "AddedLNCount",
+      "AddedObjectCount",
+      "AffectedTimestamps",
+      "DownstreamOutputDifferences",
+      "FinalOutputHash",
+      "HardValidityFailures",
+      "OriginalObjectCount",
+      "OverlapFailures",
+      "ReparseSuccess",
+      "TimestampsDirectlyChangedByD1"
+    ],
+    "strata": [
+      "FamilyMacro",
+      "Keymode10K",
+      "Keymode4K",
+      "Keymode7K",
+      "LongNoteLongNote",
+      "Micro",
+      "PerChart",
+      "RiceDenseTapSentinel",
+      "Synthetic18K",
+      "Synthetic1K",
+      "TapLongNote",
+      "TapTap"
+    ],
+    "nonDegeneracyCriteria": [
+      "AtLeastOneDirectAbstention",
+      "AtLeastOneDirectAdmission",
+      "MoreThanOneIndependentFamilyAffectedForCrossFamilyClaim",
+      "NoAffectedChartLosesEveryAddition",
+      "ReportChartsWithNoEligibleDecisionSeparately"
+    ],
+    "stoppingCriteria": [
+      "AddedObjectsEnterEvidence",
+      "ControlDiffersFromLegacy",
+      "CrossChartEvidence",
+      "DeterministicRerunFailure",
+      "DirectDecisionLacksExactProvenance",
+      "GateConsumesRng",
+      "GateRunsOutsideK2Scope",
+      "HardInvariantFailure",
+      "JointWitnessUsesMultipleOccurrences",
+      "NoOverlapFailure",
+      "NonD1OptionOrDefaultChanged",
+      "PolicyVersionMismatch",
+      "SourceOverwrite",
+      "TreatmentChangesBehaviorWhenDisabled",
+      "WriterOrReparseFailure"
+    ],
+    "holdCriteria": [
+      "AdmissionRequiresFrequencyOrScore",
+      "CandidateUnavailableBeforeMutation",
+      "DirectAndDownstreamEffectsCannotBeSeparated",
+      "EvidenceRequiresMultipleViews",
+      "GateRequiresExtraRng",
+      "HardValidityCannotBeSeparated",
+      "K3MakesK2Uninterpretable",
+      "NoCleanInsertionPoint",
+      "RerollRequired",
+      "RollbackNotByteExact",
+      "SyntheticStateWouldTeachEvidence"
+    ],
+    "futureD1Outcomes": [
+      "A: exact preregistration, deterministic and safe, nonzero admissions and abstentions across multiple families, attributable effects, noncollapsed output, exact rollback; continue technical evaluation/playtesting only",
+      "B: valid and interpretable but restricted, abstention-heavy, k3/downstream dominated, or one narrow research dependency remains; no promotion",
+      "C: degenerate, unsafe, unattributable, or unable to isolate joint evidence; rollback and park/redesign"
+    ],
+    "prohibitedCoupledChanges": [
+      "AddChanceSemantics",
+      "Articulation",
+      "CandidateSelection",
+      "Chance",
+      "ContextWindows",
+      "Density",
+      "FrequencyThreshold",
+      "Gap",
+      "K3Handling",
+      "LaneSelection",
+      "LnWeighting",
+      "OpportunityOrdering",
+      "Rng",
+      "ScoreOrConfidence",
+      "ShapeSelection",
+      "ViewFallback"
+    ],
+    "rollbackPolicy": {
+      "disabledBehavior": "legacy-experimental.1",
+      "migrationRequired": false,
+      "persistentLearnedState": false,
+      "chartRewriteRequired": false
+    }
+  },
+  "contractContentHash": "D574631B3E713AC3D08C159B605A742D50C907B1BB4589D7FCADCFA8027A7824",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; no indentation for hash; record property order; all set-like arrays sorted ordinal; no timestamps or paths"
+}

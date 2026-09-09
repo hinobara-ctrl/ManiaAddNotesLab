@@ -1,0 +1,13 @@
+audit,value
+"method","AddNotesEngine.Apply"
+"semantic_anchor","after PlaceTap/PlaceLongNote returns a non-null TimedManiaObject and before added.Add/geometry.Insert"
+"before_operation","added.Add(placed.Object), geometry.Insert(placed), placement statistics, and output mutation"
+"after_operation","chance roll, exact tap lane or LN shape/lane selection, and existing legal-geometry validation"
+"candidate_identity_available","true"
+"current_original_base_state_available","true"
+"already_added_set_available","true"
+"hard_validity_known","true"
+"output_not_yet_mutated","true"
+"gate_rng_calls","0"
+"rng_already_consumed","The chance roll and proposal-specific lane/shape RNG have already been consumed by legacy."
+"diagnostic_caveat","Legacy diagnostics currently label the proposal Placed inside PlaceTap/PlaceLongNote; future D1 must record a separate direct disposition or revise that label atomically before mutation."

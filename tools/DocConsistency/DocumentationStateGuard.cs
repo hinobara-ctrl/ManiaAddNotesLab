@@ -6,8 +6,8 @@ public sealed record DocumentationStateExpectation(
     string CurrentPhaseId,
     string CurrentPhaseStatus,
     string? CurrentPhaseOutcome,
-    string NextActionablePhaseId,
-    string NextActionablePhaseName,
+    string? NextActionablePhaseId,
+    string? NextActionablePhaseName,
     string NextActionableAuthorization,
     string NextBehavioralPhaseId,
     string NextBehavioralPhaseName,
@@ -79,7 +79,9 @@ public static class DocumentationStateGuard
             + (expected.CurrentPhaseOutcome is null ? string.Empty : $" — OUTCOME {expected.CurrentPhaseOutcome}");
         EqualNormalized("Current phase", currentValue, "current phase");
         EqualNormalized("Next actionable research candidate",
-            $"{expected.NextActionablePhaseId} — {expected.NextActionablePhaseName}",
+            expected.NextActionablePhaseId is null
+                ? "none"
+                : $"{expected.NextActionablePhaseId} — {expected.NextActionablePhaseName}",
             "next actionable phase");
         Equal("Next actionable authorization", expected.NextActionableAuthorization,
             "next actionable authorization");
@@ -119,8 +121,9 @@ public static class DocumentationStateGuard
         var errors = ImmutableArray.CreateBuilder<string>();
         CheckRow(expected.CurrentPhaseId, expected.CurrentPhaseStatus, expected.CurrentPhaseOutcome,
             "current phase");
-        CheckRow(expected.NextActionablePhaseId, "NEXT", expected.NextActionableAuthorization,
-            "next actionable phase");
+        if (expected.NextActionablePhaseId is not null)
+            CheckRow(expected.NextActionablePhaseId, "NEXT", expected.NextActionableAuthorization,
+                "next actionable phase");
         CheckRow(expected.NextBehavioralPhaseId, "FUTURE", expected.NextBehavioralAuthorization,
             "next behavioral phase");
         CheckRow(expected.BlockedPrerequisiteId, expected.BlockedPrerequisiteStatus, null,

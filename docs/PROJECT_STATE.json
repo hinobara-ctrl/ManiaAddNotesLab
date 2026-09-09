@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 4,
-  "lastUpdated": "2026-09-08",
+  "schemaVersion": 5,
+  "lastUpdated": "2026-09-09",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -24,7 +24,7 @@
     { "id": "E", "name": "Adaptive Context Prototypes / Shadow", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_E_ADAPTIVE_CONTEXT_PROTOTYPES_REPORT.md" },
     { "id": "E.1", "name": "Exact Recurrence Failure Stratification / Shadow", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_E_1_EXACT_RECURRENCE_FAILURE_STRATIFICATION_REPORT.md" },
     { "id": "D1.0", "name": "Resulting-State Composition Feasibility / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D1_0_RESULTING_STATE_COMPOSITION_FEASIBILITY_REPORT.md", "authorization": "NOT_AUTHORIZED" },
-    { "id": "D1.GATE", "name": "Resulting-State Behavioral Experiment Gate / Shadow", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null, "authorization": "NOT_AUTHORIZED" },
+    { "id": "D1.GATE", "name": "Resulting-State Behavioral Experiment Gate / Shadow", "status": "COMPLETE", "outcome": "READY", "behaviorChange": false, "report": "docs/PHASE_D1_GATE_BEHAVIORAL_EXPERIMENT_GATE_REPORT.md", "authorization": "NOT_AUTHORIZED" },
     { "id": "D1", "name": "ChordCompletion Resulting-State A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" }
   ],
   "researchBranches": [
@@ -37,10 +37,10 @@
     { "id": "D1.GATE", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
     { "id": "D1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" }
   ],
-  "currentPhase": "D1.0",
-  "nextRecommendedPhase": "D1.GATE",
+  "currentPhase": "D1.GATE",
+  "nextRecommendedPhase": null,
   "nextBehavioralPhase": "D1",
-  "testStatus": { "passed": 550, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 584, "failed": 0, "skipped": 0 },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",
