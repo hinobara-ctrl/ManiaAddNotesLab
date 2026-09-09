@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D1 permanece Outcome C/PARKED; D1.SAFETY cerró Outcome C shadow-only sin cambiar generation.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen Outcome C/PARKED. SAFETY.PROV cerró Outcome A shadow-only, sin cambiar generation, y exige **ROADMAP REVIEW REQUIRED**.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -23,6 +23,8 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow | **COMPLETE — OUTCOME READY / NOT_AUTHORIZED** | Ninguno; congeló el contrato de un eventual A/B y su rollback sin ejecutarlo. |
 | D1 — ChordCompletion Resulting-State A/B | **COMPLETE — OUTCOME C / NO PROMOTION** | Sí, sólo en el A/B explícito; hard abort de seguridad, rollback legacy y rama PARKED. |
 | D1.SAFETY — Attributable Geometry Safety Semantics / Shadow | **COMPLETE — OUTCOME C / PARKED** | Ninguno; el oracle es read-only, pero el forensic prototype violó la regla proven-or-unattributable. |
+| SAFETY.PROV — Mutation-Level Generation Provenance / Shadow | **COMPLETE — OUTCOME A / ROADMAP REVIEW REQUIRED** | Ninguno; recorder causal append-only, exacto OFF/ON y sin autoridad conductual. |
+| SAFETY.PROV — Mutation-Level Generation Provenance / Shadow | **COMPLETE — OUTCOME A / ROADMAP REVIEW REQUIRED** | Ninguno; recorder observacional con bytes, RNG, oportunidades, decisiones, geometría y serialización exactos OFF/ON. |
 | F1 — Comparable-context Resolver / Shadow + Validation | **COMPLETE — OUTCOME A** | Ninguno; formaliza support, mismatch, ausencia y ambiguity por candidate. |
 | F2 — Typed gaps and evidence backoff A/B | **COMPLETE — OUTCOME B — SHADOW ONLY** | Ninguno; identity/backoff exactos válidos, coverage insuficiente para A/B. |
 | F2.1 — Exact Gap Timing Identity / Shadow Validation | **COMPLETE — OUTCOME C — SHADOW ONLY** | Ninguno; demuestra que equivalencia nominal general requiere inferencia ausente del archivo. |
@@ -84,6 +86,12 @@ El chequeo post-run de seguridad produjo hard abort porque contó intersections 
 D1.SAFETY auditó las reglas reales: taps usan igualdad inclusiva contra releases; LN overlap usa cruce estricto y el gap se evalúa aparte; articulación ignora sólo su parent; beat-space y milisegundos son niveles distintos. El oracle puro separa raw relations, hard violations y atribución causal, con IDs deterministas, cero RNG y 26/26 casos sintéticos.
 
 El forensic safety-only reprodujo 200/171 raw relations, pero su primer agregado llamó `LegacyIntroduced` a condiciones ausentes del source sin contar con provenance de la mutación causal. Eso contradice el contrato congelado: una diferencia de snapshots debe permanecer `Unattributable`. Se retiró el agregado, se abortó la fase y no se publicaron atribuciones. D1.SAFETY cierra **OUTCOME C / PARKED**, sin afectar D1 ni generation.
+
+### Resultado SAFETY.PROV
+
+SAFETY.PROV añadió un recorder append-only conectado sólo mediante overload research. Cada DecisionEvent/MutationEvent conserva orden, opportunity/parent, StateBefore/After, RNG position, causal origin y IDs deterministas. GeometryState y GenerationState permanecen separadas; downstream exige un parent state completo descendiente de una divergencia exacta, y una reconvergencia completa elimina ancestry. Falta de provenance, hidden state incompleto o matching ambiguo produce `Unattributable`.
+
+La certificación sintética/implementation-only cubrió 1K/4K/7K/10K/18K y articulación. OFF/ON fue exacto en bytes, objetos, replacements, RNG, oportunidades, candidates, decisiones, geometría y serialización. Dos traces fueron byte-identical; recorder RNG = 0. Resultado: **COMPLETE — OUTCOME A**, que demuestra viabilidad técnica y nada más. No autoriza D1, SAFETY.GATE ni conducta. **ROADMAP REVIEW REQUIRED**.
 
 ## Qué afecta realmente la generación
 
@@ -173,7 +181,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **625 passed, 0 failed, 0 skipped** con D1.SAFETY; D1 cerró con 599.
+- `dotnet test -c Release`: **656 passed, 0 failed, 0 skipped** con SAFETY.PROV; D1.SAFETY cerró con 625 y D1 con 599.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -193,10 +201,10 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. D1 y D1.SAFETY cerraron **OUTCOME C / PARKED**. No queda una fase research o conductual accionable; cualquier revisión futura requiere autorización separada. C2 permanece **DEFERRED** y MapperSupport no está autorizado.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. D1 y D1.SAFETY cerraron **OUTCOME C / PARKED**. SAFETY.PROV cerró **OUTCOME A / SHADOW ONLY**. No queda una fase research o conductual accionable: el siguiente paso es **ROADMAP REVIEW REQUIRED** con autorización humana separada. C2 permanece **DEFERRED** y MapperSupport no está autorizado.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: D1.SAFETY — COMPLETE — OUTCOME C<br>
+Current phase: SAFETY.PROV — COMPLETE — OUTCOME A<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -207,7 +215,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 625 passed / 0 failed / 0 skipped
+Tests: 656 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

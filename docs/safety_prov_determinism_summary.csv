@@ -1,0 +1,2 @@
+trace_repetitions,trace_bytes_exact,trace_sha256,mutation_ids_deterministic,decision_ids_deterministic,divergence_ids_deterministic,recorder_rng_calls,source_unchanged
+2,true,2E13D042FA2CD95E72FAB8764FD36EA3527DA9BBD530BC9C3E7D48BBC7738226,true,true,true,0,true

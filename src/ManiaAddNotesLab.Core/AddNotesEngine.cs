@@ -19,6 +19,15 @@ public sealed class AddNotesEngine
 
     public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng,
         MapperEvidenceProfile? preparedEvidenceProfile, D1BehavioralExperimentConfiguration? d1Experiment)
+        => Apply(chart, options, rng, preparedEvidenceProfile, d1Experiment, null);
+
+    /// <summary>
+    /// Research-only observational overload. The recorder receives immutable semantic snapshots and cannot
+    /// influence generation decisions. Normal CLI/Web call sites do not use this overload.
+    /// </summary>
+    public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng,
+        MapperEvidenceProfile? preparedEvidenceProfile, D1BehavioralExperimentConfiguration? d1Experiment,
+        GenerationProvenanceRecorderResearch? provenance)
     {
         Validate(chart, options, rng);
         MapperEvidenceProfile evidenceProfile;
@@ -64,12 +73,20 @@ public sealed class AddNotesEngine
         var added = new List<ManiaObject>();
         var d1Diagnostics = d1Experiment is null ? null : new D1BehavioralRunDiagnosticsBuilder(d1Experiment);
         var opportunities = BuildOpportunities(analysis, options, stats, trace);
+        provenance?.BindOpportunitySequence(opportunities.Select(D1OpportunityKey));
         var articulationIntents = new List<ArticulationIntent>();
         var effectiveChanceSum = 0d;
         var pass1Started = Stopwatch.GetTimestamp();
 
-        foreach (var opportunity in opportunities)
+        for (var opportunityIndex = 0; opportunityIndex < opportunities.Count; opportunityIndex++)
         {
+            var opportunity = opportunities[opportunityIndex];
+            var provenanceKey = D1OpportunityKey(opportunity);
+            var provenanceStage = opportunity.Kind == OpportunityKind.BaseHead
+                ? GenerationProvenanceStage.Pass1BaseOpportunity
+                : GenerationProvenanceStage.InteriorOpportunity;
+            var provenanceBefore = provenance?.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
+                opportunityIndex, articulationIntents.Select(ArticulationIntentIdentity));
             var opportunityKey = diagnostics?.OpportunityKey(opportunity.Kind, opportunity.Order,
                 opportunity.Source.Object, opportunity.ParentOriginalLn?.Object, opportunity.InteriorAnchor?.Time);
             var density = densityAnalyzer.Analyze(opportunity.Source.StartBeat, options);
@@ -110,7 +127,17 @@ public sealed class AddNotesEngine
             AppendDensityTrace(trace, opportunity, options, density, occupiedColumns, simultaneousHeadColumns,
                 heldLnColumns, chordFactor, effectiveChance);
 
-            if (effectiveChance <= 0 || (effectiveChance < 1 && rng.NextDouble() >= effectiveChance)) continue;
+            var probabilityPassed = effectiveChance > 0
+                && (effectiveChance >= 1 || rng.NextDouble() < effectiveChance);
+            if (!probabilityPassed)
+            {
+                if (provenance is not null)
+                    provenance.ObserveDecision(provenanceStage, provenanceKey,
+                        GenerationDecisionDisposition.ProbabilityAbstain, null, provenanceBefore!,
+                        provenance.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
+                            opportunityIndex + 1, articulationIntents.Select(ArticulationIntentIdentity)));
+                continue;
+            }
             stats.SuccessfulProbabilityRolls++;
             if (opportunity.Kind == OpportunityKind.BaseHead)
             {
@@ -141,6 +168,11 @@ public sealed class AddNotesEngine
                     }
                     else stats.RejectedNotSaturated++;
                 }
+                if (provenance is not null)
+                    provenance.ObserveDecision(provenanceStage, provenanceKey,
+                        GenerationDecisionDisposition.NoLegalPlacement, null, provenanceBefore!,
+                        provenance.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
+                            opportunityIndex + 1, articulationIntents.Select(ArticulationIntentIdentity)));
                 continue;
             }
             if (d1Experiment is not null)
@@ -165,11 +197,36 @@ public sealed class AddNotesEngine
                         prospectiveSet, PairType(existingMember, candidate), evidence.EvidenceState,
                         disposition.Disposition, evidence.JointDonorOccurrenceIds, "Place",
                         mutate ? "Place" : "Abstain", rngPosition, 0, mutate));
-                    if (!mutate) continue;
+                    if (!mutate)
+                    {
+                        if (provenance is not null)
+                            provenance.ObserveDecision(provenanceStage, provenanceKey,
+                                GenerationDecisionDisposition.ExperimentalAbstain,
+                                GenerationProvenanceRecorderResearch.ObjectSemanticIdentity(placed.Object),
+                                provenanceBefore!, provenance.State(chart.OriginalObjects, added, [], Position(rng),
+                                    Position(rng), opportunityIndex + 1,
+                                    articulationIntents.Select(ArticulationIntentIdentity)),
+                                disposition.Disposition.ToString());
+                        continue;
+                    }
                 }
             }
+            var beforeMutation = provenance?.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
+                opportunityIndex, articulationIntents.Select(ArticulationIntentIdentity));
+            provenance?.ObserveDecision(provenanceStage, provenanceKey, GenerationDecisionDisposition.Place,
+                GenerationProvenanceRecorderResearch.ObjectSemanticIdentity(placed.Object), provenanceBefore!,
+                beforeMutation!);
             added.Add(placed.Object);
             geometry.Insert(placed);
+            if (provenance is not null)
+            {
+                var afterMutation = provenance.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
+                    opportunityIndex + 1, articulationIntents.Select(ArticulationIntentIdentity));
+                provenance.ObserveMutation(provenanceStage,
+                    placed.Object.Type == ManiaObjectType.Tap ? GenerationMutationKind.InsertTap
+                        : GenerationMutationKind.InsertLongNote,
+                    provenanceKey, placed.Object, placed.StartBeat, placed.EndBeat, beforeMutation!, afterMutation);
+            }
             if (placed.Object.Type == ManiaObjectType.Tap)
             {
                 stats.AddedTaps++;
@@ -198,7 +255,8 @@ public sealed class AddNotesEngine
         var articulationStarted = Stopwatch.GetTimestamp();
         var replacements = options.ArticulationEnabled
             ? ResolveArticulations(articulationIntents, analysis, geometry, retriggerAnalyzer, timeline,
-                options, DeriveArticulationRandom(rng, chart), stats, trace, diagnostics, evidenceProfile)
+                options, DeriveArticulationRandom(rng, chart), stats, trace, diagnostics, evidenceProfile,
+                provenance, chart.OriginalObjects, added, rng, opportunities.Count)
             : [];
         stats.ArticulationPassMs = options.ArticulationEnabled ? ElapsedMs(articulationStarted) : 0;
 
@@ -235,6 +293,12 @@ public sealed class AddNotesEngine
     private static string D1OpportunityKey(AddNoteOpportunity opportunity) =>
         $"OP-{opportunity.Order:D8}-{opportunity.Kind}-S{opportunity.Source.Object.Sequence}-" +
         $"T{opportunity.Source.Object.StartTime}-A{opportunity.InteriorAnchor?.Time.ToString() ?? "NA"}";
+
+    private static long? Position(IRandomSource rng) => (rng as IRandomPositionSource)?.CallCount;
+
+    private static string ArticulationIntentIdentity(ArticulationIntent intent) =>
+        $"ARTINT-P{intent.Opportunity.ParentOriginalLn!.Object.Sequence}-" +
+        $"A{intent.Opportunity.InteriorAnchor!.Time}-O{intent.Opportunity.Order}";
 
     private static CompletionPairType PairType(CompletionMemberIdentity first,
         CompletionMemberIdentity second) => (first.HeadType, second.HeadType) switch
@@ -784,12 +848,19 @@ public sealed class AddNotesEngine
         IReadOnlyList<ArticulationIntent> intents, OriginalChartAnalysis analysis, LaneGeometryIndex geometry,
         LocalRetriggerGapAnalyzer retriggerAnalyzer, BeatTimeline timeline, AddNotesOptions options,
         IRandomSource rng, AddNotesStatistics stats, StringBuilder? trace, DecisionDiagnosticsBuilder? diagnostics,
-        MapperEvidenceProfile profile)
+        MapperEvidenceProfile profile, GenerationProvenanceRecorderResearch? provenance,
+        IReadOnlyList<ManiaObject> originals, IReadOnlyList<ManiaObject> added, IRandomSource rootRng,
+        int opportunityCursor)
     {
         var result = new List<ArticulationReplacement>();
+        var pending = intents.Select(ArticulationIntentIdentity).ToList();
         foreach (var group in intents.GroupBy(x => x.Opportunity.ParentOriginalLn!.Object.Sequence)
                      .OrderBy(x => x.Key))
         {
+            var groupIdentities = group.Select(ArticulationIntentIdentity).ToArray();
+            var groupKey = $"ART-PARENT-{group.Key}";
+            var provenanceBefore = provenance?.State(originals, added, result, Position(rootRng), Position(rng),
+                opportunityCursor, pending);
             var candidates = new List<ArticulationCandidate>();
             foreach (var intent in group.OrderBy(x => x.Opportunity.InteriorAnchor!.Time))
             {
@@ -859,13 +930,37 @@ public sealed class AddNotesEngine
                     parentObject.Sequence, AddedObjectOrigin.ArticulationReplacement);
                 var right = ManiaObject.Ln(parentObject.Lane, selected.RepressTime, parentObject.EndTime!.Value, true,
                     parentObject.Sequence, AddedObjectOrigin.ArticulationReplacement);
+                var beforeMutation = provenance?.State(originals, added, result, Position(rootRng), Position(rng),
+                    opportunityCursor, pending);
+                provenance?.ObserveDecision(GenerationProvenanceStage.Articulation, groupKey,
+                    GenerationDecisionDisposition.ArticulationReplace,
+                    GenerationProvenanceRecorderResearch.ObjectSemanticIdentity(parentObject),
+                    provenanceBefore!, beforeMutation!);
                 result.Add(new ArticulationReplacement(parentObject, left, right, selected.ReleaseTime,
                     selected.RepressTime));
+                foreach (var identity in groupIdentities) pending.Remove(identity);
+                if (provenance is not null)
+                {
+                    var afterMutation = provenance.State(originals, added, result, Position(rootRng), Position(rng),
+                        opportunityCursor, pending);
+                    provenance.ObserveMutation(GenerationProvenanceStage.Articulation,
+                        GenerationMutationKind.ArticulationReplace, groupKey, left,
+                        timeline.ToBeatDecimal(left.StartTime), timeline.ToBeatDecimal(left.EndTime!.Value),
+                        beforeMutation!, afterMutation, GenerationCausalOrigin.Legacy, parentObject);
+                }
                 stats.ArticulationPlaced++;
                 var competingIntents = candidates.Select(x => x.Intent.Opportunity.InteriorAnchor!.Time).Distinct().Count() - 1;
                 if (competingIntents > 0) stats.RejectedParentCap += competingIntents;
                 trace?.AppendLine($"ARTICULATION_PLACED parent={parentObject.StartTime}-{parentObject.EndTime}@lane{parentObject.Lane + 1} R={selected.ReleaseTime} H={selected.RepressTime}");
                 if (options.MaxArticulationsPerOriginalLn <= 0) throw new InvalidOperationException();
+            }
+            else if (provenance is not null)
+            {
+                foreach (var identity in groupIdentities) pending.Remove(identity);
+                provenance.ObserveDecision(GenerationProvenanceStage.Articulation, groupKey,
+                    GenerationDecisionDisposition.ArticulationSkipped, null, provenanceBefore!,
+                    provenance.State(originals, added, result, Position(rootRng), Position(rng),
+                        opportunityCursor, pending));
             }
             if (diagnostics is not null)
             {

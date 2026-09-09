@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2: **COMPLETE/B RESEARCH/SHADOW ONLY**. F2.3: **COMPLETE/B — CONTINUE CONDITIONALLY**. F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. Phase E/E.1: **COMPLETE/B**, recurrence PARKED. D1: **COMPLETE/C — NO PROMOTION / PARKED**. D1.SAFETY: **COMPLETE — OUTCOME C / SHADOW ONLY / PARKED**. No hay siguiente fase research o conductual autorizada; C2 permanece **DEFERRED**; generation normal continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2: **COMPLETE/B RESEARCH/SHADOW ONLY**. F2.3: **COMPLETE/B — CONTINUE CONDITIONALLY**. F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. Phase E/E.1: **COMPLETE/B**, recurrence PARKED. D1: **COMPLETE/C — NO PROMOTION / PARKED**. D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV: **COMPLETE/A / SHADOW ONLY**. **ROADMAP REVIEW REQUIRED**; no hay siguiente fase research o conductual autorizada, C2 permanece **DEFERRED** y generation normal continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -653,6 +653,18 @@ Véase `PHASE_C1_LN_WITNESS_DEDUP_REPORT.md`.
 **Rollback:** policy legacy.
 
 **Acceptance criteria:** estados finales explicables y 1K–18K sin branches.
+
+## Phase SAFETY.PROV — Mutation-Level Generation Provenance / Shadow
+
+<!-- PHASE-CONTRACT:SAFETY.PROV;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED -->
+
+**SAFETY.PROV COMPLETE — OUTCOME A.**
+
+**Estado: COMPLETE — OUTCOME A / ROADMAP REVIEW REQUIRED.** El recorder append-only captura decisiones y mutaciones mientras ocurre generation, con StateBefore/After, opportunity/parent, RNG positions, deterministic IDs y genealogy. El comparator research separado prueba direct divergence, downstream ancestry y reconvergence sin usar una bandera global “ever diverged”. Missing provenance/hidden state y serialización ambigua abstienen como `Unattributable`.
+
+**Behavior change?:** no. El overload normal, CLI, Web, defaults y writer continúan intactos. OFF/ON fue exacto en bytes, AddedObjects, replacements, RNG, opportunities, candidates, decisiones, geometría y serialización para fixtures 1K/4K/7K/10K/18K; trace repeat byte-identical y recorder RNG cero.
+
+**Boundary:** Outcome A demuestra viabilidad técnica de provenance, no seguridad de D1 ni autoridad para otro experimento. D1 y D1.SAFETY permanecen COMPLETE/C/PARKED. No se crea SAFETY.GATE, SAFETY.PROV.1 ni rerun D1. El único siguiente paso permitido es revisión humana del roadmap completo.
 
 ## Phase E — Adaptive context prototypes / Shadow
 

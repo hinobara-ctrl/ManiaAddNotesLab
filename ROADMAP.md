@@ -17,6 +17,7 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow | ✅ **COMPLETE — OUTCOME READY / NOT_AUTHORIZED** | Contrato futuro pre-registrado, hash congelado y punto de inserción auditado; no se ejecutó A/B. |
 | D1 — ChordCompletion Resulting-State A/B | ⛔ **COMPLETE — OUTCOME C / NO PROMOTION** | El A/B congelado terminó en hard abort por safety attribution no establecida; rollback legacy y rama PARKED. |
 | D1.SAFETY — Attributable Geometry Safety Semantics / Shadow | ⛔ **COMPLETE — OUTCOME C / PARKED** | La semántica sintética fue útil, pero el forensic prototype atribuyó sin mutation provenance; no hay sucesora autorizada. |
+| SAFETY.PROV — Mutation-Level Generation Provenance / Shadow | ✅ **COMPLETE — OUTCOME A / ROADMAP REVIEW REQUIRED** | Provenance causal durante execution es viable y behavior-neutral; no autoriza un experimento ni una fase sucesora automática. |
 | E — Adaptive Context Prototypes / Shadow | ✅ **COMPLETE — OUTCOME B** | Recurrence exacta muestra señal restringida; boundaries son estables bajo holdout pero parameter-sensitive. |
 | E.1 — Exact Recurrence Failure Stratification / Shadow | ✅ **COMPLETE — OUTCOME B** | Exact absence domina NoContext; spacing refinement destruye coverage y la rama se aparca. |
 | F1 — Comparable-context Resolver / Shadow + Validation | ✅ **COMPLETE — OUTCOME A** | Support, mismatch, no-context y ambiguity son reconstruibles por candidate sin selection conductual. |
@@ -33,3 +34,5 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | K — Zero-config validation | ⏳ Pending | Retirar controles estilísticos del flujo principal sólo tras validación diversa. |
 
 Regla de avance: shadow y evidencia antes de conducta; una hipótesis principal por A/B; toda modificación conductual requiere versión, rollback y validación atribuible.
+
+Después de SAFETY.PROV: **ROADMAP REVIEW REQUIRED**. No existe SAFETY.GATE, SAFETY.PROV.1, rerun D1 ni fase conductual automáticamente autorizada.

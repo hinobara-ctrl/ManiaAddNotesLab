@@ -4,6 +4,23 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 3 && args[0] == "safety-prov-prepare")
+{
+    var result = SafetyProvResearchRunner.Prepare(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));
+    Console.WriteLine($"contract={result.ContractHash}");
+    Console.WriteLine($"snapshot={result.SnapshotHash}");
+    Console.WriteLine($"fixtureManifest={result.FixtureManifestHash}");
+    return;
+}
+
+if (args.Length == 7 && args[0] == "safety-prov-certify")
+{
+    SafetyProvResearchRunner.Certify(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]), args[4], args[5], args[6]);
+    Console.WriteLine("SAFETY.PROV certification PASS");
+    return;
+}
+
 if (args.Length == 3 && args[0] == "phase-d1-safety-prepare")
 {
     var hash = D1SafetyResearchRunner.Prepare(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));

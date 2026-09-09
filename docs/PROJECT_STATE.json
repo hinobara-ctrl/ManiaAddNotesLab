@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 7,
+  "schemaVersion": 8,
   "lastUpdated": "2026-09-09",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
@@ -26,7 +26,8 @@
     { "id": "D1.0", "name": "Resulting-State Composition Feasibility / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D1_0_RESULTING_STATE_COMPOSITION_FEASIBILITY_REPORT.md", "authorization": "NOT_AUTHORIZED" },
     { "id": "D1.GATE", "name": "Resulting-State Behavioral Experiment Gate / Shadow", "status": "COMPLETE", "outcome": "READY", "behaviorChange": false, "report": "docs/PHASE_D1_GATE_BEHAVIORAL_EXPERIMENT_GATE_REPORT.md", "authorization": "NOT_AUTHORIZED" },
     { "id": "D1", "name": "ChordCompletion Resulting-State A/B", "status": "COMPLETE", "outcome": "C", "behaviorChange": true, "report": "docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
-    { "id": "D1.SAFETY", "name": "Attributable Geometry Safety Semantics / Shadow", "status": "COMPLETE", "outcome": "C", "behaviorChange": false, "report": "docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md", "authorization": "RESEARCH_COMPLETED_PARKED" }
+    { "id": "D1.SAFETY", "name": "Attributable Geometry Safety Semantics / Shadow", "status": "COMPLETE", "outcome": "C", "behaviorChange": false, "report": "docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md", "authorization": "RESEARCH_COMPLETED_PARKED" },
+    { "id": "SAFETY.PROV", "name": "Mutation-Level Generation Provenance / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_SAFETY_PROV_MUTATION_LEVEL_PROVENANCE_REPORT.md", "authorization": "RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -37,12 +38,14 @@
     { "id": "D1.0", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
     { "id": "D1.GATE", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
     { "id": "D1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
-    { "id": "D1.SAFETY", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_PARKED" }
+    { "id": "D1.SAFETY", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_PARKED" },
+    { "id": "SAFETY.PROV", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED" }
   ],
-  "currentPhase": "D1.SAFETY",
+  "currentPhase": "SAFETY.PROV",
   "nextRecommendedPhase": null,
+  "nextRecommendedAction": "ROADMAP_REVIEW",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 625, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 656, "failed": 0, "skipped": 0 },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",

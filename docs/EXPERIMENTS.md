@@ -2,6 +2,8 @@
 
 Hipótesis no confirmadas. Comparar con el mismo chart, rango y seed; cambiar una sola variable por vez.
 
+SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow: provenance OFF/ON fue exacta en bytes, RNG, oportunidades, candidates, decisiones, articulación y serialización sobre fixtures 1K/4K/7K/10K/18K. Esto es evidencia de implementación, no evidencia humana ni autorización conductual. D1 y D1.SAFETY permanecen C/PARKED. **ROADMAP REVIEW REQUIRED** antes de diseñar cualquier nuevo experimento; no hay siguiente A/B autorizado.
+
 ```text
 Experiment:
 Chart:

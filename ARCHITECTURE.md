@@ -186,6 +186,20 @@ El pilot es programmatic synthetic y está marcado `DomainConstructedFromTruth`;
 
 La generación activa (`legacy-experimental.1`) continúa usando sus analizadores y parámetros históricos para crear oportunidades, calcular chance, construir candidatos y seleccionar lanes. `DecisionDiagnostics` (`phase-c1-2-shadow.1`) observa la ruta vigente y expone values/relations en certificates sin consumir RNG ni modificar el `.osu`. El perfil persistente continúa en `phase-a.1`.
 
+### SAFETY.PROV: dependency observacional
+
+```text
+Behavior generation
+        ↓ immutable observational events
+GenerationProvenanceRecorderResearch
+        ↓ exact mutation/state lineage
+GeometrySafetyAttributionResearch
+```
+
+La dependencia nunca se invierte: provenance y safety research no devuelven decisiones al engine. El overload normal, CLI, Web, defaults y writer permanecen desconectados. `GeometryStateHash` identifica sólo la proyección materializada relevante a safety; `GenerationStateHash` añade RNG, cursor de oportunidad, intents de articulación y manifest de oportunidades. Downstream exige parent generation state completo y desigual descendiente de una divergencia exacta; una reconvergencia completa borra ancestry. Missing state o mapping de serialización ambiguo queda `Unattributable`.
+
+El recorder modela `DecisionEvent` por separado de `MutationEvent`, porque una decisión puede abstenerse o producir un replacement compuesto. Articulación conserva stage y parent; causal origin es otra dimensión. Serialización se enlaza en research-side mediante tuple exacta y no añade IDs al `.osu`. Esta infraestructura cerró SAFETY.PROV Outcome A, pero no tiene autoridad conductual. **ROADMAP REVIEW REQUIRED** antes de cualquier integración futura.
+
 ## Invariantes
 
 - El archivo source no se sobrescribe.

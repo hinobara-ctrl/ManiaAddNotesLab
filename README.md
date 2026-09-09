@@ -31,11 +31,12 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase D1.GATE — COMPLETE, OUTCOME READY, SHADOW ONLY:** dejó congelado y verificable el contrato de un posible D1, sin ejecutar el A/B ni cambiar generación.
 - **Phase D1 — COMPLETE, OUTCOME C, EXPERIMENTAL ONLY:** el A/B congelado se ejecutó y abortó por no poder atribuir de forma válida el chequeo de overlap; la rama quedó aparcada y no fue promovida.
 - **Phase D1.SAFETY — COMPLETE, OUTCOME C, SHADOW ONLY:** separó raw relation, hard violation y atribución causal, pero el forensic prototype intentó atribuir una diferencia final sin mutation provenance; hard abort y framework PARKED.
+- **SAFETY.PROV — COMPLETE, OUTCOME A, SHADOW ONLY:** captura decisiones/mutaciones durante generation con lineage exacta, reconvergencia y serialización, manteniendo bytes/RNG/decisiones idénticos OFF/ON.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 permanece **Outcome C / PARKED**. D1.SAFETY construyó infraestructura read-only y confirmó que `RawRelation != HardValidityViolation != AttributableIntroducedViolation`, pero cerró también Outcome C al detectar atribución causal no demostrada en su forensic prototype. No se publicaron atribuciones ni métricas conductuales, y no hay siguiente fase autorizada. F2.ACQ sigue bloqueado y C2 deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen **Outcome C / PARKED**. SAFETY.PROV demuestra únicamente que la provenance causal durante execution es técnicamente viable y behavior-neutral; no reinterpreta D1 ni autoriza un experimento. **ROADMAP REVIEW REQUIRED** antes de cualquier fase futura. F2.ACQ sigue bloqueado y C2 deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: D1.SAFETY — COMPLETE — OUTCOME C<br>
+Current phase: SAFETY.PROV — COMPLETE — OUTCOME A<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -46,7 +47,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 625 passed / 0 failed / 0 skipped
+Tests: 656 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

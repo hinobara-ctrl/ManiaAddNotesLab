@@ -1,0 +1,4 @@
+case,pass,object_count,interpretation
+exact-roundtrip,true,2,"Exact lane/start/end/type tuple; no file metadata."
+ambiguous-mapping,true,1,"Ambiguous tuple abstains; no fuzzy matching."
+materialization-invalid-duration,true,1,"Beat-space object plus mutation provenance isolates serialized-duration failure."

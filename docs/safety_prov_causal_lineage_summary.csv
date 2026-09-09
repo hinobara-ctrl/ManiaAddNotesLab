@@ -1,0 +1,6 @@
+case,pass,interpretation
+common-prefix-and-direct,true,"Downstream requires unequal complete parent generation state descended from the exact first divergence; reconvergence clears ancestry."
+proven-downstream,true,"Downstream requires unequal complete parent generation state descended from the exact first divergence; reconvergence clears ancestry."
+reconvergence-clears-lineage,true,"Downstream requires unequal complete parent generation state descended from the exact first divergence; reconvergence clears ancestry."
+opportunity-mismatch-abstains,true,"Exact OpportunityKey alignment is required; fuzzy or list-position matching is forbidden."
+hidden-state-incomplete-abstains,true,"Geometry matched but complete generation-state lineage was unavailable; attribution abstains."

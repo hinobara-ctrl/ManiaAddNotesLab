@@ -1,0 +1,7 @@
+fixture,decision_events,mutation_events,output_bytes_exact,added_objects_exact,articulation_exact,rng_exact,decisions_exact,opportunities_exact,candidates_exact,final_geometry_exact,serialization_exact,source_unchanged,recorder_rng_calls,state_hash_work_count,safety_evaluation_count,trace_valid,all_exact
+1K,1,0,true,true,true,true,true,true,true,true,true,true,0,2,0,true,true
+4K,2,2,true,true,true,true,true,true,true,true,true,true,0,17,0,true,true
+7K,2,2,true,true,true,true,true,true,true,true,true,true,0,17,0,true,true
+10K,2,2,true,true,true,true,true,true,true,true,true,true,0,17,0,true,true
+18K,2,2,true,true,true,true,true,true,true,true,true,true,0,17,0,true,true
+7K-articulation,21,3,true,true,true,true,true,true,true,true,true,true,0,894,0,true,true

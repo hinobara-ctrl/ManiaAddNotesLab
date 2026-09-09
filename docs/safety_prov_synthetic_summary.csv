@@ -1,0 +1,6 @@
+domain,positive_controls,negative_controls,bad_controls,keymodes,pass,interpretation
+event-model,8,5,4,1K|4K|7K|10K|18K,true,implementation-only
+causal-lineage,4,4,3,synthetic,true,no-mapper-evidence
+safety-attribution,5,4,2,synthetic,true,mutation-provenance-required
+serialization,2,2,1,synthetic,true,exact-or-unattributable
+behavior-neutrality,6,0,1,1K|4K|7K|10K|18K,true,byte-and-rng-exact

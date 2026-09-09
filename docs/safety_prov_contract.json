@@ -1,0 +1,65 @@
+{
+  "contract": {
+    "schemaVersion": "generation-provenance-shadow.1",
+    "phase": "SAFETY.PROV",
+    "behaviorChange": false,
+    "d1HistoricalOutcome": "C",
+    "d1SafetyHistoricalOutcome": "C",
+    "defaultPolicy": "legacy-experimental.1",
+    "eventModel": [
+      "DecisionEvent may produce zero, one, or multiple physical mutations",
+      "MutationEvent freezes before/after state and physical delta",
+      "SequenceIndex is causal execution order; beat/time is not",
+      "OpportunityKey is reused wherever the engine already defines it"
+    ],
+    "stageSemantics": [
+      "Pass1BaseOpportunity",
+      "InteriorOpportunity",
+      "Articulation",
+      "Serialization"
+    ],
+    "causalAncestrySemantics": [
+      "Direct requires the exact paired decision that first changes state",
+      "Downstream requires a complete unequal parent GenerationState descended from that divergence",
+      "Temporal-after is never sufficient",
+      "Exact GenerationState reconvergence clears prior ancestry",
+      "Missing or incomplete provenance is Unattributable",
+      "Stage and CausalOrigin are independent dimensions"
+    ],
+    "serializationSemantics": [
+      "Placement and millisecond materialization remain separate",
+      "Generated-to-reparsed identity requires an exact one-to-one semantic tuple",
+      "Ambiguous or failed reparse mapping is Unattributable; fuzzy matching is forbidden",
+      "No identifier is written into osu output"
+    ],
+    "behaviorEquivalenceRequirements": [
+      "Output bytes",
+      "AddedObjects and order",
+      "Articulation replacements",
+      "RNG transcript",
+      "Opportunity and candidate sequence",
+      "Placement and skip decisions",
+      "Final geometry",
+      "Serialization"
+    ],
+    "hardStops": [
+      "Behavior drift",
+      "RNG consumption",
+      "Observer decision feedback",
+      "Heuristic ancestry",
+      "Missing provenance given a causal label",
+      "Nondeterministic IDs or traces",
+      "D1 or D1.SAFETY reinterpretation",
+      "Community corpus use"
+    ],
+    "outcomes": [
+      "A: exact viable mutation-level provenance",
+      "B: useful neutral infrastructure with one precise frontier",
+      "C: exactness requires drift, guessing, or unsafe coupling"
+    ],
+    "authorization": "RESEARCH_SHADOW_ONLY_NO_BEHAVIORAL_EXPERIMENT_AUTHORIZED",
+    "nextRecommendedAction": "ROADMAP_REVIEW"
+  },
+  "safetyProvContractHash": "3562A0A7746F0E6BFFD80E93B51E5D9ADAA6E646C607E9B8994E36F1AE264B8B",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; frozen ordered arrays; no timestamps, paths, UUIDs or runtime IDs"
+}
