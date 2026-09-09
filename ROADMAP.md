@@ -16,6 +16,7 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | D1.0 — Resulting-State Composition Feasibility / Shadow | ✅ **COMPLETE — OUTCOME A / NOT_AUTHORIZED** | Representa soporte conjunto exacto y demuestra que soporte marginal no equivale a occurrence conjunta; sin conducta. |
 | D1.GATE — Resulting-State Behavioral Experiment Gate / Shadow | ✅ **COMPLETE — OUTCOME READY / NOT_AUTHORIZED** | Contrato futuro pre-registrado, hash congelado y punto de inserción auditado; no se ejecutó A/B. |
 | D1 — ChordCompletion Resulting-State A/B | ⛔ **COMPLETE — OUTCOME C / NO PROMOTION** | El A/B congelado terminó en hard abort por safety attribution no establecida; rollback legacy y rama PARKED. |
+| D1.SAFETY — Attributable Geometry Safety Semantics / Shadow | ⛔ **COMPLETE — OUTCOME C / PARKED** | La semántica sintética fue útil, pero el forensic prototype atribuyó sin mutation provenance; no hay sucesora autorizada. |
 | E — Adaptive Context Prototypes / Shadow | ✅ **COMPLETE — OUTCOME B** | Recurrence exacta muestra señal restringida; boundaries son estables bajo holdout pero parameter-sensitive. |
 | E.1 — Exact Recurrence Failure Stratification / Shadow | ✅ **COMPLETE — OUTCOME B** | Exact absence domina NoContext; spacing refinement destruye coverage y la rama se aparca. |
 | F1 — Comparable-context Resolver / Shadow + Validation | ✅ **COMPLETE — OUTCOME A** | Support, mismatch, no-context y ambiguity son reconstruibles por candidate sin selection conductual. |

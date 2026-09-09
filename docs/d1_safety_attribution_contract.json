@@ -1,0 +1,65 @@
+{
+  "contract": {
+    "schemaVersion": "geometry-safety-attribution-shadow.1",
+    "phase": "D1.SAFETY",
+    "behaviorChange": false,
+    "d1HistoricalOutcome": "C",
+    "d1RemainsParked": true,
+    "taxonomy": [
+      "ArticulationIntroducedViolation",
+      "LegacyIntroducedViolation",
+      "NoViolation",
+      "PreExistingControlCondition",
+      "PreExistingOriginalCondition",
+      "ResolvedRelativeToControl",
+      "SerializationIntroducedViolation",
+      "TreatmentDirectIntroducedViolation",
+      "TreatmentDownstreamIntroducedViolation",
+      "Unattributable"
+    ],
+    "predicateSemantics": [
+      "Tap conflicts with a prior LN at end \u003E= tap beat and with any same-beat head",
+      "LN overlap uses strict interval crossing; boundary equality is not overlap",
+      "LN required spacing is mutation-specific and separate from raw intersection",
+      "LN duration must be positive in beat space and serialized milliseconds",
+      "Articulation ignores only its identified parent and validates each replacement segment"
+    ],
+    "attributionRules": [
+      "Attribution requires absence in causal parent, a real hard violation, and mutation provenance",
+      "Legacy, treatment-direct, treatment-downstream, articulation, and serialization causes remain distinct",
+      "Missing causal provenance is Unattributable, never guessed",
+      "Conditions present in source or control are not charged to treatment",
+      "ResolvedRelativeToControl is descriptive and not an automatic safety improvement"
+    ],
+    "serializationSemantics": [
+      "PreSerializationHardValidity and FinalSerializedValidity are separate",
+      "Materialization may introduce invalid duration and receives serialization attribution",
+      "Reparse success is recorded separately from pairwise hard validity"
+    ],
+    "stateDefinitions": [
+      "SourceState is the parsed original osu chart",
+      "ControlState is the legacy-generated result",
+      "TreatmentState is a separately authorized future experimental result",
+      "RepositoryEntryHead differs from ImplementationSnapshotHash"
+    ],
+    "hardStops": [
+      "Normal generation changes",
+      "Default policy changes",
+      "D1 reactivation or reinterpretation",
+      "RNG or mapper evidence used by oracle",
+      "Source mutation",
+      "Guessed causal attribution",
+      "Contract or artifact nondeterminism",
+      "Community corpus use"
+    ],
+    "forensicLimitations": [
+      "Final snapshots cannot distinguish direct from downstream without mutation provenance",
+      "Old D1 behavioral metrics remain withheld",
+      "Old D1 Outcome C cannot be repaired",
+      "Raw relation counts are not hard-validity counts"
+    ],
+    "authorization": "RESEARCH_SHADOW_ONLY_NO_BEHAVIORAL_EXPERIMENT_AUTHORIZED"
+  },
+  "contractContentHash": "C4C1273AB4029D8AAF68EFA25AB64159B56D524AF6B8B26D74054A57A2096133",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; set-like arrays ordinal-sorted; no timestamp or path"
+}

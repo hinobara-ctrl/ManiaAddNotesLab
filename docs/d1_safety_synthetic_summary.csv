@@ -1,0 +1,6 @@
+gate,status,detail
+focused_test_matrix,PASS,26 cases
+normal_generation_byte_rng_regression,PASS,oracle disconnected and read-only
+positive_negative_bad_controls,PASS,violations and missing provenance detected
+zero_rng,PASS,no IRandomSource dependency
+contract_determinism,PASS,byte-identical repeated serialization

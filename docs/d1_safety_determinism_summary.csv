@@ -1,0 +1,3 @@
+artifact,repeat_count,byte_identical,content_hash
+contract,2,true,C4C1273AB4029D8AAF68EFA25AB64159B56D524AF6B8B26D74054A57A2096133
+synthetic_semantics,2,true,deterministic IDs and order-invariant relations

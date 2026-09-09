@@ -30,11 +30,12 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase D1.0 — COMPLETE, OUTCOME A, SHADOW ONLY:** confirmó que soporte marginal no equivale a una composición conjunta observada.
 - **Phase D1.GATE — COMPLETE, OUTCOME READY, SHADOW ONLY:** dejó congelado y verificable el contrato de un posible D1, sin ejecutar el A/B ni cambiar generación.
 - **Phase D1 — COMPLETE, OUTCOME C, EXPERIMENTAL ONLY:** el A/B congelado se ejecutó y abortó por no poder atribuir de forma válida el chequeo de overlap; la rama quedó aparcada y no fue promovida.
+- **Phase D1.SAFETY — COMPLETE, OUTCOME C, SHADOW ONLY:** separó raw relation, hard violation y atribución causal, pero el forensic prototype intentó atribuir una diferencia final sin mutation provenance; hard abort y framework PARKED.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 probó únicamente el treatment explícito `d1-resulting-state-ab.1` y no cambió Web, CLI ni defaults. Los 220 pares congelados y su repetición fueron deterministas, pero el runner disparó un hard abort al usar intersections crudas del output como criterio de overlap sin poder atribuirlas al treatment. Conforme al contrato, no se reinterpretaron ni publicaron métricas conductuales post-abort: D1 cerró **Outcome C**, rollback legacy y rama PARKED. No hay siguiente fase research ni conductual autorizada. F2.ACQ sigue bloqueado y C2 deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 permanece **Outcome C / PARKED**. D1.SAFETY construyó infraestructura read-only y confirmó que `RawRelation != HardValidityViolation != AttributableIntroducedViolation`, pero cerró también Outcome C al detectar atribución causal no demostrada en su forensic prototype. No se publicaron atribuciones ni métricas conductuales, y no hay siguiente fase autorizada. F2.ACQ sigue bloqueado y C2 deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: D1 — COMPLETE — OUTCOME C<br>
+Current phase: D1.SAFETY — COMPLETE — OUTCOME C<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -42,10 +43,10 @@ Next behavioral authorization: N/A<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
-Behavior change: true<br>
+Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 599 passed / 0 failed / 0 skipped
+Tests: 625 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

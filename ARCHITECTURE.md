@@ -38,6 +38,8 @@ E.1 añade `ExactRecurrenceFailureResearch` sobre esa serie, sin alterar `exact-
 
 D1.0, D1.GATE y D1 son contratos distintos. **D1.0 — Resulting-State Composition Feasibility / Shadow** cerró Outcome A sin conducta: `CompletionSetIdentity` y `ResultingHeadStateIdentity` representan composiciones canónicas, mientras `ObservedJointCompletionSet` exige una misma occurrence original elegible. **D1.GATE** cerró `READY` y congeló el evaluador para `k=1 → k=2`, `ReducedOnly`, sin reroll y con cero RNG. **D1 — ChordCompletion Resulting-State A/B** implementó esa única admisión tras una propuesta legacy legal y antes de `added.Add`/`geometry.Insert`, mediante un índice inmutable original-only y una consulta pura. Sólo el runner selecciona `d1-resulting-state-ab.1`; los caminos normales continúan en `legacy-experimental.1`. El A/B cerró Outcome C porque el safety gate midió intersections crudas no atribuibles al treatment; la rama fue aparcada y no promovida.
 
+**D1.SAFETY** investigó una infraestructura genérica sin conectarla al engine. Su frontera arquitectónica es estricta: `RawGeometryRelation` describe matemáticas; `HardValidityViolation` aplica la semántica real de placement/materialización; `AttributableIntroducedViolation` exige un parent causal y mutation provenance. Source/control conditions no se imputan a treatment y lo no demostrable es `Unattributable`. El prototipo forensic rompió esa última regla al inferir causalidad desde snapshots y cerró Outcome C; no debe reutilizarse un count global de overlap como métrica causal.
+
 ```text
 member support (marginal) != completion-set support (joint occurrence)
 research resulting-state validation != selection

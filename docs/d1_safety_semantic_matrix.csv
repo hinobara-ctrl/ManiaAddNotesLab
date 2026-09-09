@@ -1,0 +1,7 @@
+object_pair,raw_relation,hard_validity_semantics,boundary_equality
+tap-tap,same head only,duplicate same-lane head,illegal at equal head
+ln-tap,inclusive intersection,tap blocked while LN end >= tap,illegal at LN release
+ln-ln,inclusive intersection,strict overlap plus separate required gap,not overlap but gap-dependent
+different-lane,none,no pair violation,not applicable
+articulation-segment,inclusive segment clearance,parent explicitly ignored,segment-specific
+serialization,not a pair relation,positive beat and millisecond duration required,separate final validity

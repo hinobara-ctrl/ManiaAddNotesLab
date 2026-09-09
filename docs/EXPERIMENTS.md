@@ -182,6 +182,12 @@ dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- phase-d1-g
 
 Ese comando sólo valida el contrato. El A/B cerrado se ejecutó con `phase-d1-ab` y el manifest inmutable; no debe reejecutarse como parte del cierre Outcome C. No existe toggle D1 en Web/CLI ni promoción del treatment.
 
+## D1.SAFETY — infraestructura shadow histórica
+
+D1.SAFETY no reabre D1. Modeló `RawGeometryRelation`, `HardValidityViolation` y `AttributableIntroducedViolation` como niveles distintos, sin RNG, evidencia de estilo ni conexión a generation. El contrato `geometry-safety-attribution-shadow.1` exige provenance de mutación para separar legacy, treatment-direct, treatment-downstream, articulación y serialización; una diferencia de snapshots sólo puede quedar `Unattributable`.
+
+La validación sintética pasó, pero el forensic prototype sobre los outputs D1 antiguos etiquetó condiciones ausentes del source como legacy-introduced sin provenance causal. Se activó hard abort, el agregado fue retirado y D1.SAFETY cerró Outcome C/PARKED. Los únicos conteos históricos retenidos son los raw 200/171 ya conocidos; no se reconstruyeron métricas conductuales. Un experimento futuro requeriría otro gate y provenance pre-serialization preregistrada; no está autorizado.
+
 ## Checklist
 
 - Context burst: densidad contextual OFF/ON.

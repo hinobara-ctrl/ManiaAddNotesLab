@@ -36,6 +36,7 @@ else
     ValidateFilesAndIndex(state);
     ValidateD1GateContract(state);
     ValidateD1Closure(state);
+    ValidateD1SafetyClosure(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -139,7 +140,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -183,7 +184,7 @@ void ValidatePhaseContracts(ProjectState value)
             $"canonical phase contract {contract.Id}");
     }
 
-    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "F2.ACQ", "C2" })
+    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "F2.ACQ", "C2" })
         if (value.PhaseContracts.All(x => x.Id != required))
             errors.Add($"Required canonical phase contract is absent: {required}.");
 
@@ -339,6 +340,60 @@ void ValidateD1Closure(ProjectState value)
     {
         errors.Add($"D1 run manifest cannot be validated: {exception.Message}");
     }
+}
+
+void ValidateD1SafetyClosure(ProjectState value)
+{
+    var safety = value.Phases.FirstOrDefault(x => x.Id == "D1.SAFETY");
+    if (safety?.Status != "COMPLETE") return;
+    if (safety.Outcome != "C" || safety.BehaviorChange is not false
+        || safety.Authorization != "RESEARCH_COMPLETED_PARKED")
+        errors.Add("D1.SAFETY must close COMPLETE/OUTCOME C, behaviorChange=false and PARKED.");
+    var d1 = value.Phases.FirstOrDefault(x => x.Id == "D1");
+    if (d1?.Status != "COMPLETE" || d1.Outcome != "C"
+        || d1.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION")
+        errors.Add("D1.SAFETY must preserve D1 COMPLETE/C with no promotion.");
+    foreach (var artifact in new[]
+    {
+        "docs/PHASE_D1_SAFETY_PRE_FORENSIC_DESIGN.md",
+        "docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md",
+        "docs/d1_safety_attribution_contract.json",
+        "docs/d1_safety_synthetic_summary.csv",
+        "docs/d1_safety_semantic_matrix.csv",
+        "docs/d1_safety_determinism_summary.csv",
+        "docs/d1_safety_baseline_identity_summary.csv",
+        "docs/d1_safety_abort_summary.csv"
+    })
+    {
+        RequireFile(artifact, "D1.SAFETY closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "D1.SAFETY closure artifact index entry");
+    }
+    const string frozenHash = "C4C1273AB4029D8AAF68EFA25AB64159B56D524AF6B8B26D74054A57A2096133";
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "d1_safety_attribution_contract.json")));
+        var contract = document.RootElement.GetProperty("contract");
+        var actual = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(contract)));
+        if (actual != frozenHash || document.RootElement.GetProperty("contractContentHash").GetString() != frozenHash)
+            errors.Add("D1.SAFETY contract hash differs from its frozen semantic identity.");
+        if (contract.GetProperty("behaviorChange").GetBoolean()
+            || contract.GetProperty("d1HistoricalOutcome").GetString() != "C"
+            || !contract.GetProperty("d1RemainsParked").GetBoolean())
+            errors.Add("D1.SAFETY contract must preserve shadow behavior and historical D1 Outcome C/PARKED.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"D1.SAFETY machine contract cannot be validated: {exception.Message}");
+    }
+    CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+        "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";", "legacy default after D1.SAFETY");
+    foreach (var product in new[] { "src/ManiaAddNotesLab.Cli/Program.cs", "src/ManiaAddNotesLab.Web/Program.cs" })
+        if (File.ReadAllText(Path.Combine(root, product.Replace('/', Path.DirectorySeparatorChar)))
+            .Contains("GeometrySafetyAttributionResearch", StringComparison.Ordinal))
+            errors.Add($"D1.SAFETY shadow oracle is exposed by normal product path: {product}");
+    if (File.Exists(Path.Combine(root, "docs", "d1_safety_forensic_summary.csv")))
+        errors.Add("Invalid D1.SAFETY forensic attribution aggregate must remain withdrawn after hard abort.");
 }
 
 void ValidateFilesAndIndex(ProjectState value)

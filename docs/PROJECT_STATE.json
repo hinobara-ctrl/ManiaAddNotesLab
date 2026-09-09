@@ -1,10 +1,10 @@
 {
-  "schemaVersion": 6,
+  "schemaVersion": 7,
   "lastUpdated": "2026-09-09",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
-  "behaviorChange": true,
+  "behaviorChange": false,
   "phases": [
     { "id": "A", "name": "Evidence Infrastructure", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_A_EVIDENCE_INFRASTRUCTURE_REPORT.md" },
     { "id": "B", "name": "Certificates and Failures", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_B_CERTIFICATES_AND_FAILURES_REPORT.md" },
@@ -25,7 +25,8 @@
     { "id": "E.1", "name": "Exact Recurrence Failure Stratification / Shadow", "status": "COMPLETE", "outcome": "B", "behaviorChange": false, "report": "docs/PHASE_E_1_EXACT_RECURRENCE_FAILURE_STRATIFICATION_REPORT.md" },
     { "id": "D1.0", "name": "Resulting-State Composition Feasibility / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_D1_0_RESULTING_STATE_COMPOSITION_FEASIBILITY_REPORT.md", "authorization": "NOT_AUTHORIZED" },
     { "id": "D1.GATE", "name": "Resulting-State Behavioral Experiment Gate / Shadow", "status": "COMPLETE", "outcome": "READY", "behaviorChange": false, "report": "docs/PHASE_D1_GATE_BEHAVIORAL_EXPERIMENT_GATE_REPORT.md", "authorization": "NOT_AUTHORIZED" },
-    { "id": "D1", "name": "ChordCompletion Resulting-State A/B", "status": "COMPLETE", "outcome": "C", "behaviorChange": true, "report": "docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" }
+    { "id": "D1", "name": "ChordCompletion Resulting-State A/B", "status": "COMPLETE", "outcome": "C", "behaviorChange": true, "report": "docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
+    { "id": "D1.SAFETY", "name": "Attributable Geometry Safety Semantics / Shadow", "status": "COMPLETE", "outcome": "C", "behaviorChange": false, "report": "docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md", "authorization": "RESEARCH_COMPLETED_PARKED" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -35,12 +36,13 @@
     { "id": "F2.ACQ", "kind": "BlockedPrerequisite", "behaviorChange": false, "authorization": "CONDITIONAL_ON_EXTERNAL_DATA" },
     { "id": "D1.0", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
     { "id": "D1.GATE", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
-    { "id": "D1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" }
+    { "id": "D1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
+    { "id": "D1.SAFETY", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_PARKED" }
   ],
-  "currentPhase": "D1",
+  "currentPhase": "D1.SAFETY",
   "nextRecommendedPhase": null,
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 599, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 625, "failed": 0, "skipped": 0 },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",

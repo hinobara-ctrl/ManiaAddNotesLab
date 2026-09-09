@@ -4,6 +4,20 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 3 && args[0] == "phase-d1-safety-prepare")
+{
+    var hash = D1SafetyResearchRunner.Prepare(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));
+    Console.WriteLine($"D1.SAFETY contract {hash}");
+    return;
+}
+
+if (args.Length == 5 && args[0] == "phase-d1-safety-forensic")
+{
+    D1SafetyResearchRunner.Forensic(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]), Path.GetFullPath(args[4]));
+    return;
+}
+
 if (args.Length == 3 && args[0] == "phase-d1-prepare")
 {
     var hash = D1BehavioralAbRunner.Prepare(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));
