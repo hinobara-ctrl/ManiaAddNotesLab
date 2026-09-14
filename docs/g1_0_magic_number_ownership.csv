@@ -6,4 +6,4 @@ InteriorLengthRatio,1.5,"legacy relative priority gate",0,LEGACY_UNRESOLVED,"Anc
 InteriorAbsoluteLongBeats,8,"legacy absolute priority gate",0,LEGACY_UNRESOLVED,"AnchorSupported current mode does not gate on this value.","Legacy compatibility only in current policy"
 InteriorMinimumContextLnCount,3,"source and anchor context gate",185,LEGACY_UNRESOLVED,"Affects current selector viability, not occurrence definition.","No change"
 InteriorMinimumSupportedAnchors,2,"minimum structural anchor count",8,LEGACY_UNRESOLVED,"Affects current opportunity eligibility, not complete witness identity.","No change"
-ArticulationMaxNonHeldColumns,1,"boundary from failed interior placement toward G2",0,INTENSITY_OR_CAPACITY_CANDIDATE,"G1.0 does not execute or study articulation.","G2 boundary only; NOT_AUTHORIZED"
+ArticulationMaxNonHeldColumns,1,"boundary from failed interior placement toward G2",0,LEGACY_UNRESOLVED,"G1.0 does not execute or study articulation.","Separate G2 boundary; not studied by G1.0; NOT_AUTHORIZED"
