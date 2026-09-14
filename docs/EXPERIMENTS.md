@@ -2,7 +2,7 @@
 
 Hipótesis no confirmadas. Comparar con el mismo chart, rango y seed; cambiar una sola variable por vez.
 
-SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow. G1.0 cerró después `COMPLETE/A` también shadow-only y fue recertificado tras validation hardening: un auditor independiente detecta donors prohibidos inyectados y el mismo C11 conserva cero leakage real y agregados idénticos. `G1.DESIGN` es un candidato de revisión **NOT_AUTHORIZED**; no existe un A/B G1 aprobado. D1 y D1.SAFETY permanecen C/PARKED.
+SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow. G1.0 cerró después `COMPLETE/A` también shadow-only y fue recertificado tras validation hardening. G1.DESIGN cerró `READY` sin comportamiento: formaliza membership exacta de una propuesta legacy sin selector ni RNG. `G1.GATE` es candidato de revisión **NOT_AUTHORIZED**; no existe un A/B G1 aprobado. D1 y D1.SAFETY permanecen C/PARKED.
 
 ```text
 Experiment:
@@ -22,7 +22,11 @@ El corpus C11 es DEVELOPMENT/DISCOVERY. La occurrence completa exige que head y 
 
 Addendum de recertificación: los siete contadores que antes eran ceros constantes ahora provienen de una auditoría posterior al accepted donor set. Controles adversariales independientes insertan target, parent, release, future, same-event, synthetic y cross-chart donors; todos son detectados. El semantic ID manipulado, la frecuencia sesgada, marginal-as-joint y anchor-support attrition tienen fixtures específicas. Resultado `RECERTIFICATION PASS`, behaviorChange=false.
 
-El posible paso siguiente es diseñar un único gate G1 con hipótesis, scope, stopping criteria y rollback explícitos. Hasta recibir autorización humana, no se elige clase, endpoint, lane, cantidad ni intensity; G2 articulation y H multiple cuts quedan fuera.
+## G1.DESIGN — Exact admission membership
+
+El corpus C11 de desarrollo enumeró 4.226 shapes del builder legacy sobre 298 opportunities actuales. Todas se mapearon a query/result G1.0 exactos; 76 fueron `CandidateObservedUnique`, 57 `CandidateObservedAmongAlternatives`, 2.907 `CandidateNotObserved` y 1.186 `NoObservedRelation`. Los 133 ADMIT hipotéticos aparecen en seis familias; 91 tienen soporte sólo same-parent, 15 sólo other-parent y 27 ambos. No son outputs por seed ni utility.
+
+El eventual control/treatment conserva options, seed, range, eligibility, candidate generation y posición RNG; sólo añadiría, tras un `placed` legal y antes de mutation, una decisión member/abstain con zero RNG y no-reroll. No está autorizado implementarlo. Articulation y D1 deben estar OFF.
 
 ## H1 — Densidad vertical de chords
 

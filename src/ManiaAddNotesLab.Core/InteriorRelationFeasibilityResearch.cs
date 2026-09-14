@@ -394,12 +394,20 @@ public static class InteriorRelationFeasibilityResearch
             ? x.StartBeat < witness.StartBeat || x.StartBeat >= witness.EndBeat
             : x.StartBeat >= witness.EndBeat || x.EndBeat <= witness.StartBeat);
 
+    public static string CanonicalQuerySignature(int keys, decimal parentDurationBeats,
+        decimal anchorOffsetFromParentStartBeats, InteriorAnchorKind anchorKind) =>
+        $"K:{keys}|PD:{D(parentDurationBeats)}|AO:{D(anchorOffsetFromParentStartBeats)}|AK:{(int)anchorKind}";
+
+    public static string CanonicalRelationSignature(InteriorRelationClass relation,
+        decimal durationFromAnchorBeats, decimal offsetFromParentEndBeats) =>
+        $"R:{relation}|D:{D(durationFromAnchorBeats)}|O:{D(offsetFromParentEndBeats)}";
+
     private static string QuerySignature(int keys, OriginalObservation parent, InteriorAnchorObservation anchor) =>
-        $"K:{keys}|PD:{D(parent.DurationBeats)}|AO:{D(anchor.AnchorBeat - parent.StartBeat)}|AK:{(int)anchor.Kind}";
+        CanonicalQuerySignature(keys, parent.DurationBeats, anchor.AnchorBeat - parent.StartBeat, anchor.Kind);
 
     private static string RelationSignature(OriginalObservation parent, OriginalObservation witness,
-        InteriorRelationClass relation) => $"R:{relation}|D:{D(witness.EndBeat - witness.StartBeat)}|" +
-        $"O:{D(witness.EndBeat - parent.EndBeat)}";
+        InteriorRelationClass relation) => CanonicalRelationSignature(relation,
+            witness.EndBeat - witness.StartBeat, witness.EndBeat - parent.EndBeat);
 
     private static string AnchorId(OriginalObservationId parent, int time, decimal beat) =>
         $"{parent}-A{time}-B{D(beat)}";

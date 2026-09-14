@@ -4,6 +4,21 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 5 && args[0] == "g1-design-run")
+{
+    var result = G1DesignMembershipRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]), Path.GetFullPath(args[4]));
+    Console.WriteLine($"status={result.Status}");
+    Console.WriteLine($"contract={result.ContractHash}");
+    Console.WriteLine($"opportunities={result.CurrentOpportunities}");
+    Console.WriteLine($"candidateShapes={result.CandidateShapes}");
+    Console.WriteLine($"representable={result.ExactlyRepresentable}");
+    Console.WriteLine($"admit={result.HypotheticalAdmit}");
+    Console.WriteLine($"abstain={result.HypotheticalAbstain}");
+    Console.WriteLine($"admitFamilies={result.AdmitFamilies}");
+    return;
+}
+
 if (args.Length == 7 && args[0] == "g1-0-prepare")
 {
     var result = G10InteriorRelationRunner.Prepare(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),

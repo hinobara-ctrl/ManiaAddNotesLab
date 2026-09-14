@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0/D0.1/D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. E/E.1: **COMPLETE/B**, recurrence PARKED. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV: **COMPLETE/A / SHADOW ONLY**. G1.0: **COMPLETE/A / SHADOW ONLY**. `G1.DESIGN` es el siguiente candidato **NOT_AUTHORIZED**; G1 conductual, G2 y H permanecen **NOT_AUTHORIZED**, C2 **DEFERRED** y generation normal continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0/D0.1/D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. E/E.1: **COMPLETE/B**, recurrence PARKED. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / SHADOW ONLY**. `G1.GATE` es el siguiente candidato **NOT_AUTHORIZED**; G1 conductual, G2 y H permanecen **NOT_AUTHORIZED**, C2 **DEFERRED** y generation normal continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -792,6 +792,10 @@ F2 v1 usó scope exacto `LocalLane → GlobalChart`, sin Section inventada. Sobr
 
 ## Phase G2 — Causal articulation A/B
 
+<!-- PHASE-CONTRACT:G2;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->
+
+**FUTURE / NOT_AUTHORIZED.** G1 abstention no crea articulation intent ni autoriza esta fase.
+
 **Goal:** derivar oportunidades por relaciones y activar articulation por blocker original.
 
 **Files likely affected:** interior builder, geometry detail, articulation pass.
@@ -811,6 +815,10 @@ F2 v1 usó scope exacto `LocalLane → GlobalChart`, sin Section inventada. Sobr
 **Acceptance criteria:** causalidad demostrable y pass 1 contract explícito.
 
 ## Phase H — ParentArticulationPlan
+
+<!-- PHASE-CONTRACT:H;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->
+
+**FUTURE / NOT_AUTHORIZED.** Ningún plan de cortes múltiples está autorizado por G1.DESIGN.
 
 **Goal:** investigar múltiples cortes atómicos.
 
@@ -1091,11 +1099,19 @@ El addendum post-cierre confirmó que los contadores de leakage originales eran 
 
 **Boundary:** Outcome A autoriza únicamente proponer para revisión `G1.DESIGN`, no activar G1. No existe preferencia Contained/EqualEnd/Crossing, selector, lane model, endpoint fallback, toggle ni cambio de defaults; G2/H siguen separados y `legacy-experimental.1` permanece default.
 
-## Phase G1.DESIGN — Interior Relation Behavioral Design / Gate
+## Phase G1.DESIGN — Interior Relation Admission Contract / Shadow
 
-<!-- PHASE-CONTRACT:G1.DESIGN;kind=ResearchShadow;behaviorChange=false;authorization=NOT_AUTHORIZED -->
+<!-- PHASE-CONTRACT:G1.DESIGN;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED -->
 
-**NEXT CANDIDATE / NOT_AUTHORIZED.** Si recibe autorización humana, deberá congelar una sola hipótesis conductual, scope, denominadores, causal safety, stopping criteria y rollback antes de ejecutar cualquier treatment. G1.0 no predetermina qué relación usar ni cuántas oportunidades generar.
+**G1.DESIGN COMPLETE — OUTCOME READY / SHADOW ONLY.** Este `OUTCOME READY` es sólo la proyección de estado machine-readable, no un Outcome A/B/C. Congela el claim chart-local/full-chart/original-only: la relación exacta del candidate legacy pertenece o no al result set G1.0 exacto. Unique y AmongAlternatives son ADMIT hipotético; NotObserved, NoRelation y Unresolvable son ABSTAIN. Same-parent se permite con provenance, no score.
+
+C11 enumeró 4.226 shapes reales sobre 298 opportunities, todas representables; 133 serían ADMIT y 4.093 ABSTAIN, con admits en seis familias. El evaluator consume cero RNG y no selecciona, rerollea, sustituye ni articula. El insertion point futuro es posterior al `placed` legal y anterior a mutation; eligibility, lane, D1 y G2 quedan aislados. `behaviorChange=false`.
+
+## Phase G1.GATE — Interior Relation Admission Behavioral Gate / Shadow
+
+<!-- PHASE-CONTRACT:G1.GATE;kind=ResearchShadow;behaviorChange=false;authorization=NOT_AUTHORIZED -->
+
+**NEXT CANDIDATE / NOT_AUTHORIZED.** Sólo tras revisión humana podría congelar un eventual A/B con control/treatment, métricas, stopping criteria y rollback. No existe toggle, callsite productivo ni experimento activo.
 
 ## Phase G1 — Interior Relation Semantics A/B
 

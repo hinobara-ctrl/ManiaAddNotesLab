@@ -1,0 +1,41 @@
+{
+  "schema": "g1-design-interior-relation-membership-shadow.1",
+  "phase": "G1.DESIGN",
+  "status": "READY",
+  "behaviorChange": false,
+  "contractHash": "15A16B6EFBF779CFF2C42A8C9A0DD46E025019252BEFA968E831233DC802AA68",
+  "corpusFingerprint": "878585D604E807B7E46AB429990C7DA6DB396AB0B7E930DAC2B631C8DE7ECD77",
+  "currentInteriorOpportunities": 298,
+  "candidateShapes": 4226,
+  "exactlyRepresentable": 4226,
+  "unresolvableExactIdentity": 0,
+  "hypotheticalAdmit": 133,
+  "hypotheticalAbstain": 4093,
+  "states": {
+    "CandidateObservedUnique": 76,
+    "CandidateObservedAmongAlternatives": 57,
+    "CandidateNotObserved": 2907,
+    "NoObservedRelation": 1186,
+    "UnresolvableExactIdentity": 0
+  },
+  "supportProvenance": {
+    "SameParentOnly": 91,
+    "OtherParentOnly": 15,
+    "Both": 27,
+    "None": 0
+  },
+  "relationClasses": {
+    "Contained": 1877,
+    "Crossing": 2221,
+    "EqualEnd": 128
+  },
+  "queriesWithOneObservedResult": 87,
+  "queriesWithMultipleObservedResults": 66,
+  "memberInsideMultiResultSet": 57,
+  "absentFromMultiResultSet": 1422,
+  "researchRngCalls": 0,
+  "deterministic": true,
+  "semanticCandidateHash": "19E86D5C8C358B07CBE2E890EC6655229DB6AF9CC1670866E085E2B9A4FCB24E",
+  "nextCandidate": "G1.GATE",
+  "nextAuthorized": false
+}

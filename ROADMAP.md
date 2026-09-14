@@ -19,6 +19,7 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | D1.SAFETY — Attributable Geometry Safety Semantics / Shadow | ⛔ **COMPLETE — OUTCOME C / PARKED** | La semántica sintética fue útil, pero el forensic prototype atribuyó sin mutation provenance; no hay sucesora autorizada. |
 | SAFETY.PROV — Mutation-Level Generation Provenance / Shadow | ✅ **COMPLETE — OUTCOME A / HISTORICAL ROADMAP REVIEW REQUIRED — SATISFIED** | El cierre exigió roadmap review; la revisión posterior permitió autorizar G1.0, sin autorizar conducta ni rerun D1. |
 | G1.0 — Interior LN Relation Feasibility / Shadow | ✅ **COMPLETE — OUTCOME A / RECERTIFIED / BEHAVIOR NOT AUTHORIZED** | El auditor independiente detecta fixtures ilegales y C11 conserva cero leakage real y agregados idénticos. |
+| G1.DESIGN — Interior Relation Admission Contract / Shadow | ✅ **COMPLETE — READY / BEHAVIOR NOT AUTHORIZED** | Membership exacta viable para 4.226/4.226 shapes; 133 admits hipotéticos en seis familias, zero RNG y sin selector. |
 | E — Adaptive Context Prototypes / Shadow | ✅ **COMPLETE — OUTCOME B** | Recurrence exacta muestra señal restringida; boundaries son estables bajo holdout pero parameter-sensitive. |
 | E.1 — Exact Recurrence Failure Stratification / Shadow | ✅ **COMPLETE — OUTCOME B** | Exact absence domina NoContext; spacing refinement destruye coverage y la rama se aparca. |
 | F1 — Comparable-context Resolver / Shadow + Validation | ✅ **COMPLETE — OUTCOME A** | Support, mismatch, no-context y ambiguity son reconstruibles por candidate sin selection conductual. |
@@ -27,14 +28,14 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | F2.2 — Quantization Inference Feasibility / Research Design | ✅ **COMPLETE — OUTCOME B — RESEARCH/SHADOW ONLY** | Forward compatibility es formalizable bajo domain explícito; domain mapper-derived y labels humanos siguen ausentes. |
 | F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design | ✅ **COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY** | Domain/truth methodology válida; falta un package mapper-authored pre-export independiente. |
 | F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite | ⛔ **BLOCKED / CONDITIONAL ON EXTERNAL DATA** | Requiere package pre-export mapper-authored autorizado; no es trabajo accionable actual. |
-| G1.DESIGN — Interior Relation Behavioral Design / Gate | ⏳ **NEXT CANDIDATE / NOT_AUTHORIZED** | Diseñar un único tratamiento acotado, stopping criteria y rollback; requiere revisión humana antes de empezar. |
+| G1.GATE — Interior Relation Admission Behavioral Gate / Shadow | ⏳ **NEXT CANDIDATE / NOT_AUTHORIZED** | Congelar el eventual experimento conductual y sus criterios; requiere revisión humana antes de empezar. |
 | G1 — Interior Relation Semantics A/B | ⏳ **FUTURE / NOT_AUTHORIZED** | Eventual A/B conductual; G1.0 no escogió Contained, EqualEnd, Crossing, lane, endpoint ni cantidad. |
-| G2 — Causal articulation | ⏳ Pending | Articular sólo cuando blockers originales y evidencia retrigger lo justifiquen. |
-| H — ParentArticulationPlan | ⏳ Pending | Investigar múltiples cortes como un plan atómico y válido. |
+| G2 — Causal Articulation A/B | ⏳ **FUTURE / NOT_AUTHORIZED** | Articular sólo cuando blockers originales y evidencia retrigger lo justifiquen. |
+| H — ParentArticulationPlan | ⏳ **FUTURE / NOT_AUTHORIZED** | Investigar múltiples cortes como un plan atómico y válido. |
 | I — MapperSupport research | ⏳ Pending | Evaluar rankings derivados de certificates sin inventar confidence. |
 | J — AddChance budget | ⏳ Pending | Investigar unidades, conflictos y semántica de presupuesto frente a Bernoulli. |
 | K — Zero-config validation | ⏳ Pending | Retirar controles estilísticos del flujo principal sólo tras validación diversa. |
 
 Regla de avance: shadow y evidencia antes de conducta; una hipótesis principal por A/B; toda modificación conductual requiere versión, rollback y validación atribuible.
 
-Después de G1.0: `G1.DESIGN` es sólo el siguiente candidato de revisión y permanece **NOT_AUTHORIZED**. G1 conductual, G2 y H no están autorizados; no existe rerun D1 ni promoción automática.
+Después de G1.DESIGN: `G1.GATE` es sólo el siguiente candidato de revisión y permanece **NOT_AUTHORIZED**. G1 conductual, G2 y H no están autorizados; no existe rerun D1 ni promoción automática.

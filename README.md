@@ -33,12 +33,13 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase D1.SAFETY — COMPLETE, OUTCOME C, SHADOW ONLY:** separó raw relation, hard violation y atribución causal, pero el forensic prototype intentó atribuir una diferencia final sin mutation provenance; hard abort y framework PARKED.
 - **SAFETY.PROV — COMPLETE, OUTCOME A, SHADOW ONLY:** captura decisiones/mutaciones durante generation con lineage exacta, reconvergencia y serialización, manteniendo bytes/RNG/decisiones idénticos OFF/ON.
 - **G1.0 — COMPLETE, OUTCOME A, RECERTIFIED, SHADOW ONLY:** censó relaciones interiores completas y ahora audita independientemente el donor set con bad controls adversariales; C11 mantiene cero leakage real y los mismos agregados.
+- **G1.DESIGN — COMPLETE, READY, SHADOW ONLY:** congeló membership exacta para una propuesta legacy concreta; 4.226/4.226 shapes fueron representables y 133 serían ADMIT hipotético en seis familias, sin selector ni RNG.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen **Outcome C / PARKED**. G1.0 observó 16.881 relaciones completas en C11, con Contained/EqualEnd/Crossing y provenance exacta; no escogió clase, endpoint, lane ni cantidad. El único candidato siguiente es diseñar y revisar humanamente un gate G1; no está autorizado y G2/H siguen separados. F2.ACQ continúa bloqueado y C2 deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen **Outcome C / PARKED**. G1.DESIGN sólo comprueba `legacy proposes X → X ∈ observed set`; no escoge clase, endpoint, lane ni cantidad. El candidato siguiente es `G1.GATE`, todavía no autorizado; G1 conductual, G2/H siguen separados. F2.ACQ continúa bloqueado y C2 deferred.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: G1.0 — COMPLETE — OUTCOME A<br>
-Next actionable research candidate: G1.DESIGN — Interior Relation Behavioral Design / Gate<br>
+Current phase: G1.DESIGN — COMPLETE — OUTCOME READY<br>
+Next actionable research candidate: G1.GATE — Interior Relation Admission Behavioral Gate / Shadow<br>
 Next actionable authorization: NOT_AUTHORIZED<br>
 Next behavioral phase: G1 — Interior Relation Semantics A/B<br>
 Next behavioral authorization: NOT_AUTHORIZED<br>
@@ -48,7 +49,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 684 passed / 0 failed / 0 skipped
+Tests: 698 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

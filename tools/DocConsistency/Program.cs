@@ -39,6 +39,7 @@ else
     ValidateD1SafetyClosure(state);
     ValidateSafetyProvClosure(state);
     ValidateG10Closure(state);
+    ValidateG1DesignClosure(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -144,7 +145,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -188,7 +189,7 @@ void ValidatePhaseContracts(ProjectState value)
             $"canonical phase contract {contract.Id}");
     }
 
-    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1", "F2.ACQ", "C2" })
+    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "G1", "G2", "H", "F2.ACQ", "C2" })
         if (value.PhaseContracts.All(x => x.Id != required))
             errors.Add($"Required canonical phase contract is absent: {required}.");
 
@@ -475,13 +476,12 @@ void ValidateG10Closure(ProjectState value)
     if (phase.Outcome != "A" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED")
         errors.Add("G1.0 must close COMPLETE/OUTCOME A with behaviorChange=false and no behavior authority.");
-    if (value.CurrentPhase != "G1.0" || value.NextRecommendedPhase != "G1.DESIGN"
-        || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED" || value.NextBehavioralPhase != "G1")
+    if (value.CurrentPhase == "G1.0" && (value.NextRecommendedPhase != "G1.DESIGN"
+        || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED" || value.NextBehavioralPhase != "G1"))
         errors.Add("G1.0 closure must expose only G1.DESIGN review and future G1 as NOT_AUTHORIZED.");
     var design = value.Phases.FirstOrDefault(x => x.Id == "G1.DESIGN");
     var behavior = value.Phases.FirstOrDefault(x => x.Id == "G1");
-    if (design?.Status != "NEXT" || design.Authorization != "NOT_AUTHORIZED"
-        || design.BehaviorChange is not false || behavior?.Status != "FUTURE"
+    if (design?.BehaviorChange is not false || behavior?.Status != "FUTURE"
         || behavior.Authorization != "NOT_AUTHORIZED" || behavior.BehaviorChange is not true)
         errors.Add("G1.DESIGN and G1 authorization boundaries are inconsistent.");
 
@@ -596,6 +596,117 @@ void ValidateG10Closure(ProjectState value)
     {
         errors.Add($"G1.0 validation hardening summary cannot be validated: {exception.Message}");
     }
+}
+
+void ValidateG1DesignClosure(ProjectState value)
+{
+    var phase = value.Phases.FirstOrDefault(x => x.Id == "G1.DESIGN");
+    if (phase?.Status != "COMPLETE") return;
+    if (phase.Outcome != "READY" || phase.BehaviorChange is not false
+        || phase.Authorization != "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED")
+        errors.Add("G1.DESIGN must close COMPLETE/READY with behaviorChange=false and no behavior authority.");
+    var gate = value.Phases.FirstOrDefault(x => x.Id == "G1.GATE");
+    var behavior = value.Phases.FirstOrDefault(x => x.Id == "G1");
+    if (value.CurrentPhase != "G1.DESIGN" || value.NextRecommendedPhase != "G1.GATE"
+        || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
+        || gate?.Status != "NEXT" || gate.Authorization != "NOT_AUTHORIZED"
+        || gate.BehaviorChange is not false || behavior?.Status != "FUTURE"
+        || behavior.Authorization != "NOT_AUTHORIZED")
+        errors.Add("G1.DESIGN closure must expose only G1.GATE review and future G1 as NOT_AUTHORIZED.");
+
+    foreach (var artifact in new[]
+    {
+        "docs/PHASE_G1_DESIGN_INTERIOR_RELATION_ADMISSION.md",
+        "docs/g1_design_interior_relation_admission_contract.json",
+        "docs/g1_design_membership_summary.csv",
+        "docs/g1_design_membership_by_family.csv",
+        "docs/g1_design_support_provenance.csv",
+        "docs/g1_design_determinism_summary.csv",
+        "docs/g1_design_summary.json"
+    })
+    {
+        RequireFile(artifact, "G1.DESIGN closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "G1.DESIGN artifact index entry");
+    }
+
+    const string frozenHash = "15A16B6EFBF779CFF2C42A8C9A0DD46E025019252BEFA968E831233DC802AA68";
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "g1_design_interior_relation_admission_contract.json")));
+        var contract = document.RootElement;
+        var actual = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(contract)));
+        if (actual != frozenHash)
+            errors.Add("G1.DESIGN contract hash differs from its frozen canonical identity.");
+        if (contract.GetProperty("behaviorChange").GetBoolean()
+            || contract.GetProperty("productEvidenceScope").GetProperty("originalObjectsOnly").GetBoolean() is not true
+            || contract.GetProperty("productEvidenceScope").GetProperty("fullChart").GetBoolean() is not true
+            || contract.GetProperty("productEvidenceScope").GetProperty("crossChartProhibited").GetBoolean() is not true
+            || contract.GetProperty("productEvidenceScope").GetProperty("syntheticProhibited").GetBoolean() is not true
+            || contract.GetProperty("futureGate").GetProperty("rngCalls").GetInt32() != 0
+            || contract.GetProperty("futureGate").GetProperty("reroll").GetBoolean()
+            || contract.GetProperty("futureGate").GetProperty("candidateSubstitution").GetBoolean()
+            || contract.GetProperty("authorizationBoundaries").GetProperty("g2Articulation").GetString() != "NOT_AUTHORIZED"
+            || contract.GetProperty("authorizationBoundaries").GetProperty("hMultipleArticulation").GetString() != "NOT_AUTHORIZED")
+            errors.Add("G1.DESIGN contract does not preserve exact scope/RNG/G2/H boundaries.");
+        if (contract.GetProperty("excludedAuthority").EnumerateArray()
+            .All(x => x.GetString() != "MapperSupport"))
+            errors.Add("G1.DESIGN contract must exclude MapperSupport authority.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"G1.DESIGN machine contract cannot be validated: {exception.Message}");
+    }
+
+    try
+    {
+        using var summary = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "g1_design_summary.json")));
+        var s = summary.RootElement;
+        if (s.GetProperty("status").GetString() != "READY"
+            || s.GetProperty("behaviorChange").GetBoolean()
+            || s.GetProperty("contractHash").GetString() != frozenHash
+            || s.GetProperty("researchRngCalls").GetInt32() != 0
+            || !s.GetProperty("deterministic").GetBoolean()
+            || s.GetProperty("candidateShapes").GetInt32() != s.GetProperty("exactlyRepresentable").GetInt32()
+            || s.GetProperty("unresolvableExactIdentity").GetInt32() != 0
+            || s.GetProperty("hypotheticalAdmit").GetInt32() <= 0
+            || s.GetProperty("nextCandidate").GetString() != "G1.GATE"
+            || s.GetProperty("nextAuthorized").GetBoolean())
+            errors.Add("G1.DESIGN summary does not preserve READY/representability/RNG/authority invariants.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"G1.DESIGN summary cannot be validated: {exception.Message}");
+    }
+
+    foreach (var product in new[] { "src/ManiaAddNotesLab.Core/AddNotesEngine.cs",
+                 "src/ManiaAddNotesLab.Core/Model.cs",
+                 "src/ManiaAddNotesLab.Cli/Program.cs", "src/ManiaAddNotesLab.Web/Program.cs" })
+    {
+        var text = File.ReadAllText(Path.Combine(root, product.Replace('/', Path.DirectorySeparatorChar)));
+        if (text.Contains("InteriorRelationMembershipResearch", StringComparison.Ordinal)
+            || text.Contains("g1-design", StringComparison.OrdinalIgnoreCase)
+            || text.Contains("G1Membership", StringComparison.Ordinal)
+            || text.Contains("InteriorRelationAdmission", StringComparison.Ordinal))
+            errors.Add($"G1.DESIGN research/gate is exposed by normal product path: {product}");
+    }
+    var g10 = value.Phases.FirstOrDefault(x => x.Id == "G1.0");
+    var d1 = value.Phases.FirstOrDefault(x => x.Id == "D1");
+    var safety = value.Phases.FirstOrDefault(x => x.Id == "D1.SAFETY");
+    var provenance = value.Phases.FirstOrDefault(x => x.Id == "SAFETY.PROV");
+    var f2Acq = value.Phases.FirstOrDefault(x => x.Id == "F2.ACQ");
+    var c2 = value.Phases.FirstOrDefault(x => x.Id == "C2");
+    var g2 = value.Phases.FirstOrDefault(x => x.Id == "G2");
+    var h = value.Phases.FirstOrDefault(x => x.Id == "H");
+    if (g10?.Outcome != "A" || d1?.Outcome != "C" || safety?.Outcome != "C"
+        || provenance?.Outcome != "A" || f2Acq?.Status != "BLOCKED" || c2?.Status != "DEFERRED"
+        || g2?.Authorization != "NOT_AUTHORIZED" || h?.Authorization != "NOT_AUTHORIZED")
+        errors.Add("G1.DESIGN must preserve G1.0, D1/D1.SAFETY, SAFETY.PROV, F2.ACQ and C2 history.");
+    CheckContains("docs/PHASE_G1_0_VALIDATION_HARDENING_ADDENDUM.md",
+        "RECERTIFICATION PASS", "G1.0 recertification dependency after G1.DESIGN");
+    CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+        "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";", "legacy default after G1.DESIGN");
 }
 
 void ValidateFilesAndIndex(ProjectState value)

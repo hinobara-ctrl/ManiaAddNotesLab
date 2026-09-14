@@ -1,0 +1,136 @@
+{
+  "phase": "G1.DESIGN",
+  "schema": "g1-design-interior-relation-admission-contract.1",
+  "kind": "ResearchDesignShadow",
+  "behaviorChange": false,
+  "historicalDependency": {
+    "g10": "COMPLETE_OUTCOME_A_SHADOW_RECERTIFIED_AFTER_VALIDATION_HARDENING",
+    "contract": "g1.0-interior-relation-feasibility-shadow.1"
+  },
+  "membershipClaim": "A concrete exact legacy interior-LN proposal belongs to the original relation vocabulary observed in this chart for its exact G1.0 query.",
+  "identityPipeline": [
+    "identity",
+    "membership"
+  ],
+  "excludedAuthority": [
+    "compatibility selection",
+    "ranking",
+    "majority",
+    "frequency winner",
+    "MapperSupport",
+    "candidate substitution"
+  ],
+  "productEvidenceScope": {
+    "chartLocal": true,
+    "fullChart": true,
+    "originalObjectsOnly": true,
+    "sameParentEvidenceAllowed": true,
+    "futureOriginalEvidenceAllowed": true,
+    "crossChartProhibited": true,
+    "syntheticProhibited": true,
+    "communityPriorProhibited": true,
+    "generatedOutputsProhibited": true
+  },
+  "validationEvidenceScope": "G1.0 prior-only holdouts validated representation; they are not the future offline product membership scope.",
+  "queryIdentity": [
+    "keymode",
+    "exact parent duration",
+    "exact anchor offset from parent start",
+    "AnchorKind"
+  ],
+  "resultIdentity": [
+    "InteriorEndRelation",
+    "exact duration from anchor",
+    "exact offset from parent end"
+  ],
+  "exactness": {
+    "fileMaterializedFactsOnly": true,
+    "tolerance": false,
+    "nearest": false,
+    "fuzzy": false,
+    "latentSnapInference": false
+  },
+  "admissionStates": [
+    "CandidateObservedUnique",
+    "CandidateObservedAmongAlternatives",
+    "CandidateNotObserved",
+    "NoObservedRelation",
+    "UnresolvableExactIdentity"
+  ],
+  "hypotheticalActionMapping": {
+    "CandidateObservedUnique": "ADMIT",
+    "CandidateObservedAmongAlternatives": "ADMIT",
+    "CandidateNotObserved": "ABSTAIN",
+    "NoObservedRelation": "ABSTAIN",
+    "UnresolvableExactIdentity": "ABSTAIN"
+  },
+  "supportProvenance": [
+    "SameParentOnly",
+    "OtherParentOnly",
+    "Both",
+    "None"
+  ],
+  "candidateUniverse": "All exact release shapes produced without weighted selection by the real legacy candidate builder for current LnInterior opportunities.",
+  "futureScope": "OpportunityKind.LnInterior only after a legal legacy proposal exists.",
+  "futureInsertionPoint": "After PlaceLongNote returns a geometry-valid selected proposal and before added.Add/geometry.Insert; D1 is OFF.",
+  "futureGate": {
+    "rngCalls": 0,
+    "reroll": false,
+    "fallback": false,
+    "candidateSubstitution": false,
+    "searchForAMember": false,
+    "articulationOnAbstain": false
+  },
+  "eligibilityFrozen": {
+    "InteriorMinimumSourceBeats": 3,
+    "InteriorMinimumContextLnCount": 3,
+    "InteriorMinimumSupportedAnchors": 2,
+    "LnWindowBeats": 4,
+    "MaxInteriorOpportunitiesPerSource": 2,
+    "mode": "AnchorSupported+OriginalOnly",
+    "rankingAndCapUnchanged": true
+  },
+  "experimentIsolation": {
+    "articulationEnabled": false,
+    "d1Treatment": false,
+    "control": "legacy-experimental.1 with interior opportunities ON and G1 gate OFF",
+    "treatment": "same inputs/options/seed/range/eligibility/candidate generation/RNG path; only exact membership admission differs before mutation"
+  },
+  "safetyBoundary": {
+    "membershipImpliesSafety": false,
+    "legacyGeometryMustPassFirst": true,
+    "hardValidityRemainsSeparate": true,
+    "safetyProvReuse": [
+      "proposal state",
+      "membership decision",
+      "mutation allowed or skipped",
+      "direct divergence",
+      "downstream ancestry",
+      "reconvergence"
+    ]
+  },
+  "readinessCriteria": [
+    "exact candidate identity",
+    "pure membership evaluator",
+    "zero RNG",
+    "no selector or frequency authority",
+    "no fuzzy identity",
+    "alternatives preserve membership",
+    "isolated future insertion point",
+    "no articulation fallback",
+    "direct-effect potential in more than one C11 family",
+    "behavior neutrality"
+  ],
+  "authorizationBoundaries": {
+    "g1Gate": "NOT_AUTHORIZED",
+    "g1Behavior": "NOT_AUTHORIZED",
+    "g2Articulation": "NOT_AUTHORIZED",
+    "hMultipleArticulation": "NOT_AUTHORIZED",
+    "mapperSupport": "NOT_AUTHORIZED",
+    "d1": "COMPLETE_OUTCOME_C_PARKED",
+    "d1Safety": "COMPLETE_OUTCOME_C_PARKED",
+    "safetyProv": "COMPLETE_OUTCOME_A_SHADOW",
+    "f2Acq": "BLOCKED_ON_EXTERNAL_DATA",
+    "c2": "DEFERRED"
+  }
+}
