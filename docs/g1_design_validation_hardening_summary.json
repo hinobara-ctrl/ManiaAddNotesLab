@@ -1,0 +1,135 @@
+{
+  "schema": "g1-design-validation-hardening.1",
+  "phase": "G1.DESIGN VALIDATION HARDENING / RECERTIFICATION",
+  "repositoryEntryHead": "964831978da269ccc2ada56b6fed7fe6a895ac2c",
+  "originMainAtEntry": "964831978da269ccc2ada56b6fed7fe6a895ac2c",
+  "baselineTests": 698,
+  "behaviorChange": false,
+  "recertificationStatus": "PASS",
+  "designStatus": "COMPLETE_READY_SHADOW",
+  "readyMeaning": "Design readiness only; not behavioral promotion or authorization",
+  "contractHash": "15A16B6EFBF779CFF2C42A8C9A0DD46E025019252BEFA968E831233DC802AA68",
+  "contractUnchanged": true,
+  "corpusFingerprint": "878585D604E807B7E46AB429990C7DA6DB396AB0B7E930DAC2B631C8DE7ECD77",
+  "implementationSnapshotHash": "B0F6872A052F0A2A286F2AF317EC7CF2BE73AE2EC73082EFEF5116C94BF9443C",
+  "aggregateReproduction": {
+    "exact": true,
+    "historical": {
+      "currentInteriorOpportunities": 298,
+      "candidateShapes": 4226,
+      "exactlyRepresentable": 4226,
+      "hypotheticalAdmit": 133,
+      "hypotheticalAbstain": 4093,
+      "states": {
+        "candidateObservedUnique": 76,
+        "candidateObservedAmongAlternatives": 57,
+        "candidateNotObserved": 2907,
+        "noObservedRelation": 1186,
+        "unresolvableExactIdentity": 0
+      },
+      "supportProvenance": {
+        "sameParentOnly": 91,
+        "otherParentOnly": 15,
+        "both": 27,
+        "none": 0
+      },
+      "relationClasses": {
+        "contained": 1877,
+        "crossing": 2221,
+        "equalEnd": 128
+      }
+    },
+    "hardened": {
+      "currentInteriorOpportunities": 298,
+      "candidateShapes": 4226,
+      "exactlyRepresentable": 4226,
+      "hypotheticalAdmit": 133,
+      "hypotheticalAbstain": 4093,
+      "states": {
+        "CandidateObservedUnique": 76,
+        "CandidateObservedAmongAlternatives": 57,
+        "CandidateNotObserved": 2907,
+        "NoObservedRelation": 1186,
+        "UnresolvableExactIdentity": 0
+      },
+      "supportProvenance": {
+        "SameParentOnly": 91,
+        "OtherParentOnly": 15,
+        "Both": 27,
+        "None": 0
+      },
+      "relationClasses": {
+        "Contained": 1877,
+        "Crossing": 2221,
+        "EqualEnd": 128
+      }
+    }
+  },
+  "candidateUniverseInterpretation": "Membership over enumerated candidate-builder shapes; not post-geometry placements or behavioral effects",
+  "syntheticNormalization": {
+    "aggregateUnchanged": true,
+    "injectedCharts": 11,
+    "cleanHash": "5BFB4BD5DCEB14D915A428754F7B4ACF1AB891BEFC88F0E0F61BCBAFF3A21D2B",
+    "contaminatedHash": "5BFB4BD5DCEB14D915A428754F7B4ACF1AB891BEFC88F0E0F61BCBAFF3A21D2B",
+    "method": "Synthetic object injected into source.OriginalObjects for every C11 chart"
+  },
+  "constructionMembershipProvenance": {
+    "exactAttributionAvailable": true,
+    "identity": "Reference-exact original object route to OriginalObservationId; candidate endpoint by exact materialized end time",
+    "decisionAuthority": false,
+    "counts": {
+      "ConstructionEvidenceOnly": 107,
+      "IndependentEvidenceOnly": 15,
+      "ConstructionAndIndependent": 11,
+      "None": 0,
+      "Unattributable": 0
+    }
+  },
+  "rngCertification": {
+    "method": "STRUCTURAL_NO_RNG_DEPENDENCY",
+    "evaluatorApiAcceptsRng": false,
+    "weightedSelectionInvoked": false,
+    "repeatedEvaluationDeterministic": true,
+    "zeroCountersAreProof": false
+  },
+  "badControls": {
+    "realEvaluatorControlsPass": true,
+    "designContractControlsPass": true,
+    "realEvaluatorControls": {
+      "syntheticEvidenceRejected": true,
+      "crossChartEvidenceRejected": true,
+      "frequencySkewKeepsMinorityMember": true,
+      "marginalFragmentsDoNotJoin": true,
+      "exactMismatchRemainsMismatch": true
+    },
+    "designContractControls": {
+      "replacementTraceDetected": true,
+      "articulationTraceDetected": true,
+      "rngDivergenceTraceDetected": true
+    }
+  },
+  "queryDenominators": {
+    "universe": "Distinct exact queries reached by the current candidate-builder universe, chart-local",
+    "reachedDistinctExactQueries": 247,
+    "noObservedResult": 94,
+    "oneObservedResult": 87,
+    "multipleObservedResults": 66
+  },
+  "opportunityDistribution": {
+    "totalOpportunities": 298,
+    "zeroAdmitted": 185,
+    "atLeastOneAdmitted": 113,
+    "noCandidateShapes": 0,
+    "allCandidatesAbstain": 185,
+    "mixedAdmitAbstain": 113,
+    "allCandidatesAdmit": 0,
+    "admittedShapeCountDistribution": {
+      "0": 185,
+      "1": 94,
+      "2": 18,
+      "3": 1
+    }
+  },
+  "nextCandidate": "G1.GATE",
+  "nextAuthorized": false
+}

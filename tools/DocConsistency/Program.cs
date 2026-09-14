@@ -621,8 +621,12 @@ void ValidateG1DesignClosure(ProjectState value)
         "docs/g1_design_membership_summary.csv",
         "docs/g1_design_membership_by_family.csv",
         "docs/g1_design_support_provenance.csv",
+        "docs/g1_design_construction_support_provenance.csv",
+        "docs/g1_design_opportunity_summary.csv",
         "docs/g1_design_determinism_summary.csv",
-        "docs/g1_design_summary.json"
+        "docs/g1_design_summary.json",
+        "docs/PHASE_G1_DESIGN_VALIDATION_HARDENING_ADDENDUM.md",
+        "docs/g1_design_validation_hardening_summary.json"
     })
     {
         RequireFile(artifact, "G1.DESIGN closure artifact");
@@ -674,6 +678,16 @@ void ValidateG1DesignClosure(ProjectState value)
             || s.GetProperty("nextCandidate").GetString() != "G1.GATE"
             || s.GetProperty("nextAuthorized").GetBoolean())
             errors.Add("G1.DESIGN summary does not preserve READY/representability/RNG/authority invariants.");
+        var opportunities = s.GetProperty("opportunityDistribution");
+        if (opportunities.GetProperty("totalOpportunities").GetInt32() != 298
+            || opportunities.GetProperty("zeroAdmitted").GetInt32()
+                + opportunities.GetProperty("atLeastOneAdmitted").GetInt32() != 298)
+            errors.Add("G1.DESIGN opportunity distribution does not preserve its exact denominator.");
+        if (s.GetProperty("reachedDistinctExactQueries").GetInt32()
+            != s.GetProperty("queriesWithNoObservedResult").GetInt32()
+                + s.GetProperty("queriesWithOneObservedResult").GetInt32()
+                + s.GetProperty("queriesWithMultipleObservedResults").GetInt32())
+            errors.Add("G1.DESIGN reached-query denominator is inconsistent.");
     }
     catch (Exception exception)
     {
@@ -707,6 +721,56 @@ void ValidateG1DesignClosure(ProjectState value)
         "RECERTIFICATION PASS", "G1.0 recertification dependency after G1.DESIGN");
     CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
         "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";", "legacy default after G1.DESIGN");
+    foreach (var researchPath in new[] { "src/ManiaAddNotesLab.Core/InteriorRelationMembershipResearch.cs",
+                 "tools/ManiaAddNotesLab.Experiments/G1DesignMembershipRunner.cs" })
+    {
+        var researchText = File.ReadAllText(Path.Combine(root,
+            researchPath.Replace('/', Path.DirectorySeparatorChar)));
+        foreach (var forbidden in new[] { "IRandomSource", "SeededRandom", "System.Random", "TakeWeighted(" })
+            if (researchText.Contains(forbidden, StringComparison.Ordinal))
+                errors.Add($"G1.DESIGN structural RNG boundary violated by {forbidden} in {researchPath}.");
+    }
+
+    const string hardeningAddendum = "docs/PHASE_G1_DESIGN_VALIDATION_HARDENING_ADDENDUM.md";
+    CheckContains(hardeningAddendum, "RECERTIFICATION PASS", "G1.DESIGN recertification result");
+    CheckContains(hardeningAddendum, "READY denotes design readiness only",
+        "G1.DESIGN READY non-promotion boundary");
+    CheckContains(hardeningAddendum, "candidate-universe membership potential",
+        "corrected candidate-universe interpretation");
+    try
+    {
+        using var hardening = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "g1_design_validation_hardening_summary.json")));
+        var hardeningRoot = hardening.RootElement;
+        if (hardeningRoot.GetProperty("recertificationStatus").GetString() != "PASS"
+            || hardeningRoot.GetProperty("behaviorChange").GetBoolean()
+            || hardeningRoot.GetProperty("contractHash").GetString() != frozenHash
+            || !hardeningRoot.GetProperty("contractUnchanged").GetBoolean()
+            || !hardeningRoot.GetProperty("aggregateReproduction").GetProperty("exact").GetBoolean()
+            || !hardeningRoot.GetProperty("syntheticNormalization").GetProperty("aggregateUnchanged").GetBoolean()
+            || hardeningRoot.GetProperty("syntheticNormalization").GetProperty("injectedCharts").GetInt32() != 11
+            || hardeningRoot.GetProperty("constructionMembershipProvenance").GetProperty("counts")
+                .GetProperty("Unattributable").GetInt32() != 0
+            || hardeningRoot.GetProperty("rngCertification").GetProperty("evaluatorApiAcceptsRng").GetBoolean()
+            || hardeningRoot.GetProperty("rngCertification").GetProperty("zeroCountersAreProof").GetBoolean()
+            || !hardeningRoot.GetProperty("badControls").GetProperty("realEvaluatorControlsPass").GetBoolean()
+            || !hardeningRoot.GetProperty("badControls").GetProperty("designContractControlsPass").GetBoolean()
+            || hardeningRoot.GetProperty("nextAuthorized").GetBoolean())
+            errors.Add("G1.DESIGN hardening summary does not preserve recertification invariants.");
+        CheckContains(hardeningAddendum, hardeningRoot.GetProperty("implementationSnapshotHash").GetString()!,
+            "G1.DESIGN hardening implementation snapshot");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"G1.DESIGN validation hardening summary cannot be validated: {exception.Message}");
+    }
+
+    foreach (var document in new[] { "README.md", "PROJECT_STATUS.md", "ROADMAP.md",
+                 "docs/EXPERIMENTS.md", "docs/MAPPER_DERIVED_IMPLEMENTATION_ROADMAP.md",
+                 "docs/BEHAVIOR_DECISION_AUDIT.md", "docs/PHASE_G1_DESIGN_INTERIOR_RELATION_ADMISSION.md" })
+        if (File.ReadAllText(Path.Combine(root, document.Replace('/', Path.DirectorySeparatorChar)))
+            .Contains("direct-effect potential", StringComparison.OrdinalIgnoreCase))
+            errors.Add($"G1.DESIGN overclaim remains outside frozen contract/addendum history: {document}");
 }
 
 void ValidateFilesAndIndex(ProjectState value)

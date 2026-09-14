@@ -33,9 +33,9 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase D1.SAFETY — COMPLETE, OUTCOME C, SHADOW ONLY:** separó raw relation, hard violation y atribución causal, pero el forensic prototype intentó atribuir una diferencia final sin mutation provenance; hard abort y framework PARKED.
 - **SAFETY.PROV — COMPLETE, OUTCOME A, SHADOW ONLY:** captura decisiones/mutaciones durante generation con lineage exacta, reconvergencia y serialización, manteniendo bytes/RNG/decisiones idénticos OFF/ON.
 - **G1.0 — COMPLETE, OUTCOME A, RECERTIFIED, SHADOW ONLY:** censó relaciones interiores completas y ahora audita independientemente el donor set con bad controls adversariales; C11 mantiene cero leakage real y los mismos agregados.
-- **G1.DESIGN — COMPLETE, READY, SHADOW ONLY:** congeló membership exacta para una propuesta legacy concreta; 4.226/4.226 shapes fueron representables y 133 serían ADMIT hipotético en seis familias, sin selector ni RNG.
+- **G1.DESIGN — COMPLETE, READY, RECERTIFIED, SHADOW ONLY:** membership exacta reproducida sobre 4.226/4.226 shapes del candidate-builder; 133 son members hipotéticos, no placements post-geometry ni efectos conductuales. La API es estructuralmente RNG-free y no existe selector.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen **Outcome C / PARKED**. G1.DESIGN sólo comprueba `legacy proposes X → X ∈ observed set`; no escoge clase, endpoint, lane ni cantidad. El candidato siguiente es `G1.GATE`, todavía no autorizado; G1 conductual, G2/H siguen separados. F2.ACQ continúa bloqueado y C2 deferred.
+La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen **Outcome C / PARKED**. G1.DESIGN sólo comprueba `legacy proposes X → X ∈ observed set`; su READY significa design readiness, no promoción ni autorización. El candidato siguiente es `G1.GATE`, todavía no autorizado; G1 conductual, G2/H siguen separados.
 
 <!-- PROJECT-STATE:BEGIN -->
 Current phase: G1.DESIGN — COMPLETE — OUTCOME READY<br>
@@ -49,7 +49,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 698 passed / 0 failed / 0 skipped
+Tests: 703 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

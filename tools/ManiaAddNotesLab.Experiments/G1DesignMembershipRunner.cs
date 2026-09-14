@@ -49,6 +49,10 @@ internal static class G1DesignMembershipRunner
         WriteGlobal(Path.Combine(publicOutputDirectory, "g1_design_membership_summary.csv"), rows);
         WriteFamilies(Path.Combine(publicOutputDirectory, "g1_design_membership_by_family.csv"), rows);
         WriteProvenance(Path.Combine(publicOutputDirectory, "g1_design_support_provenance.csv"), rows);
+        WriteConstructionProvenance(Path.Combine(publicOutputDirectory,
+            "g1_design_construction_support_provenance.csv"), rows);
+        WriteOpportunitySummary(Path.Combine(publicOutputDirectory,
+            "g1_design_opportunity_summary.csv"), rows);
         WriteDeterminism(Path.Combine(publicOutputDirectory, "g1_design_determinism_summary.csv"),
             contractHash, firstIdentity, deterministic, rows);
         var summary = Summary(status, contractHash, firstIdentity, deterministic, rows);
@@ -91,17 +95,32 @@ internal static class G1DesignMembershipRunner
                 x => Count(candidates, x)),
             supportProvenance = Enum.GetValues<InteriorRelationSupportProvenance>().ToDictionary(x => x.ToString(),
                 x => candidates.Count(y => y.HypotheticalAdmit && y.SupportProvenance == x)),
+            constructionSupportProvenance = Enum.GetValues<InteriorRelationConstructionSupportProvenance>()
+                .ToDictionary(x => x.ToString(), x => candidates.Count(y => y.HypotheticalAdmit
+                    && y.ConstructionSupportProvenance == x)),
             relationClasses = Enum.GetValues<InteriorEndRelation>()
                 .Where(x => x is InteriorEndRelation.Contained or InteriorEndRelation.EqualEnd
                     or InteriorEndRelation.Crossing).ToDictionary(x => x.ToString(),
                     x => candidates.Count(y => y.Candidate.EndRelation == x)),
             queriesWithOneObservedResult = QueryCount(candidates, 1),
             queriesWithMultipleObservedResults = QueryCount(candidates, 2),
+            queriesWithNoObservedResult = QueryCount(candidates, -1),
+            queryCountUniverse = "Distinct exact queries reached by the current candidate-builder universe, chart-local",
+            reachedDistinctExactQueries = QueryCount(candidates, 0),
             memberInsideMultiResultSet = candidates.Count(x => x.HypotheticalAdmit
                 && x.ObservedResultSignatures.Length > 1),
             absentFromMultiResultSet = candidates.Count(x => x.State == InteriorRelationMembershipState.CandidateNotObserved
                 && x.ObservedResultSignatures.Length > 1),
+            opportunityDistribution = OpportunityDistribution(rows),
             researchRngCalls = rows.Sum(x => x.Result.ResearchRngCalls),
+            researchRngCallsMeaning = "Schema-compatible diagnostic metadata; not proof of RNG purity",
+            rngCertification = new
+            {
+                method = InteriorRelationMembershipResearch.RngCertification,
+                evaluatorApiAcceptsRng = false,
+                candidateEnumerationUsesWeightedSelection = false,
+                deterministicRepeat = deterministic
+            },
             deterministic,
             semanticCandidateHash = identity,
             nextCandidate = "G1.GATE",
@@ -112,7 +131,7 @@ internal static class G1DesignMembershipRunner
     private static void WriteGlobal(string path, IReadOnlyList<G1DesignChartResult> rows)
     {
         using var w = Writer(path);
-        w.WriteLine("scope,current_opportunities,candidate_shapes,exactly_representable,unresolvable,candidate_observed_unique,candidate_observed_among_alternatives,candidate_not_observed,no_observed_relation,hypothetical_admit,hypothetical_abstain,contained,equal_end,crossing,queries_one_result,queries_multiple_results,member_in_multi,absent_from_multi");
+        w.WriteLine("scope,current_opportunities,candidate_shapes,exactly_representable,unresolvable,candidate_observed_unique,candidate_observed_among_alternatives,candidate_not_observed,no_observed_relation,hypothetical_admit,hypothetical_abstain,contained,equal_end,crossing,queries_no_result,queries_one_result,queries_multiple_results,member_in_multi,absent_from_multi");
         WriteMembershipRow(w, "GLOBAL", rows);
         foreach (var row in rows.OrderBy(x => x.Chart.RelativePath, StringComparer.Ordinal))
             WriteMembershipRow(w, Csv($"CHART:{row.Chart.RelativePath}"), [row]);
@@ -157,6 +176,7 @@ internal static class G1DesignMembershipRunner
         };
         if (includeQueries)
         {
+            values.Add(I(QueryCount(c, -1)));
             values.Add(I(QueryCount(c, 1)));
             values.Add(I(QueryCount(c, 2)));
         }
@@ -183,6 +203,35 @@ internal static class G1DesignMembershipRunner
         }
     }
 
+    private static void WriteConstructionProvenance(string path, IReadOnlyList<G1DesignChartResult> rows)
+    {
+        using var w = Writer(path);
+        w.WriteLine("construction_support_provenance,hypothetical_admits,percentage_of_all_admits");
+        var candidates = rows.SelectMany(x => x.Result.Candidates).Where(x => x.HypotheticalAdmit).ToArray();
+        foreach (var kind in Enum.GetValues<InteriorRelationConstructionSupportProvenance>())
+        {
+            var count = candidates.Count(x => x.ConstructionSupportProvenance == kind);
+            w.WriteLine(string.Join(',', kind, I(count), candidates.Length == 0 ? "0"
+                : (100m * count / candidates.Length).ToString("0.0000", CultureInfo.InvariantCulture)));
+        }
+    }
+
+    private static void WriteOpportunitySummary(string path, IReadOnlyList<G1DesignChartResult> rows)
+    {
+        var distribution = OpportunityDistribution(rows);
+        using var w = Writer(path);
+        w.WriteLine("metric,value,denominator,scope");
+        w.WriteLine($"total_current_opportunities,{distribution.TotalOpportunities},{distribution.TotalOpportunities},current eligibility");
+        w.WriteLine($"opportunities_with_zero_admitted_shapes,{distribution.ZeroAdmitted},{distribution.TotalOpportunities},candidate-builder universe");
+        w.WriteLine($"opportunities_with_at_least_one_admitted_shape,{distribution.AtLeastOneAdmitted},{distribution.TotalOpportunities},candidate-builder universe");
+        w.WriteLine($"opportunities_with_no_candidate_shapes,{distribution.NoCandidateShapes},{distribution.TotalOpportunities},candidate-builder universe");
+        w.WriteLine($"all_candidates_abstain,{distribution.AllCandidatesAbstain},{distribution.TotalOpportunities},nonempty candidate sets");
+        w.WriteLine($"mixed_admit_abstain,{distribution.MixedAdmitAbstain},{distribution.TotalOpportunities},nonempty candidate sets");
+        w.WriteLine($"all_candidates_admit,{distribution.AllCandidatesAdmit},{distribution.TotalOpportunities},nonempty candidate sets");
+        foreach (var pair in distribution.AdmittedShapeCountDistribution)
+            w.WriteLine($"admitted_shape_count_{pair.Key},{pair.Value},{distribution.TotalOpportunities},candidate-builder universe");
+    }
+
     private static void WriteDeterminism(string path, string contractHash, string identity,
         bool deterministic, IReadOnlyList<G1DesignChartResult> rows)
     {
@@ -196,9 +245,22 @@ internal static class G1DesignMembershipRunner
         InteriorRelationMembershipState state) => values.Count(x => x.State == state);
     private static int QueryCount(IEnumerable<InteriorRelationMembershipEvaluation> values, int cardinality) => values
         .GroupBy(x => $"{x.Candidate.ChartFingerprint}|{x.Candidate.QuerySignature}", StringComparer.Ordinal)
-        .Count(group => cardinality == 1
-            ? group.First().ObservedResultSignatures.Length == 1
-            : group.First().ObservedResultSignatures.Length > 1);
+        .Count(group => cardinality == 0 || (cardinality < 0
+            ? group.First().ObservedResultSignatures.Length == 0
+            : cardinality == 1 ? group.First().ObservedResultSignatures.Length == 1
+            : group.First().ObservedResultSignatures.Length > 1));
+    private static G1DesignOpportunityDistribution OpportunityDistribution(
+        IReadOnlyList<G1DesignChartResult> rows)
+    {
+        var values = rows.Select(x => InteriorRelationMembershipResearch.SummarizeOpportunities(x.Result)).ToArray();
+        var admitted = rows.SelectMany(row => row.Result.CurrentOpportunityIds.Select(id =>
+            row.Result.Candidates.Count(x => x.Candidate.OpportunityId == id && x.HypotheticalAdmit))).ToArray();
+        return new G1DesignOpportunityDistribution(values.Sum(x => x.TotalOpportunities),
+            values.Sum(x => x.ZeroAdmitted), values.Sum(x => x.AtLeastOneAdmitted),
+            values.Sum(x => x.NoCandidateShapes), values.Sum(x => x.AllCandidatesAbstain),
+            values.Sum(x => x.MixedAdmitAbstain), values.Sum(x => x.AllCandidatesAdmit),
+            admitted.GroupBy(x => x).OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Count()));
+    }
     private static string Identity(IEnumerable<InteriorRelationMembershipCorpusResult> values) => Hash(string.Join('\n',
         values.SelectMany(x => x.Candidates).OrderBy(x => x.Candidate.CandidateId, StringComparer.Ordinal).Select(x =>
             $"{x.Candidate.CandidateId}|{x.State}|{x.SupportProvenance}|{string.Join(';', x.ObservedResultSignatures)}")));
@@ -222,3 +284,6 @@ internal sealed record G1DesignChartResult(C11CorpusChartDescriptor Chart,
 internal sealed record G1DesignRunSummary(string Status, string ContractHash, int CurrentOpportunities,
     int CandidateShapes, int ExactlyRepresentable, int HypotheticalAdmit, int HypotheticalAbstain,
     int AdmitFamilies, string SemanticCandidateHash, bool Deterministic);
+internal sealed record G1DesignOpportunityDistribution(int TotalOpportunities, int ZeroAdmitted,
+    int AtLeastOneAdmitted, int NoCandidateShapes, int AllCandidatesAbstain, int MixedAdmitAbstain,
+    int AllCandidatesAdmit, IReadOnlyDictionary<int, int> AdmittedShapeCountDistribution);

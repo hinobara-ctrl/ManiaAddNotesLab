@@ -24,6 +24,13 @@
     "Both": 27,
     "None": 0
   },
+  "constructionSupportProvenance": {
+    "ConstructionEvidenceOnly": 107,
+    "IndependentEvidenceOnly": 15,
+    "ConstructionAndIndependent": 11,
+    "None": 0,
+    "Unattributable": 0
+  },
   "relationClasses": {
     "Contained": 1877,
     "Crossing": 2221,
@@ -31,9 +38,34 @@
   },
   "queriesWithOneObservedResult": 87,
   "queriesWithMultipleObservedResults": 66,
+  "queriesWithNoObservedResult": 94,
+  "queryCountUniverse": "Distinct exact queries reached by the current candidate-builder universe, chart-local",
+  "reachedDistinctExactQueries": 247,
   "memberInsideMultiResultSet": 57,
   "absentFromMultiResultSet": 1422,
+  "opportunityDistribution": {
+    "totalOpportunities": 298,
+    "zeroAdmitted": 185,
+    "atLeastOneAdmitted": 113,
+    "noCandidateShapes": 0,
+    "allCandidatesAbstain": 185,
+    "mixedAdmitAbstain": 113,
+    "allCandidatesAdmit": 0,
+    "admittedShapeCountDistribution": {
+      "0": 185,
+      "1": 94,
+      "2": 18,
+      "3": 1
+    }
+  },
   "researchRngCalls": 0,
+  "researchRngCallsMeaning": "Schema-compatible diagnostic metadata; not proof of RNG purity",
+  "rngCertification": {
+    "method": "STRUCTURAL_NO_RNG_DEPENDENCY",
+    "evaluatorApiAcceptsRng": false,
+    "candidateEnumerationUsesWeightedSelection": false,
+    "deterministicRepeat": true
+  },
   "deterministic": true,
   "semanticCandidateHash": "19E86D5C8C358B07CBE2E890EC6655229DB6AF9CC1670866E085E2B9A4FCB24E",
   "nextCandidate": "G1.GATE",

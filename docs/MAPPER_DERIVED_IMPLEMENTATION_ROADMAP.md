@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0/D0.1/D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. E/E.1: **COMPLETE/B**, recurrence PARKED. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / SHADOW ONLY**. `G1.GATE` es el siguiente candidato **NOT_AUTHORIZED**; G1 conductual, G2 y H permanecen **NOT_AUTHORIZED**, C2 **DEFERRED** y generation normal continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` es el siguiente candidato **NOT_AUTHORIZED**; G1, G2 y H permanecen **NOT_AUTHORIZED** y generation continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1105,7 +1105,7 @@ El addendum post-cierre confirmó que los contadores de leakage originales eran 
 
 **G1.DESIGN COMPLETE — OUTCOME READY / SHADOW ONLY.** Este `OUTCOME READY` es sólo la proyección de estado machine-readable, no un Outcome A/B/C. Congela el claim chart-local/full-chart/original-only: la relación exacta del candidate legacy pertenece o no al result set G1.0 exacto. Unique y AmongAlternatives son ADMIT hipotético; NotObserved, NoRelation y Unresolvable son ABSTAIN. Same-parent se permite con provenance, no score.
 
-C11 enumeró 4.226 shapes reales sobre 298 opportunities, todas representables; 133 serían ADMIT y 4.093 ABSTAIN, con admits en seis familias. El evaluator consume cero RNG y no selecciona, rerollea, sustituye ni articula. El insertion point futuro es posterior al `placed` legal y anterior a mutation; eligibility, lane, D1 y G2 quedan aislados. `behaviorChange=false`.
+C11 enumeró 4.226 shapes pre-geometry sobre 298 opportunities, todas representables; 133 son members hipotéticos y 4.093 no-members. No son placements ni efectos. El evaluator/API es estructuralmente RNG-free y no selecciona, rerollea, sustituye ni articula. La recertificación normalizó original-only, reprodujo todos los agregados y separó construction-only 107, independent-only 15 y ambos 11. `behaviorChange=false`; READY sólo expresa design readiness.
 
 ## Phase G1.GATE — Interior Relation Admission Behavioral Gate / Shadow
 

@@ -1,0 +1,12 @@
+metric,value,denominator,scope
+total_current_opportunities,298,298,current eligibility
+opportunities_with_zero_admitted_shapes,185,298,candidate-builder universe
+opportunities_with_at_least_one_admitted_shape,113,298,candidate-builder universe
+opportunities_with_no_candidate_shapes,0,298,candidate-builder universe
+all_candidates_abstain,185,298,nonempty candidate sets
+mixed_admit_abstain,113,298,nonempty candidate sets
+all_candidates_admit,0,298,nonempty candidate sets
+admitted_shape_count_0,185,298,candidate-builder universe
+admitted_shape_count_1,94,298,candidate-builder universe
+admitted_shape_count_2,18,298,candidate-builder universe
+admitted_shape_count_3,1,298,candidate-builder universe

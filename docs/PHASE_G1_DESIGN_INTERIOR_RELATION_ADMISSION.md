@@ -52,7 +52,7 @@ La misma parent puede demostrar uso original dentro de ese contexto. La provenan
 
 ## 13. Alternative semantics
 
-Un candidate exacto dentro de un result set plural es `CandidateObservedAmongAlternatives` y sigue siendo miembro. `ConflictingForSpecificClaim` no es veto universal para el claim de membership. C11 contiene 87 queries exactas con un observed result y 66 con múltiples; dentro de los result sets múltiples hubo 57 candidate members y 1.422 candidate shapes ausentes.
+Un candidate exacto dentro de un result set plural es `CandidateObservedAmongAlternatives` y sigue siendo miembro. `ConflictingForSpecificClaim` no es veto universal para el claim de membership. En las 247 queries exactas distintas alcanzadas por el universo **actual de candidate shapes** hubo 94 sin observed result, 87 con uno y 66 con múltiples. No son todas las queries G1.0 de C11. Dentro de los result sets múltiples hubo 57 candidate members y 1.422 candidate shapes ausentes.
 
 ## 14. Admission states
 
@@ -72,7 +72,7 @@ El punto aislable está dentro de la opportunity `LnInterior`: después de obten
 
 ## 18. RNG semantics
 
-El evaluator consume cero RNG. Inmediatamente antes y después del gate, control y treatment deben conservar la misma posición RNG; cualquier divergencia posterior sólo puede descender causalmente de permitir u omitir la mutación.
+El evaluator y su API son estructuralmente RNG-free: no reciben `IRandomSource` y la enumeración DESIGN no invoca selección ponderada. Los campos `RngCalls=0` se conservan sólo como metadatos compatibles y no constituyen la prueba. La repetición completa fue determinista. Un gate futuro tendría que volver a demostrar igualdad de posición RNG en el runtime real.
 
 ## 19. No-reroll semantics
 
@@ -100,7 +100,7 @@ Se encontraron 298 opportunities actuales y 4.226 candidate shapes. Las 4.226 (1
 
 ## 25. Per-family distribution
 
-Seis familias mostraron direct-effect potential: Hakanaki Mono Ningen 20 admits, Kara Kara Kara no Kara 31, Spring of Dreams 50, Celestial Axes 6, Ko Inu 22 y Mikimiki Romantic Night 4. Cinco familias no tenían opportunity actual o no produjeron admit; Destiny produjo 98 shapes y 0 admits. Véase `g1_design_membership_by_family.csv` para todos los denominadores y keymodes.
+Seis familias mostraron **candidate-universe membership potential**: Hakanaki Mono Ningen 20 admits, Kara Kara Kara no Kara 31, Spring of Dreams 50, Celestial Axes 6, Ko Inu 22 y Mikimiki Romantic Night 4. Son memberships sobre shapes enumeradas antes de geometry, no placements ni efectos. Cinco familias no tenían opportunity actual o no produjeron admit; Destiny produjo 98 shapes y 0 admits. Véase `g1_design_membership_by_family.csv` para todos los denominadores y keymodes.
 
 ## 26. Same-parent vs other-parent provenance
 
@@ -110,13 +110,13 @@ Entre los 133 admits: 91 `SameParentOnly` (68,4211%), 15 `OtherParentOnly` (11,2
 
 El universo representable contiene 1.877 `Contained`, 128 `EqualEnd` y 2.221 `Crossing` (denominador 4.226). No se introdujo preferencia de clase.
 
-## 28. Direct-effect potential
+## 28. Candidate-universe membership potential — terminology corrected by hardening
 
-El mapping shadow produciría 133 `ADMIT` y 4.093 `ABSTAIN` sobre 4.226 shapes posibles. Esto mide potencial de intervención, no outputs por seed, utilidad humana ni recomendación de promoción.
+El evaluator clasifica 133 `ADMIT` y 4.093 `ABSTAIN` hipotéticos sobre las 4.226 shapes enumeradas por el candidate builder. No se ejecutó `FindLegalLnLanes` en un estado mutable: por tanto no son placements post-geometry, outputs, efectos seed-level, efectos conductuales, utilidad ni evidencia de promoción. El addendum conserva explícitamente el registro de la terminología anterior corregida.
 
 ## 29. What DESIGN proves
 
-Prueba que la identity G1.0 puede aplicarse exactamente al universo actual, que un evaluator puro puede decidir pertenencia—including alternatives—sin RNG ni selector, y que existe un insertion point aislable con potencial directo en más de una familia.
+Prueba que la identity G1.0 puede aplicarse exactamente al universo actual, que un evaluator puro puede decidir pertenencia—including alternatives—sin dependencia RNG ni selector, y que existe membership potential en el universo del builder en más de una familia. El insertion point futuro es arquitectónicamente identificable, pero esta fase no midió supervivencia post-geometry.
 
 ## 30. What DESIGN does not prove
 
@@ -124,7 +124,7 @@ No prueba que agregar una nota mejore un chart, que el vocabulario observado sea
 
 ## 31. Readiness decision
 
-**READY.** Se satisfacen exact identity, pure membership, zero RNG, no selector/frequency/fuzzy authority, alternatives-as-membership, insertion isolation, no articulation fallback, comportamiento neutral y efecto potencial en seis familias.
+**READY.** Se satisfacen exact identity, pure membership estructuralmente RNG-free, no selector/frequency/fuzzy authority, alternatives-as-membership, insertion isolation, no articulation fallback, comportamiento neutral y candidate-universe membership potential en seis familias. **READY denota sólo design readiness; no es promoción conductual ni autorización.**
 
 ## 32. Future G1.GATE status
 
@@ -140,7 +140,7 @@ Los resultados pertenecen a C11, un corpus de desarrollo. Full-chart y same-pare
 
 ## 35. Tests
 
-La matriz determinista cubre los 20 casos pedidos y bad controls adversariales: evidence synthetic/cross-chart, frequency winner, fake marginal join, fuzzy match, replacement, articulation routing y RNG. El cierre final registra 698 passed, 0 failed, 0 skipped.
+La suite G1.DESIGN original contiene 12 métodos de test y 14 casos xUnit materializados (11 Facts más tres filas de una Theory); sus assertions cubren conjuntamente los 20 invariantes semánticos solicitados, no 20 tests uno-a-uno. El hardening añade 5 métodos/casos enfocados. Los controles synthetic/cross-chart/frequency/marginal/mismatch ejercitan el evaluator real; replacement/articulation/RNG-divergence son controles adversariales del contrato/trace futuro, no prueba de un runtime G1 inexistente. El cierre recertificado registra 703 passed, 0 failed, 0 skipped.
 
 ## 36. Git status
 

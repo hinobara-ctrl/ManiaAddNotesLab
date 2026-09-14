@@ -4,6 +4,14 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 5 && args[0] == "g1-design-harden-run")
+{
+    var status = G1DesignValidationHardeningRunner.Run(args[1], args[2], args[3], args[4]);
+    Console.WriteLine($"recertification={status}");
+    Environment.ExitCode = status == "PASS" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 5 && args[0] == "g1-design-run")
 {
     var result = G1DesignMembershipRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),

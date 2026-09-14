@@ -2,7 +2,7 @@
 
 Hipótesis no confirmadas. Comparar con el mismo chart, rango y seed; cambiar una sola variable por vez.
 
-SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow. G1.0 cerró después `COMPLETE/A` también shadow-only y fue recertificado tras validation hardening. G1.DESIGN cerró `READY` sin comportamiento: formaliza membership exacta de una propuesta legacy sin selector ni RNG. `G1.GATE` es candidato de revisión **NOT_AUTHORIZED**; no existe un A/B G1 aprobado. D1 y D1.SAFETY permanecen C/PARKED.
+SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow. G1.0 cerró después `COMPLETE/A` también shadow-only y fue recertificado. G1.DESIGN cerró `READY` y fue recertificado sin comportamiento: formaliza membership exacta, estructuralmente RNG-free, sin selector. READY no es promoción. `G1.GATE` permanece **NOT_AUTHORIZED**.
 
 ```text
 Experiment:
@@ -24,9 +24,9 @@ Addendum de recertificación: los siete contadores que antes eran ceros constant
 
 ## G1.DESIGN — Exact admission membership
 
-El corpus C11 de desarrollo enumeró 4.226 shapes del builder legacy sobre 298 opportunities actuales. Todas se mapearon a query/result G1.0 exactos; 76 fueron `CandidateObservedUnique`, 57 `CandidateObservedAmongAlternatives`, 2.907 `CandidateNotObserved` y 1.186 `NoObservedRelation`. Los 133 ADMIT hipotéticos aparecen en seis familias; 91 tienen soporte sólo same-parent, 15 sólo other-parent y 27 ambos. No son outputs por seed ni utility.
+El corpus C11 de desarrollo enumeró 4.226 shapes del builder legacy sobre 298 opportunities actuales. Todas se mapearon a query/result G1.0 exactos; 76 fueron `CandidateObservedUnique`, 57 `CandidateObservedAmongAlternatives`, 2.907 `CandidateNotObserved` y 1.186 `NoObservedRelation`. Los 133 ADMIT hipotéticos son membership del universo pre-geometry, no placements ni efectos. Se distribuyen en 113 opportunities; otras 185 tienen cero admits.
 
-El eventual control/treatment conserva options, seed, range, eligibility, candidate generation y posición RNG; sólo añadiría, tras un `placed` legal y antes de mutation, una decisión member/abstain con zero RNG y no-reroll. No está autorizado implementarlo. Articulation y D1 deben estar OFF.
+La recertificación inyectó synthetic objects dentro de `OriginalObjects` en los 11 charts sin alterar ningún agregado. Construction provenance exacta: 107 admits construction-only, 15 independent-only y 11 ambos. Los ceros RNG son metadata; la prueba real es API sin RNG, enumeración sin weighted selection y repetición determinista. Un runtime futuro deberá recertificar sus propios traces.
 
 ## H1 — Densidad vertical de chords
 
