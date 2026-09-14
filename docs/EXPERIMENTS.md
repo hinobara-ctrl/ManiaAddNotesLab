@@ -2,7 +2,7 @@
 
 Hipótesis no confirmadas. Comparar con el mismo chart, rango y seed; cambiar una sola variable por vez.
 
-SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow. G1.0 cerró después `COMPLETE/A` también shadow-only: censó 16.881 relaciones exactas parent+anchor+LN witness, separó marginal/joint y auditó los gates actuales sin escoger policy. `G1.DESIGN` es un candidato de revisión **NOT_AUTHORIZED**; no existe un A/B G1 aprobado. D1 y D1.SAFETY permanecen C/PARKED.
+SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow. G1.0 cerró después `COMPLETE/A` también shadow-only y fue recertificado tras validation hardening: un auditor independiente detecta donors prohibidos inyectados y el mismo C11 conserva cero leakage real y agregados idénticos. `G1.DESIGN` es un candidato de revisión **NOT_AUTHORIZED**; no existe un A/B G1 aprobado. D1 y D1.SAFETY permanecen C/PARKED.
 
 ```text
 Experiment:
@@ -19,6 +19,8 @@ Decisión provisional:
 ## G1.0 — Interior relation feasibility
 
 El corpus C11 es DEVELOPMENT/DISCOVERY. La occurrence completa exige que head y endpoint provengan de la misma LN witness original; una duración o release marginal de otra occurrence no completa el candidato. Los holdouts `TargetObservation` y `ParentOccurrence` son tareas separadas, chart-local y prior-only. Contained, EqualEnd y Crossing son resultados descriptivos, no arms de un experimento.
+
+Addendum de recertificación: los siete contadores que antes eran ceros constantes ahora provienen de una auditoría posterior al accepted donor set. Controles adversariales independientes insertan target, parent, release, future, same-event, synthetic y cross-chart donors; todos son detectados. El semantic ID manipulado, la frecuencia sesgada, marginal-as-joint y anchor-support attrition tienen fixtures específicas. Resultado `RECERTIFICATION PASS`, behaviorChange=false.
 
 El posible paso siguiente es diseñar un único gate G1 con hipótesis, scope, stopping criteria y rollback explícitos. Hasta recibir autorización humana, no se elige clase, endpoint, lane, cantidad ni intensity; G2 articulation y H multiple cuts quedan fuera.
 

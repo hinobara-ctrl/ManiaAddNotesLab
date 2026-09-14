@@ -338,6 +338,8 @@ public static class InteriorRelationFeasibilityResearch
         {
             foreach (var kind in Enum.GetValues<InteriorHoldoutKind>())
             {
+                // Construction remains the frozen G1.0 query. Verification below is intentionally a
+                // separate pass over the accepted set rather than a reused construction predicate.
                 var donors = groups[target.QuerySignature].Where(x => x.ChartFingerprint == target.ChartFingerprint
                     && x.AnchorTime < target.AnchorTime
                     && x.WitnessLongNoteId != target.WitnessLongNoteId
@@ -345,20 +347,17 @@ public static class InteriorRelationFeasibilityResearch
                     && x.WitnessLongNoteId != target.ParentLongNoteId
                     && (kind != InteriorHoldoutKind.ParentOccurrence
                         || x.ParentLongNoteId != target.ParentLongNoteId)).ToArray();
-                var distinct = donors.Select(x => x.RelationSignature).Distinct(StringComparer.Ordinal).Count();
-                var joint = donors.Any(x => x.RelationSignature == target.RelationSignature);
-                var duration = donors.Any(x => x.DurationFromAnchorBeats == target.DurationFromAnchorBeats);
-                var endpoint = donors.Any(x => x.RelationClass == target.RelationClass
-                    && x.OffsetFromParentEndBeats == target.OffsetFromParentEndBeats);
-                var state = joint ? distinct == 1 ? InteriorAlternativeState.ObservedUnique
-                        : InteriorAlternativeState.ObservedAmongAlternatives
-                    : donors.Length == 0 ? InteriorAlternativeState.NoObservedRelation
-                    : InteriorAlternativeState.ConflictingForSpecificClaim;
+                var accepted = donors.Select(x => new InteriorRelationHoldoutDonor(x)).ToArray();
+                var assessment = InteriorRelationHoldoutAuditor.Assess(target, accepted);
+                var audit = InteriorRelationHoldoutAuditor.Audit(target, kind, accepted);
                 result.Add(new InteriorRelationHoldout(target.OccurrenceId, kind, target.QuerySignature,
-                    target.RelationSignature, donors.Length, distinct, joint, duration, endpoint,
-                    !joint && duration && endpoint, state,
-                    donors.Select(x => x.OccurrenceId).Order(StringComparer.Ordinal).ToImmutableArray(),
-                    0, 0, 0, 0, 0, 0, 0));
+                    target.RelationSignature, assessment.ComparableDonorCount,
+                    assessment.DistinctRelationCount, assessment.ExactJointSupported,
+                    assessment.DurationMarginalSupported, assessment.EndpointMarginalSupported,
+                    assessment.MarginalOnly, assessment.AlternativeState, assessment.DonorOccurrenceIds,
+                    audit.TargetLeakageCount, audit.ParentLeakageCount, audit.ReleaseLeakageCount,
+                    audit.FutureLeakageCount, audit.SameEventLeakageCount, audit.SyntheticLeakageCount,
+                    audit.CrossChartLeakageCount));
             }
         }
         return result.ToImmutableArray();

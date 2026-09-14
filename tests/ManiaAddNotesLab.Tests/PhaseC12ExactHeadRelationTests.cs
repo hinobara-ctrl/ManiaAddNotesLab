@@ -215,8 +215,8 @@ public sealed class PhaseC12ExactHeadRelationTests
         Assert.Contains("Next behavioral phase: G1 — Interior Relation Semantics A/B", status);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", readme);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", status);
-        Assert.Contains("Tests: 672 passed / 0 failed / 0 skipped", readme);
-        Assert.Contains("Tests: 672 passed / 0 failed / 0 skipped", status);
+        Assert.Contains("Tests: 684 passed / 0 failed / 0 skipped", readme);
+        Assert.Contains("Tests: 684 passed / 0 failed / 0 skipped", status);
     }
 
     private static string FindRepositoryRoot([CallerFilePath] string sourceFile = "")
