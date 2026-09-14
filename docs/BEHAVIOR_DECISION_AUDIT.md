@@ -1,7 +1,7 @@
 # Behavior Decision Audit
 
-Estado: inventario vivo; conserva la historia de Phase A y sus refinamientos posteriores.
-Última actualización: 2026-09-13.
+Estado: inventario de Phase A, taxonomía refinada antes de Phase B.  
+Fecha: 2026-09-06.  
 Alcance: Core, parser/writer, CLI, Web y política experimental vigente.
 
 Esta auditoría no elimina ni modifica decisiones. Identifica números y elecciones no numéricas que pueden afectar el resultado para que futuras sustituciones sean versionadas y atribuibles.
@@ -115,7 +115,7 @@ Una policy contract no es una verdad física ni de formato. Un `HARD_VALIDITY_IN
 | ChordCompletion resulting-state policy | D1 behavioral A/B | gate experimental `k=1→2` para la segunda completion ya propuesta por legacy | Sí, sólo treatment explícito | FUTURE_POLICY_CONTRACT | D1 histórico | Sí, sólo versionado | D1 COMPLETE/C, PARKED | `behaviorChange=true`; hard abort por safety attribution, sin promoción; default legacy |
 | Geometry safety attribution | D1.SAFETY research shadow | separa raw relation, hard violation y causa introducida con provenance obligatoria | No | IMPLEMENTATION_ONLY | D1.SAFETY | No activa | D1.SAFETY COMPLETE/C, PARKED | Un failure A/B debe ser causalmente atribuible o `Unattributable`; source/control no se cargan silenciosamente a treatment |
 | Mutation-level causal provenance | SAFETY.PROV research shadow | DecisionEvent/MutationEvent con StateBefore/After, RNG y ancestry exacta | No | IMPLEMENTATION_ONLY | SAFETY.PROV | No activa | SAFETY.PROV COMPLETE/A | Behavioral causal safety claims requieren provenance capturada durante execution; final snapshots no atribuyen mutaciones y temporally after divergence != causally downstream |
-| Complete interior relation representation | G1.0 research shadow | parent LN + exact interior anchor + same-occurrence LN witness + exact endpoint relation | No | IMPLEMENTATION_ONLY | G1.0 | No activa | G1.0 COMPLETE/A — RECERTIFIED | 16.881 complete relations in C11; independent accepted-set auditor reports zero real leakage and adversarial fixtures trigger every prohibition; no selector, vote or generation authority |
+| Complete interior relation representation | G1.0 research shadow | parent LN + exact interior anchor + same-occurrence LN witness + exact endpoint relation | No | IMPLEMENTATION_ONLY | G1.0 | No activa | G1.0 COMPLETE/A | 16.881 complete relations in C11; marginal pieces and alternatives remain separate, with no selector, vote or generation authority |
 | Comparable local context | ventanas y conteos | equivalencia temporal aproximada | Sí | OPEN_DESIGN_DECISION | Diseño faltante | Sí | E/F | Requiere mismatch/no-context |
 | Generalization policy | implícita por pooling/fallback | no está versionada como tal | Sí | OPEN_DESIGN_DECISION | Diseño faltante | Sí | F/I | Debe quedar en certificate |
 | Evidence confidence | no existe | no se muestra porcentaje | Sí | OPEN_DESIGN_DECISION | Investigación | Sí | I | Phase A no inventa fórmula |

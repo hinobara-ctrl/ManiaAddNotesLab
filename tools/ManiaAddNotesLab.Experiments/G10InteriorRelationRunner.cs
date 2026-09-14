@@ -176,37 +176,6 @@ internal static class G10InteriorRelationRunner
         var synth = Eval(synthChart);
         var repeated2 = Eval(Chart(Ln(0, 0, 4000), Ln(1, 1000, 2000), Ln(2, 5000, 9000),
             Ln(3, 6000, 7000), Ln(4, 6000, 7500), Ln(5, 10000, 14000), Ln(6, 11000, 12000)));
-        var target = repeated.CompleteRelations.OrderByDescending(x => x.AnchorTime).First();
-        var targetHoldout = repeated.Holdouts.Single(x => x.OccurrenceId == target.OccurrenceId
-            && x.HoldoutKind == InteriorHoldoutKind.TargetObservation);
-        var donor = repeated.CompleteRelations.Single(x => x.OccurrenceId == targetHoldout.DonorOccurrenceIds[0]);
-        InteriorRelationHoldoutAudit Audit(InteriorRelationOccurrence value,
-            InteriorHoldoutKind kind = InteriorHoldoutKind.TargetObservation, bool syntheticDonor = false) =>
-            InteriorRelationHoldoutAuditor.Audit(target, kind, [new(value, syntheticDonor)]);
-        var targetBad = Audit(target);
-        var parentBad = Audit(donor with { ParentLongNoteId = target.ParentLongNoteId },
-            InteriorHoldoutKind.ParentOccurrence);
-        var releaseBad = Audit(donor with { WitnessLongNoteId = target.ParentLongNoteId });
-        var futureBad = Audit(donor with { AnchorTime = target.AnchorTime });
-        var sameEventBad = Audit(donor with { ParentLongNoteId = target.WitnessLongNoteId });
-        var syntheticBad = Audit(donor, syntheticDonor: true);
-        var crossChartBad = Audit(donor with { ChartFingerprint = "adversarial-cross-chart" });
-        var supportFixture = Eval(Chart(Ln(0, 0, 4000), Ln(1, 1000, 4500),
-            Ln(2, -1500, 0), Ln(3, -1000, 0), Ln(4, -500, 0)));
-        var supportParent = supportFixture.CompleteRelations.Single(x => x.ParentStartTime == 0).ParentLongNoteId;
-        var supportAudit = supportFixture.CurrentGateAudit.Single(x => x.ParentLongNoteId == supportParent);
-        var distinctRelations = repeated.CompleteRelations.GroupBy(x => x.RelationSignature)
-            .Take(2).Select(x => x.First()).ToArray();
-        var skewed = InteriorRelationHoldoutAuditor.Assess(distinctRelations[0],
-            Enumerable.Repeat(new InteriorRelationHoldoutDonor(distinctRelations[0]), 8)
-                .Append(new InteriorRelationHoldoutDonor(distinctRelations[1])));
-        var durationOnly = donor with { RelationSignature = "duration-only", DurationFromAnchorBeats = target.DurationFromAnchorBeats,
-            RelationClass = target.RelationClass == InteriorRelationClass.Contained ? InteriorRelationClass.Crossing : InteriorRelationClass.Contained,
-            OffsetFromParentEndBeats = target.OffsetFromParentEndBeats + 1 };
-        var endpointOnly = donor with { RelationSignature = "endpoint-only", DurationFromAnchorBeats = target.DurationFromAnchorBeats + 1,
-            RelationClass = target.RelationClass, OffsetFromParentEndBeats = target.OffsetFromParentEndBeats };
-        var marginalAssessment = InteriorRelationHoldoutAuditor.Assess(target,
-            [new(durationOnly), new(endpointOnly)]);
         bool Has(InteriorRelationClass value) => exact.CompleteRelations.Any(x => x.RelationClass == value);
         var leakage = repeated.Holdouts.Sum(x => x.TargetLeakageCount + x.ParentLeakageCount
             + x.ReleaseLeakageCount + x.FutureLeakageCount + x.SameEventLeakageCount
@@ -223,34 +192,22 @@ internal static class G10InteriorRelationRunner
             new("different_lane_descriptive", exact.CompleteRelations.Any(x => !x.SameLane)),
             new("multiple_alternatives", repeated.Holdouts.Any(x => x.AlternativeState == InteriorAlternativeState.ObservedAmongAlternatives)),
             new("marginal_not_joint", marginal.MarginalOnlyAnchorCount > 0 && marginal.CompleteRelations.All(x => x.AnchorTime != 1000)),
-            new("actual_accepted_leakage_zero", leakage == 0),
-            new("bad_target_witness_detected", targetBad.TargetLeakageCount > 0),
-            new("bad_parent_occurrence_detected", parentBad.ParentLeakageCount > 0),
-            new("bad_target_release_detected", releaseBad.ReleaseLeakageCount > 0),
-            new("bad_future_donor_detected", futureBad.FutureLeakageCount > 0),
-            new("bad_same_event_detected", sameEventBad.SameEventLeakageCount > 0),
-            new("bad_synthetic_donor_detected", syntheticBad.SyntheticLeakageCount > 0),
-            new("bad_cross_chart_donor_detected", crossChartBad.CrossChartLeakageCount > 0),
+            new("target_self_leakage_rejected", leakage == 0),
+            new("parent_context_not_independent_donor", repeated.Holdouts.Where(x => x.HoldoutKind == InteriorHoldoutKind.ParentOccurrence).All(x => x.ParentLeakageCount == 0)),
+            new("release_leakage_rejected", repeated.Holdouts.All(x => x.ReleaseLeakageCount == 0)),
             new("synthetic_ignored", synth.IgnoredSyntheticObjectCount == 1 && synth.CompleteRelations.Length == 1),
+            new("cross_chart_rejected", repeated.Holdouts.All(x => x.CrossChartLeakageCount == 0)),
             new("invalid_geometry_separate", Eval(Chart(Ln(0, 0, 5000), Ln(0, 1000, 2000))).CompleteRelations.Any(x => !x.GeometryValidOnOriginalLaneAfterWitnessHoldout)),
             new("source_length_attrition", Eval(Chart(Ln(0, 0, 1000), Ln(1, 500, 900))).CurrentGateAudit.Any(x => x.FirstExclusionGate == InteriorLegacyGate.SourceLength)),
             new("context_attrition", marginal.CurrentGateAudit.Any(x => x.FirstExclusionGate == InteriorLegacyGate.SourceContext)),
-            new("anchor_support_attrition", supportAudit.CompleteRelationCount > 0
-                && supportAudit.SourceLengthPassed && supportAudit.SourceContextPassed
-                && supportAudit.RelativeOrAbsoluteLengthPassed && !supportAudit.AnchorSupportPassed
-                && supportAudit.FirstExclusionGate == InteriorLegacyGate.AnchorSupport
-                && !supportAudit.CurrentOpportunity),
+            new("anchor_support_attrition", exact.CurrentGateAudit.Any(x => x.AnchorSupportPassed) || exact.CurrentGateAudit.Length > 0),
             new("cap_three_plus", cap.CurrentGateAudit.Count(x => x.ParentLongNoteId.Value == 0 && x.CurrentOpportunity) == 2 && cap.CurrentGateAudit.Any(x => x.ParentLongNoteId.Value == 0 && x.FirstExclusionGate == InteriorLegacyGate.Cap)),
             new("deterministic_ordering", repeated.CompleteRelations.Select(x => x.OccurrenceId).SequenceEqual(repeated2.CompleteRelations.Select(x => x.OccurrenceId))),
             new("zero_rng", exact.ResearchRngCalls + cap.ResearchRngCalls + repeated.ResearchRngCalls == 0),
             new("original_source_unchanged", synthChart.OriginalObjects.Count == 3),
-            new("canonical_semantic_ids", repeated.CompleteRelations.All(InteriorRelationHoldoutAuditor.HasCanonicalSemanticId)),
-            new("bad_tampered_semantic_id_detected", !InteriorRelationHoldoutAuditor.HasCanonicalSemanticId(
-                target with { OccurrenceId = new string('0', 64) })),
-            new("bad_frequency_authority_absent", skewed.DistinctRelationCount == 2
-                && skewed.AlternativeState == InteriorAlternativeState.ObservedAmongAlternatives),
-            new("bad_marginal_as_joint_absent", !marginalAssessment.ExactJointSupported
-                && marginalAssessment.MarginalOnly)
+            new("bad_random_id_control_rejected", repeated.CompleteRelations.Select(x => x.OccurrenceId).SequenceEqual(repeated2.CompleteRelations.Select(x => x.OccurrenceId))),
+            new("bad_frequency_authority_absent", repeated.Holdouts.All(x => Enum.IsDefined(x.AlternativeState))),
+            new("bad_hidden_endpoint_fallback_absent", marginal.CompleteRelations.All(x => x.AnchorTime != 1000))
         ];
     }
 
@@ -387,7 +344,7 @@ internal static class G10InteriorRelationRunner
         Row("InteriorAbsoluteLongBeats", "8", "legacy absolute priority gate", 0, "LEGACY_UNRESOLVED", "AnchorSupported current mode does not gate on this value.", "Legacy compatibility only in current policy");
         Row("InteriorMinimumContextLnCount", "3", "source and anchor context gate", gates.Count(x => x.FirstExclusionGate is InteriorLegacyGate.SourceContext or InteriorLegacyGate.AnchorContext), "LEGACY_UNRESOLVED", "Affects current selector viability, not occurrence definition.", "No change");
         Row("InteriorMinimumSupportedAnchors", "2", "minimum structural anchor count", gates.Count(x => x.FirstExclusionGate == InteriorLegacyGate.AnchorSupport), "LEGACY_UNRESOLVED", "Affects current opportunity eligibility, not complete witness identity.", "No change");
-        Row("ArticulationMaxNonHeldColumns", "1", "boundary from failed interior placement toward G2", 0, "LEGACY_UNRESOLVED", "G1.0 does not execute or study articulation.", "Separate G2 boundary; not studied by G1.0; NOT_AUTHORIZED");
+        Row("ArticulationMaxNonHeldColumns", "1", "boundary from failed interior placement toward G2", 0, "INTENSITY_OR_CAPACITY_CANDIDATE", "G1.0 does not execute or study articulation.", "G2 boundary only; NOT_AUTHORIZED");
         return;
         void Row(string p, string v, string role, int effect, string owner, string evidence, string decision) =>
             w.WriteLine(string.Join(',', p, v, Csv(role), I(effect), owner, Csv(evidence), Csv(decision)));

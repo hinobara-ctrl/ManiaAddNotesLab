@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen Outcome C/PARKED. G1.0 cerró Outcome A shadow-only y fue **RECERTIFIED AFTER VALIDATION HARDENING**: demostró una representación completa de relaciones interiores sin escoger una policy. `G1.DESIGN` es candidato de revisión, todavía **NOT_AUTHORIZED**.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen Outcome C/PARKED. G1.0 cerró Outcome A shadow-only: demostró una representación completa de relaciones interiores sin escoger una policy. `G1.DESIGN` es candidato de revisión, todavía **NOT_AUTHORIZED**.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -93,7 +93,7 @@ El forensic safety-only reprodujo 200/171 raw relations, pero su primer agregado
 
 SAFETY.PROV añadió un recorder append-only conectado sólo mediante overload research. Cada DecisionEvent/MutationEvent conserva orden, opportunity/parent, StateBefore/After, RNG position, causal origin y IDs deterministas. GeometryState y GenerationState permanecen separadas; downstream exige un parent state completo descendiente de una divergencia exacta, y una reconvergencia completa elimina ancestry. Falta de provenance, hidden state incompleto o matching ambiguo produce `Unattributable`.
 
-La certificación sintética/implementation-only cubrió 1K/4K/7K/10K/18K y articulación. OFF/ON fue exacto en bytes, objetos, replacements, RNG, oportunidades, candidates, decisiones, geometría y serialización. Dos traces fueron byte-identical; recorder RNG = 0. Resultado: **COMPLETE — OUTCOME A**, que demuestra viabilidad técnica y nada más. No autoriza D1, SAFETY.GATE ni conducta. **ROADMAP REVIEW REQUIRED** fue el requisito histórico de cierre; la revisión estratégica y humana posterior que autorizó G1.0 lo dejó **SATISFIED** como bloqueo actual. El bloqueo vigente es la revisión humana separada de `G1.DESIGN`.
+La certificación sintética/implementation-only cubrió 1K/4K/7K/10K/18K y articulación. OFF/ON fue exacto en bytes, objetos, replacements, RNG, oportunidades, candidates, decisiones, geometría y serialización. Dos traces fueron byte-identical; recorder RNG = 0. Resultado: **COMPLETE — OUTCOME A**, que demuestra viabilidad técnica y nada más. No autoriza D1, SAFETY.GATE ni conducta. **ROADMAP REVIEW REQUIRED**.
 
 ### Resultado G1.0
 
@@ -102,8 +102,6 @@ G1.0 definió una occurrence completa como parent LN original + anchor interior 
 En C11 se censaron **22.162 anchors estructurales** y **16.881 relaciones completas**: 5.617 Contained, 3.093 EqualEnd y 8.171 Crossing, repartidas en varias familias. Los dos holdouts congelados produjeron 22.332 consultas comparables y 14.584 soportes joint exactos sumando ambas tareas; target/release/future/same-event/synthetic/cross-chart leakage fue cero. El pipeline actual dejó 298 oportunidades y sólo 288 relation occurrences adjuntas: el source-length gate excluyó primero 15.726 relaciones y el cap=2 otras 862. Son hechos de attrition, no prueba de calidad.
 
 G1.0 cierra **COMPLETE — OUTCOME A / behaviorChange=false**. `MaxInteriorOpportunitiesPerSource=2` queda provisionalmente como `INTENSITY_OR_CAPACITY_CANDIDATE`; ventanas, source length, context y anchor support permanecen `LEGACY_UNRESOLVED`. El resultado no escoge clase, endpoint, lane ni cantidad. `G1.DESIGN` es sólo candidato de revisión; G1 conductual, G2 y H siguen **NOT_AUTHORIZED**.
-
-El addendum post-G1.0 reemplazó los contadores de leakage constantes por una auditoría pura e independiente del donor set aceptado. Siete fixtures adversariales disparan cada prohibición, el ID semántico manipulado se detecta, frecuencia sesgada no crea authority, marginales separados no forman joint y el attrition de anchor support queda aislado. El mismo C11 reprodujo byte por byte los CSV de relaciones, holdouts y gates: leakage aceptado real cero, RNG cero y agregados históricos sin drift. Resultado: **RECERTIFICATION PASS**; G1.0 conserva Outcome A / Shadow.
 
 ## Qué afecta realmente la generación
 
@@ -193,7 +191,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **684 passed, 0 failed, 0 skipped** tras el hardening de validación G1.0; G1.0 cerró originalmente con 672, SAFETY.PROV con 656, D1.SAFETY con 625 y D1 con 599.
+- `dotnet test -c Release`: **672 passed, 0 failed, 0 skipped** con G1.0; SAFETY.PROV cerró con 656, D1.SAFETY con 625 y D1 con 599.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -227,7 +225,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 684 passed / 0 failed / 0 skipped
+Tests: 672 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

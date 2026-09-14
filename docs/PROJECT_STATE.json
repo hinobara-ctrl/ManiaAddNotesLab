@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 9,
+  "schemaVersion": 8,
   "lastUpdated": "2026-09-13",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
@@ -51,18 +51,7 @@
   "nextRecommendedPhase": "G1.DESIGN",
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": "G1",
-  "testStatus": { "passed": 684, "failed": 0, "skipped": 0 },
-  "reviewRequirements": {
-    "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
-    "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "HUMAN_REVIEW_REQUIRED_FOR_G1_DESIGN"
-  },
-  "g10Recertification": {
-    "status": "PASS",
-    "behaviorChange": false,
-    "addendum": "docs/PHASE_G1_0_VALIDATION_HARDENING_ADDENDUM.md",
-    "summary": "docs/g1_0_validation_hardening_summary.json"
-  },
+  "testStatus": { "passed": 672, "failed": 0, "skipped": 0 },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",

@@ -32,7 +32,7 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **Phase D1 — COMPLETE, OUTCOME C, EXPERIMENTAL ONLY:** el A/B congelado se ejecutó y abortó por no poder atribuir de forma válida el chequeo de overlap; la rama quedó aparcada y no fue promovida.
 - **Phase D1.SAFETY — COMPLETE, OUTCOME C, SHADOW ONLY:** separó raw relation, hard violation y atribución causal, pero el forensic prototype intentó atribuir una diferencia final sin mutation provenance; hard abort y framework PARKED.
 - **SAFETY.PROV — COMPLETE, OUTCOME A, SHADOW ONLY:** captura decisiones/mutaciones durante generation con lineage exacta, reconvergencia y serialización, manteniendo bytes/RNG/decisiones idénticos OFF/ON.
-- **G1.0 — COMPLETE, OUTCOME A, RECERTIFIED, SHADOW ONLY:** censó relaciones interiores completas y ahora audita independientemente el donor set con bad controls adversariales; C11 mantiene cero leakage real y los mismos agregados.
+- **G1.0 — COMPLETE, OUTCOME A, SHADOW ONLY:** censó relaciones interiores completas parent+anchor+LN witness, separó joint de marginal y midió gates legacy sin gobernar generación.
 
 La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen **Outcome C / PARKED**. G1.0 observó 16.881 relaciones completas en C11, con Contained/EqualEnd/Crossing y provenance exacta; no escogió clase, endpoint, lane ni cantidad. El único candidato siguiente es diseñar y revisar humanamente un gate G1; no está autorizado y G2/H siguen separados. F2.ACQ continúa bloqueado y C2 deferred.
 
@@ -48,7 +48,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 684 passed / 0 failed / 0 skipped
+Tests: 672 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

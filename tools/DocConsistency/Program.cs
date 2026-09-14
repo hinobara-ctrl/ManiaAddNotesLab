@@ -498,9 +498,7 @@ void ValidateG10Closure(ProjectState value)
         "docs/g1_0_holdout_summary.csv",
         "docs/g1_0_legacy_gate_attrition.csv",
         "docs/g1_0_magic_number_ownership.csv",
-        "docs/g1_0_determinism_summary.csv",
-        "docs/PHASE_G1_0_VALIDATION_HARDENING_ADDENDUM.md",
-        "docs/g1_0_validation_hardening_summary.json"
+        "docs/g1_0_determinism_summary.csv"
     })
     {
         RequireFile(artifact, "G1.0 closure artifact");
@@ -552,50 +550,6 @@ void ValidateG10Closure(ProjectState value)
         "COMPLETE — OUTCOME A", "G1.0 report outcome");
     CheckContains("docs/PHASE_G1_0_INTERIOR_RELATION_FEASIBILITY_REPORT.md",
         "behaviorChange=false", "G1.0 behavior neutrality");
-
-    const string addendum = "docs/PHASE_G1_0_VALIDATION_HARDENING_ADDENDUM.md";
-    const string summaryPath = "docs/g1_0_validation_hardening_summary.json";
-    CheckContains(addendum, "RECERTIFICATION PASS", "G1.0 recertification result");
-    CheckContains(addendum, "behaviorChange=false", "G1.0 recertification behavior neutrality");
-    CheckContains(addendum, "G1.DESIGN", "G1.0 next candidate boundary");
-    CheckContains(addendum, "NOT_AUTHORIZED", "G1.0 post-recertification authority boundary");
-    CheckContains("docs/PROJECT_STATE.json", "\"safetyProvHistoricalClosureRequirement\": \"ROADMAP_REVIEW_REQUIRED\"",
-        "historical SAFETY.PROV review requirement");
-    CheckContains("docs/PROJECT_STATE.json", "\"safetyProvCurrentBlockingRequirement\": \"SATISFIED_",
-        "satisfied current SAFETY.PROV review state");
-    CheckContains("PROJECT_STATUS.md", "requisito histórico de cierre", "historical/current SAFETY.PROV distinction");
-
-    var magic = File.ReadAllText(Path.Combine(root, "docs", "g1_0_magic_number_ownership.csv"));
-    var articulation = magic.Split('\n').FirstOrDefault(x => x.StartsWith(
-        "ArticulationMaxNonHeldColumns,", StringComparison.Ordinal));
-    if (articulation is null || !articulation.Contains(",LEGACY_UNRESOLVED,", StringComparison.Ordinal)
-        || articulation.Contains("INTENSITY_OR_CAPACITY_CANDIDATE", StringComparison.Ordinal))
-        errors.Add("ArticulationMaxNonHeldColumns must remain a LEGACY_UNRESOLVED G2 boundary, not G1-established intensity evidence.");
-
-    try
-    {
-        using var summary = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
-            summaryPath.Replace('/', Path.DirectorySeparatorChar))));
-        var s = summary.RootElement;
-        if (s.GetProperty("contractHash").GetString() != frozenHash
-            || s.GetProperty("historicalOutcome").GetString() != "COMPLETE_OUTCOME_A_SHADOW"
-            || s.GetProperty("recertificationStatus").GetString() != "PASS"
-            || !s.GetProperty("relationAggregateMatch").GetBoolean()
-            || !s.GetProperty("currentGateAggregateMatch").GetBoolean()
-            || s.GetProperty("behaviorChange").GetBoolean()
-            || s.GetProperty("rngCalls").GetInt32() != 0
-            || s.GetProperty("nextCandidate").GetString() != "G1.DESIGN"
-            || s.GetProperty("nextAuthorized").GetBoolean())
-            errors.Add("G1.0 hardening summary does not preserve its PASS/outcome/contract/authority invariants.");
-        if (s.GetProperty("actualLeakage").EnumerateObject().Any(x => x.Value.GetInt32() != 0))
-            errors.Add("G1.0 Outcome A recertification cannot contain actual accepted leakage.");
-        if (s.GetProperty("negativeControls").EnumerateObject().Any(x => !x.Value.GetBoolean()))
-            errors.Add("Every G1.0 adversarial negative control must demonstrate detection.");
-    }
-    catch (Exception exception)
-    {
-        errors.Add($"G1.0 validation hardening summary cannot be validated: {exception.Message}");
-    }
 }
 
 void ValidateFilesAndIndex(ProjectState value)

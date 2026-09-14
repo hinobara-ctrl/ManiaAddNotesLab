@@ -1081,13 +1081,11 @@ La representación shadow pasa identity exacta, transition typing, original-only
 
 <!-- PHASE-CONTRACT:G1.0;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED -->
 
-**G1.0 COMPLETE — OUTCOME A / SHADOW ONLY — RECERTIFIED AFTER VALIDATION HARDENING.**
+**G1.0 COMPLETE — OUTCOME A / SHADOW ONLY.**
 
 La occurrence mínima exacta conserva una LN padre original, un anchor interior de `MapperEvidenceProfile` y una LN witness de la misma occurrence cuyo head coincide con el anchor. Head/release marginales de otros objetos nunca completan esa relación. `Contained`, `EqualEnd` y `Crossing` permanecen categorías separadas; lane, frecuencia y geometry son atributos descriptivos, no authority.
 
 C11 produjo 22.162 anchors y 16.881 relaciones completas en varias familias. Los holdouts `TargetObservation` y `ParentOccurrence` son chart-local, prior-only y excluyen target/release/future/same-event/synthetic/cross-chart leakage. El censo structural se calculó antes de los gates actuales; la attrition ordenada dejó 298 oportunidades actuales y 288 relation occurrences. El cap=2 excluyó 1.595 anchors ya elegibles, por lo que se clasifica provisionalmente como `INTENSITY_OR_CAPACITY_CANDIDATE`; ventanas y thresholds siguen `LEGACY_UNRESOLVED`.
-
-El addendum post-cierre confirmó que los contadores de leakage originales eran constantes y los sustituyó por un auditor puro posterior a construction. Siete bad controls inyectan cada donor prohibido y el mismo C11 reproduce los agregados históricos con cero violations reales, semantic IDs/ordering deterministas y RNG cero. `ArticulationMaxNonHeldColumns` queda `LEGACY_UNRESOLVED`: es un boundary G2 no estudiado por G1.0.
 
 **Boundary:** Outcome A autoriza únicamente proponer para revisión `G1.DESIGN`, no activar G1. No existe preferencia Contained/EqualEnd/Crossing, selector, lane model, endpoint fallback, toggle ni cambio de defaults; G2/H siguen separados y `legacy-experimental.1` permanece default.
 
