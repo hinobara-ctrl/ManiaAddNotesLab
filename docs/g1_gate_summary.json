@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "g1-gate-runtime-certification-summary.1",
+  "phase": "G1.GATE",
+  "decision": "NEEDS_REVIEW",
+  "repositoryEntryHead": "22707d40fbd92d39885a1caee5bcde005aecdb04",
+  "originMainAtEntry": "22707d40fbd92d39885a1caee5bcde005aecdb04",
+  "baselineTests": 703,
+  "controlPolicy": "legacy-experimental.1",
+  "treatmentPolicy": "g1-interior-relation-admission.1",
+  "contractSha256": "0281FDA2A16E26CD9A176D2A59BF80DA421D2A419D70FAD33B0F02790088FB9A",
+  "g1DesignDependencySha256": "15A16B6EFBF779CFF2C42A8C9A0DD46E025019252BEFA968E831233DC802AA68",
+  "insertionPoint": "after PlaceLongNote returns its selected legal shape/lane; before added.Add and geometry.Insert",
+  "evidenceNormalization": "chart-local full-chart source.OriginalObjects filtered by !IsSynthetic \u0026\u0026 Origin==None; immutable index per chart",
+  "corpus": {
+    "role": "C11 development certification only",
+    "charts": 11,
+    "families": 11,
+    "keymodes": [
+      4,
+      7,
+      10
+    ],
+    "seeds": "1-20",
+    "pairs": 220,
+    "manifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
+  },
+  "direct": {
+    "evaluated": 1006,
+    "states": {
+      "CandidateNotObserved": 355,
+      "CandidateObservedAmongAlternatives": 10,
+      "CandidateObservedUnique": 107,
+      "NoObservedRelation": 534,
+      "UnresolvableExactIdentity": 0
+    },
+    "admit": 117,
+    "abstain": 889,
+    "committed": 117,
+    "suppressed": 889,
+    "firstDirectDivergences": 126,
+    "exactProposalFailures": 0,
+    "gateRngCalls": 0,
+    "replacementAttempts": 0,
+    "articulationIntents": 0
+  },
+  "output": {
+    "originalObjects": 1016720,
+    "controlAddedObjects": 301245,
+    "treatmentAddedObjects": 300413,
+    "absoluteDelta": -832,
+    "relativeDelta": -0.002761871566333051,
+    "controlFinalObjects": 1317965,
+    "treatmentFinalObjects": 1317133,
+    "controlHeads": 301245,
+    "treatmentHeads": 300413,
+    "controlLongNotes": 38097,
+    "treatmentLongNotes": 37312
+  },
+  "causal": {
+    "downstreamChangedObjects": 9575,
+    "runsWithGeometryReconvergence": 94,
+    "runsWithGenerationStateReconvergence": 94,
+    "runsWithRngReconvergence": 208,
+    "provenanceValidationFailures": 0,
+    "exactOpportunityAlignmentFailures": 0
+  },
+  "safety": {
+    "controlHardViolations": 200,
+    "treatmentHardViolations": 192,
+    "attributableIntroducedViolations": 9,
+    "unattributableSafetyCases": 0,
+    "serializationUnattributable": 0,
+    "initialFinalSnapshotUnattributable": 9,
+    "forensicRuns": 4,
+    "forensicClassification": "All 9 treatment-only TapOnHeldLongNote violations link to treatment downstream mutations after the first direct G1 gate divergence."
+  },
+  "isolation": {
+    "defaultLegacyExact": true,
+    "rngEqualAtGate": true,
+    "noReroll": true,
+    "noReplacement": true,
+    "articulationOff": true,
+    "eligibilityFrozen": true,
+    "evidenceIndexImmutable": true
+  },
+  "deterministicRepeat": true,
+  "badControls": {
+    "gateConsumesRng": true,
+    "gateRerollsCandidate": true,
+    "gateRerollsLane": true,
+    "gateSubstitutesReleaseShape": true,
+    "gateRoutesAbstainToArticulation": true,
+    "gateMutatesBeforeDecision": true,
+    "gateUsesSyntheticEvidence": true,
+    "gateUsesCrossChartEvidence": true,
+    "gateChangesEligibility": true,
+    "gateChangesDefaultLegacyOutput": true,
+    "admitReconstructsProposal": true,
+    "abstainDirectMutation": true,
+    "frequencyWinner": true,
+    "fuzzyIdentity": true,
+    "marginalAsJoint": true
+  },
+  "behavior": {
+    "behaviorChange": true,
+    "defaultBehaviorChange": false,
+    "researchTreatmentPathIntroduced": true,
+    "promotion": "PROHIBITED"
+  },
+  "authorization": {
+    "g1BehavioralUtility": "NOT_AUTHORIZED",
+    "g2": "NOT_AUTHORIZED",
+    "h": "NOT_AUTHORIZED"
+  }
+}

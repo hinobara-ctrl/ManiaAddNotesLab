@@ -40,6 +40,7 @@ else
     ValidateSafetyProvClosure(state);
     ValidateG10Closure(state);
     ValidateG1DesignClosure(state);
+    ValidateG1GateClosure(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -607,12 +608,13 @@ void ValidateG1DesignClosure(ProjectState value)
         errors.Add("G1.DESIGN must close COMPLETE/READY with behaviorChange=false and no behavior authority.");
     var gate = value.Phases.FirstOrDefault(x => x.Id == "G1.GATE");
     var behavior = value.Phases.FirstOrDefault(x => x.Id == "G1");
-    if (value.CurrentPhase != "G1.DESIGN" || value.NextRecommendedPhase != "G1.GATE"
-        || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
-        || gate?.Status != "NEXT" || gate.Authorization != "NOT_AUTHORIZED"
-        || gate.BehaviorChange is not false || behavior?.Status != "FUTURE"
-        || behavior.Authorization != "NOT_AUTHORIZED")
-        errors.Add("G1.DESIGN closure must expose only G1.GATE review and future G1 as NOT_AUTHORIZED.");
+    if (gate?.Status != "COMPLETE"
+        && (value.CurrentPhase != "G1.DESIGN" || value.NextRecommendedPhase != "G1.GATE"
+            || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
+            || gate?.Status != "NEXT" || gate.Authorization != "NOT_AUTHORIZED"
+            || gate.BehaviorChange is not false || behavior?.Status != "FUTURE"
+            || behavior.Authorization != "NOT_AUTHORIZED"))
+        errors.Add("Before runtime closure, G1.DESIGN must expose only G1.GATE review and future G1 as NOT_AUTHORIZED.");
 
     foreach (var artifact in new[]
     {
@@ -694,9 +696,11 @@ void ValidateG1DesignClosure(ProjectState value)
         errors.Add($"G1.DESIGN summary cannot be validated: {exception.Message}");
     }
 
-    foreach (var product in new[] { "src/ManiaAddNotesLab.Core/AddNotesEngine.cs",
-                 "src/ManiaAddNotesLab.Core/Model.cs",
-                 "src/ManiaAddNotesLab.Cli/Program.cs", "src/ManiaAddNotesLab.Web/Program.cs" })
+    var productPaths = gate?.Status == "COMPLETE"
+        ? new[] { "src/ManiaAddNotesLab.Cli/Program.cs", "src/ManiaAddNotesLab.Web/Program.cs" }
+        : new[] { "src/ManiaAddNotesLab.Core/AddNotesEngine.cs", "src/ManiaAddNotesLab.Core/Model.cs",
+            "src/ManiaAddNotesLab.Cli/Program.cs", "src/ManiaAddNotesLab.Web/Program.cs" };
+    foreach (var product in productPaths)
     {
         var text = File.ReadAllText(Path.Combine(root, product.Replace('/', Path.DirectorySeparatorChar)));
         if (text.Contains("InteriorRelationMembershipResearch", StringComparison.Ordinal)
@@ -771,6 +775,79 @@ void ValidateG1DesignClosure(ProjectState value)
         if (File.ReadAllText(Path.Combine(root, document.Replace('/', Path.DirectorySeparatorChar)))
             .Contains("direct-effect potential", StringComparison.OrdinalIgnoreCase))
             errors.Add($"G1.DESIGN overclaim remains outside frozen contract/addendum history: {document}");
+}
+
+void ValidateG1GateClosure(ProjectState value)
+{
+    var gate = value.Phases.FirstOrDefault(x => x.Id == "G1.GATE");
+    if (gate?.Status != "COMPLETE") return;
+    if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
+        || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
+        || value.CurrentPhase != "G1.GATE" || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
+        errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
+
+    foreach (var artifact in new[]
+    {
+        "docs/PHASE_G1_GATE_INTERIOR_RELATION_ADMISSION_RUNTIME.md",
+        "docs/g1_gate_interior_relation_admission_contract.json",
+        "docs/g1_gate_runtime_manifest.json",
+        "docs/g1_gate_summary.json",
+        "docs/g1_gate_paired_runs.csv",
+        "docs/g1_gate_decisions.csv",
+        "docs/g1_gate_family_summary.csv",
+        "docs/g1_gate_safety_provenance.csv",
+        "docs/g1_gate_forensic_summary.csv",
+        "docs/g1_gate_forensic_summary.json"
+    })
+    {
+        RequireFile(artifact, "G1.GATE closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "G1.GATE closure artifact index entry");
+    }
+
+    const string frozenHash = "0281FDA2A16E26CD9A176D2A59BF80DA421D2A419D70FAD33B0F02790088FB9A";
+    try
+    {
+        using var contractDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "g1_gate_interior_relation_admission_contract.json")));
+        var actual = Convert.ToHexString(SHA256.HashData(
+            JsonSerializer.SerializeToUtf8Bytes(contractDocument.RootElement.GetProperty("contract"))));
+        if (actual != frozenHash)
+            errors.Add("G1.GATE contract hash differs from its frozen canonical identity.");
+
+        using var summaryDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "g1_gate_summary.json")));
+        var summary = summaryDocument.RootElement;
+        var safety = summary.GetProperty("safety");
+        var direct = summary.GetProperty("direct");
+        if (summary.GetProperty("decision").GetString() != "NEEDS_REVIEW"
+            || summary.GetProperty("contractSha256").GetString() != frozenHash
+            || safety.GetProperty("attributableIntroducedViolations").GetInt32() != 9
+            || safety.GetProperty("unattributableSafetyCases").GetInt32() != 0
+            || direct.GetProperty("gateRngCalls").GetInt32() != 0
+            || direct.GetProperty("replacementAttempts").GetInt32() != 0
+            || direct.GetProperty("articulationIntents").GetInt32() != 0
+            || !summary.GetProperty("deterministicRepeat").GetBoolean()
+            || summary.GetProperty("behavior").GetProperty("promotion").GetString() != "PROHIBITED"
+            || summary.GetProperty("badControls").EnumerateObject().Any(x => !x.Value.GetBoolean()))
+            errors.Add("G1.GATE summary does not preserve stop, isolation, determinism and bad-control invariants.");
+
+        using var forensicDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "g1_gate_forensic_summary.json")));
+        var forensic = forensicDocument.RootElement;
+        if (!forensic.GetProperty("stopConditionMet").GetBoolean()
+            || forensic.GetProperty("attributableIntroducedViolations").GetInt32() != 9
+            || forensic.GetProperty("remainingUnattributable").GetInt32() != 0)
+            errors.Add("G1.GATE forensic summary does not preserve the causal stop result.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"G1.GATE closure artifacts cannot be validated: {exception.Message}");
+    }
+
+    CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+        "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
+        "legacy default after G1.GATE");
 }
 
 void ValidateFilesAndIndex(ProjectState value)

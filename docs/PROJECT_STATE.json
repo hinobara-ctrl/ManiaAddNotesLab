@@ -1,10 +1,10 @@
 {
-  "schemaVersion": 11,
+  "schemaVersion": 12,
   "lastUpdated": "2026-09-14",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
-  "behaviorChange": false,
+  "behaviorChange": true,
   "phases": [
     { "id": "A", "name": "Evidence Infrastructure", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_A_EVIDENCE_INFRASTRUCTURE_REPORT.md" },
     { "id": "B", "name": "Certificates and Failures", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_B_CERTIFICATES_AND_FAILURES_REPORT.md" },
@@ -30,7 +30,7 @@
     { "id": "SAFETY.PROV", "name": "Mutation-Level Generation Provenance / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_SAFETY_PROV_MUTATION_LEVEL_PROVENANCE_REPORT.md", "authorization": "RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED" },
     { "id": "G1.0", "name": "Interior LN Relation Feasibility / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_G1_0_INTERIOR_RELATION_FEASIBILITY_REPORT.md", "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
     { "id": "G1.DESIGN", "name": "Interior Relation Admission Contract / Shadow", "status": "COMPLETE", "outcome": "READY", "behaviorChange": false, "report": "docs/PHASE_G1_DESIGN_INTERIOR_RELATION_ADMISSION.md", "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
-    { "id": "G1.GATE", "name": "Interior Relation Admission Behavioral Gate / Shadow", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null, "authorization": "NOT_AUTHORIZED" },
+    { "id": "G1.GATE", "name": "Interior Relation Admission Runtime", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_G1_GATE_INTERIOR_RELATION_ADMISSION_RUNTIME.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "name": "Causal Articulation A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" }
@@ -48,20 +48,20 @@
     { "id": "SAFETY.PROV", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED" },
     { "id": "G1.0", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
     { "id": "G1.DESIGN", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
-    { "id": "G1.GATE", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
+    { "id": "G1.GATE", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "G1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" }
   ],
-  "currentPhase": "G1.DESIGN",
-  "nextRecommendedPhase": "G1.GATE",
+  "currentPhase": "G1.GATE",
+  "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
-  "nextBehavioralPhase": "G1",
-  "testStatus": { "passed": 703, "failed": 0, "skipped": 0 },
+  "nextBehavioralPhase": null,
+  "testStatus": { "passed": 710, "failed": 0, "skipped": 0 },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "HUMAN_REVIEW_REQUIRED_FOR_G1_GATE"
+    "currentBlockingRequirement": "G1_GATE_NEEDS_REVIEW_NO_SUCCESSOR_AUTHORIZED"
   },
   "g10Recertification": {
     "status": "PASS",
@@ -85,6 +85,20 @@
     "summary": "docs/g1_design_validation_hardening_summary.json",
     "contractUnchanged": true,
     "readyMeaning": "DESIGN_READINESS_ONLY_NOT_BEHAVIORAL_PROMOTION_OR_AUTHORIZATION"
+  },
+  "g1Gate": {
+    "status": "COMPLETE",
+    "outcome": "NEEDS_REVIEW",
+    "behaviorChange": true,
+    "defaultBehaviorChange": false,
+    "treatmentPolicy": "g1-interior-relation-admission.1",
+    "contract": "docs/g1_gate_interior_relation_admission_contract.json",
+    "contractHash": "0281FDA2A16E26CD9A176D2A59BF80DA421D2A419D70FAD33B0F02790088FB9A",
+    "summary": "docs/g1_gate_summary.json",
+    "attributableIntroducedViolations": 9,
+    "unattributableSafetyCases": 0,
+    "promotion": "PROHIBITED",
+    "successorAuthorized": false
   },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [

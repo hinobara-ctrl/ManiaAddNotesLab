@@ -4,6 +4,22 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 5 && args[0] == "g1-gate-forensic")
+{
+    G1GateRuntimeCertificationRunner.Forensic(Path.GetFullPath(args[1]), args[2],
+        int.Parse(args[3], CultureInfo.InvariantCulture), Path.GetFullPath(args[4]));
+    return;
+}
+
+if (args.Length == 4 && args[0] == "g1-gate-certify")
+{
+    var status = G1GateRuntimeCertificationRunner.Run(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]));
+    Console.WriteLine($"G1.GATE certification={status}");
+    Environment.ExitCode = status == "READY" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 5 && args[0] == "g1-design-harden-run")
 {
     var status = G1DesignValidationHardeningRunner.Run(args[1], args[2], args[3], args[4]);

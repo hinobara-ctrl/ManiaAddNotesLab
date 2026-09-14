@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política conductual activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen Outcome C/PARKED. G1.0 conserva Outcome A recertificado y G1.DESIGN está **READY / RECERTIFIED / behaviorChange=false**. READY significa sólo design readiness. `G1.GATE` es el siguiente candidato, todavía **NOT_AUTHORIZED**.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. G1.GATE cerró **COMPLETE / NEEDS_REVIEW**: el treatment research-only fue mecánicamente aislado, pero introdujo nueve violaciones hard atribuibles y no puede promoverse. No existe sucesora autorizada.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -26,7 +26,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | SAFETY.PROV — Mutation-Level Generation Provenance / Shadow | **COMPLETE — OUTCOME A / ROADMAP REVIEW REQUIRED** | Ninguno; recorder causal append-only, exacto OFF/ON y sin autoridad conductual. |
 | G1.0 — Interior LN Relation Feasibility / Shadow | **COMPLETE — OUTCOME A / BEHAVIOR NOT AUTHORIZED** | Ninguno; censo exacto original-only, holdouts, alternatives y attrition de gates actuales. |
 | G1.DESIGN — Interior Relation Admission Contract / Shadow | **COMPLETE — READY / RECERTIFIED / BEHAVIOR NOT AUTHORIZED** | Ninguno; evalúa membership exacta del candidate-builder, no placements post-geometry. |
-| G1.GATE — Interior Relation Admission Behavioral Gate / Shadow | **NEXT CANDIDATE / NOT_AUTHORIZED** | Ninguno; requiere autorización humana separada. |
+| G1.GATE — Interior Relation Admission Runtime | **COMPLETE — NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment explícito; 9 violaciones hard atribuibles activaron stop. Default intacto. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -96,7 +96,7 @@ El forensic safety-only reprodujo 200/171 raw relations, pero su primer agregado
 
 SAFETY.PROV añadió un recorder append-only conectado sólo mediante overload research. Cada DecisionEvent/MutationEvent conserva orden, opportunity/parent, StateBefore/After, RNG position, causal origin y IDs deterministas. GeometryState y GenerationState permanecen separadas; downstream exige un parent state completo descendiente de una divergencia exacta, y una reconvergencia completa elimina ancestry. Falta de provenance, hidden state incompleto o matching ambiguo produce `Unattributable`.
 
-La certificación sintética/implementation-only cubrió 1K/4K/7K/10K/18K y articulación. OFF/ON fue exacto en bytes, objetos, replacements, RNG, oportunidades, candidates, decisiones, geometría y serialización. Dos traces fueron byte-identical; recorder RNG = 0. Resultado: **COMPLETE — OUTCOME A**, que demuestra viabilidad técnica y nada más. No autoriza D1, SAFETY.GATE ni conducta. **ROADMAP REVIEW REQUIRED** fue el requisito histórico de cierre; la revisión estratégica y humana posterior que autorizó G1.0 lo dejó **SATISFIED** como bloqueo actual. El bloqueo vigente es la revisión humana separada de `G1.GATE`.
+La certificación sintética/implementation-only cubrió 1K/4K/7K/10K/18K y articulación. OFF/ON fue exacto en bytes, objetos, replacements, RNG, oportunidades, candidates, decisiones, geometría y serialización. Dos traces fueron byte-identical; recorder RNG = 0. Resultado: **COMPLETE — OUTCOME A**, que demuestra viabilidad técnica y nada más. No autoriza D1, SAFETY.GATE ni conducta. **ROADMAP REVIEW REQUIRED** fue el requisito histórico de cierre; la revisión estratégica posterior permitió G1.0. En G1.GATE, SAFETY.PROV fue usado para atribuir el nuevo stop condition, no para autorizar una sucesora.
 
 ### Resultado G1.0
 
@@ -111,6 +111,12 @@ El addendum post-G1.0 reemplazó los contadores de leakage constantes por una au
 ### Resultado G1.DESIGN
 
 La membership congelada compara la query `(keymode, parent duration, anchor offset, AnchorKind)` y el resultado `(InteriorEndRelation, duration from anchor, offset from parent end)` exactamente contra occurrences originales del chart completo. En C11 hubo 298 opportunities, 4.226 shapes representables, 133 ADMIT y 4.093 ABSTAIN hipotéticos sobre el universo del builder. No son placements post-geometry ni efectos. El hardening normaliza una sola población original-only, certifica la ausencia RNG estructuralmente y separa support de construcción: 107 construction-only, 15 independent-only y 11 ambos. Por opportunity: 185 sin admit y 113 con al menos uno.
+
+### Resultado G1.GATE
+
+La policy opt-in `g1-interior-relation-admission.1` insertó la mapping congelada después de `PlaceLongNote` y antes del commit. En 220 pares C11 evaluó 1.006 propuestas: 117 ADMIT y 889 ABSTAIN; no consumió RNG, rerolleó, sustituyó ni articuló. El tratamiento añadió 300.413 objetos frente a 301.245 del control, delta -832 (-0,276187%).
+
+El snapshot final marcó nueve casos treatment-only inicialmente no atribuibles. Cuatro ejecuciones con SAFETY.PROV mutation-level enlazaron los nueve `TapOnHeldLongNote` a cambios downstream posteriores a la primera supresión del gate. Quedaron 9 atribuibles y 0 no atribuibles. Esto satisface el stop condition y fuerza **NEEDS_REVIEW / NO PROMOTION**. G1 utility, G2, H, UI y defaults permanecen fuera de alcance.
 
 ## Qué afecta realmente la generación
 
@@ -200,7 +206,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **703 passed, 0 failed, 0 skipped** tras recertificar G1.DESIGN; G1.DESIGN original cerró con 698 y G1.0 recertificado con 684.
+- `dotnet test -c Release`: **710 passed, 0 failed, 0 skipped** tras G1.GATE; el baseline de entrada tenía 703.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -220,21 +226,21 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. D1 y D1.SAFETY cerraron **OUTCOME C / PARKED**. SAFETY.PROV y G1.0 conservan **OUTCOME A / SHADOW ONLY**; G1.DESIGN cerró **READY**. `G1.GATE` es sólo el siguiente candidato de revisión y requiere autorización humana separada. C2 permanece **DEFERRED** y MapperSupport, G1 conductual, G2 y H no están autorizados.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. G1.GATE cerró **NEEDS_REVIEW / NO PROMOTION**. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. No se propone una fase siguiente hasta revisión humana del fallo atribuible.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: G1.DESIGN — COMPLETE — OUTCOME READY<br>
-Next actionable research candidate: G1.GATE — Interior Relation Admission Behavioral Gate / Shadow<br>
-Next actionable authorization: NOT_AUTHORIZED<br>
-Next behavioral phase: G1 — Interior Relation Semantics A/B<br>
-Next behavioral authorization: NOT_AUTHORIZED<br>
+Current phase: G1.GATE — COMPLETE — OUTCOME NEEDS_REVIEW<br>
+Next actionable research candidate: none<br>
+Next actionable authorization: N/A<br>
+Next behavioral phase: none<br>
+Next behavioral authorization: N/A<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
-Behavior change: none<br>
+Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 703 passed / 0 failed / 0 skipped
+Tests: 710 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

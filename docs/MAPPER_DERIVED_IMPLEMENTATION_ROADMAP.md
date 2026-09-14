@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` es el siguiente candidato **NOT_AUTHORIZED**; G1, G2 y H permanecen **NOT_AUTHORIZED** y generation continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION** tras nueve violaciones hard atribuibles; G1, G2 y H permanecen **NOT_AUTHORIZED** y el default continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1109,7 +1109,9 @@ C11 enumeró 4.226 shapes pre-geometry sobre 298 opportunities, todas representa
 
 ## Phase G1.GATE — Interior Relation Admission Behavioral Gate / Shadow
 
-<!-- PHASE-CONTRACT:G1.GATE;kind=ResearchShadow;behaviorChange=false;authorization=NOT_AUTHORIZED -->
+<!-- PHASE-CONTRACT:G1.GATE;kind=BehaviorChanging;behaviorChange=true;authorization=EXPERIMENT_COMPLETED_NO_PROMOTION -->
+
+**G1.GATE COMPLETE — OUTCOME NEEDS_REVIEW / EXPERIMENT COMPLETED / NO PROMOTION.** El runtime opt-in aplicó la mapping congelada después de candidate/lane/geometry y antes del commit, sin RNG, reroll, replacement ni articulación. En 220 pares C11 evaluó 1.006 proposals, admitió 117 y suprimió 889; el output cayó 832 objetos (-0,276187%). SAFETY.PROV recertificó los nueve casos treatment-only como `TapOnHeldLongNote` atribuibles a mutaciones downstream del gate. Se activó el stop condition: no existe sucesora autorizada.
 
 **NEXT CANDIDATE / NOT_AUTHORIZED.** Sólo tras revisión humana podría congelar un eventual A/B con control/treatment, métricas, stopping criteria y rollback. No existe toggle, callsite productivo ni experimento activo.
 

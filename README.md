@@ -34,22 +34,23 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **SAFETY.PROV — COMPLETE, OUTCOME A, SHADOW ONLY:** captura decisiones/mutaciones durante generation con lineage exacta, reconvergencia y serialización, manteniendo bytes/RNG/decisiones idénticos OFF/ON.
 - **G1.0 — COMPLETE, OUTCOME A, RECERTIFIED, SHADOW ONLY:** censó relaciones interiores completas y ahora audita independientemente el donor set con bad controls adversariales; C11 mantiene cero leakage real y los mismos agregados.
 - **G1.DESIGN — COMPLETE, READY, RECERTIFIED, SHADOW ONLY:** membership exacta reproducida sobre 4.226/4.226 shapes del candidate-builder; 133 son members hipotéticos, no placements post-geometry ni efectos conductuales. La API es estructuralmente RNG-free y no existe selector.
+- **G1.GATE — COMPLETE, NEEDS_REVIEW, NO PROMOTION:** el treatment runtime congelado suprimió 889/1.006 propuestas sin RNG/reroll, pero SAFETY.PROV atribuyó nueve `TapOnHeldLongNote` nuevos a efectos downstream; se activó el stop condition.
 
-La generación activa continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. D1 y D1.SAFETY permanecen **Outcome C / PARKED**. G1.DESIGN sólo comprueba `legacy proposes X → X ∈ observed set`; su READY significa design readiness, no promoción ni autorización. El candidato siguiente es `G1.GATE`, todavía no autorizado; G1 conductual, G2/H siguen separados.
+La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE existe sólo como treatment research explícito y no está expuesto en CLI/Web. Su resultado prohíbe promoción; G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: G1.DESIGN — COMPLETE — OUTCOME READY<br>
-Next actionable research candidate: G1.GATE — Interior Relation Admission Behavioral Gate / Shadow<br>
-Next actionable authorization: NOT_AUTHORIZED<br>
-Next behavioral phase: G1 — Interior Relation Semantics A/B<br>
-Next behavioral authorization: NOT_AUTHORIZED<br>
+Current phase: G1.GATE — COMPLETE — OUTCOME NEEDS_REVIEW<br>
+Next actionable research candidate: none<br>
+Next actionable authorization: N/A<br>
+Next behavioral phase: none<br>
+Next behavioral authorization: N/A<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
-Behavior change: none<br>
+Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 703 passed / 0 failed / 0 skipped
+Tests: 710 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

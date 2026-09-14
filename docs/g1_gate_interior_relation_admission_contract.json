@@ -1,0 +1,30 @@
+{
+  "contract": {
+    "phase": "G1.GATE",
+    "humanAuthorization": "AUTHORIZED_FOR_RESEARCH_BY_HUMAN_PROMPT",
+    "repositoryEntryHead": "22707d40fbd92d39885a1caee5bcde005aecdb04",
+    "controlPolicyVersion": "legacy-experimental.1",
+    "treatmentPolicyVersion": "g1-interior-relation-admission.1",
+    "insertionPoint": "after exact legacy LN shape/lane/geometry proposal; before added.Add and geometry.Insert",
+    "g1DesignDependencyHash": "15A16B6EFBF779CFF2C42A8C9A0DD46E025019252BEFA968E831233DC802AA68",
+    "membershipMapping": {
+      "CandidateNotObserved": "ABSTAIN",
+      "CandidateObservedAmongAlternatives": "ADMIT",
+      "CandidateObservedUnique": "ADMIT",
+      "NoObservedRelation": "ABSTAIN",
+      "UnresolvableExactIdentity": "ABSTAIN"
+    },
+    "noReroll": "ABSTAIN terminates the opportunity; no reroll, replacement, fallback, or compensation",
+    "articulation": "OFF in control and treatment; G1 ABSTAIN cannot create ArticulationIntent",
+    "eligibility": "frozen legacy opportunity construction, ordering, thresholds, candidates, lanes, and geometry",
+    "rng": "gate consumes zero RNG; paired RNG positions equal at direct decision",
+    "evidenceScope": "chart-local full-chart normalized IsSynthetic=false and Origin=None only; immutable per run",
+    "safetyProvenance": "SAFETY.PROV exact state, divergence, ancestry, reconvergence, and serialization semantics",
+    "defaultBehaviorChanged": false,
+    "certificationCorpus": "frozen C11 development corpus; seeds 1-20; mechanical certification only",
+    "promotion": "PROHIBITED; no utility, quality, preference, safety-benefit, or default claim",
+    "nextPhase": "G1 behavioral utility, G2, and H remain NOT_AUTHORIZED"
+  },
+  "canonicalSha256": "0281FDA2A16E26CD9A176D2A59BF80DA421D2A419D70FAD33B0F02790088FB9A",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; frozen ordered membership map; no timestamps or paths"
+}

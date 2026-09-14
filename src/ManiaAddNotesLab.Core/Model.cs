@@ -227,7 +227,8 @@ public sealed record LaneGapDecision(double GapBeats, bool IsLocal, int Evidence
 
 public sealed record AddNotesResult(ManiaChart ModifiedChart, AddNotesStatistics Statistics, string? Trace,
     MapperEvidenceProfile EvidenceProfile, DecisionDiagnostics? DecisionDiagnostics,
-    D1BehavioralRunDiagnostics? D1BehavioralDiagnostics = null);
+    D1BehavioralRunDiagnostics? D1BehavioralDiagnostics = null,
+    G1GateRuntimeDiagnostics? G1GateDiagnostics = null);
 
 public interface IRandomSource
 {

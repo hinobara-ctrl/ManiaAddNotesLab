@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "g1-gate-forensic-summary.1",
+  "phase": "G1.GATE",
+  "decision": "NEEDS_REVIEW",
+  "initialFinalSnapshotUnattributable": 9,
+  "forensicRuns": 4,
+  "attributableIntroducedViolations": 9,
+  "remainingUnattributable": 0,
+  "violationKinds": { "TapOnHeldLongNote": 9 },
+  "classification": "Every treatment-only violation is causally downstream of a suppressed G1 proposal according to mutation-level SAFETY.PROV lineage.",
+  "stopConditionMet": true,
+  "promotion": "PROHIBITED",
+  "details": "docs/g1_gate_forensic_summary.csv",
+  "fullArtifacts": ".artifacts/g1_gate_forensic/*.json"
+}

@@ -1,0 +1,144 @@
+{
+  "manifest": {
+    "schemaVersion": "g1-gate-runtime-certification-manifest.1",
+    "corpusFingerprint": "878585D604E807B7E46AB429990C7DA6DB396AB0B7E930DAC2B631C8DE7ECD77",
+    "charts": [
+      {
+        "chartId": "02D9D1781418E7442956D4D901C8C611E58256556AE9A828E72128C3B5B8E3EB",
+        "family": "NOWISEE | KO INU | RUKA",
+        "keyCount": 7,
+        "originalObjects": 5400
+      },
+      {
+        "chartId": "0338ADEB4CDBB086D7819736292CB932608EA53DAD840AD3B8BBEAA605AC8349",
+        "family": "BUTAOTOME | HAKANAKI MONO NINGEN | YUEAST 2018",
+        "keyCount": 4,
+        "originalObjects": 1933
+      },
+      {
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "family": "KIKUO | KARA KARA KARA NO KARA | XNETT",
+        "keyCount": 7,
+        "originalObjects": 10142
+      },
+      {
+        "chartId": "322F995448A73713DCBECE3D140F4D516EF687DBC43CC140CFF14948566F906B",
+        "family": "ORGT | DESTINY | BAIO",
+        "keyCount": 7,
+        "originalObjects": 1653
+      },
+      {
+        "chartId": "B1F847192EBB07C44024AA8A4BA570FCCF04EAA03F92D5FC4DBA1EAF40C42249",
+        "family": "-45 | MIDORIGO QUEEN BEE | ITZBENJA616",
+        "keyCount": 7,
+        "originalObjects": 4897
+      },
+      {
+        "chartId": "BC0401B460251A3CD37EBB8FB6BCDE3D75B619F692C7E9373BF8FC84D089AD95",
+        "family": "MORO | HOLY BITCH | ITZBENJA616",
+        "keyCount": 7,
+        "originalObjects": 8284
+      },
+      {
+        "chartId": "BEF3BB94655D3F4749FA91C3C535FD5CFB8387AB19B951DDA3D3877B705677D4",
+        "family": "AKATSUKI RECORDS | MIZUIRO RAINDROP | [GB]V1DO",
+        "keyCount": 4,
+        "originalObjects": 2241
+      },
+      {
+        "chartId": "DAC0347BBDC54E15A080316356E2E9A0CC2002927FF4B031D5F995C6C832F5AF",
+        "family": "A-ONE | SIDE BY SIDE | KURISU MAKISE",
+        "keyCount": 10,
+        "originalObjects": 4001
+      },
+      {
+        "chartId": "DD5D885E5A72729DF913D1010A32D145596DB465F94271AE54E5ECDD7A3C5C20",
+        "family": "NMK\u0026WATHUE | CELESTIAL AXES | WONKI",
+        "keyCount": 7,
+        "originalObjects": 3098
+      },
+      {
+        "chartId": "E73B098AA0CB6FA3BECE45E9551EF225412F5E01F6398184093A40B944F0AAE0",
+        "family": "NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",
+        "keyCount": 7,
+        "originalObjects": 4608
+      },
+      {
+        "chartId": "F0E7AD21B536EC13F9EE2F8C09913100A35BA2DFE1338C86F78452AA4391BE7E",
+        "family": "SAMFREE FT. SF-A2 MIKI | MIKIMIKI ROMANTIC NIGHT | NANANANA",
+        "keyCount": 7,
+        "originalObjects": 4579
+      }
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "options": {
+      "chance": 0.5,
+      "startMs": null,
+      "endMs": null,
+      "lnWindowBeats": 4,
+      "sourceAffinityMultiplier": 1.25,
+      "distanceDecayPerBeat": 0.2,
+      "minimumDistanceWeight": 0.2,
+      "densityGraceColumns": 2,
+      "densityDecayPerColumn": 0.65,
+      "verticalDensityMode": "simultaneousHeads",
+      "verticalDensityScaleMode": "keymodeRelative",
+      "contextualDensityNormalizationEnabled": true,
+      "contextualDensityScaleMode": "keymodeRelative",
+      "microDensityWindowBeats": 1,
+      "contextDensityWindowBeats": 4,
+      "burstDensityRatioThreshold": 1.5,
+      "burstSpanOneBeatFactor": 0.45,
+      "burstSpanTwoBeatFactor": 0.6,
+      "burstSpanThreeBeatFactor": 0.8,
+      "useLocalLaneGap": true,
+      "laneGapWindowBeats": 4,
+      "laneGapMinimumSupport": 2,
+      "fallbackMinimumLaneGapBeats": 0.125,
+      "mapRelativeSnapEnabled": true,
+      "interiorLnOpportunitiesEnabled": true,
+      "maxInteriorOpportunitiesPerSource": 2,
+      "interiorMinimumSourceBeats": 3,
+      "interiorLengthRatio": 1.5,
+      "interiorAbsoluteLongBeats": 8,
+      "interiorMinimumContextLnCount": 3,
+      "interiorMinimumSupportedAnchors": 2,
+      "interiorEligibilityMode": "anchorSupported",
+      "interiorContextMode": "originalOnly",
+      "articulationEnabled": false,
+      "articulationMaxNonHeldColumns": 1,
+      "maxArticulationsPerOriginalLn": 1,
+      "retriggerGapWindowBeats": 4,
+      "retriggerGapMinimumSupport": 2,
+      "trace": false,
+      "diagnosticsEnabled": false
+    },
+    "controlPolicy": "legacy-experimental.1",
+    "treatmentPolicy": "g1-interior-relation-admission.1",
+    "purpose": "paired mechanical runtime certification; not utility",
+    "articulation": "OFF",
+    "unrelatedTreatments": "OFF"
+  },
+  "canonicalSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
+}

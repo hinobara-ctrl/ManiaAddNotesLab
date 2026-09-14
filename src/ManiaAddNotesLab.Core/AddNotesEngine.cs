@@ -28,6 +28,15 @@ public sealed class AddNotesEngine
     public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng,
         MapperEvidenceProfile? preparedEvidenceProfile, D1BehavioralExperimentConfiguration? d1Experiment,
         GenerationProvenanceRecorderResearch? provenance)
+        => Apply(chart, options, rng, preparedEvidenceProfile, d1Experiment, provenance, null);
+
+    /// <summary>
+    /// Research-only G1.GATE overload. The treatment receives a fully constructed legal proposal and may only
+    /// permit or suppress its mutation. Normal CLI/Web call sites cannot select this path through options.
+    /// </summary>
+    public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng,
+        MapperEvidenceProfile? preparedEvidenceProfile, D1BehavioralExperimentConfiguration? d1Experiment,
+        GenerationProvenanceRecorderResearch? provenance, G1GateRuntimeConfiguration? g1Gate)
     {
         Validate(chart, options, rng);
         MapperEvidenceProfile evidenceProfile;
@@ -54,6 +63,20 @@ public sealed class AddNotesEngine
             if (rng is not IRandomPositionSource)
                 throw new InvalidOperationException("D1 treatment requires an auditable RNG position source.");
         }
+        if (g1Gate is not null)
+        {
+            if (d1Experiment is not null)
+                throw new InvalidOperationException("G1.GATE certification requires every unrelated treatment OFF.");
+            if (g1Gate.ContractContentHash != G1GateContractResearch.ComputeContentHash(
+                    G1GateContractResearch.Create()))
+                throw new InvalidOperationException("G1.GATE contract hash does not match the frozen contract.");
+            if (rng is not IRandomPositionSource)
+                throw new InvalidOperationException("G1.GATE treatment requires an auditable RNG position source.");
+            if (options.ArticulationEnabled)
+                throw new InvalidOperationException("G1.GATE certification requires articulation OFF.");
+            ValidateG1GateEligibility(options);
+            g1Gate.EvidenceIndex.ValidateFor(chart);
+        }
         var timeline = new BeatTimeline(chart.TimingPoints);
         var analysis = new OriginalChartAnalysis(chart, timeline);
         var geometry = new LaneGeometryIndex(chart.KeyCount, analysis.Objects);
@@ -72,6 +95,7 @@ public sealed class AddNotesEngine
         stats.ProfileRelationCount = evidenceProfile.RelationCount;
         var added = new List<ManiaObject>();
         var d1Diagnostics = d1Experiment is null ? null : new D1BehavioralRunDiagnosticsBuilder(d1Experiment);
+        var g1Diagnostics = g1Gate is null ? null : new G1GateRuntimeDiagnosticsBuilder(g1Gate);
         var opportunities = BuildOpportunities(analysis, options, stats, trace);
         provenance?.BindOpportunitySequence(opportunities.Select(D1OpportunityKey));
         var articulationIntents = new List<ArticulationIntent>();
@@ -211,11 +235,52 @@ public sealed class AddNotesEngine
                     }
                 }
             }
+            GenerationStateIdentity? g1GateState = null;
+            if (g1Gate is not null && opportunity.Kind == OpportunityKind.LnInterior)
+            {
+                var parent = opportunity.ParentOriginalLn?.Object
+                    ?? throw new InvalidOperationException("G1.GATE interior proposal has no original parent.");
+                var anchor = opportunity.InteriorAnchor
+                    ?? throw new InvalidOperationException("G1.GATE interior proposal has no exact anchor.");
+                var rngBefore = ((IRandomPositionSource)rng).CallCount;
+                g1GateState = provenance?.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
+                    opportunityIndex, articulationIntents.Select(ArticulationIntentIdentity))
+                    ?? G1GateStateResearch.Snapshot(chart.OriginalObjects, added, rngBefore, opportunityIndex);
+                var evaluation = g1Gate.EvidenceIndex.Evaluate(parent, anchor.Time, anchor.Beat,
+                    placed.Object.EndTime!.Value, placed.EndBeat);
+                var rngAfter = ((IRandomPositionSource)rng).CallCount;
+                if (rngAfter != rngBefore || evaluation.RngCalls != 0)
+                    throw new InvalidOperationException("The frozen G1.GATE membership decision consumed RNG.");
+                var admitted = evaluation.HypotheticalAdmit;
+                var commit = !g1Gate.TreatmentEnabled || admitted;
+                var state = g1GateState;
+                g1Diagnostics!.Add(new G1GateDirectDecision(provenanceKey,
+                    evaluation.Candidate.CandidateId, evaluation.Candidate.CandidateId,
+                    commit ? evaluation.Candidate.CandidateId : null,
+                    evaluation.Candidate.ParentLongNoteId,
+                    anchor.Time, anchor.Beat, placed.Object.EndTime.Value, placed.EndBeat, placed.Object.Lane,
+                    commit ? placed.Object.Lane : null, evaluation.State, admitted, commit, false, false,
+                    false, rngBefore, rngAfter,
+                    state.GeometryStateHash, state.GenerationStateHash));
+                if (!commit)
+                {
+                    if (provenance is not null)
+                        provenance.ObserveDecision(provenanceStage, provenanceKey,
+                            GenerationDecisionDisposition.ExperimentalAbstain,
+                            GenerationProvenanceRecorderResearch.ObjectSemanticIdentity(placed.Object),
+                            g1GateState!, provenance.State(chart.OriginalObjects, added, [], Position(rng),
+                                Position(rng), opportunityIndex + 1,
+                                articulationIntents.Select(ArticulationIntentIdentity)),
+                            evaluation.State.ToString());
+                    continue;
+                }
+            }
             var beforeMutation = provenance?.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
                 opportunityIndex, articulationIntents.Select(ArticulationIntentIdentity));
             provenance?.ObserveDecision(provenanceStage, provenanceKey, GenerationDecisionDisposition.Place,
                 GenerationProvenanceRecorderResearch.ObjectSemanticIdentity(placed.Object), provenanceBefore!,
-                beforeMutation!);
+                beforeMutation!,
+                g1GateState is null ? null : "ADMIT");
             added.Add(placed.Object);
             geometry.Insert(placed);
             if (provenance is not null)
@@ -279,6 +344,10 @@ public sealed class AddNotesEngine
         if (d1RunDiagnostics is not null &&
             d1RunDiagnostics.EvidenceIndexHashBefore != d1RunDiagnostics.EvidenceIndexHashAfter)
             throw new InvalidOperationException("D1 original-only evidence index mutated during generation.");
+        var g1RunDiagnostics = g1Diagnostics?.Build();
+        if (g1RunDiagnostics is not null &&
+            g1RunDiagnostics.EvidenceIndexHashBefore != g1RunDiagnostics.EvidenceIndexHashAfter)
+            throw new InvalidOperationException("G1.GATE original-only evidence index mutated during generation.");
         return new AddNotesResult(new ManiaChart
         {
             KeyCount = chart.KeyCount,
@@ -287,7 +356,8 @@ public sealed class AddNotesEngine
             TimingPoints = chart.TimingPoints,
             AddedObjects = added,
             ArticulationReplacements = replacements
-        }, stats, trace?.ToString(), evidenceProfile, decisionDiagnostics, d1RunDiagnostics);
+        }, stats, trace?.ToString(), evidenceProfile, decisionDiagnostics, d1RunDiagnostics,
+            g1RunDiagnostics);
     }
 
     private static string D1OpportunityKey(AddNoteOpportunity opportunity) =>
@@ -1202,6 +1272,22 @@ public sealed class AddNotesEngine
             || profile.ChartFingerprint != MapperEvidenceProfileBuilder.ComputeFingerprint(chart))
             throw new ArgumentException("The prepared evidence profile does not match this chart or profile version.",
                 nameof(profile));
+    }
+
+    private static void ValidateG1GateEligibility(AddNotesOptions options)
+    {
+        var frozen = InteriorRelationMembershipResearch.CurrentOptions();
+        if (!options.InteriorLnOpportunitiesEnabled
+            || options.MaxInteriorOpportunitiesPerSource != frozen.MaxInteriorOpportunitiesPerSource
+            || options.InteriorMinimumSourceBeats != frozen.InteriorMinimumSourceBeats
+            || options.InteriorLengthRatio != frozen.InteriorLengthRatio
+            || options.InteriorAbsoluteLongBeats != frozen.InteriorAbsoluteLongBeats
+            || options.InteriorMinimumContextLnCount != frozen.InteriorMinimumContextLnCount
+            || options.InteriorMinimumSupportedAnchors != frozen.InteriorMinimumSupportedAnchors
+            || options.LnWindowBeats != frozen.LnWindowBeats
+            || options.InteriorEligibilityMode != frozen.InteriorEligibilityMode
+            || options.InteriorContextMode != frozen.InteriorContextMode)
+            throw new InvalidOperationException("G1.GATE requires the frozen legacy interior eligibility contract.");
     }
 
     private sealed record AddNoteOpportunity(TimedManiaObject Source, OpportunityKind Kind, int Order,

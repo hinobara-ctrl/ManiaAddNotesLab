@@ -2,7 +2,7 @@
 
 Hipótesis no confirmadas. Comparar con el mismo chart, rango y seed; cambiar una sola variable por vez.
 
-SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow. G1.0 cerró después `COMPLETE/A` también shadow-only y fue recertificado. G1.DESIGN cerró `READY` y fue recertificado sin comportamiento: formaliza membership exacta, estructuralmente RNG-free, sin selector. READY no es promoción. `G1.GATE` permanece **NOT_AUTHORIZED**.
+SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow. G1.0 cerró `COMPLETE/A` y G1.DESIGN `READY`, ambos recertificados. G1.GATE ejecutó después el treatment runtime congelado y cerró `COMPLETE/NEEDS_REVIEW`: nueve violaciones hard atribuibles prohíben promoción. El default legacy permanece intacto y no hay sucesora autorizada.
 
 ```text
 Experiment:
@@ -27,6 +27,10 @@ Addendum de recertificación: los siete contadores que antes eran ceros constant
 El corpus C11 de desarrollo enumeró 4.226 shapes del builder legacy sobre 298 opportunities actuales. Todas se mapearon a query/result G1.0 exactos; 76 fueron `CandidateObservedUnique`, 57 `CandidateObservedAmongAlternatives`, 2.907 `CandidateNotObserved` y 1.186 `NoObservedRelation`. Los 133 ADMIT hipotéticos son membership del universo pre-geometry, no placements ni efectos. Se distribuyen en 113 opportunities; otras 185 tienen cero admits.
 
 La recertificación inyectó synthetic objects dentro de `OriginalObjects` en los 11 charts sin alterar ningún agregado. Construction provenance exacta: 107 admits construction-only, 15 independent-only y 11 ambos. Los ceros RNG son metadata; la prueba real es API sin RNG, enumeración sin weighted selection y repetición determinista. Un runtime futuro deberá recertificar sus propios traces.
+
+## G1.GATE — Runtime admission
+
+C11 ejecutó 220 pares con seeds 1–20. De 1.006 propuestas que alcanzaron el gate, 117 fueron ADMIT y 889 ABSTAIN. El tratamiento añadió 832 objetos menos (-0,276187%), sin consumo RNG, reroll, replacement o articulación. El snapshot final dejó nueve casos inicialmente no atribuibles; cuatro traces SAFETY.PROV los clasificaron todos como `TapOnHeldLongNote` downstream de supresiones G1. Stop condition cumplido: `NEEDS_REVIEW`, sin evaluación de utilidad ni promoción.
 
 ## H1 — Densidad vertical de chords
 
