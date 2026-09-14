@@ -1,0 +1,9 @@
+parameter,current_value,current_role,observed_effect_on_population,provisional_owner,evidence,decision
+LnWindowBeats,4,"source/anchor local LN context radius",185,LEGACY_UNRESOLVED,"Structural relations exist independently of the window; current attrition is measured.","Do not move or change in G1.0"
+MaxInteriorOpportunitiesPerSource,2,"ranked per-parent opportunity cap",1595,INTENSITY_OR_CAPACITY_CANDIDATE,"Cap removes already-eligible anchors and does not define relation identity.","Candidate ownership only; no value recommendation"
+InteriorMinimumSourceBeats,3,"minimum parent duration",20076,LEGACY_UNRESOLVED,"Exact relations below threshold are counted separately.","No change"
+InteriorLengthRatio,1.5,"legacy relative priority gate",0,LEGACY_UNRESOLVED,"AnchorSupported current mode does not gate on this value.","Legacy compatibility only in current policy"
+InteriorAbsoluteLongBeats,8,"legacy absolute priority gate",0,LEGACY_UNRESOLVED,"AnchorSupported current mode does not gate on this value.","Legacy compatibility only in current policy"
+InteriorMinimumContextLnCount,3,"source and anchor context gate",185,LEGACY_UNRESOLVED,"Affects current selector viability, not occurrence definition.","No change"
+InteriorMinimumSupportedAnchors,2,"minimum structural anchor count",8,LEGACY_UNRESOLVED,"Affects current opportunity eligibility, not complete witness identity.","No change"
+ArticulationMaxNonHeldColumns,1,"boundary from failed interior placement toward G2",0,INTENSITY_OR_CAPACITY_CANDIDATE,"G1.0 does not execute or study articulation.","G2 boundary only; NOT_AUTHORIZED"

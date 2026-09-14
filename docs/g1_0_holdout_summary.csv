@@ -1,0 +1,3 @@
+holdout,targets,comparable,exact_joint_supported,marginal_only,no_observed,unique,among_alternatives,conflicting,target_leakage,parent_leakage,release_leakage,future_leakage,same_event_leakage,synthetic_leakage,cross_chart_leakage
+TargetObservation,16881,11166,7292,142,5715,569,6723,3874,0,0,0,0,0,0,0
+ParentOccurrence,16881,11166,7292,142,5715,569,6723,3874,0,0,0,0,0,0,0

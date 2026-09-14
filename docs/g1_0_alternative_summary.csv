@@ -1,0 +1,9 @@
+holdout,state,queries,charts,families
+TargetObservation,NoObservedRelation,5715,7,7
+TargetObservation,ObservedUnique,569,7,7
+TargetObservation,ObservedAmongAlternatives,6723,4,4
+TargetObservation,ConflictingForSpecificClaim,3874,6,6
+ParentOccurrence,NoObservedRelation,5715,7,7
+ParentOccurrence,ObservedUnique,569,7,7
+ParentOccurrence,ObservedAmongAlternatives,6723,4,4
+ParentOccurrence,ConflictingForSpecificClaim,3874,6,6

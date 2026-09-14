@@ -38,6 +38,7 @@ else
     ValidateD1Closure(state);
     ValidateD1SafetyClosure(state);
     ValidateSafetyProvClosure(state);
+    ValidateG10Closure(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -143,7 +144,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -187,7 +188,7 @@ void ValidatePhaseContracts(ProjectState value)
             $"canonical phase contract {contract.Id}");
     }
 
-    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "F2.ACQ", "C2" })
+    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1", "F2.ACQ", "C2" })
         if (value.PhaseContracts.All(x => x.Id != required))
             errors.Add($"Required canonical phase contract is absent: {required}.");
 
@@ -406,8 +407,8 @@ void ValidateSafetyProvClosure(ProjectState value)
     if (provenance.Outcome != "A" || provenance.BehaviorChange is not false
         || provenance.Authorization != "RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED")
         errors.Add("SAFETY.PROV must close COMPLETE/OUTCOME A, behaviorChange=false and require roadmap review.");
-    if (value.NextRecommendedAction != "ROADMAP_REVIEW" || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null)
+    if (value.CurrentPhase == "SAFETY.PROV" && (value.NextRecommendedAction != "ROADMAP_REVIEW"
+        || value.NextRecommendedPhase is not null || value.NextBehavioralPhase is not null))
         errors.Add("SAFETY.PROV closure must recommend ROADMAP_REVIEW and authorize no next phase.");
     var d1 = value.Phases.FirstOrDefault(x => x.Id == "D1");
     var safety = value.Phases.FirstOrDefault(x => x.Id == "D1.SAFETY");
@@ -461,11 +462,94 @@ void ValidateSafetyProvClosure(ProjectState value)
             || text.Contains("SafetyProvContractResearch", StringComparison.Ordinal))
             errors.Add($"SAFETY.PROV research instrumentation is exposed by normal product path: {product}");
     }
-    CheckContains("README.md", "ROADMAP REVIEW REQUIRED", "post-SAFETY.PROV roadmap boundary");
-    CheckContains("PROJECT_STATUS.md", "ROADMAP REVIEW REQUIRED", "post-SAFETY.PROV roadmap boundary");
-    CheckContains("ROADMAP.md", "ROADMAP REVIEW REQUIRED", "post-SAFETY.PROV roadmap boundary");
+    CheckContains("PROJECT_STATUS.md", "ROADMAP REVIEW REQUIRED", "historical SAFETY.PROV roadmap boundary");
+    CheckContains("ROADMAP.md", "ROADMAP REVIEW REQUIRED", "historical SAFETY.PROV roadmap boundary");
     CheckContains("docs/BEHAVIOR_DECISION_AUDIT.md", "temporally after divergence",
         "temporal versus causal downstream rule");
+}
+
+void ValidateG10Closure(ProjectState value)
+{
+    var phase = value.Phases.FirstOrDefault(x => x.Id == "G1.0");
+    if (phase?.Status != "COMPLETE") return;
+    if (phase.Outcome != "A" || phase.BehaviorChange is not false
+        || phase.Authorization != "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED")
+        errors.Add("G1.0 must close COMPLETE/OUTCOME A with behaviorChange=false and no behavior authority.");
+    if (value.CurrentPhase != "G1.0" || value.NextRecommendedPhase != "G1.DESIGN"
+        || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED" || value.NextBehavioralPhase != "G1")
+        errors.Add("G1.0 closure must expose only G1.DESIGN review and future G1 as NOT_AUTHORIZED.");
+    var design = value.Phases.FirstOrDefault(x => x.Id == "G1.DESIGN");
+    var behavior = value.Phases.FirstOrDefault(x => x.Id == "G1");
+    if (design?.Status != "NEXT" || design.Authorization != "NOT_AUTHORIZED"
+        || design.BehaviorChange is not false || behavior?.Status != "FUTURE"
+        || behavior.Authorization != "NOT_AUTHORIZED" || behavior.BehaviorChange is not true)
+        errors.Add("G1.DESIGN and G1 authorization boundaries are inconsistent.");
+
+    foreach (var artifact in new[]
+    {
+        "docs/g1_0_interior_relation_contract.json",
+        "docs/PHASE_G1_0_INTERIOR_RELATION_FEASIBILITY_DESIGN.md",
+        "docs/PHASE_G1_0_INTERIOR_RELATION_FEASIBILITY_REPORT.md",
+        "docs/g1_0_relation_census.csv",
+        "docs/g1_0_relation_by_family.csv",
+        "docs/g1_0_anchor_kind_summary.csv",
+        "docs/g1_0_marginal_vs_joint_summary.csv",
+        "docs/g1_0_alternative_summary.csv",
+        "docs/g1_0_holdout_summary.csv",
+        "docs/g1_0_legacy_gate_attrition.csv",
+        "docs/g1_0_magic_number_ownership.csv",
+        "docs/g1_0_determinism_summary.csv"
+    })
+    {
+        RequireFile(artifact, "G1.0 closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "G1.0 artifact index entry");
+    }
+
+    const string frozenHash = "7C04E4CD9B45EE9351FBDC3C179083AAE43A5906115815A9F7987E0C51412194";
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "g1_0_interior_relation_contract.json")));
+        var contract = document.RootElement;
+        var actual = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(contract)));
+        if (actual != frozenHash)
+            errors.Add("G1.0 contract hash differs from its frozen canonical identity.");
+        if (contract.GetProperty("behaviorChange").GetBoolean()
+            || contract.GetProperty("defaultPolicy").GetString() != "legacy-experimental.1"
+            || contract.GetProperty("authorizationBoundaries").GetProperty("g1Behavior").GetString()
+                != "NOT_AUTHORIZED"
+            || contract.GetProperty("authorizationBoundaries").GetProperty("g2Articulation").GetString()
+                != "NOT_AUTHORIZED"
+            || contract.GetProperty("authorizationBoundaries").GetProperty("hMultipleArticulation").GetString()
+                != "NOT_AUTHORIZED")
+            errors.Add("G1.0 machine contract does not preserve default/G1/G2/H boundaries.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"G1.0 machine contract cannot be validated: {exception.Message}");
+    }
+
+    CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+        "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";", "legacy default after G1.0");
+    foreach (var product in new[] { "src/ManiaAddNotesLab.Cli/Program.cs", "src/ManiaAddNotesLab.Web/Program.cs" })
+    {
+        var text = File.ReadAllText(Path.Combine(root, product.Replace('/', Path.DirectorySeparatorChar)));
+        if (text.Contains("InteriorRelationFeasibilityResearch", StringComparison.Ordinal)
+            || text.Contains("G10InteriorRelationRunner", StringComparison.Ordinal))
+            errors.Add($"G1.0 research model is exposed by normal product path: {product}");
+    }
+    var d1 = value.Phases.FirstOrDefault(x => x.Id == "D1");
+    var safety = value.Phases.FirstOrDefault(x => x.Id == "D1.SAFETY");
+    var provenance = value.Phases.FirstOrDefault(x => x.Id == "SAFETY.PROV");
+    var f2Acq = value.Phases.FirstOrDefault(x => x.Id == "F2.ACQ");
+    var c2 = value.Phases.FirstOrDefault(x => x.Id == "C2");
+    if (d1?.Outcome != "C" || safety?.Outcome != "C" || provenance?.Outcome != "A"
+        || f2Acq?.Status != "BLOCKED" || c2?.Status != "DEFERRED")
+        errors.Add("G1.0 must preserve D1/D1.SAFETY, SAFETY.PROV, F2.ACQ and C2 history.");
+    CheckContains("docs/PHASE_G1_0_INTERIOR_RELATION_FEASIBILITY_REPORT.md",
+        "COMPLETE — OUTCOME A", "G1.0 report outcome");
+    CheckContains("docs/PHASE_G1_0_INTERIOR_RELATION_FEASIBILITY_REPORT.md",
+        "behaviorChange=false", "G1.0 behavior neutrality");
 }
 
 void ValidateFilesAndIndex(ProjectState value)

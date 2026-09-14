@@ -1,0 +1,111 @@
+{
+  "phase": "G1.0 — Interior LN Relation Feasibility / Shadow",
+  "schema": "g1.0-interior-relation-feasibility-shadow.1",
+  "behaviorChange": false,
+  "defaultPolicy": "legacy-experimental.1",
+  "relationOccurrenceDefinition": {
+    "source": "OriginalObjects only",
+    "identity": "one original parent LN + one exact strict-interior MapperEvidenceProfile anchor + one original LN witness whose head is the same anchor",
+    "requiredFields": [
+      "chartFingerprint",
+      "parentLongNoteId",
+      "witnessLongNoteId",
+      "parentStartAndEnd",
+      "anchorTimeAndBeat",
+      "witnessStartAndEnd",
+      "durationFromAnchor",
+      "offsetFromParentEnd",
+      "anchorKind",
+      "relationClass",
+      "parentAndWitnessLane",
+      "deterministicSemanticId"
+    ],
+    "descriptiveNotAuthoritative": [
+      "sameLane",
+      "differentLane",
+      "frequency",
+      "geometryValidity"
+    ]
+  },
+  "structuralPopulation": "all original-only strict interior anchors and their same-occurrence complete LN witnesses before production thresholds, ranking or cap",
+  "currentGatedPopulation": {
+    "mode": "AnchorSupported + OriginalOnly",
+    "orderedPipeline": [
+      "source length",
+      "source context",
+      "legacy relative/absolute length when applicable",
+      "anchor support",
+      "anchor context",
+      "ranking",
+      "cap",
+      "current opportunity"
+    ],
+    "pipelineAttritionIsNotCausalAuthority": true
+  },
+  "holdoutRules": {
+    "tasks": [
+      "TargetObservation",
+      "ParentOccurrence"
+    ],
+    "query": "keymode + exact parent duration + exact anchor offset from parent start + AnchorKind",
+    "jointResult": "InteriorEndRelation + exact duration from anchor + exact offset from parent end",
+    "chartLocal": true,
+    "priorOnly": true,
+    "targetWitnessExcludedFromEveryDonorRole": true,
+    "targetReleaseExcluded": true,
+    "wholeSameEventExcluded": true,
+    "parentMayRemainKnownQueryContext": true,
+    "parentOccurrenceTaskExcludesSameParentDonors": true
+  },
+  "sameOccurrenceRule": "anchor, child head and endpoint must come from the same original LN witness; marginal values from different observations never form a complete relation",
+  "marginalVsJointRule": "marginal duration and endpoint support are reported independently from exact same-occurrence joint support",
+  "relationClasses": [
+    "Contained",
+    "EqualEnd",
+    "Crossing",
+    "Invalid",
+    "Degenerate",
+    "SerializationCollision",
+    "Other"
+  ],
+  "alternativeSemantics": [
+    "NoObservedRelation",
+    "ObservedUnique",
+    "ObservedAmongAlternatives",
+    "ConflictingForSpecificClaim"
+  ],
+  "c11Role": "development/discovery corpus only; observed in C11 is not independent external validation",
+  "leakageProhibitions": [
+    "target observation",
+    "target release",
+    "future donor",
+    "same-event donor",
+    "synthetic donor",
+    "cross-chart donor"
+  ],
+  "zeroRng": true,
+  "behaviorNeutrality": {
+    "normalCliOrWebCallsite": false,
+    "generationOutputAuthority": false,
+    "candidateOrderingAuthority": false,
+    "laneAuthority": false,
+    "writerAuthority": false,
+    "defaultOrToggleChange": false
+  },
+  "outcomeCriteria": {
+    "A": "exact representation; marginal/joint separation; exact provenance; zero leakage/RNG/behavior drift; a relation class in more than one C11 family; real held-out comparable cases; alternatives without selector; bounded future G1 design scope",
+    "B": "exact representation works but evidence is too sparse, concentrated, alternative-dominated, legacy-gate-dependent or otherwise insufficient for a useful bounded intervention",
+    "C": "identity requires unauthorized inference/fuzzy matching, leakage is intrinsic, behavior/RNG changes, synthetic evidence contaminates style, or frequency becomes authority"
+  },
+  "authorizationBoundaries": {
+    "g1Behavior": "NOT_AUTHORIZED",
+    "g2Articulation": "NOT_AUTHORIZED",
+    "hMultipleArticulation": "NOT_AUTHORIZED",
+    "mapperSupport": "NOT_AUTHORIZED",
+    "c2": "DEFERRED",
+    "f2Acq": "BLOCKED_ON_EXTERNAL_DATA",
+    "d1": "COMPLETE_OUTCOME_C_PARKED",
+    "d1Safety": "COMPLETE_OUTCOME_C_PARKED",
+    "safetyProv": "COMPLETE_OUTCOME_A_SHADOW"
+  }
+}

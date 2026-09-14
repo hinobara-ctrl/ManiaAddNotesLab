@@ -1,0 +1,10 @@
+stage,anchors_first_excluded,relation_occurrences_first_excluded,contained_first_excluded,equal_end_first_excluded,crossing_first_excluded,anchors_remaining,relation_occurrences_remaining
+Structural,0,0,0,0,0,22162,16881
+SourceLength,20076,15726,4692,2998,8036,2086,1155
+SourceContext,185,2,0,2,0,1901,1153
+RelativeOrAbsoluteLengthLegacy,0,0,0,0,0,1901,1153
+AnchorSupport,8,3,0,0,3,1893,1150
+AnchorContext,0,0,0,0,0,1893,1150
+Ranking,0,0,0,0,0,1893,1150
+Cap,1595,862,706,56,100,298,288
+CurrentOpportunity,0,0,0,0,0,298,288

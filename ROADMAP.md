@@ -18,6 +18,7 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | D1 — ChordCompletion Resulting-State A/B | ⛔ **COMPLETE — OUTCOME C / NO PROMOTION** | El A/B congelado terminó en hard abort por safety attribution no establecida; rollback legacy y rama PARKED. |
 | D1.SAFETY — Attributable Geometry Safety Semantics / Shadow | ⛔ **COMPLETE — OUTCOME C / PARKED** | La semántica sintética fue útil, pero el forensic prototype atribuyó sin mutation provenance; no hay sucesora autorizada. |
 | SAFETY.PROV — Mutation-Level Generation Provenance / Shadow | ✅ **COMPLETE — OUTCOME A / ROADMAP REVIEW REQUIRED** | Provenance causal durante execution es viable y behavior-neutral; no autoriza un experimento ni una fase sucesora automática. |
+| G1.0 — Interior LN Relation Feasibility / Shadow | ✅ **COMPLETE — OUTCOME A / BEHAVIOR NOT AUTHORIZED** | Relaciones completas parent+anchor+LN witness son representables original-only; joint/marginal, alternatives y gates actuales quedan separados. |
 | E — Adaptive Context Prototypes / Shadow | ✅ **COMPLETE — OUTCOME B** | Recurrence exacta muestra señal restringida; boundaries son estables bajo holdout pero parameter-sensitive. |
 | E.1 — Exact Recurrence Failure Stratification / Shadow | ✅ **COMPLETE — OUTCOME B** | Exact absence domina NoContext; spacing refinement destruye coverage y la rama se aparca. |
 | F1 — Comparable-context Resolver / Shadow + Validation | ✅ **COMPLETE — OUTCOME A** | Support, mismatch, no-context y ambiguity son reconstruibles por candidate sin selection conductual. |
@@ -26,7 +27,8 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | F2.2 — Quantization Inference Feasibility / Research Design | ✅ **COMPLETE — OUTCOME B — RESEARCH/SHADOW ONLY** | Forward compatibility es formalizable bajo domain explícito; domain mapper-derived y labels humanos siguen ausentes. |
 | F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design | ✅ **COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY** | Domain/truth methodology válida; falta un package mapper-authored pre-export independiente. |
 | F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite | ⛔ **BLOCKED / CONDITIONAL ON EXTERNAL DATA** | Requiere package pre-export mapper-authored autorizado; no es trabajo accionable actual. |
-| G1 — Interior relations | ⏳ Pending | Separar y validar relaciones contained, crossing y equal-end. |
+| G1.DESIGN — Interior Relation Behavioral Design / Gate | ⏳ **NEXT CANDIDATE / NOT_AUTHORIZED** | Diseñar un único tratamiento acotado, stopping criteria y rollback; requiere revisión humana antes de empezar. |
+| G1 — Interior Relation Semantics A/B | ⏳ **FUTURE / NOT_AUTHORIZED** | Eventual A/B conductual; G1.0 no escogió Contained, EqualEnd, Crossing, lane, endpoint ni cantidad. |
 | G2 — Causal articulation | ⏳ Pending | Articular sólo cuando blockers originales y evidencia retrigger lo justifiquen. |
 | H — ParentArticulationPlan | ⏳ Pending | Investigar múltiples cortes como un plan atómico y válido. |
 | I — MapperSupport research | ⏳ Pending | Evaluar rankings derivados de certificates sin inventar confidence. |
@@ -35,4 +37,4 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 
 Regla de avance: shadow y evidencia antes de conducta; una hipótesis principal por A/B; toda modificación conductual requiere versión, rollback y validación atribuible.
 
-Después de SAFETY.PROV: **ROADMAP REVIEW REQUIRED**. No existe SAFETY.GATE, SAFETY.PROV.1, rerun D1 ni fase conductual automáticamente autorizada.
+Después de G1.0: `G1.DESIGN` es sólo el siguiente candidato de revisión y permanece **NOT_AUTHORIZED**. G1 conductual, G2 y H no están autorizados; no existe rerun D1 ni promoción automática.

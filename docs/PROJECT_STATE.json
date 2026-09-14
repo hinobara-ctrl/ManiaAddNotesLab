@@ -1,6 +1,6 @@
 {
   "schemaVersion": 8,
-  "lastUpdated": "2026-09-09",
+  "lastUpdated": "2026-09-13",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -27,7 +27,10 @@
     { "id": "D1.GATE", "name": "Resulting-State Behavioral Experiment Gate / Shadow", "status": "COMPLETE", "outcome": "READY", "behaviorChange": false, "report": "docs/PHASE_D1_GATE_BEHAVIORAL_EXPERIMENT_GATE_REPORT.md", "authorization": "NOT_AUTHORIZED" },
     { "id": "D1", "name": "ChordCompletion Resulting-State A/B", "status": "COMPLETE", "outcome": "C", "behaviorChange": true, "report": "docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "D1.SAFETY", "name": "Attributable Geometry Safety Semantics / Shadow", "status": "COMPLETE", "outcome": "C", "behaviorChange": false, "report": "docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md", "authorization": "RESEARCH_COMPLETED_PARKED" },
-    { "id": "SAFETY.PROV", "name": "Mutation-Level Generation Provenance / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_SAFETY_PROV_MUTATION_LEVEL_PROVENANCE_REPORT.md", "authorization": "RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED" }
+    { "id": "SAFETY.PROV", "name": "Mutation-Level Generation Provenance / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_SAFETY_PROV_MUTATION_LEVEL_PROVENANCE_REPORT.md", "authorization": "RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED" },
+    { "id": "G1.0", "name": "Interior LN Relation Feasibility / Shadow", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_G1_0_INTERIOR_RELATION_FEASIBILITY_REPORT.md", "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
+    { "id": "G1.DESIGN", "name": "Interior Relation Behavioral Design / Gate", "status": "NEXT", "outcome": null, "behaviorChange": false, "report": null, "authorization": "NOT_AUTHORIZED" },
+    { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -39,13 +42,16 @@
     { "id": "D1.GATE", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
     { "id": "D1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "D1.SAFETY", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_PARKED" },
-    { "id": "SAFETY.PROV", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED" }
+    { "id": "SAFETY.PROV", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_ROADMAP_REVIEW_REQUIRED" },
+    { "id": "G1.0", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
+    { "id": "G1.DESIGN", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
+    { "id": "G1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" }
   ],
-  "currentPhase": "SAFETY.PROV",
-  "nextRecommendedPhase": null,
-  "nextRecommendedAction": "ROADMAP_REVIEW",
-  "nextBehavioralPhase": null,
-  "testStatus": { "passed": 656, "failed": 0, "skipped": 0 },
+  "currentPhase": "G1.0",
+  "nextRecommendedPhase": "G1.DESIGN",
+  "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
+  "nextBehavioralPhase": "G1",
+  "testStatus": { "passed": 672, "failed": 0, "skipped": 0 },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [
     "README.md",

@@ -4,6 +4,28 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 7 && args[0] == "g1-0-prepare")
+{
+    var result = G10InteriorRelationRunner.Prepare(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]), Path.GetFullPath(args[4]), args[5], args[6]);
+    Console.WriteLine($"contract={result.ContractHash}");
+    Console.WriteLine($"snapshot={result.SnapshotHash}");
+    Console.WriteLine($"corpus={result.CorpusHash}");
+    Console.WriteLine($"synthetic={result.SyntheticGate.Count(x => x.Passed)}/{result.SyntheticGate.Length}");
+    return;
+}
+
+if (args.Length == 7 && args[0] == "g1-0-run")
+{
+    var result = G10InteriorRelationRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]), Path.GetFullPath(args[4]), Path.GetFullPath(args[5]),
+        Path.GetFullPath(args[6]));
+    Console.WriteLine($"outcome={result.Outcome}");
+    Console.WriteLine($"relations={result.CompleteRelations}");
+    Console.WriteLine($"comparableHoldouts={result.ComparableHoldouts}");
+    return;
+}
+
 if (args.Length == 3 && args[0] == "safety-prov-prepare")
 {
     var result = SafetyProvResearchRunner.Prepare(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));

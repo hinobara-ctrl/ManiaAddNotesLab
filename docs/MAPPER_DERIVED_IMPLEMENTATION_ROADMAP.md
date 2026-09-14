@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0: **COMPLETE/A**. D0.1: **COMPLETE/A**. D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**. F2.1: **COMPLETE/C SHADOW ONLY**. F2.2: **COMPLETE/B RESEARCH/SHADOW ONLY**. F2.3: **COMPLETE/B — CONTINUE CONDITIONALLY**. F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. Phase E/E.1: **COMPLETE/B**, recurrence PARKED. D1: **COMPLETE/C — NO PROMOTION / PARKED**. D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV: **COMPLETE/A / SHADOW ONLY**. **ROADMAP REVIEW REQUIRED**; no hay siguiente fase research o conductual autorizada, C2 permanece **DEFERRED** y generation normal continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD — hypothesis reframed**. C1.1: **COMPLETE/B**. C1.2: **COMPLETE/A**. D0/D0.1/D0.2: **COMPLETE/A**. F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ queda **BLOCKED / CONDITIONAL ON EXTERNAL DATA**. E/E.1: **COMPLETE/B**, recurrence PARKED. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV: **COMPLETE/A / SHADOW ONLY**. G1.0: **COMPLETE/A / SHADOW ONLY**. `G1.DESIGN` es el siguiente candidato **NOT_AUTHORIZED**; G1 conductual, G2 y H permanecen **NOT_AUTHORIZED**, C2 **DEFERRED** y generation normal continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1076,3 +1076,27 @@ Las 25 condiciones de estados excluyentes, abstención, hechos por vista, identi
 La representación shadow pasa identity exacta, transition typing, original-only, whole-group exclusion, provenance, backoff sólo por no-context, SKIP, determinismo, multi-key, corpus y leakage. El behavioral subgate falla: 2/50.762 local support y 0 global support harían degenerado cualquier A/B. No se creó una versión conductual ni se alteró legacy.
 
 **F2 COMPLETE/B; F2.1 COMPLETE — OUTCOME C — SHADOW ONLY; F2.2 COMPLETE OUTCOME B — RESEARCH/SHADOW ONLY; F2.3 COMPLETE OUTCOME B — CONTINUE CONDITIONALLY; F2.ACQ BLOCKED ON EXTERNAL DATA; PHASE E/E.1 COMPLETE/B — RECURRENCE PARKED; D1.0 COMPLETE/A; D1.GATE COMPLETE/READY; D1 COMPLETE/C — NO PROMOTION / PARKED; D1.SAFETY COMPLETE/C — SHADOW ONLY / PARKED; NO NEXT AUTHORIZED PHASE; C2 DEFERRED.**
+
+## Phase G1.0 — Interior LN Relation Feasibility / Shadow
+
+<!-- PHASE-CONTRACT:G1.0;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED -->
+
+**G1.0 COMPLETE — OUTCOME A / SHADOW ONLY.**
+
+La occurrence mínima exacta conserva una LN padre original, un anchor interior de `MapperEvidenceProfile` y una LN witness de la misma occurrence cuyo head coincide con el anchor. Head/release marginales de otros objetos nunca completan esa relación. `Contained`, `EqualEnd` y `Crossing` permanecen categorías separadas; lane, frecuencia y geometry son atributos descriptivos, no authority.
+
+C11 produjo 22.162 anchors y 16.881 relaciones completas en varias familias. Los holdouts `TargetObservation` y `ParentOccurrence` son chart-local, prior-only y excluyen target/release/future/same-event/synthetic/cross-chart leakage. El censo structural se calculó antes de los gates actuales; la attrition ordenada dejó 298 oportunidades actuales y 288 relation occurrences. El cap=2 excluyó 1.595 anchors ya elegibles, por lo que se clasifica provisionalmente como `INTENSITY_OR_CAPACITY_CANDIDATE`; ventanas y thresholds siguen `LEGACY_UNRESOLVED`.
+
+**Boundary:** Outcome A autoriza únicamente proponer para revisión `G1.DESIGN`, no activar G1. No existe preferencia Contained/EqualEnd/Crossing, selector, lane model, endpoint fallback, toggle ni cambio de defaults; G2/H siguen separados y `legacy-experimental.1` permanece default.
+
+## Phase G1.DESIGN — Interior Relation Behavioral Design / Gate
+
+<!-- PHASE-CONTRACT:G1.DESIGN;kind=ResearchShadow;behaviorChange=false;authorization=NOT_AUTHORIZED -->
+
+**NEXT CANDIDATE / NOT_AUTHORIZED.** Si recibe autorización humana, deberá congelar una sola hipótesis conductual, scope, denominadores, causal safety, stopping criteria y rollback antes de ejecutar cualquier treatment. G1.0 no predetermina qué relación usar ni cuántas oportunidades generar.
+
+## Phase G1 — Interior Relation Semantics A/B
+
+<!-- PHASE-CONTRACT:G1;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->
+
+**FUTURE / NOT_AUTHORIZED.** No existe policy, toggle, CLI/Web path ni A/B activo. Requiere el cierre previo de un G1.DESIGN autorizado y revisión humana separada.

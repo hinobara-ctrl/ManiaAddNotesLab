@@ -2,7 +2,7 @@
 
 Hipótesis no confirmadas. Comparar con el mismo chart, rango y seed; cambiar una sola variable por vez.
 
-SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow: provenance OFF/ON fue exacta en bytes, RNG, oportunidades, candidates, decisiones, articulación y serialización sobre fixtures 1K/4K/7K/10K/18K. Esto es evidencia de implementación, no evidencia humana ni autorización conductual. D1 y D1.SAFETY permanecen C/PARKED. **ROADMAP REVIEW REQUIRED** antes de diseñar cualquier nuevo experimento; no hay siguiente A/B autorizado.
+SAFETY.PROV cerró `COMPLETE/A` como infraestructura shadow. G1.0 cerró después `COMPLETE/A` también shadow-only: censó 16.881 relaciones exactas parent+anchor+LN witness, separó marginal/joint y auditó los gates actuales sin escoger policy. `G1.DESIGN` es un candidato de revisión **NOT_AUTHORIZED**; no existe un A/B G1 aprobado. D1 y D1.SAFETY permanecen C/PARKED.
 
 ```text
 Experiment:
@@ -15,6 +15,12 @@ Observación visual/AiMod:
 Playtest:
 Decisión provisional:
 ```
+
+## G1.0 — Interior relation feasibility
+
+El corpus C11 es DEVELOPMENT/DISCOVERY. La occurrence completa exige que head y endpoint provengan de la misma LN witness original; una duración o release marginal de otra occurrence no completa el candidato. Los holdouts `TargetObservation` y `ParentOccurrence` son tareas separadas, chart-local y prior-only. Contained, EqualEnd y Crossing son resultados descriptivos, no arms de un experimento.
+
+El posible paso siguiente es diseñar un único gate G1 con hipótesis, scope, stopping criteria y rollback explícitos. Hasta recibir autorización humana, no se elige clase, endpoint, lane, cantidad ni intensity; G2 articulation y H multiple cuts quedan fuera.
 
 ## H1 — Densidad vertical de chords
 
