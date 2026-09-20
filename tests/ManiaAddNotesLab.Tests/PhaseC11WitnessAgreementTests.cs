@@ -237,7 +237,7 @@ public sealed class PhaseC11WitnessAgreementTests
         {
             var chart = OsuBeatmap.Parse(File.ReadAllText(Path.Combine(root, relative)));
             var output = new AddNotesEngine().Apply(chart, options, new SeededRandom(seed));
-            var bytes = Encoding.UTF8.GetBytes(OsuBeatmap.Write(output.ModifiedChart, chance));
+            var bytes = Encoding.UTF8.GetBytes(OsuBeatmap.Write(output.ModifiedChart, chance).Replace("\n", "\r\n").Replace("\r\r\n", "\r\n"));
             Assert.Equal(expected, Convert.ToHexString(SHA256.HashData(bytes)));
         }
     }

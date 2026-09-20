@@ -68,6 +68,51 @@ internal static class SafetyCausalForensicRunner
 
     public static string Run(string corpusRoot, string publicDirectory, string artifactDirectory)
     {
+        return RunDoubleReplay(corpusRoot, publicDirectory, artifactDirectory);
+    }
+
+    public static string RunDoubleReplay(string corpusRoot, string publicDirectory, string artifactDirectory)
+    {
+        var runA = Path.Combine(artifactDirectory, "runA");
+        var runB = Path.Combine(artifactDirectory, "runB");
+        if (Directory.Exists(runA)) Directory.Delete(runA, true);
+        if (Directory.Exists(runB)) Directory.Delete(runB, true);
+        Directory.CreateDirectory(runA);
+        Directory.CreateDirectory(runB);
+        var sourceManifest = Path.Combine("docs", "g1_gate_runtime_manifest.json");
+        File.Copy(sourceManifest, Path.Combine(runA, "g1_gate_runtime_manifest.json"));
+        File.Copy(sourceManifest, Path.Combine(runB, "g1_gate_runtime_manifest.json"));
+
+        RunInternal(corpusRoot, runA, runA, out _);
+        RunInternal(corpusRoot, runB, runB, out _);
+
+        var independentReplayDeterministic = true;
+        var filesToCompare = new[] {
+            "safety_causal_treatment_violations.csv", "safety_causal_treatment_violations.json",
+            "safety_causal_control_classification.csv", "safety_causal_control_classification.json",
+            "safety_causal_placement_oracle_comparison.csv", "safety_causal_cases.json",
+            "safety_causal_family_summary.csv", "safety_causal_summary.json"
+        };
+        foreach(var f in filesToCompare) {
+            var fileA = Path.Combine(runA, f);
+            var fileB = Path.Combine(runB, f);
+            if (!File.Exists(fileA) || !File.Exists(fileB)) {
+                independentReplayDeterministic = false;
+                break;
+            }
+            if (Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(fileA))) !=
+                Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(fileB)))) {
+                independentReplayDeterministic = false;
+                break;
+            }
+        }
+        
+        var passed = RunInternal(corpusRoot, publicDirectory, artifactDirectory, out _, independentReplayDeterministic);
+        return passed;
+    }
+
+    private static string RunInternal(string corpusRoot, string publicDirectory, string artifactDirectory, out SafetyCausalCase[] allRowsOut, bool independentReplayDeterministic = false)
+    {
         Directory.CreateDirectory(publicDirectory);
         Directory.CreateDirectory(artifactDirectory);
         var discovery = C11CorpusDiscovery.Discover(corpusRoot);
@@ -170,7 +215,7 @@ internal static class SafetyCausalForensicRunner
 
         var passed = treatmentRows.Length == 9 && controlRows.Length == 200
             && allRows.All(x => x.RootCause == SafetyCausalRootCause.OracleOrSemanticMismatch)
-            && nonInterferenceFailures == 0 && traceValidationFailures == 0 && deterministicRepeat;
+            && nonInterferenceFailures == 0 && traceValidationFailures == 0 && deterministicRepeat && independentReplayDeterministic;
         var summary = new
         {
             schemaVersion = DownstreamHardValidityCausalityResearch.SchemaVersion,
@@ -198,7 +243,7 @@ internal static class SafetyCausalForensicRunner
                 hiddenStateDifference = false, serializationChangesCoordinates = false,
                 firstSemanticDivergence = "BuildReleaseCandidates preserves intended EndBeat when ToTimeMilliseconds(intendedEndBeat) equals selected EndTime; CurrentGeometry then compares that latent decimal while canonical final HardValidity normalizes both endpoints from integer milliseconds." },
             validation = new { instrumentedRuns, nonInterferenceFailures, traceValidationFailures,
-                recorderRngCalls = 0, deterministicRepeat },
+                recorderRngCalls = 0, artifactProjectionDeterministic = deterministicRepeat, independentReplayDeterministic },
             behavior = new { behaviorChange = false, defaultBehaviorChange = false,
                 generationSemanticsChange = false, defaultPolicy = "legacy-experimental.1", remediationImplemented = false },
             authorization = new { g1Gate = "COMPLETE_NEEDS_REVIEW_NO_PROMOTION",
@@ -207,6 +252,7 @@ internal static class SafetyCausalForensicRunner
         };
         File.WriteAllText(Path.Combine(publicDirectory, "safety_causal_summary.json"),
             JsonSerializer.Serialize(summary, Json) + Environment.NewLine, new UTF8Encoding(false));
+        allRowsOut = allRows;
         return passed ? "A" : "NEEDS_REVIEW";
     }
 

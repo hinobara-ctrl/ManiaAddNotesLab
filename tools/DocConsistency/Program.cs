@@ -908,7 +908,8 @@ void ValidateSafetyCausalClosure(ProjectState value)
             || validation.GetProperty("nonInterferenceFailures").GetInt32() != 0
             || validation.GetProperty("traceValidationFailures").GetInt32() != 0
             || validation.GetProperty("recorderRngCalls").GetInt32() != 0
-            || !validation.GetProperty("deterministicRepeat").GetBoolean()
+            || !validation.GetProperty("artifactProjectionDeterministic").GetBoolean()
+            || !validation.GetProperty("independentReplayDeterministic").GetBoolean()
             || behavior.GetProperty("behaviorChange").GetBoolean()
             || behavior.GetProperty("defaultBehaviorChange").GetBoolean()
             || behavior.GetProperty("generationSemanticsChange").GetBoolean()

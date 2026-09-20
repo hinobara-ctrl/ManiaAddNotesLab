@@ -45,7 +45,8 @@
     "nonInterferenceFailures": 0,
     "traceValidationFailures": 0,
     "recorderRngCalls": 0,
-    "deterministicRepeat": true
+    "artifactProjectionDeterministic": true,
+    "independentReplayDeterministic": true
   },
   "behavior": {
     "behaviorChange": false,

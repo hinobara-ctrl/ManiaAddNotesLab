@@ -23,6 +23,13 @@ The operators do **not** differ. Runtime and oracle both treat equality as occup
 
 All 209 conditions were accepted by the real `AddNotesEngine.PlaceTap → LaneGeometryIndex.FindLegalTapLanes → CanPlaceTap` path. In all 209, `internalConflict=false`, `materializedConflict=true`, `placementAccepted=true`, `endpointOperatorDiffers=false`, `geometrySnapshotWasStale=false` and `serializationChangedCoordinates=false`.
 
+## Provenance Boundary Corrections
+
+SAFETY.CAUSAL discovered and corrected two important provenance boundary issues:
+
+1. **G1 StateBefore boundary correction**: The G1 abstention recorder had used the post-candidate/gate-local snapshot as the decision `StateBefore`, omitting work that occurred since the full opportunity `provenanceBefore` state. The recorder was corrected to use the complete opportunity pre-state for causal comparison. The exact gate-local snapshot remains available separately for G1 diagnostics. This changed attribution instrumentation only; it did not change generated objects, RNG transcript, generation semantics, G1 behavior, or output bytes.
+2. **Full reconvergence permanently clears prior lineage**: Once complete `GenerationState` reconvergence occurs, ancestry from the previous governed divergence ends. A later divergence must establish a new causal lineage. This permanently prevents an old divergence from being resurrected across a full reconvergence to claim attribution for an unrelated later difference. This is a provenance-model hardening for attribution semantics, not generation behavior.
+
 ## Earliest semantic divergence
 
 The earliest divergence is candidate materialization in `AddNotesEngine.BuildReleaseCandidates`. `AddDuration` converts `intendedEndBeat` to `rawTime`; `Add` then retains `intendedEndBeat` whenever `endTime == rawTime`. Equality of the rounded millisecond does not imply equality of the original decimal beat. The mutable `LaneGeometryIndex` stores that latent decimal alongside the already-materialized `ManiaObject.EndTime`.

@@ -1,8 +1,8 @@
 # Mapper-Derived Implementation Roadmap
 
 Estado: roadmap de transición aprobado para implementación incremental.  
-Baseline revisado: copia local de `ManiaAddNotesLab`, 6 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION** tras nueve violaciones hard atribuibles; G1, G2 y H permanecen **NOT_AUTHORIZED** y el default continúa en `legacy-experimental.1`.
+Baseline revisado: copia local de `ManiaAddNotesLab`, 19 de septiembre de 2026.  
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND** reportando `LEGACY_GENERAL` y `ORACLE_OR_SEMANTIC_MISMATCH` con `NO REMEDIATION`; G1, G2 y H permanecen **NOT_AUTHORIZED** y el default continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1121,10 +1121,16 @@ C11 enumeró 4.226 shapes pre-geometry sobre 298 opportunities, todas representa
 
 **Boundary:** esta fase diagnostica, no corrige. G1.GATE conserva `NEEDS_REVIEW / NO PROMOTION`; default legacy, G1 utility, G2 y H permanecen sin autorización. Una remediation requeriría contrato y revisión humana separados.
 
-**NEXT CANDIDATE / NOT_AUTHORIZED.** Sólo tras revisión humana podría congelar un eventual A/B con control/treatment, métricas, stopping criteria y rollback. No existe toggle, callsite productivo ni experimento activo.
+**NEXT CANDIDATE / NOT_AUTHORIZED.** El diseño de una remediación (remediation design) es la siguiente pregunta lógica de investigación, pero permanece **NOT_AUTHORIZED**. G1 behavioral utility no es el siguiente candidato conceptual y permanece **NOT_AUTHORIZED**. Sólo tras revisión humana podría congelar un eventual A/B con control/treatment, métricas, stopping criteria y rollback. No existe toggle, callsite productivo ni experimento activo.
+
+## Phase SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design
+
+<!-- PHASE-CONTRACT:SAFETY.REMEDIATION.DESIGN;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->
+
+**FUTURE / NOT_AUTHORIZED.** Diseñar y experimentar con una remediación para el mismatch semántico descubierto por SAFETY.CAUSAL. No existe contrato, toggle ni implementación autorizada actualmente.
 
 ## Phase G1 — Interior Relation Semantics A/B
 
 <!-- PHASE-CONTRACT:G1;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->
 
-**FUTURE / NOT_AUTHORIZED.** No existe policy, toggle, CLI/Web path ni A/B activo. Requiere el cierre previo de un G1.DESIGN autorizado y revisión humana separada.
+**FUTURE / NOT_AUTHORIZED.** No existe policy, toggle, CLI/Web path ni A/B activo. Requiere el cierre previo de un SAFETY.REMEDIATION.DESIGN autorizado y revisión humana separada.
