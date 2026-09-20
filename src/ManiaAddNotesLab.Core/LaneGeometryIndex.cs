@@ -15,6 +15,21 @@ public sealed class LaneGeometryIndex
 
     public int KeyCount => _lanes.Length;
 
+    /// <summary>Research-only snapshot of the exact neighbors consulted by tap legality.</summary>
+    public TapLaneGeometryInspection InspectTapLane(int laneIndex, decimal beat)
+    {
+        if (laneIndex < 0 || laneIndex >= _lanes.Length)
+            return new(laneIndex, beat, null, null, false, "outside lane");
+        var lane = _lanes[laneIndex];
+        var index = LowerBound(lane, beat);
+        var previous = index > 0 ? lane[index - 1] : null;
+        var next = index < lane.Count ? lane[index] : null;
+        var legal = (previous is null || previous.EndBeat < beat)
+            && (next is null || next.StartBeat != beat);
+        return new(laneIndex, beat, previous, next, legal,
+            "CanPlaceTap checks only previous.EndBeat >= beat and next.StartBeat == beat in current geometry.");
+    }
+
     public int CountOccupiedColumns(decimal beat, AddNotesStatistics statistics)
     {
         var count = 0;
@@ -266,3 +281,6 @@ public sealed class LaneGeometryIndex
 
     private enum LnRejection { None, Overlap, Gap }
 }
+
+public sealed record TapLaneGeometryInspection(int Lane, decimal Beat, TimedManiaObject? Previous,
+    TimedManiaObject? Next, bool IsLegal, string Rule);

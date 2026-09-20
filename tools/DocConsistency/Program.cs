@@ -41,6 +41,7 @@ else
     ValidateG10Closure(state);
     ValidateG1DesignClosure(state);
     ValidateG1GateClosure(state);
+    ValidateSafetyCausalClosure(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -146,7 +147,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -190,7 +191,7 @@ void ValidatePhaseContracts(ProjectState value)
             $"canonical phase contract {contract.Id}");
     }
 
-    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "G1", "G2", "H", "F2.ACQ", "C2" })
+    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "G1", "G2", "H", "F2.ACQ", "C2" })
         if (value.PhaseContracts.All(x => x.Id != required))
             errors.Add($"Required canonical phase contract is absent: {required}.");
 
@@ -783,7 +784,7 @@ void ValidateG1GateClosure(ProjectState value)
     if (gate?.Status != "COMPLETE") return;
     if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
         || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase != "G1.GATE" || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
 
@@ -848,6 +849,80 @@ void ValidateG1GateClosure(ProjectState value)
     CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
         "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
         "legacy default after G1.GATE");
+}
+
+void ValidateSafetyCausalClosure(ProjectState value)
+{
+    var phase = value.Phases.FirstOrDefault(x => x.Id == "SAFETY.CAUSAL");
+    if (phase?.Status != "COMPLETE") return;
+    if (phase.Outcome != "A" || phase.BehaviorChange is not false
+        || phase.Authorization != "RESEARCH_COMPLETED_NO_REMEDIATION"
+        || value.CurrentPhase != "SAFETY.CAUSAL" || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
+        errors.Add("SAFETY.CAUSAL must close COMPLETE/A with no remediation, promotion or successor.");
+
+    foreach (var artifact in new[]
+    {
+        "docs/PHASE_SAFETY_CAUSAL_DOWNSTREAM_HARD_VALIDITY.md",
+        "docs/safety_causal_downstream_hard_validity_contract.json",
+        "docs/safety_causal_summary.json",
+        "docs/safety_causal_treatment_violations.csv",
+        "docs/safety_causal_treatment_violations.json",
+        "docs/safety_causal_control_classification.csv",
+        "docs/safety_causal_control_classification.json",
+        "docs/safety_causal_placement_oracle_comparison.csv",
+        "docs/safety_causal_family_summary.csv",
+        "docs/safety_causal_cases.json"
+    })
+    {
+        RequireFile(artifact, "SAFETY.CAUSAL closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "SAFETY.CAUSAL artifact index entry");
+    }
+
+    const string frozenHash = "300E879BCB479F77A704BFFB89BF304D9D04ECC556067F921C49C45E4E8FCB84";
+    try
+    {
+        using var contractDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "safety_causal_downstream_hard_validity_contract.json")));
+        var actual = Convert.ToHexString(SHA256.HashData(
+            JsonSerializer.SerializeToUtf8Bytes(contractDocument.RootElement.GetProperty("contract"))));
+        if (actual != frozenHash || contractDocument.RootElement.GetProperty("canonicalSha256").GetString() != frozenHash)
+            errors.Add("SAFETY.CAUSAL contract hash differs from its frozen canonical identity.");
+
+        using var summaryDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "safety_causal_summary.json")));
+        var summary = summaryDocument.RootElement;
+        var treatment = summary.GetProperty("treatment");
+        var control = summary.GetProperty("control");
+        var validation = summary.GetProperty("validation");
+        var behavior = summary.GetProperty("behavior");
+        if (summary.GetProperty("outcome").GetString() != "A"
+            || summary.GetProperty("contractSha256").GetString() != frozenHash
+            || treatment.GetProperty("hardValidityViolations").GetInt32() != 9
+            || treatment.GetProperty("treatmentDownstream").GetInt32() != 9
+            || treatment.GetProperty("unattributable").GetInt32() != 0
+            || control.GetProperty("hardValidityConditions").GetInt32() != 200
+            || control.GetProperty("legacyDownstream").GetInt32() != 200
+            || control.GetProperty("sourcePreExisting").GetInt32() != 0
+            || control.GetProperty("unattributable").GetInt32() != 0
+            || validation.GetProperty("nonInterferenceFailures").GetInt32() != 0
+            || validation.GetProperty("traceValidationFailures").GetInt32() != 0
+            || validation.GetProperty("recorderRngCalls").GetInt32() != 0
+            || !validation.GetProperty("deterministicRepeat").GetBoolean()
+            || behavior.GetProperty("behaviorChange").GetBoolean()
+            || behavior.GetProperty("defaultBehaviorChange").GetBoolean()
+            || behavior.GetProperty("generationSemanticsChange").GetBoolean()
+            || behavior.GetProperty("remediationImplemented").GetBoolean())
+            errors.Add("SAFETY.CAUSAL summary does not preserve counts, evidence and no-remediation boundaries.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"SAFETY.CAUSAL closure artifacts cannot be validated: {exception.Message}");
+    }
+
+    CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+        "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
+        "legacy default after SAFETY.CAUSAL");
 }
 
 void ValidateFilesAndIndex(ProjectState value)

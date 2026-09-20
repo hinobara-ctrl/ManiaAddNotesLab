@@ -29,6 +29,7 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | F2.3 — Quantization Hypothesis Domain and Labeled Ground Truth Acquisition / Research Design | ✅ **COMPLETE — OUTCOME B — CONTINUE CONDITIONALLY** | Domain/truth methodology válida; falta un package mapper-authored pre-export independiente. |
 | F2.ACQ — Controlled Pre-Serialization Ground Truth Acquisition Prerequisite | ⛔ **BLOCKED / CONDITIONAL ON EXTERNAL DATA** | Requiere package pre-export mapper-authored autorizado; no es trabajo accionable actual. |
 | G1.GATE — Interior Relation Admission Runtime | ⛔ **COMPLETE — NEEDS_REVIEW / NO PROMOTION** | Treatment aislado y RNG-free; 9 violaciones hard atribuibles activaron el stop condition. |
+| SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics | ✅ **COMPLETE — OUTCOME A / CAUSE FOUND / NO REMEDIATION** | 9/9 treatment-only y 200/200 controles comparten el mismatch decimal-latente vs milisegundo canónico; G1.GATE permanece NEEDS_REVIEW. |
 | G1 — Interior Relation Semantics A/B | ⏳ **FUTURE / NOT_AUTHORIZED** | Eventual A/B conductual; G1.0 no escogió Contained, EqualEnd, Crossing, lane, endpoint ni cantidad. |
 | G2 — Causal Articulation A/B | ⏳ **FUTURE / NOT_AUTHORIZED** | Articular sólo cuando blockers originales y evidencia retrigger lo justifiquen. |
 | H — ParentArticulationPlan | ⏳ **FUTURE / NOT_AUTHORIZED** | Investigar múltiples cortes como un plan atómico y válido. |
@@ -38,4 +39,4 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 
 Regla de avance: shadow y evidencia antes de conducta; una hipótesis principal por A/B; toda modificación conductual requiere versión, rollback y validación atribuible.
 
-Después de G1.GATE no existe una fase sucesora autorizada. G1 utility, G2 y H permanecen **NOT_AUTHORIZED**; el fallo mecánico no se corrige por tuning, reroll ni promoción automática.
+SAFETY.CAUSAL cerró únicamente la investigación causal posterior a G1.GATE. No existe una fase sucesora autorizada. G1 utility, G2 y H permanecen **NOT_AUTHORIZED**; el fallo mecánico no se corrige por tuning, reroll ni promoción automática.

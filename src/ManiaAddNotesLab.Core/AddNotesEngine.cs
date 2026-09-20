@@ -268,7 +268,7 @@ public sealed class AddNotesEngine
                         provenance.ObserveDecision(provenanceStage, provenanceKey,
                             GenerationDecisionDisposition.ExperimentalAbstain,
                             GenerationProvenanceRecorderResearch.ObjectSemanticIdentity(placed.Object),
-                            g1GateState!, provenance.State(chart.OriginalObjects, added, [], Position(rng),
+                            provenanceBefore!, provenance.State(chart.OriginalObjects, added, [], Position(rng),
                                 Position(rng), opportunityIndex + 1,
                                 articulationIntents.Select(ArticulationIntentIdentity)),
                             evaluation.State.ToString());

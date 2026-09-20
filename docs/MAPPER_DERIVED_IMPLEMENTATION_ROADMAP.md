@@ -1113,6 +1113,14 @@ C11 enumeró 4.226 shapes pre-geometry sobre 298 opportunities, todas representa
 
 **G1.GATE COMPLETE — OUTCOME NEEDS_REVIEW / EXPERIMENT COMPLETED / NO PROMOTION.** El runtime opt-in aplicó la mapping congelada después de candidate/lane/geometry y antes del commit, sin RNG, reroll, replacement ni articulación. En 220 pares C11 evaluó 1.006 proposals, admitió 117 y suprimió 889; el output cayó 832 objetos (-0,276187%). SAFETY.PROV recertificó los nueve casos treatment-only como `TapOnHeldLongNote` atribuibles a mutaciones downstream del gate. Se activó el stop condition: no existe sucesora autorizada.
 
+## Phase SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics
+
+<!-- PHASE-CONTRACT:SAFETY.CAUSAL;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_NO_REMEDIATION -->
+
+**SAFETY.CAUSAL COMPLETE — OUTCOME A / CAUSE FOUND / NO REMEDIATION.** El replay de las 9 condiciones treatment-only y las 200 control prueba una sola familia: placement consulta un `EndBeat` decimal latente ligeramente anterior, mientras HardValidity reconstruye ambos endpoints desde el mismo milisegundo y detecta igualdad inclusiva. Los 200 controles son `LegacyDownstream`, ninguno source-pre-existing; por tanto la causa es `LEGACY_GENERAL` y `ORACLE_OR_SEMANTIC_MISMATCH`, no G1-specific.
+
+**Boundary:** esta fase diagnostica, no corrige. G1.GATE conserva `NEEDS_REVIEW / NO PROMOTION`; default legacy, G1 utility, G2 y H permanecen sin autorización. Una remediation requeriría contrato y revisión humana separados.
+
 **NEXT CANDIDATE / NOT_AUTHORIZED.** Sólo tras revisión humana podría congelar un eventual A/B con control/treatment, métricas, stopping criteria y rollback. No existe toggle, callsite productivo ni experimento activo.
 
 ## Phase G1 — Interior Relation Semantics A/B

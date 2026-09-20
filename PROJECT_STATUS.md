@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. G1.GATE cerró **COMPLETE / NEEDS_REVIEW**: el treatment research-only fue mecánicamente aislado, pero introdujo nueve violaciones hard atribuibles y no puede promoverse. No existe sucesora autorizada.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.CAUSAL cerró **COMPLETE / OUTCOME A / NO REMEDIATION**: identificó un mismatch general entre beat decimal latente y milisegundo canónico, pero G1.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** y no existe sucesora autorizada.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -27,6 +27,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | G1.0 — Interior LN Relation Feasibility / Shadow | **COMPLETE — OUTCOME A / BEHAVIOR NOT AUTHORIZED** | Ninguno; censo exacto original-only, holdouts, alternatives y attrition de gates actuales. |
 | G1.DESIGN — Interior Relation Admission Contract / Shadow | **COMPLETE — READY / RECERTIFIED / BEHAVIOR NOT AUTHORIZED** | Ninguno; evalúa membership exacta del candidate-builder, no placements post-geometry. |
 | G1.GATE — Interior Relation Admission Runtime | **COMPLETE — NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment explícito; 9 violaciones hard atribuibles activaron stop. Default intacto. |
+| SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics | **COMPLETE — OUTCOME A / NO REMEDIATION** | Ninguno; explica 9/9 treatment-only y 200/200 controles mediante replay exacto. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -118,6 +119,12 @@ La policy opt-in `g1-interior-relation-admission.1` insertó la mapping congelad
 
 El snapshot final marcó nueve casos treatment-only inicialmente no atribuibles. Cuatro ejecuciones con SAFETY.PROV mutation-level enlazaron los nueve `TapOnHeldLongNote` a cambios downstream posteriores a la primera supresión del gate. Quedaron 9 atribuibles y 0 no atribuibles. Esto satisface el stop condition y fuerza **NEEDS_REVIEW / NO PROMOTION**. G1 utility, G2, H, UI y defaults permanecen fuera de alcance.
 
+### Resultado SAFETY.CAUSAL
+
+El replay completo enlazó cada una de las nueve violaciones treatment-only y las 200 condiciones control a un tap generado que placement aceptó después de una LN generada. En los 209 casos la LN conserva un `EndBeat` decimal apenas menor al beat del tap, aunque ambos ya materializan al mismo milisegundo. `LaneGeometryIndex` y HardValidity usan el mismo operador inclusivo; difieren los valores observados. No hubo source-pre-existing, stale geometry, cambio de serialización ni caso no atribuible.
+
+La instrumentación inicial reveló cuatro transiciones omitidas en dos traces G1 y se corrigió el límite de `StateBefore` sin modificar bytes, RNG, findings ni generación. Las ocho traces finales validan. La clasificación científica es `LEGACY_GENERAL_CAUSE_FOUND` + `ORACLE_OR_SEMANTIC_MISMATCH_FOUND`. No se implementó remediation y el estado de G1.GATE no cambia.
+
 ## Qué afecta realmente la generación
 
 La policy legacy sigue tomando decisiones mediante Bernoulli por oportunidad, factores manuales de chord/contexto, weights LN por distancia y afinidad, gap local con fallback, selección ponderada de forma y lane legal uniforme. Los toggles experimentales documentados sí pueden alterar el resultado cuando se activan o desactivan.
@@ -206,7 +213,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **710 passed, 0 failed, 0 skipped** tras G1.GATE; el baseline de entrada tenía 703.
+- `dotnet test -c Release`: **723 passed, 0 failed, 0 skipped** tras SAFETY.CAUSAL; el baseline de entrada tenía 710.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -229,7 +236,7 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 `F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. G1.GATE cerró **NEEDS_REVIEW / NO PROMOTION**. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. No se propone una fase siguiente hasta revisión humana del fallo atribuible.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: G1.GATE — COMPLETE — OUTCOME NEEDS_REVIEW<br>
+Current phase: SAFETY.CAUSAL — COMPLETE — OUTCOME A<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -237,10 +244,10 @@ Next behavioral authorization: N/A<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
-Behavior change: true<br>
+Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 710 passed / 0 failed / 0 skipped
+Tests: 723 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

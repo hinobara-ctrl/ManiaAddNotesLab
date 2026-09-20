@@ -35,11 +35,12 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **G1.0 — COMPLETE, OUTCOME A, RECERTIFIED, SHADOW ONLY:** censó relaciones interiores completas y ahora audita independientemente el donor set con bad controls adversariales; C11 mantiene cero leakage real y los mismos agregados.
 - **G1.DESIGN — COMPLETE, READY, RECERTIFIED, SHADOW ONLY:** membership exacta reproducida sobre 4.226/4.226 shapes del candidate-builder; 133 son members hipotéticos, no placements post-geometry ni efectos conductuales. La API es estructuralmente RNG-free y no existe selector.
 - **G1.GATE — COMPLETE, NEEDS_REVIEW, NO PROMOTION:** el treatment runtime congelado suprimió 889/1.006 propuestas sin RNG/reroll, pero SAFETY.PROV atribuyó nueve `TapOnHeldLongNote` nuevos a efectos downstream; se activó el stop condition.
+- **SAFETY.CAUSAL — COMPLETE, OUTCOME A, FORENSICS ONLY:** el replay exacto demuestra que los 9 treatment-only y los 200 controles legacy comparten un mismatch entre el `EndBeat` decimal latente usado por placement y el beat reconstruido desde milisegundos usado por HardValidity. Causa encontrada; remediation y promoción no autorizadas.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE existe sólo como treatment research explícito y no está expuesto en CLI/Web. Su resultado prohíbe promoción; G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: G1.GATE — COMPLETE — OUTCOME NEEDS_REVIEW<br>
+Current phase: SAFETY.CAUSAL — COMPLETE — OUTCOME A<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -47,10 +48,10 @@ Next behavioral authorization: N/A<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
-Behavior change: true<br>
+Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 710 passed / 0 failed / 0 skipped
+Tests: 723 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

@@ -1,7 +1,7 @@
 # Behavior Decision Audit
 
 Estado: inventario vivo; conserva la historia de Phase A y sus refinamientos posteriores.
-Última actualización: 2026-09-13.
+Última actualización: 2026-09-19.
 Alcance: Core, parser/writer, CLI, Web y política experimental vigente.
 
 Esta auditoría no elimina ni modifica decisiones. Identifica números y elecciones no numéricas que pueden afectar el resultado para que futuras sustituciones sean versionadas y atribuibles.
@@ -131,3 +131,6 @@ Una policy contract no es una verdad física ni de formato. Un `HARD_VALIDITY_IN
 El inventario contiene **105 decisiones**: 3 `USER_INTENT`, 6 `HARD_VALIDITY_INVARIANT`, 9 `CURRENT_POLICY_CONTRACT`, 2 `FUTURE_POLICY_CONTRACT`, 49 `MAPPER_DERIVED_CANDIDATE`, 25 `IMPLEMENTATION_ONLY` y 11 `OPEN_DESIGN_DECISION`. G1.GATE probó la membership como treatment post-geometry, pero cerró NEEDS_REVIEW por nueve violaciones atribuibles. Ninguna policy mapper-derived gobierna el selector normal; el default continúa legacy.
 
 Se debe actualizar al introducir cada policy version. La reclasificación distingue validez inderrotable de semántica conductual revisable; no modifica generación. Para la futura policy mapper-derived por defecto, el criterio final es `Active manually sourced style decisions = 0`. Cualquier `OPEN_DESIGN_DECISION` estilística debe resolverse o quedar inactiva, y `IMPLEMENTATION_ONLY` requiere evidencia de neutralidad estilística.
+## SAFETY.CAUSAL — causalidad de HardValidity downstream
+
+Estado: **COMPLETE — OUTCOME A / NO REMEDIATION**. La fase observacional prueba que 9/9 condiciones treatment-only G1.GATE y 200/200 condiciones control legacy comparten el mismatch `EndBeat` decimal latente frente a beat reconstruido desde milisegundos. No hay cambio de operador, stale cache ni deriva de serialización. Esto explica el mecanismo pero no autoriza cambiar placement, HardValidity, candidate construction ni defaults. G1.GATE sigue `NEEDS_REVIEW / NO PROMOTION`; G1 utility, G2 y H siguen `NOT_AUTHORIZED`.

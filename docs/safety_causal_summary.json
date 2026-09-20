@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "safety-causal-downstream-hard-validity.1",
+  "phase": "SAFETY.CAUSAL",
+  "outcome": "A",
+  "scientificClassification": [
+    "LEGACY_GENERAL_CAUSE_FOUND",
+    "ORACLE_OR_SEMANTIC_MISMATCH_FOUND"
+  ],
+  "repositoryEntryHead": "f54c3be692fe4f9bfeffe2dc892297e61cf327c1",
+  "contractSha256": "300E879BCB479F77A704BFFB89BF304D9D04ECC556067F921C49C45E4E8FCB84",
+  "corpus": {
+    "charts": 11,
+    "seeds": "1-20",
+    "pairs": 220
+  },
+  "treatment": {
+    "runs": 4,
+    "hardValidityViolations": 9,
+    "treatmentDownstream": 9,
+    "unattributable": 0
+  },
+  "control": {
+    "hardValidityConditions": 200,
+    "classifiedRows": 200,
+    "sourcePreExisting": 0,
+    "legacyDirect": 0,
+    "legacyDownstream": 200,
+    "articulationDerived": 0,
+    "transformationDerived": 0,
+    "serializationDerived": 0,
+    "unattributable": 0
+  },
+  "mechanism": {
+    "placementAuthority": "LaneGeometryIndex.CanPlaceTap",
+    "placementPredicate": "previous.EndBeat \u003E= tapBeat blocks",
+    "oraclePredicate": "materialized previous.EndBeat \u003E= materialized tapBeat blocks",
+    "endpointOperatorDiffers": false,
+    "geometryCacheStale": false,
+    "hiddenStateDifference": false,
+    "serializationChangesCoordinates": false,
+    "firstSemanticDivergence": "BuildReleaseCandidates preserves intended EndBeat when ToTimeMilliseconds(intendedEndBeat) equals selected EndTime; CurrentGeometry then compares that latent decimal while canonical final HardValidity normalizes both endpoints from integer milliseconds."
+  },
+  "validation": {
+    "instrumentedRuns": 39,
+    "nonInterferenceFailures": 0,
+    "traceValidationFailures": 0,
+    "recorderRngCalls": 0,
+    "deterministicRepeat": true
+  },
+  "behavior": {
+    "behaviorChange": false,
+    "defaultBehaviorChange": false,
+    "generationSemanticsChange": false,
+    "defaultPolicy": "legacy-experimental.1",
+    "remediationImplemented": false
+  },
+  "authorization": {
+    "g1Gate": "COMPLETE_NEEDS_REVIEW_NO_PROMOTION",
+    "g1BehavioralUtility": "NOT_AUTHORIZED",
+    "g2": "NOT_AUTHORIZED",
+    "h": "NOT_AUTHORIZED",
+    "nextPhase": "NOT_AUTHORIZED"
+  }
+}

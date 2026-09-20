@@ -1,0 +1,42 @@
+{
+  "contract": {
+    "schemaVersion": "safety-causal-downstream-hard-validity.1",
+    "phase": "SAFETY.CAUSAL",
+    "humanAuthorization": "AUTHORIZED_DOWNSTREAM_HARD_VALIDITY_CAUSALITY_FORENSICS",
+    "repositoryEntryHead": "f54c3be692fe4f9bfeffe2dc892297e61cf327c1",
+    "researchQuestion": "Why can runtime placement accept a mutation that canonical HardValidity later proves introduced TapOnHeldLongNote?",
+    "treatmentCases": [
+      "02D9...E3EB seeds 9,11,17",
+      "20651...C788 seed 11"
+    ],
+    "controlScope": "All 200 legacy control hard-validity conditions in frozen G1.GATE C11 seeds 1-20",
+    "causalTaxonomy": [
+      "ArticulationDerived",
+      "LegacyDirect",
+      "LegacyDownstream",
+      "SerializationDerived",
+      "SourcePreExisting",
+      "TransformationDerived",
+      "TreatmentDownstream",
+      "Unattributable"
+    ],
+    "provenanceSemantics": [
+      "Exact mutation identity and pre/post GenerationState are required",
+      "Temporal-after is not causal downstream",
+      "Full GenerationState reconvergence clears G1 ancestry",
+      "Missing evidence is Unattributable"
+    ],
+    "reconvergenceSemantics": "Full GenerationState equality clears ancestry; geometry-only or RNG-only equality does not",
+    "noRemediation": true,
+    "instrumentationMustNotInterfere": true,
+    "deterministicReplayRequired": true,
+    "sourcePreExistingMustRemainDistinct": true,
+    "placementOracleComparisonRequired": true,
+    "defaultPolicy": "legacy-experimental.1",
+    "defaultBehaviorChanged": false,
+    "generationSemanticsChanged": false,
+    "nextPhaseAuthorization": "NOT_AUTHORIZED"
+  },
+  "canonicalSha256": "300E879BCB479F77A704BFFB89BF304D9D04ECC556067F921C49C45E4E8FCB84",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; frozen ordered arrays; no timestamps or machine paths"
+}

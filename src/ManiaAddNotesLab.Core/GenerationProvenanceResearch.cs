@@ -418,7 +418,8 @@ public static class ProvenancePairComparatorResearch
                 return new(common, first, divergence, downstream.ToImmutable(), temporal.ToImmutable(),
                     reconvergence.ToImmutable(), false,
                     "Geometry matched but complete generation-state lineage was unavailable; attribution abstains.");
-            if (!lineageActive && !Equivalent(control[i], treatment[i])) lineageActive = true;
+            // A fully reconverged lineage stays cleared. A later difference needs its own
+            // independently governed divergence identity; it cannot inherit this one.
         }
         return new(common, first, divergence, downstream.ToImmutable(), temporal.ToImmutable(),
             reconvergence.ToImmutable(), true,

@@ -4,6 +4,36 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 3 && args[0] == "safety-causal-publish-existing")
+{
+    SafetyCausalForensicRunner.PublishExistingCases(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));
+    Console.WriteLine("SAFETY.CAUSAL public case artifacts refreshed");
+    return;
+}
+
+if (args.Length == 2 && args[0] == "safety-causal-validate-traces")
+{
+    var failures = SafetyCausalForensicRunner.ValidateExistingTraces(Path.GetFullPath(args[1]));
+    Console.WriteLine($"SAFETY.CAUSAL trace validation failures={failures}");
+    Environment.ExitCode = failures == 0 ? 0 : 1;
+    return;
+}
+
+if (args.Length == 2 && args[0] == "safety-causal-contract")
+{
+    Console.WriteLine($"SAFETY.CAUSAL contract={SafetyCausalForensicRunner.WriteContract(Path.GetFullPath(args[1]))}");
+    return;
+}
+
+if (args.Length == 4 && args[0] == "safety-causal-run")
+{
+    var outcome = SafetyCausalForensicRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]));
+    Console.WriteLine($"SAFETY.CAUSAL outcome={outcome}");
+    Environment.ExitCode = outcome == "A" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 5 && args[0] == "g1-gate-forensic")
 {
     G1GateRuntimeCertificationRunner.Forensic(Path.GetFullPath(args[1]), args[2],

@@ -97,6 +97,36 @@ public sealed class PhaseG1GateRuntimeTests
     }
 
     [Fact]
+    public void G1AbstainProvenanceIsContinuousAndNonInterfering()
+    {
+        var chart = Fixture();
+        var options = Options();
+        var profile = MapperEvidenceProfileBuilder.Build(chart);
+        var configuration = G1GateRuntimeConfiguration.Frozen(G1GateEvidenceIndex.Build(chart), "fixture");
+        for (var seed = 1; seed <= 64; seed++)
+        {
+            var cleanRng = new RecordingRandom(seed);
+            var observedRng = new RecordingRandom(seed);
+            var clean = new AddNotesEngine().Apply(chart, options, cleanRng, profile, null, null, configuration);
+            var recorder = new GenerationProvenanceRecorderResearch(
+                GenerationProvenanceIdentityResearch.Create(profile.ChartFingerprint, seed, options,
+                    G1GatePolicyVersions.Treatment, []));
+            var observed = new AddNotesEngine().Apply(chart, options, observedRng, profile, null, recorder,
+                configuration);
+            if (!observed.G1GateDiagnostics!.DirectDecisions.Any(x => !x.Admitted)) continue;
+
+            Assert.Equal(OsuBeatmap.Write(clean.ModifiedChart, options.Chance),
+                OsuBeatmap.Write(observed.ModifiedChart, options.Chance));
+            Assert.Equal(cleanRng.Transcript, observedRng.Transcript);
+            Assert.Equal(0, recorder.RecorderRngCalls);
+            var validation = GenerationProvenanceTraceValidatorResearch.Validate(recorder.Build());
+            Assert.True(validation.IsValid, string.Join(Environment.NewLine, validation.Errors));
+            return;
+        }
+        Assert.Fail("The exact fixture never reached a G1 abstention for provenance validation.");
+    }
+
+    [Fact]
     public void EvidenceIsOriginalOnlyChartLocalAndCacheCannotLeak()
     {
         var chart = Fixture();

@@ -93,3 +93,12 @@ Los outputs `.osu`, CSV de ejecución y baselines grandes permanecen como artefa
 ## Fixtures
 
 - [samples/README](samples/README.md) — descripción de los `.osu` sintéticos pequeños incluidos para pruebas reproducibles.
+## SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics
+
+- `docs/PHASE_SAFETY_CAUSAL_DOWNSTREAM_HARD_VALIDITY.md` — informe causal completo, mecanismo, minimal counterexample, bad controls y remediations candidatas no implementadas.
+- `docs/safety_causal_downstream_hard_validity_contract.json` — contrato congelado, SHA-256 `300E879BCB479F77A704BFFB89BF304D9D04ECC556067F921C49C45E4E8FCB84`.
+- `docs/safety_causal_summary.json` — outcome, conteos, mecanismo, no-interferencia y límites de autoridad.
+- `docs/safety_causal_treatment_violations.csv` / `docs/safety_causal_treatment_violations.json` — nueve casos treatment-only con mutación y estado exactos.
+- `docs/safety_causal_control_classification.csv` / `docs/safety_causal_control_classification.json` — 200 condiciones control clasificadas individualmente.
+- `docs/safety_causal_placement_oracle_comparison.csv` — representación y resultado placement/oracle por caso.
+- `docs/safety_causal_family_summary.csv` y `docs/safety_causal_cases.json` — agregados por familia y conjunto machine-readable completo.

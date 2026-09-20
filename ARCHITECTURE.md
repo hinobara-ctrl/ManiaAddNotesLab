@@ -200,6 +200,12 @@ La dependencia nunca se invierte: provenance y safety research no devuelven deci
 
 El recorder modela `DecisionEvent` por separado de `MutationEvent`, porque una decisión puede abstenerse o producir un replacement compuesto. Articulación conserva stage y parent; causal origin es otra dimensión. Serialización se enlaza en research-side mediante tuple exacta y no añade IDs al `.osu`. Esta infraestructura cerró SAFETY.PROV Outcome A, pero no tiene autoridad conductual. **ROADMAP REVIEW REQUIRED** antes de cualquier integración futura.
 
+### SAFETY.CAUSAL: autoridad de placement frente a oracle
+
+`DownstreamHardValidityCausalityResearch` reconstruye la geometría inmediatamente anterior a una mutación desde SourceState más el prefijo exacto de `MutationEvent`. `LaneGeometryIndex.InspectTapLane` expone sólo para research los vecinos y la regla realmente consultados, sin mutar geometría ni consumir RNG. La comparación separa beat decimal interno, coordenada entera materializada y beat canónico reconstruido.
+
+El hallazgo arquitectónico es una representación dual: `BuildReleaseCandidates` puede conservar `intendedEndBeat` aunque el `EndTime` ya haya redondeado al mismo milisegundo de un tap posterior. Placement opera sobre el decimal; HardValidity sobre el milisegundo normalizado. Ambos usan igualdad inclusiva. El escritor conserva las coordenadas existentes y no introduce el conflicto. SAFETY.CAUSAL no unifica estas autoridades ni cambia conducta.
+
 ## Invariantes
 
 - El archivo source no se sobrescribe.
