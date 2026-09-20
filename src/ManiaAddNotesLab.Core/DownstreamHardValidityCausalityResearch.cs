@@ -275,6 +275,53 @@ public sealed record SafetyCausalContract(string SchemaVersion, string Phase, st
 public sealed record SafetyCausalContractArtifact(SafetyCausalContract Contract, string CanonicalSha256,
     string Canonicalization);
 
+public sealed record SafetyCausalReplayArtifactComparison(
+    bool Equivalent,
+    ImmutableArray<string> MissingArtifacts,
+    ImmutableArray<string> DifferentArtifacts);
+
+/// <summary>
+/// Research-only byte comparison used by the independent SAFETY.CAUSAL replay certification.
+/// The artifact list is centralized here so the runner and its lower-level contract test cannot drift.
+/// </summary>
+public static class SafetyCausalReplayArtifactResearch
+{
+    public static ImmutableArray<string> CanonicalArtifactFileNames { get; } =
+    [
+        "safety_causal_treatment_violations.csv",
+        "safety_causal_treatment_violations.json",
+        "safety_causal_control_classification.csv",
+        "safety_causal_control_classification.json",
+        "safety_causal_placement_oracle_comparison.csv",
+        "safety_causal_cases.json",
+        "safety_causal_family_summary.csv",
+        "safety_causal_summary.json"
+    ];
+
+    public static SafetyCausalReplayArtifactComparison CompareDirectories(string first, string second)
+    {
+        var missing = ImmutableArray.CreateBuilder<string>();
+        var different = ImmutableArray.CreateBuilder<string>();
+        foreach (var relative in CanonicalArtifactFileNames)
+        {
+            var firstPath = Path.Combine(first, relative);
+            var secondPath = Path.Combine(second, relative);
+            if (!File.Exists(firstPath) || !File.Exists(secondPath))
+            {
+                missing.Add(relative);
+                continue;
+            }
+
+            var firstHash = SHA256.HashData(File.ReadAllBytes(firstPath));
+            var secondHash = SHA256.HashData(File.ReadAllBytes(secondPath));
+            if (!firstHash.AsSpan().SequenceEqual(secondHash)) different.Add(relative);
+        }
+
+        return new(missing.Count == 0 && different.Count == 0,
+            missing.ToImmutable(), different.ToImmutable());
+    }
+}
+
 public static class SafetyCausalContractResearch
 {
     private static readonly JsonSerializerOptions Canonical = new()

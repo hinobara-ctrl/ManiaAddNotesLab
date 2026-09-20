@@ -28,7 +28,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | G1.DESIGN — Interior Relation Admission Contract / Shadow | **COMPLETE — READY / RECERTIFIED / BEHAVIOR NOT AUTHORIZED** | Ninguno; evalúa membership exacta del candidate-builder, no placements post-geometry. |
 | G1.GATE — Interior Relation Admission Runtime | **COMPLETE — NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment explícito; 9 violaciones hard atribuibles activaron stop. Default intacto. |
 | SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics | **COMPLETE — OUTCOME A / NO REMEDIATION** | Ninguno; explica 9/9 treatment-only y 200/200 controles mediante replay exacto. |
-| SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design | **FUTURE / NOT_AUTHORIZED** | No implementada; remediación conductual pendiente. |
+| SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design | **FUTURE / NOT_AUTHORIZED / RESEARCH ONLY** | Ninguno; sólo diseñaría una remediación, sin modificar runtime. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -214,7 +214,8 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 
 - `dotnet restore`: PASS.
 - `dotnet build -c Release`: PASS, 0 errores.
-- `dotnet test -c Release`: **723 passed, 0 failed, 0 skipped** tras SAFETY.CAUSAL; el baseline de entrada tenía 710.
+- Validación final histórica de SAFETY.CAUSAL: **723 passed, 0 failed, 0 skipped**; el baseline de entrada de esa fase tenía 710.
+- Endurecimiento de cierre actual: **727 passed, 0 failed, 0 skipped**, sin cambio de output, RNG ni semántica de generación.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -234,7 +235,7 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. G1.GATE cerró **NEEDS_REVIEW / NO PROMOTION**. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. No se propone una fase siguiente hasta revisión humana del fallo atribuible.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. G1.GATE cerró **NEEDS_REVIEW / NO PROMOTION**. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. La dependencia futura correcta es SAFETY.CAUSAL → diseño research-only → implementación/gate de remediación con autorización separada → recertificación runtime/safety → reconsideración humana de G1.GATE → sólo entonces, y con otra autorización, G1 utility. No se propone una fase siguiente accionable.
 
 <!-- PROJECT-STATE:BEGIN -->
 Current phase: SAFETY.CAUSAL — COMPLETE — OUTCOME A<br>
@@ -248,7 +249,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 723 passed / 0 failed / 0 skipped
+Tests: 727 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

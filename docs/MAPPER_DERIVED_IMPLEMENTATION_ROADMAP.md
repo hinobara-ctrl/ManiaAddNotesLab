@@ -1125,12 +1125,12 @@ C11 enumeró 4.226 shapes pre-geometry sobre 298 opportunities, todas representa
 
 ## Phase SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design
 
-<!-- PHASE-CONTRACT:SAFETY.REMEDIATION.DESIGN;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->
+<!-- PHASE-CONTRACT:SAFETY.REMEDIATION.DESIGN;kind=ResearchShadow;behaviorChange=false;authorization=NOT_AUTHORIZED -->
 
-**FUTURE / NOT_AUTHORIZED.** Diseñar y experimentar con una remediación para el mismatch semántico descubierto por SAFETY.CAUSAL. No existe contrato, toggle ni implementación autorizada actualmente.
+**FUTURE / NOT_AUTHORIZED / RESEARCH ONLY.** Diseñar una remediación para el mismatch semántico descubierto por SAFETY.CAUSAL, sin modificar runtime ni ejecutar un treatment. No existe contrato, toggle ni implementación autorizada actualmente. Una futura implementación/gate de remediación sería un paso conductual separado, requeriría autorización propia y debería completar recertificación runtime/safety antes de cualquier reconsideración humana de G1.GATE.
 
 ## Phase G1 — Interior Relation Semantics A/B
 
 <!-- PHASE-CONTRACT:G1;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->
 
-**FUTURE / NOT_AUTHORIZED.** No existe policy, toggle, CLI/Web path ni A/B activo. Requiere el cierre previo de un SAFETY.REMEDIATION.DESIGN autorizado y revisión humana separada.
+**FUTURE / NOT_AUTHORIZED.** No existe policy, toggle, CLI/Web path ni A/B activo. SAFETY.REMEDIATION.DESIGN por sí solo no habilita esta fase: antes se requieren una implementación/gate de remediación autorizada por separado, recertificación runtime/safety y reconsideración humana de G1.GATE; después G1 todavía requeriría autorización independiente.

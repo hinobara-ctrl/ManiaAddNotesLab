@@ -214,7 +214,7 @@ public sealed class PhaseC11WitnessAgreementTests
     }
 
     [Fact]
-    public void HistoricalPhaseCSnapshotsRemainByteExact()
+    public void HistoricalPhaseCSerializationMatchesCanonicalWindowsLineEndings()
     {
         var root = AppContext.BaseDirectory;
         var cases = new[]
@@ -237,9 +237,15 @@ public sealed class PhaseC11WitnessAgreementTests
         {
             var chart = OsuBeatmap.Parse(File.ReadAllText(Path.Combine(root, relative)));
             var output = new AddNotesEngine().Apply(chart, options, new SeededRandom(seed));
-            var bytes = Encoding.UTF8.GetBytes(OsuBeatmap.Write(output.ModifiedChart, chance).Replace("\n", "\r\n").Replace("\r\r\n", "\r\n"));
+            var bytes = CanonicalWindowsSerializationBytes(OsuBeatmap.Write(output.ModifiedChart, chance));
             Assert.Equal(expected, Convert.ToHexString(SHA256.HashData(bytes)));
         }
+    }
+
+    private static byte[] CanonicalWindowsSerializationBytes(string serialization)
+    {
+        var canonicalLf = serialization.Replace("\r\n", "\n").Replace('\r', '\n');
+        return Encoding.UTF8.GetBytes(canonicalLf.Replace("\n", "\r\n"));
     }
 
     private static ReleaseCandidateResearchBuild Build(ManiaObject source, ManiaObject donor)

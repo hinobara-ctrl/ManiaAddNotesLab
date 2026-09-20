@@ -32,7 +32,7 @@
     { "id": "G1.DESIGN", "name": "Interior Relation Admission Contract / Shadow", "status": "COMPLETE", "outcome": "READY", "behaviorChange": false, "report": "docs/PHASE_G1_DESIGN_INTERIOR_RELATION_ADMISSION.md", "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
     { "id": "G1.GATE", "name": "Interior Relation Admission Runtime", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_G1_GATE_INTERIOR_RELATION_ADMISSION_RUNTIME.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "SAFETY.CAUSAL", "name": "Downstream Hard-Validity Causality Forensics", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_SAFETY_CAUSAL_DOWNSTREAM_HARD_VALIDITY.md", "authorization": "RESEARCH_COMPLETED_NO_REMEDIATION" },
-    { "id": "SAFETY.REMEDIATION.DESIGN", "name": "Hard-Validity Remediation Design", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
+    { "id": "SAFETY.REMEDIATION.DESIGN", "name": "Hard-Validity Remediation Design", "status": "FUTURE", "outcome": null, "behaviorChange": false, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "name": "Causal Articulation A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" }
@@ -52,7 +52,7 @@
     { "id": "G1.DESIGN", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
     { "id": "G1.GATE", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "SAFETY.CAUSAL", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_NO_REMEDIATION" },
-    { "id": "SAFETY.REMEDIATION.DESIGN", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
+    { "id": "SAFETY.REMEDIATION.DESIGN", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
     { "id": "G1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" }
@@ -61,7 +61,7 @@
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 723, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 727, "failed": 0, "skipped": 0 },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
@@ -117,6 +117,14 @@
     "scientificClassification": ["LEGACY_GENERAL_CAUSE_FOUND", "ORACLE_OR_SEMANTIC_MISMATCH_FOUND"],
     "remediationImplemented": false,
     "successorAuthorized": false
+  },
+  "safetyCausalClosureHardening": {
+    "status": "PASS",
+    "behaviorChange": false,
+    "originalPhaseValidationPassed": 723,
+    "closureHardeningValidationPassed": 727,
+    "scientificResultChanged": false,
+    "remediationImplemented": false
   },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [

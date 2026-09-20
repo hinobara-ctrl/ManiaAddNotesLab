@@ -86,26 +86,8 @@ internal static class SafetyCausalForensicRunner
         RunInternal(corpusRoot, runA, runA, out _);
         RunInternal(corpusRoot, runB, runB, out _);
 
-        var independentReplayDeterministic = true;
-        var filesToCompare = new[] {
-            "safety_causal_treatment_violations.csv", "safety_causal_treatment_violations.json",
-            "safety_causal_control_classification.csv", "safety_causal_control_classification.json",
-            "safety_causal_placement_oracle_comparison.csv", "safety_causal_cases.json",
-            "safety_causal_family_summary.csv", "safety_causal_summary.json"
-        };
-        foreach(var f in filesToCompare) {
-            var fileA = Path.Combine(runA, f);
-            var fileB = Path.Combine(runB, f);
-            if (!File.Exists(fileA) || !File.Exists(fileB)) {
-                independentReplayDeterministic = false;
-                break;
-            }
-            if (Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(fileA))) !=
-                Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(fileB)))) {
-                independentReplayDeterministic = false;
-                break;
-            }
-        }
+        var independentReplayDeterministic = SafetyCausalReplayArtifactResearch
+            .CompareDirectories(runA, runB).Equivalent;
         
         var passed = RunInternal(corpusRoot, publicDirectory, artifactDirectory, out _, independentReplayDeterministic);
         return passed;

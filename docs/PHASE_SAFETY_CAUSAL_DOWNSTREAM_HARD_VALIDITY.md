@@ -116,6 +116,7 @@ The full runner regenerates the treatment CSV/JSON, control classification CSV/J
 - Full forensic certification: Outcome A; 220 controls; 39 affected control runs instrumented; 4 treatment pairs; 209 case rows; 0 non-interference failures; 0 trace-validation failures; recorder RNG calls 0; deterministic repeat true.
 - Critical trace replay: all eight control/treatment traces valid after the instrumentation boundary correction.
 - Final verification: restore PASS with only `NU1900`; Release build PASS; **723/723 tests**, 0 failed, 0 skipped; DocConsistency PASS; public artifact republication byte-identical; `git diff --check` PASS.
+- Closure-hardening verification at reviewed base `3d4dc5c3c218b770cfdca71cfe5207abd40cf529`: **727/727 tests**, 0 failed, 0 skipped; the replay comparator, instrumentation non-interference and G1 pre-state boundaries now exercise production paths. This is a later validation record and does not rewrite the original 723/723 phase closure.
 - Repository hygiene: the pre-existing untracked `docs/ASTRA_ROADMAP_V2_PROPOSAL.md` was not read, edited or included. No staging, commit, push, tag or release was performed.
 
 ## Closure and authority
