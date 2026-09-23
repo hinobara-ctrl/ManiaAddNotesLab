@@ -30,6 +30,19 @@ public sealed class LaneGeometryIndex
             "CanPlaceTap checks only previous.EndBeat >= beat and next.StartBeat == beat in current geometry.");
     }
 
+    /// <summary>Research-only collision inspection using the exact LN predicate with zero spacing.</summary>
+    public LnLaneGeometryInspection InspectLnLane(int laneIndex, decimal startBeat, decimal endBeat)
+    {
+        if (laneIndex < 0 || laneIndex >= _lanes.Length)
+            return new(laneIndex, startBeat, endBeat, false, GeometryHardViolationKind.OutsideLane);
+        if (endBeat <= startBeat)
+            return new(laneIndex, startBeat, endBeat, false, GeometryHardViolationKind.InvalidBeatDuration);
+        var rejection = GetLnRejection(laneIndex, startBeat, endBeat, 0, new AddNotesStatistics());
+        return new(laneIndex, startBeat, endBeat, rejection == LnRejection.None,
+            rejection == LnRejection.Overlap ? GeometryHardViolationKind.LongNoteOverlap
+                : GeometryHardViolationKind.None);
+    }
+
     public int CountOccupiedColumns(decimal beat, AddNotesStatistics statistics)
     {
         var count = 0;
@@ -284,3 +297,5 @@ public sealed class LaneGeometryIndex
 
 public sealed record TapLaneGeometryInspection(int Lane, decimal Beat, TimedManiaObject? Previous,
     TimedManiaObject? Next, bool IsLegal, string Rule);
+public sealed record LnLaneGeometryInspection(int Lane, decimal StartBeat, decimal EndBeat,
+    bool IsLegal, GeometryHardViolationKind Violation);

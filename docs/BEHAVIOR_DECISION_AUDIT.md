@@ -134,3 +134,9 @@ Se debe actualizar al introducir cada policy version. La reclasificación distin
 ## SAFETY.CAUSAL — causalidad de HardValidity downstream
 
 Estado: **COMPLETE — OUTCOME A / NO REMEDIATION**. La fase observacional prueba que 9/9 condiciones treatment-only G1.GATE y 200/200 condiciones control legacy comparten el mismatch `EndBeat` decimal latente frente a beat reconstruido desde milisegundos. No hay cambio de operador, stale cache ni deriva de serialización. Esto explica el mecanismo pero no autoriza cambiar placement, HardValidity, candidate construction ni defaults. G1.GATE sigue `NEEDS_REVIEW / NO PROMOTION`; G1 utility, G2 y H siguen `NOT_AUTHORIZED`.
+
+## SAFETY.REMEDIATION.DESIGN — autoridad canónica de geometría
+
+Estado: **COMPLETE — READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION**. La decisión de diseño separa `candidate-intent/latent evidence` de `playable geometry`: integer milliseconds son la coordenada durable y el beat reconstruido desde esos enteros es la única autoridad beat-space para collision. El diseño preferido es un modelo jugable canónico compartido por placement y HardValidity; los campos exactos de G1 no se canonicalizan.
+
+El shadow sobre 307.167 proposals conservó output/RNG del generador y midió 215 accepts legacy que una autoridad canónica rechazaría: los 209 conocidos más 6 treatment adicionales, todos `TapOnHeldLongNote`. Es una medición directa, no una estimación de output o densidad final. No existe toggle productivo ni gate de remediación autorizado.

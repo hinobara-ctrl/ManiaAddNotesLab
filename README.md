@@ -36,12 +36,12 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **G1.DESIGN — COMPLETE, READY, RECERTIFIED, SHADOW ONLY:** membership exacta reproducida sobre 4.226/4.226 shapes del candidate-builder; 133 son members hipotéticos, no placements post-geometry ni efectos conductuales. La API es estructuralmente RNG-free y no existe selector.
 - **G1.GATE — COMPLETE, NEEDS_REVIEW, NO PROMOTION:** el treatment runtime congelado suprimió 889/1.006 propuestas sin RNG/reroll, pero SAFETY.PROV atribuyó nueve `TapOnHeldLongNote` nuevos a efectos downstream; se activó el stop condition.
 - **SAFETY.CAUSAL — COMPLETE, OUTCOME A, FORENSICS ONLY:** el replay exacto demuestra que los 9 treatment-only y los 200 controles legacy comparten un mismatch entre el `EndBeat` decimal latente usado por placement y el beat reconstruido desde milisegundos usado por HardValidity. Causa encontrada; remediation y promoción no autorizadas.
-- **SAFETY.REMEDIATION.DESIGN — FUTURE, NOT_AUTHORIZED, RESEARCH ONLY:** sólo podrá diseñar una corrección; una implementación/gate conductual separada y una recertificación runtime/safety serán necesarias antes de reconsiderar G1.GATE.
+- **SAFETY.REMEDIATION.DESIGN — COMPLETE, READY_FOR_SEPARATE_REMEDIATION_GATE, RESEARCH ONLY:** seleccionó geometría jugable canónica compartida, cubrió en shadow los 209 casos conocidos y halló 6 deltas directos adicionales. No implementó la corrección; el gate conductual separado sigue sin autorización.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE existe sólo como treatment research explícito y no está expuesto en CLI/Web. Su resultado prohíbe promoción; G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: SAFETY.CAUSAL — COMPLETE — OUTCOME A<br>
+Current phase: SAFETY.REMEDIATION.DESIGN — COMPLETE — OUTCOME READY_FOR_SEPARATE_REMEDIATION_GATE<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -52,7 +52,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 727 passed / 0 failed / 0 skipped
+Tests: 738 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 13,
-  "lastUpdated": "2026-09-19",
+  "schemaVersion": 14,
+  "lastUpdated": "2026-09-20",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -32,7 +32,7 @@
     { "id": "G1.DESIGN", "name": "Interior Relation Admission Contract / Shadow", "status": "COMPLETE", "outcome": "READY", "behaviorChange": false, "report": "docs/PHASE_G1_DESIGN_INTERIOR_RELATION_ADMISSION.md", "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
     { "id": "G1.GATE", "name": "Interior Relation Admission Runtime", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_G1_GATE_INTERIOR_RELATION_ADMISSION_RUNTIME.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "SAFETY.CAUSAL", "name": "Downstream Hard-Validity Causality Forensics", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_SAFETY_CAUSAL_DOWNSTREAM_HARD_VALIDITY.md", "authorization": "RESEARCH_COMPLETED_NO_REMEDIATION" },
-    { "id": "SAFETY.REMEDIATION.DESIGN", "name": "Hard-Validity Remediation Design", "status": "FUTURE", "outcome": null, "behaviorChange": false, "report": null, "authorization": "NOT_AUTHORIZED" },
+    { "id": "SAFETY.REMEDIATION.DESIGN", "name": "Hard-Validity Remediation Design", "status": "COMPLETE", "outcome": "READY_FOR_SEPARATE_REMEDIATION_GATE", "behaviorChange": false, "report": "docs/PHASE_SAFETY_REMEDIATION_DESIGN.md", "authorization": "RESEARCH_COMPLETED_NO_IMPLEMENTATION" },
     { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "name": "Causal Articulation A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" }
@@ -52,20 +52,20 @@
     { "id": "G1.DESIGN", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_BEHAVIOR_NOT_AUTHORIZED" },
     { "id": "G1.GATE", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "SAFETY.CAUSAL", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_NO_REMEDIATION" },
-    { "id": "SAFETY.REMEDIATION.DESIGN", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NOT_AUTHORIZED" },
+    { "id": "SAFETY.REMEDIATION.DESIGN", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_NO_IMPLEMENTATION" },
     { "id": "G1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" }
   ],
-  "currentPhase": "SAFETY.CAUSAL",
+  "currentPhase": "SAFETY.REMEDIATION.DESIGN",
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 727, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 738, "failed": 0, "skipped": 0 },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "SAFETY_CAUSAL_COMPLETE_NO_REMEDIATION_NO_SUCCESSOR_AUTHORIZED"
+    "currentBlockingRequirement": "SAFETY_REMEDIATION_DESIGN_COMPLETE_IMPLEMENTATION_GATE_NOT_AUTHORIZED"
   },
   "g10Recertification": {
     "status": "PASS",
@@ -125,6 +125,19 @@
     "closureHardeningValidationPassed": 727,
     "scientificResultChanged": false,
     "remediationImplemented": false
+  },
+  "safetyRemediationDesign": {
+    "status": "COMPLETE",
+    "outcome": "READY_FOR_SEPARATE_REMEDIATION_GATE",
+    "behaviorChange": false,
+    "contract": "docs/safety_remediation_design_contract.json",
+    "contractHash": "EFB31F2BF5026BE7353ACB30C15768389D077CC7244B0C91D66F8B6B6BD002F8",
+    "summary": "docs/safety_remediation_design_summary.json",
+    "preferredDesign": "SharedCanonicalPlayableGeometry",
+    "knownConditionsAddressed": 209,
+    "additionalDirectDeltas": 6,
+    "remediationImplemented": false,
+    "successorAuthorized": false
   },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },
   "masterDocuments": [

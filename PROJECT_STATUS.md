@@ -1,10 +1,10 @@
 # Project Status
 
-Última actualización: 2026-09-19. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
+Última actualización: 2026-09-20. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.CAUSAL cerró **COMPLETE / OUTCOME A / NO REMEDIATION**: identificó un mismatch general entre beat decimal latente y milisegundo canónico, pero G1.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** y no existe sucesora autorizada.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.DESIGN cerró **COMPLETE / READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION**: seleccionó geometría jugable canónica compartida y conservó los decimales latentes sólo como intención/evidencia. G1.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** y ninguna sucesora conductual está autorizada.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -28,7 +28,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | G1.DESIGN — Interior Relation Admission Contract / Shadow | **COMPLETE — READY / RECERTIFIED / BEHAVIOR NOT AUTHORIZED** | Ninguno; evalúa membership exacta del candidate-builder, no placements post-geometry. |
 | G1.GATE — Interior Relation Admission Runtime | **COMPLETE — NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment explícito; 9 violaciones hard atribuibles activaron stop. Default intacto. |
 | SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics | **COMPLETE — OUTCOME A / NO REMEDIATION** | Ninguno; explica 9/9 treatment-only y 200/200 controles mediante replay exacto. |
-| SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design | **FUTURE / NOT_AUTHORIZED / RESEARCH ONLY** | Ninguno; sólo diseñaría una remediación, sin modificar runtime. |
+| SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design | **COMPLETE — READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION** | Ninguno; shadow puro selecciona autoridad canónica compartida sin modificar runtime. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -126,6 +126,14 @@ El replay completo enlazó cada una de las nueve violaciones treatment-only y la
 
 La instrumentación inicial reveló cuatro transiciones omitidas en dos traces G1 y se corrigió el límite de `StateBefore` sin modificar bytes, RNG, findings ni generación. Las ocho traces finales validan. La clasificación científica es `LEGACY_GENERAL_CAUSE_FOUND` + `ORACLE_OR_SEMANTIC_MISMATCH_FOUND`. No se implementó remediation y el estado de G1.GATE no cambia.
 
+### Resultado SAFETY.REMEDIATION.DESIGN
+
+La fase trazó el lifecycle completo desde integer milliseconds authored hasta intent decimal, materialización, geometry, commit, serialization y HardValidity. Concluye que integer milliseconds son la coordenada jugable durable y que cualquier consulta beat-space debe reconstruir su beat canónico desde esos enteros. La precisión latente permanece separada para intención, evidencia e identidad G1.
+
+El shadow reprodujo 220 runs control y 4 treatment sobre 11 charts. De 307.167 propuestas comprometidas, 306.952 conservaron aceptación y 215 pasarían de accept a reject: cubren los 209 casos SAFETY.CAUSAL más 6 treatment adicionales, todos `TapOnHeldLongNote`. El observer tuvo 0 fallos de proyección y 0 RNG; los artefactos regeneraron byte-identical. Estos deltas directos no predicen output final por path dependence.
+
+Se recomienda `SharedCanonicalPlayableGeometry` más `LatentValuesAsEvidenceOnly`. El outcome es **READY_FOR_SEPARATE_REMEDIATION_GATE**, pero no se implementó remediation y el implementation/gate sigue **NOT_AUTHORIZED**.
+
 ## Qué afecta realmente la generación
 
 La policy legacy sigue tomando decisiones mediante Bernoulli por oportunidad, factores manuales de chord/contexto, weights LN por distancia y afinidad, gap local con fallback, selección ponderada de forma y lane legal uniforme. Los toggles experimentales documentados sí pueden alterar el resultado cuando se activan o desactivan.
@@ -216,6 +224,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 - `dotnet build -c Release`: PASS, 0 errores.
 - Validación final histórica de SAFETY.CAUSAL: **723 passed, 0 failed, 0 skipped**; el baseline de entrada de esa fase tenía 710.
 - Endurecimiento de cierre actual: **727 passed, 0 failed, 0 skipped**, sin cambio de output, RNG ni semántica de generación.
+- Validación de SAFETY.REMEDIATION.DESIGN: **738 passed, 0 failed, 0 skipped**; shadow/observer sin cambio de output ni RNG.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -235,10 +244,10 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. G1.GATE cerró **NEEDS_REVIEW / NO PROMOTION**. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. La dependencia futura correcta es SAFETY.CAUSAL → diseño research-only → implementación/gate de remediación con autorización separada → recertificación runtime/safety → reconsideración humana de G1.GATE → sólo entonces, y con otra autorización, G1 utility. No se propone una fase siguiente accionable.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. G1.GATE cerró **NEEDS_REVIEW / NO PROMOTION**. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. SAFETY.REMEDIATION.DESIGN está completo, pero su resultado sólo permite que el mantenedor considere autorizar un implementation/gate separado; éste no fue iniciado. Después todavía se requerirían recertificación runtime/safety, reconsideración humana de G1.GATE y otra autorización para G1 utility. No existe fase siguiente accionable sin decisión humana.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: SAFETY.CAUSAL — COMPLETE — OUTCOME A<br>
+Current phase: SAFETY.REMEDIATION.DESIGN — COMPLETE — OUTCOME READY_FOR_SEPARATE_REMEDIATION_GATE<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -249,7 +258,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 727 passed / 0 failed / 0 skipped
+Tests: 738 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

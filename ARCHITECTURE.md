@@ -206,6 +206,20 @@ El recorder modela `DecisionEvent` por separado de `MutationEvent`, porque una d
 
 El hallazgo arquitectónico es una representación dual: `BuildReleaseCandidates` puede conservar `intendedEndBeat` aunque el `EndTime` ya haya redondeado al mismo milisegundo de un tap posterior. Placement opera sobre el decimal; HardValidity sobre el milisegundo normalizado. Ambos usan igualdad inclusiva. El escritor conserva las coordenadas existentes y no introduce el conflicto. SAFETY.CAUSAL no unifica estas autoridades ni cambia conducta.
 
+### SAFETY.REMEDIATION.DESIGN: autoridad propuesta, no implementada
+
+La investigación posterior define una frontera explícita. El integer millisecond materializado es la coordenada jugable durable; cualquier predicado beat-space debe consumir el beat canónico reconstruido desde ese entero y el timing map. El decimal intended/latent permanece separado para candidate intent, evidencia e identidad G1, pero no concede permiso de collision.
+
+```text
+latent intent/evidence ───────────────→ G1/research identity
+          │
+          └─ materialize → integer ms → canonical playable beat
+                                           ├─ placement geometry
+                                           └─ HardValidity
+```
+
+El diseño preferido es un modelo `SharedCanonicalPlayableGeometry`, combinado con `LatentValuesAsEvidenceOnly`. Es una especificación research-only: el runtime actual todavía no consume ese modelo y no se alteraron sus decisiones. El shadow observó 215 deltas directos `TapOnHeldLongNote` (209 conocidos + 6 adicionales); por path dependence no predice el output final de una implementación.
+
 ## Invariantes
 
 - El archivo source no se sobrescribe.

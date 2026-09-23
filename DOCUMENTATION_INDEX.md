@@ -102,3 +102,12 @@ Los outputs `.osu`, CSV de ejecución y baselines grandes permanecen como artefa
 - `docs/safety_causal_control_classification.csv` / `docs/safety_causal_control_classification.json` — 200 condiciones control clasificadas individualmente.
 - `docs/safety_causal_placement_oracle_comparison.csv` — representación y resultado placement/oracle por caso.
 - `docs/safety_causal_family_summary.csv` y `docs/safety_causal_cases.json` — agregados por familia y conjunto machine-readable completo.
+
+## SAFETY.REMEDIATION.DESIGN — Canonical Geometry Authority Research
+
+- `docs/PHASE_SAFETY_REMEDIATION_DESIGN.md` — lifecycle, authority model, collision surfaces, candidates, bad controls, invariants y gate futuro no autorizado.
+- `docs/safety_remediation_design_contract.json` — contrato congelado, SHA-256 canónico `EFB31F2BF5026BE7353ACB30C15768389D077CC7244B0C91D66F8B6B6BD002F8`.
+- `docs/safety_remediation_design_summary.json` — outcome, corpus, footprint directo, timing audit y límites conductuales.
+- `docs/safety_remediation_candidate_matrix.csv` — comparación reproducible de A/B/C/D sin scores arbitrarios.
+- `docs/safety_remediation_representation_inventory.csv` — lifecycle y autoridades por transición.
+- `docs/safety_remediation_shadow_footprint.csv` — conteos por candidato, brazo, tipo, superficie y transición.

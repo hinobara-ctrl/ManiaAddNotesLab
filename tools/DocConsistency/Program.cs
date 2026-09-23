@@ -42,6 +42,7 @@ else
     ValidateG1DesignClosure(state);
     ValidateG1GateClosure(state);
     ValidateSafetyCausalClosure(state);
+    ValidateSafetyRemediationDesignClosure(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -784,7 +785,7 @@ void ValidateG1GateClosure(ProjectState value)
     if (gate?.Status != "COMPLETE") return;
     if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
         || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
 
@@ -857,16 +858,17 @@ void ValidateSafetyCausalClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "A" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_REMEDIATION"
-        || value.CurrentPhase != "SAFETY.CAUSAL" || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.CAUSAL must close COMPLETE/A with no remediation, promotion or successor.");
 
     var design = value.Phases.FirstOrDefault(x => x.Id == "SAFETY.REMEDIATION.DESIGN");
     var designContract = value.PhaseContracts.FirstOrDefault(x => x.Id == "SAFETY.REMEDIATION.DESIGN");
-    if (design?.Status != "FUTURE" || design.BehaviorChange is not false
-        || design.Authorization != "NOT_AUTHORIZED" || designContract?.Kind != "ResearchShadow"
-        || designContract.BehaviorChange is not false || designContract.Authorization != "NOT_AUTHORIZED")
-        errors.Add("SAFETY.REMEDIATION.DESIGN must remain FUTURE/NOT_AUTHORIZED research-only design work.");
+    if (design?.Status != "COMPLETE" || design.Outcome != "READY_FOR_SEPARATE_REMEDIATION_GATE"
+        || design.BehaviorChange is not false || design.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION"
+        || designContract?.Kind != "ResearchShadow" || designContract.BehaviorChange is not false
+        || designContract.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION")
+        errors.Add("SAFETY.REMEDIATION.DESIGN must close research-only without implementing or authorizing remediation.");
 
     foreach (var artifact in new[]
     {
@@ -931,6 +933,77 @@ void ValidateSafetyCausalClosure(ProjectState value)
     CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
         "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
         "legacy default after SAFETY.CAUSAL");
+}
+
+void ValidateSafetyRemediationDesignClosure(ProjectState value)
+{
+    var phase = value.Phases.FirstOrDefault(x => x.Id == "SAFETY.REMEDIATION.DESIGN");
+    if (phase?.Status != "COMPLETE") return;
+    if (phase.Outcome != "READY_FOR_SEPARATE_REMEDIATION_GATE" || phase.BehaviorChange is not false
+        || phase.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION"
+        || value.CurrentPhase != "SAFETY.REMEDIATION.DESIGN" || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
+        errors.Add("SAFETY.REMEDIATION.DESIGN must close READY_FOR_SEPARATE_REMEDIATION_GATE with no implementation or authorized successor.");
+
+    foreach (var artifact in new[]
+    {
+        "docs/PHASE_SAFETY_REMEDIATION_DESIGN.md",
+        "docs/safety_remediation_design_contract.json",
+        "docs/safety_remediation_design_summary.json",
+        "docs/safety_remediation_candidate_matrix.csv",
+        "docs/safety_remediation_representation_inventory.csv",
+        "docs/safety_remediation_shadow_footprint.csv"
+    })
+    {
+        RequireFile(artifact, "SAFETY.REMEDIATION.DESIGN closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact,
+            "SAFETY.REMEDIATION.DESIGN closure artifact index entry");
+    }
+
+    const string frozenHash = "EFB31F2BF5026BE7353ACB30C15768389D077CC7244B0C91D66F8B6B6BD002F8";
+    try
+    {
+        using var contractDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "safety_remediation_design_contract.json")));
+        var actual = Convert.ToHexString(SHA256.HashData(
+            JsonSerializer.SerializeToUtf8Bytes(contractDocument.RootElement.GetProperty("contract"))));
+        if (actual != frozenHash
+            || contractDocument.RootElement.GetProperty("canonicalSha256").GetString() != frozenHash)
+            errors.Add("SAFETY.REMEDIATION.DESIGN contract hash differs from its frozen canonical identity.");
+
+        using var summaryDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "safety_remediation_design_summary.json")));
+        var summary = summaryDocument.RootElement;
+        var shadow = summary.GetProperty("directShadow");
+        var validation = summary.GetProperty("validation");
+        var boundaries = summary.GetProperty("boundaries");
+        if (summary.GetProperty("outcome").GetString() != "READY_FOR_SEPARATE_REMEDIATION_GATE"
+            || summary.GetProperty("contractSha256").GetString() != frozenHash
+            || shadow.GetProperty("totalEvaluated").GetInt32() != 307167
+            || shadow.GetProperty("legacyAcceptToCandidateReject").GetInt32() != 215
+            || shadow.GetProperty("known209Addressed").GetInt32() != 209
+            || shadow.GetProperty("known209NotAddressed").GetInt32() != 0
+            || shadow.GetProperty("additionalDirectDeltasOutsideKnown209").GetInt32() != 6
+            || shadow.GetProperty("directDeltaIsFinalOutputDelta").GetBoolean()
+            || validation.GetProperty("observerProjectionFailures").GetInt32() != 0
+            || validation.GetProperty("observerRngCalls").GetInt64() != 0
+            || !validation.GetProperty("artifactOrderingDeterministic").GetBoolean()
+            || boundaries.GetProperty("behaviorChange").GetBoolean()
+            || boundaries.GetProperty("generationSemanticsChange").GetBoolean()
+            || boundaries.GetProperty("defaultBehaviorChange").GetBoolean()
+            || boundaries.GetProperty("g1SemanticsChange").GetBoolean()
+            || boundaries.GetProperty("remediationImplemented").GetBoolean()
+            || boundaries.GetProperty("nextPhase").GetString() != "NOT_AUTHORIZED")
+            errors.Add("SAFETY.REMEDIATION.DESIGN summary does not preserve footprint, non-interference and authorization boundaries.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"SAFETY.REMEDIATION.DESIGN artifacts cannot be validated: {exception.Message}");
+    }
+
+    CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+        "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
+        "legacy default after SAFETY.REMEDIATION.DESIGN");
 }
 
 void ValidateFilesAndIndex(ProjectState value)

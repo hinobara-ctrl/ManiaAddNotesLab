@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 19 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND** reportando `LEGACY_GENERAL` y `ORACLE_OR_SEMANTIC_MISMATCH` con `NO REMEDIATION`; G1, G2 y H permanecen **NOT_AUTHORIZED** y el default continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró **COMPLETE/READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION**; el gate de implementación, G1, G2 y H permanecen **NOT_AUTHORIZED** y el default continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1125,9 +1125,13 @@ C11 enumeró 4.226 shapes pre-geometry sobre 298 opportunities, todas representa
 
 ## Phase SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design
 
-<!-- PHASE-CONTRACT:SAFETY.REMEDIATION.DESIGN;kind=ResearchShadow;behaviorChange=false;authorization=NOT_AUTHORIZED -->
+<!-- PHASE-CONTRACT:SAFETY.REMEDIATION.DESIGN;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_NO_IMPLEMENTATION -->
 
-**FUTURE / NOT_AUTHORIZED / RESEARCH ONLY.** Diseñar una remediación para el mismatch semántico descubierto por SAFETY.CAUSAL, sin modificar runtime ni ejecutar un treatment. No existe contrato, toggle ni implementación autorizada actualmente. Una futura implementación/gate de remediación sería un paso conductual separado, requeriría autorización propia y debería completar recertificación runtime/safety antes de cualquier reconsideración humana de G1.GATE.
+**SAFETY.REMEDIATION.DESIGN COMPLETE — OUTCOME READY_FOR_SEPARATE_REMEDIATION_GATE.**
+
+**COMPLETE / READY_FOR_SEPARATE_REMEDIATION_GATE / RESEARCH ONLY.** La autoridad jugable queda definida por integer milliseconds y el beat canónico reconstruido desde ellos; latent intent/evidence no gobierna colisiones. El shadow cubrió 209/209 condiciones conocidas y encontró 6 deltas directos adicionales de la misma familia `TapOnHeldLongNote` entre 307.167 propuestas. Se prefiere `SharedCanonicalPlayableGeometry` junto al invariante `LatentValuesAsEvidenceOnly`. No se implementó la remediación ni se ejecutó trayectoria contrafactual.
+
+**SUCCESSOR / NOT_AUTHORIZED.** Un implementation/gate separado deberá certificar output, RNG/path, densidad, todos los keymodes y timing boundaries antes de reconsiderar G1.GATE. `READY_FOR_SEPARATE_REMEDIATION_GATE` describe preparación de diseño, no autorización.
 
 ## Phase G1 — Interior Relation Semantics A/B
 

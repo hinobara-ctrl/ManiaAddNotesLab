@@ -37,6 +37,15 @@ public sealed class AddNotesEngine
     public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng,
         MapperEvidenceProfile? preparedEvidenceProfile, D1BehavioralExperimentConfiguration? d1Experiment,
         GenerationProvenanceRecorderResearch? provenance, G1GateRuntimeConfiguration? g1Gate)
+        => Apply(chart, options, rng, preparedEvidenceProfile, d1Experiment, provenance, g1Gate, null);
+
+    /// <summary>
+    /// Research-only append-only placement observation. The observer cannot return a decision or consume RNG.
+    /// </summary>
+    public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng,
+        MapperEvidenceProfile? preparedEvidenceProfile, D1BehavioralExperimentConfiguration? d1Experiment,
+        GenerationProvenanceRecorderResearch? provenance, G1GateRuntimeConfiguration? g1Gate,
+        SafetyRemediationPlacementObserverResearch? placementObserver)
     {
         Validate(chart, options, rng);
         MapperEvidenceProfile evidenceProfile;
@@ -281,6 +290,7 @@ public sealed class AddNotesEngine
                 GenerationProvenanceRecorderResearch.ObjectSemanticIdentity(placed.Object), provenanceBefore!,
                 beforeMutation!,
                 g1GateState is null ? null : "ADMIT");
+            placementObserver?.ObserveCommittedProposal(placed);
             added.Add(placed.Object);
             geometry.Insert(placed);
             if (provenance is not null)

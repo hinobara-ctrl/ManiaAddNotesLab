@@ -4,6 +4,21 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 2 && args[0] == "safety-remediation-design-contract")
+{
+    Console.WriteLine($"SAFETY.REMEDIATION.DESIGN contract={SafetyRemediationDesignRunner.WriteContract(Path.GetFullPath(args[1]))}");
+    return;
+}
+
+if (args.Length == 4 && args[0] == "safety-remediation-design-run")
+{
+    var outcome = SafetyRemediationDesignRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]));
+    Console.WriteLine($"SAFETY.REMEDIATION.DESIGN outcome={outcome}");
+    Environment.ExitCode = outcome == "READY_FOR_SEPARATE_REMEDIATION_GATE" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 3 && args[0] == "safety-causal-publish-existing")
 {
     SafetyCausalForensicRunner.PublishExistingCases(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));
