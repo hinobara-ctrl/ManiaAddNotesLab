@@ -1,0 +1,50 @@
+{
+  "contract": {
+    "schemaVersion": "safety-remediation-design-shadow.1",
+    "phase": "SAFETY.REMEDIATION.DESIGN",
+    "humanAuthorization": "AUTHORIZED_HARD_VALIDITY_REMEDIATION_DESIGN_CANONICAL_GEOMETRY_AUTHORITY_RESEARCH",
+    "repositoryEntryHead": "04661593e377aa261c8bcbd7a14a3087bc766964",
+    "scientificDependency": "SAFETY.CAUSAL",
+    "safetyCausalContractSha256": "300E879BCB479F77A704BFFB89BF304D9D04ECC556067F921C49C45E4E8FCB84",
+    "researchQuestions": [
+      "What representation is canonical authority for playable collision geometry?",
+      "Which latent values remain evidence/intent/identity without granting runtime permission?"
+    ],
+    "representationDistinctions": [
+      "authored != candidate intent",
+      "latent precision != playable authority",
+      "evidence identity != collision authority",
+      "serialization coordinate != evidence identity",
+      "direct shadow delta != final behavioral delta"
+    ],
+    "candidateFamilies": [
+      "MaterializedGeometryCanonicalization",
+      "CanonicalPreCommitHardValidity",
+      "SharedCanonicalPlayableGeometry",
+      "LatentValuesAsEvidenceOnly"
+    ],
+    "evaluationAxes": [
+      "root-cause coverage",
+      "single source of truth",
+      "HardValidity consistency",
+      "G1/evidence compatibility",
+      "timing and serialization",
+      "direct footprint",
+      "RNG/path/density risk",
+      "duplication/stale-state risk",
+      "rollback/testability/migration"
+    ],
+    "canonicalPlayableAuthority": "Integer milliseconds are the durable playable coordinate; a canonical beat reconstructed from that exact integer and timing map is the only beat-space collision authority.",
+    "shadowOnly": true,
+    "behaviorChange": false,
+    "generationSemanticsChange": false,
+    "defaultBehaviorChange": false,
+    "g1SemanticsChange": false,
+    "directDeltaIsFinalOutputDelta": false,
+    "remediationImplemented": false,
+    "defaultPolicy": "legacy-experimental.1",
+    "nextPhaseAuthorization": "NOT_AUTHORIZED"
+  },
+  "canonicalSha256": "EFB31F2BF5026BE7353ACB30C15768389D077CC7244B0C91D66F8B6B6BD002F8",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; frozen ordered arrays; no timestamps or machine paths"
+}

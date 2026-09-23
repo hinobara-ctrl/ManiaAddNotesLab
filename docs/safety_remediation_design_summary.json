@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "safety-remediation-design-shadow.1",
+  "phase": "SAFETY.REMEDIATION.DESIGN",
+  "outcome": "READY_FOR_SEPARATE_REMEDIATION_GATE",
+  "repositoryEntryHead": "04661593e377aa261c8bcbd7a14a3087bc766964",
+  "contractSha256": "EFB31F2BF5026BE7353ACB30C15768389D077CC7244B0C91D66F8B6B6BD002F8",
+  "frozenSafetyCausal": {
+    "classification": [
+      "LEGACY_GENERAL_CAUSE_FOUND",
+      "ORACLE_OR_SEMANTIC_MISMATCH_FOUND"
+    ],
+    "knownConditions": 209,
+    "changed": false
+  },
+  "corpus": {
+    "charts": 11,
+    "controlRuns": 220,
+    "treatmentRuns": 4,
+    "totalRuns": 224
+  },
+  "directShadow": {
+    "scope": "concrete committed proposals; collision-only; no counterfactual trajectory",
+    "totalEvaluated": 307167,
+    "unchangedAccepts": 306952,
+    "unchangedRejects": 0,
+    "legacyAcceptToCandidateReject": 215,
+    "legacyRejectToCandidateAccept": 0,
+    "unexpectedLegacyConflicts": 0,
+    "known209Addressed": 209,
+    "known209NotAddressed": 0,
+    "additionalDirectDeltasOutsideKnown209": 6,
+    "collisionSurfaces": {
+      "TapOnHeldLongNote": 215
+    },
+    "directDeltaIsFinalOutputDelta": false
+  },
+  "authority": {
+    "playable": "integer milliseconds plus canonical beat reconstructed from those milliseconds",
+    "latent": "intent/evidence/G1 identity only",
+    "preferred": "SharedCanonicalPlayableGeometry"
+  },
+  "collisionSurfaceAudit": [
+    {
+      "surface": "tap vs previous LN / LN end vs later tap",
+      "classification": "affected and observed",
+      "evidence": "209 frozen cases"
+    },
+    {
+      "surface": "LN head vs previous LN",
+      "classification": "unaffected",
+      "evidence": "strict interval overlap; endpoint equality remains legal"
+    },
+    {
+      "surface": "LN vs LN overlap",
+      "classification": "unaffected",
+      "evidence": "strict interval overlap on canonical endpoints"
+    },
+    {
+      "surface": "equal starts",
+      "classification": "unaffected",
+      "evidence": "starts originate from materialized integer milliseconds"
+    },
+    {
+      "surface": "equal releases",
+      "classification": "unaffected",
+      "evidence": "release equality alone is not a hard-validity violation"
+    },
+    {
+      "surface": "zero-gap transitions",
+      "classification": "unaffected",
+      "evidence": "hard collision and required spacing remain separate"
+    },
+    {
+      "surface": "same-ms distinct-decimal endpoints",
+      "classification": "affected and observed",
+      "evidence": "the 209 tap-on-held conditions"
+    },
+    {
+      "surface": "timing-point boundaries",
+      "classification": "unresolved in frozen corpus; structurally covered by authority invariant",
+      "evidence": "deterministic idempotence fixtures only"
+    }
+  ],
+  "timingAudit": {
+    "midpointRounding": "MidpointRounding.AwayFromZero",
+    "positiveAndNegativeOffsets": "tested",
+    "timingPointTransitions": "tested",
+    "inheritedTimingPoints": "excluded by BeatTimeline playable-time lookup",
+    "repeatedCanonicalizationIdempotent": true
+  },
+  "badControls": [
+    {
+      "id": 1,
+      "result": "REJECTED",
+      "reason": "inclusive occupied-endpoint semantics is preserved"
+    },
+    {
+      "id": 2,
+      "result": "REJECTED",
+      "reason": "latent G1/evidence values remain untouched"
+    },
+    {
+      "id": 3,
+      "result": "REJECTED",
+      "reason": "duplicated placement/veto authority has high drift risk"
+    },
+    {
+      "id": 4,
+      "result": "REJECTED",
+      "reason": "writer roundtrip is not the runtime oracle"
+    },
+    {
+      "id": 5,
+      "result": "REJECTED",
+      "reason": "playable-ms equality does not redefine evidence identity"
+    },
+    {
+      "id": 6,
+      "result": "REJECTED",
+      "reason": "direct delta is explicitly not final output delta"
+    },
+    {
+      "id": 7,
+      "result": "REJECTED",
+      "reason": "original-only style authority and frozen G1 identity remain"
+    },
+    {
+      "id": 8,
+      "result": "PASSED",
+      "reason": "all collision surfaces were audited under one authority invariant"
+    },
+    {
+      "id": 9,
+      "result": "PASSED",
+      "reason": "canonicalization is idempotent across boundary fixtures"
+    },
+    {
+      "id": 10,
+      "result": "PASSED",
+      "reason": "shadow and observer consume zero RNG and cannot veto"
+    }
+  ],
+  "validation": {
+    "observerProjectionFailures": 0,
+    "observerRngCalls": 0,
+    "shadowConsumesRng": false,
+    "shadowMutatesGeneration": false,
+    "artifactOrderingDeterministic": true
+  },
+  "boundaries": {
+    "behaviorChange": false,
+    "generationSemanticsChange": false,
+    "defaultBehaviorChange": false,
+    "g1SemanticsChange": false,
+    "remediationImplemented": false,
+    "defaultPolicy": "legacy-experimental.1",
+    "nextPhase": "NOT_AUTHORIZED",
+    "g1Utility": "NOT_AUTHORIZED",
+    "g2": "NOT_AUTHORIZED",
+    "h": "NOT_AUTHORIZED"
+  }
+}

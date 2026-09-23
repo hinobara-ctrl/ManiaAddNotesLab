@@ -1,0 +1,11 @@
+order,stage,source_value,destination_value,numeric_type,rounding_rule,timing_dependency,information_lost,latent_retained,current_collision_authority,evidence_authority,g1_identity_dependency,design_authority
+1,"Authored .osu","integer object coordinates","parsed ManiaObject","Int32 milliseconds","none","none",false,false,true,true,true,"authored source; playable authority is its integer coordinate"
+2,"Original analysis","ManiaObject milliseconds","TimedManiaObject beats","decimal beat","exact division","active positive timing point",false,false,true,true,true,"canonical beat derived from authored milliseconds"
+3,"Candidate intent","observed beat relations","intended endpoint","decimal beat","exact decimal arithmetic","candidate timing segment",false,true,false,true,true,"intent/evidence only"
+4,"Materialization","intended decimal beat","ManiaObject time","Int32 milliseconds","MidpointRounding.AwayFromZero","active positive timing point",true,true,true,false,false,"integer milliseconds define playable coordinate"
+5,"Placed proposal","materialized time + intended beat","TimedManiaObject","Int32 + decimal","conditional latent retention","same timeline",false,true,true,true,true,"future design separates playable canonical beat from latent intent"
+6,"Current geometry","TimedManiaObject","lane legality","decimal beat","none","already converted",false,true,true,false,false,"future collision authority must consume canonical playable coordinates only"
+7,"Mutation commit","placed proposal","AddedObjects","integer milliseconds","none","none",true,false,true,false,false,"materialized playable object"
+8,"Serialization","AddedObjects",".osu hit objects","integer milliseconds","none","none",false,false,true,false,false,"preserve materialized playable coordinate"
+9,"Reparse",".osu integer milliseconds","canonical beats","decimal beat","exact division","active positive timing point",false,false,true,true,true,"canonical playable reconstruction"
+10,"HardValidity","canonical reparsed beats","hard-validity result","decimal predicates","none","canonical timeline",false,false,true,false,false,"same canonical playable model as placement"
