@@ -189,8 +189,8 @@ public sealed class PhaseC12ExactHeadRelationTests
 
         var stateRoot = state.RootElement;
         Assert.Equal("legacy-experimental.1", stateRoot.GetProperty("behaviorPolicyVersion").GetString());
-        Assert.False(stateRoot.GetProperty("behaviorChange").GetBoolean());
-        Assert.Equal("SAFETY.REMEDIATION.DESIGN", stateRoot.GetProperty("currentPhase").GetString());
+        Assert.True(stateRoot.GetProperty("behaviorChange").GetBoolean());
+        Assert.Equal("SAFETY.REMEDIATION.GATE", stateRoot.GetProperty("currentPhase").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextRecommendedPhase").ValueKind);
         Assert.Equal("HUMAN_REVIEW_REQUIRED", stateRoot.GetProperty("nextRecommendedAction").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextBehavioralPhase").ValueKind);
@@ -214,18 +214,21 @@ public sealed class PhaseC12ExactHeadRelationTests
         Assert.Equal("READY_FOR_SEPARATE_REMEDIATION_GATE", phases.Single(x =>
                 x.GetProperty("id").GetString() == "SAFETY.REMEDIATION.DESIGN")
             .GetProperty("outcome").GetString());
+        Assert.Equal("REMEDIATION_RUNTIME_CERTIFIED", phases.Single(x =>
+                x.GetProperty("id").GetString() == "SAFETY.REMEDIATION.GATE")
+            .GetProperty("outcome").GetString());
         Assert.Equal("CONTINUE_CONDITIONALLY", stateRoot.GetProperty("researchBranches")[0]
             .GetProperty("decision").GetString());
-        Assert.Contains("Current phase: SAFETY.REMEDIATION.DESIGN — COMPLETE — OUTCOME READY_FOR_SEPARATE_REMEDIATION_GATE", readme);
-        Assert.Contains("Current phase: SAFETY.REMEDIATION.DESIGN — COMPLETE — OUTCOME READY_FOR_SEPARATE_REMEDIATION_GATE", status);
+        Assert.Contains("Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME REMEDIATION_RUNTIME_CERTIFIED", readme);
+        Assert.Contains("Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME REMEDIATION_RUNTIME_CERTIFIED", status);
         Assert.Contains("Next actionable research candidate: none", readme);
         Assert.Contains("Next actionable research candidate: none", status);
         Assert.Contains("Next behavioral phase: none", readme);
         Assert.Contains("Next behavioral phase: none", status);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", readme);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", status);
-        Assert.Contains("Tests: 738 passed / 0 failed / 0 skipped", readme);
-        Assert.Contains("Tests: 738 passed / 0 failed / 0 skipped", status);
+        Assert.Contains("Tests: 747 passed / 0 failed / 0 skipped", readme);
+        Assert.Contains("Tests: 747 passed / 0 failed / 0 skipped", status);
     }
 
     private static string FindRepositoryRoot([CallerFilePath] string sourceFile = "")

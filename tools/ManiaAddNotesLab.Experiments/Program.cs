@@ -4,6 +4,21 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 2 && args[0] == "safety-remediation-gate-contract")
+{
+    Console.WriteLine($"SAFETY.REMEDIATION.GATE contract={SafetyRemediationGateRunner.WriteContract(Path.GetFullPath(args[1]))}");
+    return;
+}
+
+if (args.Length == 4 && args[0] == "safety-remediation-gate-run")
+{
+    var outcome = SafetyRemediationGateRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+        Path.GetFullPath(args[3]));
+    Console.WriteLine($"SAFETY.REMEDIATION.GATE outcome={outcome}");
+    Environment.ExitCode = outcome == "REMEDIATION_RUNTIME_CERTIFIED" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 2 && args[0] == "safety-remediation-design-contract")
 {
     Console.WriteLine($"SAFETY.REMEDIATION.DESIGN contract={SafetyRemediationDesignRunner.WriteContract(Path.GetFullPath(args[1]))}");

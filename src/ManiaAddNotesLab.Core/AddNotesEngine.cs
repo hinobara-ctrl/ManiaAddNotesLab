@@ -46,6 +46,17 @@ public sealed class AddNotesEngine
         MapperEvidenceProfile? preparedEvidenceProfile, D1BehavioralExperimentConfiguration? d1Experiment,
         GenerationProvenanceRecorderResearch? provenance, G1GateRuntimeConfiguration? g1Gate,
         SafetyRemediationPlacementObserverResearch? placementObserver)
+        => Apply(chart, options, rng, preparedEvidenceProfile, d1Experiment, provenance, g1Gate,
+            placementObserver, null);
+
+    /// <summary>
+    /// Research-only SAFETY.REMEDIATION.GATE overload. No normal CLI/Web call site can activate it.
+    /// </summary>
+    public AddNotesResult Apply(ManiaChart chart, AddNotesOptions options, IRandomSource rng,
+        MapperEvidenceProfile? preparedEvidenceProfile, D1BehavioralExperimentConfiguration? d1Experiment,
+        GenerationProvenanceRecorderResearch? provenance, G1GateRuntimeConfiguration? g1Gate,
+        SafetyRemediationPlacementObserverResearch? placementObserver,
+        SafetyRemediationGateRuntimeConfiguration? safetyRemediationGate)
     {
         Validate(chart, options, rng);
         MapperEvidenceProfile evidenceProfile;
@@ -86,9 +97,24 @@ public sealed class AddNotesEngine
             ValidateG1GateEligibility(options);
             g1Gate.EvidenceIndex.ValidateFor(chart);
         }
+        if (safetyRemediationGate is not null)
+        {
+            if (d1Experiment is not null)
+                throw new InvalidOperationException("SAFETY.REMEDIATION.GATE requires D1 treatment OFF.");
+            if (safetyRemediationGate.ContractContentHash != SafetyRemediationGateContractResearch.ComputeHash(
+                    SafetyRemediationGateContractResearch.Create()))
+                throw new InvalidOperationException("SAFETY.REMEDIATION.GATE contract hash does not match the frozen contract.");
+            if (rng is not IRandomPositionSource)
+                throw new InvalidOperationException("SAFETY.REMEDIATION.GATE requires an auditable RNG position source.");
+            if (options.ArticulationEnabled)
+                throw new InvalidOperationException("SAFETY.REMEDIATION.GATE certification requires articulation OFF.");
+        }
         var timeline = new BeatTimeline(chart.TimingPoints);
         var analysis = new OriginalChartAnalysis(chart, timeline);
-        var geometry = new LaneGeometryIndex(chart.KeyCount, analysis.Objects);
+        var playable = safetyRemediationGate is null ? null : new CanonicalPlayableGeometry(timeline);
+        var legacyGeometry = new LaneGeometryIndex(chart.KeyCount, analysis.Objects);
+        var canonicalGeometry = playable is null ? null : new LaneGeometryIndex(chart.KeyCount,
+            analysis.Objects.Select(playable.Project).ToArray());
         var densityGeometry = new LaneGeometryIndex(chart.KeyCount, analysis.Objects);
         var densityAnalyzer = new HeadDensityAnalyzer(analysis.Heads, chart.KeyCount);
         var gapAnalyzer = new LocalLaneGapAnalyzer(analysis);
@@ -105,6 +131,8 @@ public sealed class AddNotesEngine
         var added = new List<ManiaObject>();
         var d1Diagnostics = d1Experiment is null ? null : new D1BehavioralRunDiagnosticsBuilder(d1Experiment);
         var g1Diagnostics = g1Gate is null ? null : new G1GateRuntimeDiagnosticsBuilder(g1Gate);
+        var remediationDiagnostics = safetyRemediationGate is null ? null
+            : new SafetyRemediationGateRuntimeDiagnosticsBuilder(safetyRemediationGate);
         var opportunities = BuildOpportunities(analysis, options, stats, trace);
         provenance?.BindOpportunitySequence(opportunities.Select(D1OpportunityKey));
         var articulationIntents = new List<ArticulationIntent>();
@@ -181,10 +209,12 @@ public sealed class AddNotesEngine
             else stats.SuccessfulInteriorRolls++;
 
             TimedManiaObject? placed = opportunity.Source.Object.Type == ManiaObjectType.Tap
-                ? PlaceTap(opportunity, geometry, rng, stats, trace, diagnostics, opportunityKey,
+                ? PlaceTap(opportunity, legacyGeometry, canonicalGeometry, playable, safetyRemediationGate,
+                    remediationDiagnostics, provenanceKey, rng, stats, trace, diagnostics, opportunityKey,
                     evidenceProfile, simultaneousHeadColumns, heldLnColumns)
-                : PlaceLongNote(opportunity, analysis, geometry, gapAnalyzer, timeline, options, rng, stats, trace,
-                    diagnostics, opportunityKey, evidenceProfile, diagnosticTimeline);
+                : PlaceLongNote(opportunity, analysis, legacyGeometry, canonicalGeometry, playable,
+                    safetyRemediationGate, remediationDiagnostics, provenanceKey, gapAnalyzer, timeline, options,
+                    rng, stats, trace, diagnostics, opportunityKey, evidenceProfile, diagnosticTimeline);
 
             if (placed is null)
             {
@@ -292,7 +322,8 @@ public sealed class AddNotesEngine
                 g1GateState is null ? null : "ADMIT");
             placementObserver?.ObserveCommittedProposal(placed);
             added.Add(placed.Object);
-            geometry.Insert(placed);
+            legacyGeometry.Insert(placed);
+            canonicalGeometry?.Insert(playable!.Project(placed));
             if (provenance is not null)
             {
                 var afterMutation = provenance.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
@@ -329,7 +360,7 @@ public sealed class AddNotesEngine
         stats.Pass1Ms = ElapsedMs(pass1Started);
         var articulationStarted = Stopwatch.GetTimestamp();
         var replacements = options.ArticulationEnabled
-            ? ResolveArticulations(articulationIntents, analysis, geometry, retriggerAnalyzer, timeline,
+            ? ResolveArticulations(articulationIntents, analysis, legacyGeometry, retriggerAnalyzer, timeline,
                 options, DeriveArticulationRandom(rng, chart), stats, trace, diagnostics, evidenceProfile,
                 provenance, chart.OriginalObjects, added, rng, opportunities.Count)
             : [];
@@ -367,7 +398,7 @@ public sealed class AddNotesEngine
             AddedObjects = added,
             ArticulationReplacements = replacements
         }, stats, trace?.ToString(), evidenceProfile, decisionDiagnostics, d1RunDiagnostics,
-            g1RunDiagnostics);
+                g1RunDiagnostics, remediationDiagnostics?.Build());
     }
 
     private static string D1OpportunityKey(AddNoteOpportunity opportunity) =>
@@ -635,19 +666,34 @@ public sealed class AddNotesEngine
         return OriginalContextNear(analysis, parent.StartBeat, parent, (decimal)options.LnWindowBeats);
     }
 
-    private static TimedManiaObject? PlaceTap(AddNoteOpportunity opportunity, LaneGeometryIndex geometry,
+    private static TimedManiaObject? PlaceTap(AddNoteOpportunity opportunity,
+        LaneGeometryIndex legacyGeometry, LaneGeometryIndex? canonicalGeometry,
+        CanonicalPlayableGeometry? playable, SafetyRemediationGateRuntimeConfiguration? remediation,
+        SafetyRemediationGateRuntimeDiagnosticsBuilder? remediationDiagnostics, string provenanceKey,
         IRandomSource rng, AddNotesStatistics stats, StringBuilder? trace, DecisionDiagnosticsBuilder? diagnostics,
         OpportunityDiagnosticKey? opportunityKey, MapperEvidenceProfile profile, int originalHeads, int originalHeld)
     {
+        var canonicalBeat = playable?.Beat(opportunity.Source.Object.StartTime) ?? opportunity.Source.StartBeat;
+        var shadowStats = new AddNotesStatistics();
         var started = Stopwatch.GetTimestamp();
-        var lanes = geometry.FindLegalTapLanes(opportunity.Source.StartBeat, stats);
-        ObserveLegalLaneRatio(stats, lanes.Count, geometry.KeyCount);
+        var legacyLanes = legacyGeometry.FindLegalTapLanes(opportunity.Source.StartBeat,
+            remediation?.TreatmentEnabled == true ? shadowStats : stats);
+        var canonicalLanes = canonicalGeometry?.FindLegalTapLanes(canonicalBeat,
+            remediation?.TreatmentEnabled == true ? stats : shadowStats) ?? legacyLanes;
+        var authorityGeometry = remediation?.TreatmentEnabled == true ? canonicalGeometry! : legacyGeometry;
+        var authorityBeat = remediation?.TreatmentEnabled == true ? canonicalBeat : opportunity.Source.StartBeat;
+        var lanes = remediation?.TreatmentEnabled == true ? canonicalLanes : legacyLanes;
+        remediationDiagnostics?.Add(provenanceKey, 0, ManiaObjectType.Tap,
+            opportunity.Source.Object.StartTime, null, opportunity.Source.StartBeat, null,
+            canonicalBeat, null, legacyLanes, canonicalLanes,
+            authorityGeometry.MaterializedStateHash(), ((IRandomPositionSource)rng).CallCount);
+        ObserveLegalLaneRatio(stats, lanes.Count, authorityGeometry.KeyCount);
         stats.GeometryMs += ElapsedMs(started);
         HardValidityResult? validity = null;
         if (diagnostics is not null)
         {
             started = Stopwatch.GetTimestamp();
-            validity = geometry.ExplainTapPlacement(opportunity.Source.StartBeat, diagnostics.Provenance);
+            validity = authorityGeometry.ExplainTapPlacement(authorityBeat, diagnostics.Provenance);
             diagnostics.AddFailureTicks(Stopwatch.GetTimestamp() - started);
             var explained = validity.LaneEvaluations.Where(x => x.IsValid).Select(x => x.Lane).ToArray();
             if (!lanes.SequenceEqual(explained)) throw new InvalidOperationException("Legacy and diagnostic tap legality diverged.");
@@ -663,13 +709,14 @@ public sealed class AddNotesEngine
                     opportunity.Kind, opportunity.Order, 0, opportunity.Source.Object.StartTime, null,
                     opportunity.Source.StartBeat, null, null, LegacyDecisionOutcome.NoLegalLane, null, [], 0, 0,
                     certificate, validity!, null, InteriorAnchorKind.None, null, InteriorEndRelation.NotApplicable,
-                    new RiceStateDiagnostic(geometry.KeyCount, originalHeads, originalHeld,
-                        geometry.CountSimultaneousHeadColumns(opportunity.Source.StartBeat), geometry.KeyCount,
-                        0, null, geometry.CountSimultaneousHeadColumns(opportunity.Source.StartBeat))));
+                    new RiceStateDiagnostic(authorityGeometry.KeyCount, originalHeads, originalHeld,
+                        authorityGeometry.CountSimultaneousHeadColumns(authorityBeat), authorityGeometry.KeyCount,
+                        0, null, authorityGeometry.CountSimultaneousHeadColumns(authorityBeat))));
             }
             return null;
         }
         var lane = lanes[rng.Next(lanes.Count)];
+        remediationDiagnostics?.MarkSelected(provenanceKey, 0, lane);
         var obj = ManiaObject.Tap(lane, opportunity.Source.Object.StartTime, true, opportunity.Source.Object.Sequence)
             with { Origin = AddedObjectOrigin.HeadOpportunity };
         if (diagnostics is not null)
@@ -677,19 +724,22 @@ public sealed class AddNotesEngine
             var key = diagnostics.CandidateKey(opportunityKey!.Value, DiagnosticCandidateKind.Tap, 0,
                 opportunity.Source.Object.StartTime, null);
             var certificate = diagnostics.Certificate(key, [], validity!, false);
-            var currentHeads = geometry.CountSimultaneousHeadColumns(opportunity.Source.StartBeat);
+            var currentHeads = authorityGeometry.CountSimultaneousHeadColumns(authorityBeat);
             diagnostics.Record(new DecisionDiagnostic(opportunityKey.Value, key, DiagnosticCandidateKind.Tap,
                 opportunity.Kind, opportunity.Order, 0, opportunity.Source.Object.StartTime, null,
                 opportunity.Source.StartBeat, null, null, LegacyDecisionOutcome.Placed, lane, [], 0, 0,
                 certificate, validity!, null, InteriorAnchorKind.None, null, InteriorEndRelation.NotApplicable,
-                new RiceStateDiagnostic(geometry.KeyCount, originalHeads, originalHeld, currentHeads,
-                    geometry.KeyCount - lanes.Count, lanes.Count, lane, currentHeads + 1)));
+                new RiceStateDiagnostic(authorityGeometry.KeyCount, originalHeads, originalHeld, currentHeads,
+                    authorityGeometry.KeyCount - lanes.Count, lanes.Count, lane, currentHeads + 1)));
         }
         return new TimedManiaObject(obj, opportunity.Source.StartBeat, opportunity.Source.StartBeat);
     }
 
     private TimedManiaObject? PlaceLongNote(AddNoteOpportunity opportunity, OriginalChartAnalysis analysis,
-        LaneGeometryIndex geometry, LocalLaneGapAnalyzer gapAnalyzer, BeatTimeline timeline, AddNotesOptions options,
+        LaneGeometryIndex legacyGeometry, LaneGeometryIndex? canonicalGeometry,
+        CanonicalPlayableGeometry? playable, SafetyRemediationGateRuntimeConfiguration? remediation,
+        SafetyRemediationGateRuntimeDiagnosticsBuilder? remediationDiagnostics, string provenanceKey,
+        LocalLaneGapAnalyzer gapAnalyzer, BeatTimeline timeline, AddNotesOptions options,
         IRandomSource rng, AddNotesStatistics stats, StringBuilder? trace, DecisionDiagnosticsBuilder? diagnostics,
         OpportunityDiagnosticKey? opportunityKey, MapperEvidenceProfile profile, BeatTimeline? diagnosticTimeline)
     {
@@ -729,6 +779,9 @@ public sealed class AddNotesEngine
         for (var candidateOrder = 0; candidateOrder < candidates.Count; candidateOrder++)
         {
             var candidate = candidates[candidateOrder];
+            var canonicalStartBeat = playable?.Beat(opportunity.Source.Object.StartTime)
+                ?? opportunity.Source.StartBeat;
+            var canonicalEndBeat = playable?.Beat(candidate.EndTime) ?? candidate.EndBeat;
             if (opportunity.Kind == OpportunityKind.LnInterior)
             {
                 var duration = candidate.EndBeat - opportunity.Source.StartBeat;
@@ -740,15 +793,34 @@ public sealed class AddNotesEngine
                 else stats.InteriorCandidatesLong++;
             }
             started = Stopwatch.GetTimestamp();
-            var lanes = geometry.FindLegalLnLanes(opportunity.Source.StartBeat, candidate.EndBeat,
-                (decimal)gap.GapBeats, stats, out var rejectedByOverlap, out var rejectedByGap);
-            ObserveLegalLaneRatio(stats, lanes.Count, geometry.KeyCount);
+            var shadowStats = new AddNotesStatistics();
+            var legacyLanes = legacyGeometry.FindLegalLnLanes(opportunity.Source.StartBeat, candidate.EndBeat,
+                (decimal)gap.GapBeats, remediation?.TreatmentEnabled == true ? shadowStats : stats,
+                out var legacyOverlap, out var legacyGap);
+            var canonicalOverlap = legacyOverlap;
+            var canonicalGap = legacyGap;
+            var canonicalLanes = canonicalGeometry is null ? legacyLanes
+                : canonicalGeometry.FindLegalLnLanes(canonicalStartBeat, canonicalEndBeat,
+                    (decimal)gap.GapBeats, remediation?.TreatmentEnabled == true ? stats : shadowStats,
+                    out canonicalOverlap, out canonicalGap);
+            var lanes = remediation?.TreatmentEnabled == true ? canonicalLanes : legacyLanes;
+            var authorityGeometry = remediation?.TreatmentEnabled == true ? canonicalGeometry! : legacyGeometry;
+            var authorityStartBeat = remediation?.TreatmentEnabled == true
+                ? canonicalStartBeat : opportunity.Source.StartBeat;
+            var authorityEndBeat = remediation?.TreatmentEnabled == true ? canonicalEndBeat : candidate.EndBeat;
+            var rejectedByOverlap = remediation?.TreatmentEnabled == true ? canonicalOverlap : legacyOverlap;
+            var rejectedByGap = remediation?.TreatmentEnabled == true ? canonicalGap : legacyGap;
+            remediationDiagnostics?.Add(provenanceKey, candidateOrder, ManiaObjectType.LongNote,
+                opportunity.Source.Object.StartTime, candidate.EndTime, opportunity.Source.StartBeat,
+                candidate.EndBeat, canonicalStartBeat, canonicalEndBeat, legacyLanes, canonicalLanes,
+                authorityGeometry.MaterializedStateHash(), ((IRandomPositionSource)rng).CallCount);
+            ObserveLegalLaneRatio(stats, lanes.Count, authorityGeometry.KeyCount);
             stats.GeometryMs += ElapsedMs(started);
             var diagnosticIndex = -1;
             if (diagnostics is not null)
             {
                 started = Stopwatch.GetTimestamp();
-                var validity = geometry.ExplainLnPlacement(opportunity.Source.StartBeat, candidate.EndBeat,
+                var validity = authorityGeometry.ExplainLnPlacement(authorityStartBeat, authorityEndBeat,
                     (decimal)gap.GapBeats, opportunity.Source.Object.StartTime, candidate.EndTime,
                     diagnostics.Provenance);
                 diagnostics.AddFailureTicks(Stopwatch.GetTimestamp() - started);
@@ -795,6 +867,8 @@ public sealed class AddNotesEngine
 
         var selected = TakeWeighted(resolved, rng);
         var lane = selected.LegalLanes[rng.Next(selected.LegalLanes.Count)];
+        remediationDiagnostics?.MarkSelected(provenanceKey,
+            candidates.ToList().IndexOf(selected.Candidate), lane);
         if (diagnostics is not null && selected.DiagnosticIndex >= 0)
             diagnostics.MarkSelected(selected.DiagnosticIndex, lane, LegacyDecisionOutcome.Placed);
         var origin = opportunity.Kind == OpportunityKind.LnInterior

@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: copia local de `ManiaAddNotesLab`, 19 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró **COMPLETE/READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION**; el gate de implementación, G1, G2 y H permanecen **NOT_AUTHORIZED** y el default continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró READY y `SAFETY.REMEDIATION.GATE` cerró **COMPLETE/REMEDIATION_RUNTIME_CERTIFIED / NO PROMOTION**. G1, G2, H y cualquier sucesora permanecen **NOT_AUTHORIZED**; el default continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1133,8 +1133,18 @@ C11 enumeró 4.226 shapes pre-geometry sobre 298 opportunities, todas representa
 
 **SUCCESSOR / NOT_AUTHORIZED.** Un implementation/gate separado deberá certificar output, RNG/path, densidad, todos los keymodes y timing boundaries antes de reconsiderar G1.GATE. `READY_FOR_SEPARATE_REMEDIATION_GATE` describe preparación de diseño, no autorización.
 
+## Phase SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime
+
+<!-- PHASE-CONTRACT:SAFETY.REMEDIATION.GATE;kind=BehaviorChanging;behaviorChange=true;authorization=EXPERIMENT_COMPLETED_NO_PROMOTION -->
+
+**SAFETY.REMEDIATION.GATE COMPLETE — OUTCOME REMEDIATION_RUNTIME_CERTIFIED.**
+
+**COMPLETE / REMEDIATION_RUNTIME_CERTIFIED / EXPERIMENTAL ONLY.** El treatment `safety-remediation-canonical-playable.1` usa integer milliseconds y beats canónicos derivados como autoridad de collision, manteniendo latent values sólo para intent/evidence/G1. En 220 pares C11 y cuatro pares secundarios G1, las 215 condiciones control bajaron a cero; hubo 0 violaciones nuevas, 0 RNG del gate, 0 fallos de determinismo/reparse y 0 drift de identidad G1.
+
+**NO PROMOTION / NO SUCCESSOR.** La ruta existe sólo en configuración research explícita. Default, CLI/Web, G1 utility, G2, H y cualquier fase posterior requieren autorización humana separada.
+
 ## Phase G1 — Interior Relation Semantics A/B
 
 <!-- PHASE-CONTRACT:G1;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->
 
-**FUTURE / NOT_AUTHORIZED.** No existe policy, toggle, CLI/Web path ni A/B activo. SAFETY.REMEDIATION.DESIGN por sí solo no habilita esta fase: antes se requieren una implementación/gate de remediación autorizada por separado, recertificación runtime/safety y reconsideración humana de G1.GATE; después G1 todavía requeriría autorización independiente.
+**FUTURE / NOT_AUTHORIZED.** No existe policy, toggle, CLI/Web path ni A/B activo. SAFETY.REMEDIATION.GATE certifica la corrección geométrica experimental, pero no reconsidera ni promueve G1.GATE. G1 todavía requiere revisión humana y autorización independiente.

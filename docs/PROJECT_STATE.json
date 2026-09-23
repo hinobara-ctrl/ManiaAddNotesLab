@@ -1,10 +1,10 @@
 {
-  "schemaVersion": 14,
-  "lastUpdated": "2026-09-20",
+  "schemaVersion": 15,
+  "lastUpdated": "2026-09-23",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
-  "behaviorChange": false,
+  "behaviorChange": true,
   "phases": [
     { "id": "A", "name": "Evidence Infrastructure", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_A_EVIDENCE_INFRASTRUCTURE_REPORT.md" },
     { "id": "B", "name": "Certificates and Failures", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_B_CERTIFICATES_AND_FAILURES_REPORT.md" },
@@ -33,6 +33,7 @@
     { "id": "G1.GATE", "name": "Interior Relation Admission Runtime", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_G1_GATE_INTERIOR_RELATION_ADMISSION_RUNTIME.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "SAFETY.CAUSAL", "name": "Downstream Hard-Validity Causality Forensics", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_SAFETY_CAUSAL_DOWNSTREAM_HARD_VALIDITY.md", "authorization": "RESEARCH_COMPLETED_NO_REMEDIATION" },
     { "id": "SAFETY.REMEDIATION.DESIGN", "name": "Hard-Validity Remediation Design", "status": "COMPLETE", "outcome": "READY_FOR_SEPARATE_REMEDIATION_GATE", "behaviorChange": false, "report": "docs/PHASE_SAFETY_REMEDIATION_DESIGN.md", "authorization": "RESEARCH_COMPLETED_NO_IMPLEMENTATION" },
+    { "id": "SAFETY.REMEDIATION.GATE", "name": "Canonical Playable Geometry Runtime Gate", "status": "COMPLETE", "outcome": "REMEDIATION_RUNTIME_CERTIFIED", "behaviorChange": true, "report": "docs/PHASE_SAFETY_REMEDIATION_GATE.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "name": "Causal Articulation A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" }
@@ -53,19 +54,20 @@
     { "id": "G1.GATE", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "SAFETY.CAUSAL", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_NO_REMEDIATION" },
     { "id": "SAFETY.REMEDIATION.DESIGN", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_NO_IMPLEMENTATION" },
+    { "id": "SAFETY.REMEDIATION.GATE", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "G1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" }
   ],
-  "currentPhase": "SAFETY.REMEDIATION.DESIGN",
+  "currentPhase": "SAFETY.REMEDIATION.GATE",
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 738, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 747, "failed": 0, "skipped": 0 },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "SAFETY_REMEDIATION_DESIGN_COMPLETE_IMPLEMENTATION_GATE_NOT_AUTHORIZED"
+    "currentBlockingRequirement": "SAFETY_REMEDIATION_GATE_COMPLETE_HUMAN_REVIEW_REQUIRED_NO_PROMOTION"
   },
   "g10Recertification": {
     "status": "PASS",
@@ -137,6 +139,22 @@
     "knownConditionsAddressed": 209,
     "additionalDirectDeltas": 6,
     "remediationImplemented": false,
+    "successorAuthorized": false
+  },
+  "safetyRemediationGate": {
+    "status": "COMPLETE",
+    "outcome": "REMEDIATION_RUNTIME_CERTIFIED",
+    "behaviorChange": true,
+    "defaultBehaviorChange": false,
+    "treatmentPolicy": "safety-remediation-canonical-playable.1",
+    "contract": "docs/safety_remediation_gate_contract.json",
+    "contractHash": "9415E4710E44163D26BF56123C3166EF9F52C43AA376E53BA7D2E8305E3293D8",
+    "summary": "docs/safety_remediation_gate_summary.json",
+    "controlHardViolations": 215,
+    "treatmentHardViolations": 0,
+    "knownCases": 209,
+    "additionalCases": 6,
+    "promotion": "NOT_AUTHORIZED",
     "successorAuthorized": false
   },
   "validationCorpus": { "families": 11, "humanCharts": 11, "keymodes": [4, 7, 10], "originalObjects": 50836, "exactHeadGroups": 24939, "chordGroups": 14463, "completionTrials": 40360 },

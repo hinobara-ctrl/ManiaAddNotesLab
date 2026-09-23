@@ -43,6 +43,7 @@ else
     ValidateG1GateClosure(state);
     ValidateSafetyCausalClosure(state);
     ValidateSafetyRemediationDesignClosure(state);
+    ValidateSafetyRemediationGateClosure(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -148,7 +149,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -192,7 +193,7 @@ void ValidatePhaseContracts(ProjectState value)
             $"canonical phase contract {contract.Id}");
     }
 
-    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "G1", "G2", "H", "F2.ACQ", "C2" })
+    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "F2.ACQ", "C2" })
         if (value.PhaseContracts.All(x => x.Id != required))
             errors.Add($"Required canonical phase contract is absent: {required}.");
 
@@ -785,7 +786,7 @@ void ValidateG1GateClosure(ProjectState value)
     if (gate?.Status != "COMPLETE") return;
     if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
         || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
 
@@ -858,7 +859,7 @@ void ValidateSafetyCausalClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "A" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_REMEDIATION"
-        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.CAUSAL must close COMPLETE/A with no remediation, promotion or successor.");
 
@@ -941,7 +942,7 @@ void ValidateSafetyRemediationDesignClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "READY_FOR_SEPARATE_REMEDIATION_GATE" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION"
-        || value.CurrentPhase != "SAFETY.REMEDIATION.DESIGN" || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.DESIGN must close READY_FOR_SEPARATE_REMEDIATION_GATE with no implementation or authorized successor.");
 
@@ -1004,6 +1005,94 @@ void ValidateSafetyRemediationDesignClosure(ProjectState value)
     CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
         "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
         "legacy default after SAFETY.REMEDIATION.DESIGN");
+}
+
+void ValidateSafetyRemediationGateClosure(ProjectState value)
+{
+    var phase = value.Phases.FirstOrDefault(x => x.Id == "SAFETY.REMEDIATION.GATE");
+    var contractState = value.PhaseContracts.FirstOrDefault(x => x.Id == "SAFETY.REMEDIATION.GATE");
+    if (phase?.Status != "COMPLETE") return;
+    if (phase.Outcome != "REMEDIATION_RUNTIME_CERTIFIED" || phase.BehaviorChange is not true
+        || phase.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
+        || contractState?.Kind != "BehaviorChanging" || contractState.BehaviorChange is not true
+        || contractState.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
+        || value.CurrentPhase != "SAFETY.REMEDIATION.GATE" || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
+        errors.Add("SAFETY.REMEDIATION.GATE must close certified, experimental-only and without promotion or successor.");
+
+    foreach (var artifact in new[]
+    {
+        "docs/PHASE_SAFETY_REMEDIATION_GATE.md",
+        "docs/safety_remediation_gate_contract.json",
+        "docs/safety_remediation_gate_runs.csv",
+        "docs/safety_remediation_gate_known_cases.csv",
+        "docs/safety_remediation_gate_summary.json"
+    })
+    {
+        RequireFile(artifact, "SAFETY.REMEDIATION.GATE closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact,
+            "SAFETY.REMEDIATION.GATE closure artifact index entry");
+    }
+
+    const string frozenHash = "9415E4710E44163D26BF56123C3166EF9F52C43AA376E53BA7D2E8305E3293D8";
+    const string snapshot = "93DD2E5E2D7FC6C49FB33B34C7CCDCC58870FA6BE835892FF7903A09D4ADCBE7";
+    try
+    {
+        using var contractDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "safety_remediation_gate_contract.json")));
+        var actual = Convert.ToHexString(SHA256.HashData(
+            JsonSerializer.SerializeToUtf8Bytes(contractDocument.RootElement.GetProperty("contract"))));
+        var contract = contractDocument.RootElement.GetProperty("contract");
+        if (actual != frozenHash
+            || contractDocument.RootElement.GetProperty("canonicalSha256").GetString() != frozenHash
+            || contract.GetProperty("implementationSnapshotSha256").GetString() != snapshot
+            || contract.GetProperty("defaultBehaviorChanged").GetBoolean()
+            || contract.GetProperty("successorAuthorization").GetString() != "NOT_AUTHORIZED")
+            errors.Add("SAFETY.REMEDIATION.GATE contract identity or authorization boundary drifted.");
+
+        using var summaryDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "safety_remediation_gate_summary.json")));
+        var summary = summaryDocument.RootElement;
+        var corpus = summary.GetProperty("corpus");
+        var runtime = summary.GetProperty("runtime");
+        var cases = summary.GetProperty("frozenCases");
+        var validation = summary.GetProperty("validation");
+        var boundaries = summary.GetProperty("boundaries");
+        if (summary.GetProperty("outcome").GetString() != "REMEDIATION_RUNTIME_CERTIFIED"
+            || summary.GetProperty("contractSha256").GetString() != frozenHash
+            || summary.GetProperty("implementationSnapshotSha256").GetString() != snapshot
+            || corpus.GetProperty("primaryPairs").GetInt32() != 220
+            || corpus.GetProperty("secondaryPairs").GetInt32() != 4
+            || runtime.GetProperty("controlHardViolations").GetInt32() != 215
+            || runtime.GetProperty("treatmentHardViolations").GetInt32() != 0
+            || runtime.GetProperty("treatmentOnlyHardViolations").GetInt32() != 0
+            || runtime.GetProperty("gateRngCalls").GetInt32() != 0
+            || cases.GetProperty("observedKnown").GetInt32() != 209
+            || cases.GetProperty("observedAdditional").GetInt32() != 6
+            || cases.GetProperty("unexpected").GetInt32() != 0
+            || validation.GetProperty("defaultEquivalenceFailures").GetInt32() != 0
+            || validation.GetProperty("deterministicRerunFailures").GetInt32() != 0
+            || validation.GetProperty("serializationReparseFailures").GetInt32() != 0
+            || validation.GetProperty("g1EvidenceHashFailures").GetInt32() != 0
+            || validation.GetProperty("hardValiditySemanticsChanged").GetBoolean()
+            || validation.GetProperty("latentG1IdentityChanged").GetBoolean()
+            || validation.GetProperty("productDefaultChanged").GetBoolean()
+            || boundaries.GetProperty("g1Promotion").GetString() != "NOT_AUTHORIZED"
+            || boundaries.GetProperty("successor").GetString() != "NOT_AUTHORIZED")
+            errors.Add("SAFETY.REMEDIATION.GATE summary does not preserve certification and no-promotion invariants.");
+
+        if (File.ReadLines(Path.Combine(root, "docs", "safety_remediation_gate_runs.csv")).Count() != 225
+            || File.ReadLines(Path.Combine(root, "docs", "safety_remediation_gate_known_cases.csv")).Count() != 216)
+            errors.Add("SAFETY.REMEDIATION.GATE public CSV denominators drifted.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"SAFETY.REMEDIATION.GATE closure artifacts cannot be validated: {exception.Message}");
+    }
+
+    CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+        "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
+        "legacy default after SAFETY.REMEDIATION.GATE");
 }
 
 void ValidateFilesAndIndex(ProjectState value)

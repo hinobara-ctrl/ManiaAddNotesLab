@@ -1,19 +1,29 @@
 using System.Collections.Immutable;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ManiaAddNotesLab.Core;
 
 public sealed class LaneGeometryIndex
 {
     private readonly List<TimedManiaObject>[] _lanes;
+    private readonly byte[] _materializedAccumulator = new byte[32];
 
     public LaneGeometryIndex(int keyCount, IReadOnlyList<TimedManiaObject> originals)
     {
         _lanes = Enumerable.Range(0, keyCount).Select(_ => new List<TimedManiaObject>()).ToArray();
-        foreach (var item in originals) _lanes[item.Object.Lane].Add(item);
+        foreach (var item in originals)
+        {
+            _lanes[item.Object.Lane].Add(item);
+            AccumulateMaterializedIdentity(item);
+        }
         foreach (var lane in _lanes) lane.Sort(Compare);
     }
 
     public int KeyCount => _lanes.Length;
+
+    /// <summary>Research-only durable-coordinate state identity; latent beats are deliberately excluded.</summary>
+    public string MaterializedStateHash() => Convert.ToHexString(_materializedAccumulator);
 
     /// <summary>Research-only snapshot of the exact neighbors consulted by tap legality.</summary>
     public TapLaneGeometryInspection InspectTapLane(int laneIndex, decimal beat)
@@ -179,6 +189,20 @@ public sealed class LaneGeometryIndex
     {
         var lane = _lanes[item.Object.Lane];
         lane.Insert(LowerBound(lane, item.StartBeat), item);
+        AccumulateMaterializedIdentity(item);
+    }
+
+    private void AccumulateMaterializedIdentity(TimedManiaObject item)
+    {
+        var row = $"{item.Object.Lane}|{item.Object.StartTime}|{item.Object.EndTime}|{item.Object.Type}|{item.Object.Sequence}|{item.Object.Origin}";
+        var digest = SHA256.HashData(Encoding.UTF8.GetBytes(row));
+        var carry = 0;
+        for (var index = _materializedAccumulator.Length - 1; index >= 0; index--)
+        {
+            var sum = _materializedAccumulator[index] + digest[index] + carry;
+            _materializedAccumulator[index] = (byte)sum;
+            carry = sum >> 8;
+        }
     }
 
     public bool CanReplaceWithArticulation(TimedManiaObject parent, decimal releaseBeat, decimal repressBeat,

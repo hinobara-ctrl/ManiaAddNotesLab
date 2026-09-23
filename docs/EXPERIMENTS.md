@@ -206,6 +206,17 @@ D1.SAFETY no reabre D1. Modeló `RawGeometryRelation`, `HardValidityViolation` y
 
 La validación sintética pasó, pero el forensic prototype sobre los outputs D1 antiguos etiquetó condiciones ausentes del source como legacy-introduced sin provenance causal. Se activó hard abort, el agregado fue retirado y D1.SAFETY cerró Outcome C/PARKED. Los únicos conteos históricos retenidos son los raw 200/171 ya conocidos; no se reconstruyeron métricas conductuales. Un experimento futuro requeriría otro gate y provenance pre-serialization preregistrada; no está autorizado.
 
+## SAFETY.REMEDIATION.GATE — runtime canónico congelado
+
+El gate cerrado se reproduce únicamente con el contrato y corpus congelados:
+
+```powershell
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- safety-remediation-gate-contract docs/safety_remediation_gate_contract.json
+dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- safety-remediation-gate-run src/ManiaAddNotesLab.Web/batch-results docs .artifacts/safety_remediation_gate
+```
+
+La primera orden aborta si los cuatro archivos runtime ya no coinciden con el snapshot `93DD2E5E…`. La segunda ejecuta 224 pares, repetición treatment, serialización/reparse independiente y auditoría HardValidity. El resultado congelado es `REMEDIATION_RUNTIME_CERTIFIED`: 215 condiciones control, 0 treatment, 0 inesperadas, 0 RNG del gate y 0 fallos de invariantes. No es un comando de producto ni autoriza tuning o promoción.
+
 ## Checklist
 
 - Context burst: densidad contextual OFF/ON.

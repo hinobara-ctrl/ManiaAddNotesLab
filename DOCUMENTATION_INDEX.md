@@ -111,3 +111,11 @@ Los outputs `.osu`, CSV de ejecución y baselines grandes permanecen como artefa
 - `docs/safety_remediation_candidate_matrix.csv` — comparación reproducible de A/B/C/D sin scores arbitrarios.
 - `docs/safety_remediation_representation_inventory.csv` — lifecycle y autoridades por transición.
 - `docs/safety_remediation_shadow_footprint.csv` — conteos por candidato, brazo, tipo, superficie y transición.
+
+## SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime
+
+- `docs/PHASE_SAFETY_REMEDIATION_GATE.md` — integración, contrato, matriz, causalidad, verificación y límites de la certificación runtime.
+- `docs/safety_remediation_gate_contract.json` — contrato congelado, SHA-256 canónico `9415E4710E44163D26BF56123C3166EF9F52C43AA376E53BA7D2E8305E3293D8`.
+- `docs/safety_remediation_gate_runs.csv` — 220 pares C11 y cuatro pares secundarios G1 con output, RNG, HardValidity, reparse y reconvergencia.
+- `docs/safety_remediation_gate_known_cases.csv` — clasificación individual de los 209 casos conocidos y 6 adicionales como rechazo directo o inalcanzable downstream.
+- `docs/safety_remediation_gate_summary.json` — outcome `REMEDIATION_RUNTIME_CERTIFIED`, conteos e invariantes machine-readable.

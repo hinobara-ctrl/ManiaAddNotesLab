@@ -206,9 +206,9 @@ El recorder modela `DecisionEvent` por separado de `MutationEvent`, porque una d
 
 El hallazgo arquitectónico es una representación dual: `BuildReleaseCandidates` puede conservar `intendedEndBeat` aunque el `EndTime` ya haya redondeado al mismo milisegundo de un tap posterior. Placement opera sobre el decimal; HardValidity sobre el milisegundo normalizado. Ambos usan igualdad inclusiva. El escritor conserva las coordenadas existentes y no introduce el conflicto. SAFETY.CAUSAL no unifica estas autoridades ni cambia conducta.
 
-### SAFETY.REMEDIATION.DESIGN: autoridad propuesta, no implementada
+### SAFETY.REMEDIATION.GATE: autoridad canónica integrada en research runtime
 
-La investigación posterior define una frontera explícita. El integer millisecond materializado es la coordenada jugable durable; cualquier predicado beat-space debe consumir el beat canónico reconstruido desde ese entero y el timing map. El decimal intended/latent permanece separado para candidate intent, evidencia e identidad G1, pero no concede permiso de collision.
+La investigación y su gate posterior definen una frontera explícita. El integer millisecond materializado es la coordenada jugable durable; cualquier predicado beat-space del treatment consume el beat canónico reconstruido desde ese entero y el timing map. El decimal intended/latent permanece separado para candidate intent, evidencia e identidad G1, pero no concede permiso de collision.
 
 ```text
 latent intent/evidence ───────────────→ G1/research identity
@@ -218,7 +218,9 @@ latent intent/evidence ───────────────→ G1/resea
                                            └─ HardValidity
 ```
 
-El diseño preferido es un modelo `SharedCanonicalPlayableGeometry`, combinado con `LatentValuesAsEvidenceOnly`. Es una especificación research-only: el runtime actual todavía no consume ese modelo y no se alteraron sus decisiones. El shadow observó 215 deltas directos `TapOnHeldLongNote` (209 conocidos + 6 adicionales); por path dependence no predice el output final de una implementación.
+`SharedCanonicalPlayableGeometry` y `LatentValuesAsEvidenceOnly` están integrados sólo por el overload research de `AddNotesEngine`. Control conserva la geometría legacy y treatment mantiene un espejo canónico de los mismos commits reales; no hay segunda veto layer ni inserciones ficticias. El gate no acepta RNG, no rerollea y deja la identidad G1 latente intacta. Normal CLI/Web y defaults no pueden activar esta ruta.
+
+La certificación de 224 pares explica los 215 casos congelados: 188 alcanzan la propuesta equivalente y son rechazados directamente, mientras 27 quedan causalmente inaccesibles tras una divergencia gobernada anterior. El treatment termina con cero violaciones HardValidity y cero fallos de serialización/reparse. Este cierre valida la integración experimental; no promueve G1 ni la policy como default.
 
 ## Invariantes
 
