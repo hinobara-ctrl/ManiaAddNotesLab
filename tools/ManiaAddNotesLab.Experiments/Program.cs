@@ -4,6 +4,15 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 5 && args[0] == "safety-op466-candidate-admission-run")
+{
+    var outcome = SafetyOp466CandidateAdmissionRunner.Run(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]), Path.GetFullPath(args[4]));
+    Console.WriteLine($"SAFETY OP-466 candidate-admission outcome={outcome}");
+    Environment.ExitCode = outcome == "MECHANISM_IDENTIFIED" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 6 && args[0] == "safety-op185-op466-prepare")
 {
     var hash = SafetyOp185Op466CounterfactualRunner.Prepare(Path.GetFullPath(args[1]),
