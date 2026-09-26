@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE conserva su cierre histórico **COMPLETE / NEEDS_REVIEW / NO PROMOTION**. Un seguimiento focalizado corrigió dos defectos del clasificador y demostró el mecanismo de los cinco `C_UNRESOLVED`: el tap histórico sí existe, pero la LN sintética conflictiva está ausente en treatment. No se reejecutó la matriz ni se promovió el resultado. El default no cambió, G1.GATE permanece **NEEDS_REVIEW** y ninguna sucesora está autorizada.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE cerró su recertificación final **COMPLETE / NEEDS_REVIEW / NO PROMOTION**. La única matriz confirmó 215→0 condiciones HardValidity, pero la causalidad fuerte quedó en `188 A + 21 B + 5 D + 1 unresolved` y registró 70.835 divergencias de estado sin atribución fuerte. El default no cambió, G1.GATE permanece **NEEDS_REVIEW** y ninguna sucesora está autorizada.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -29,7 +29,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | G1.GATE — Interior Relation Admission Runtime | **COMPLETE — NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment explícito; 9 violaciones hard atribuibles activaron stop. Default intacto. |
 | SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics | **COMPLETE — OUTCOME A / NO REMEDIATION** | Ninguno; explica 9/9 treatment-only y 200/200 controles mediante replay exacto. |
 | SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design | **COMPLETE — READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION** | Ninguno; shadow puro selecciona autoridad canónica compartida sin modificar runtime. |
-| SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime | **COMPLETE — FOLLOW-UP CLOSED / HISTORICAL NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment research explícito; 5/5 mecanismos explicados como blocker ausente, sin matriz nueva ni reclasificación histórica; default, CLI/Web y G1 intactos. |
+| SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime | **COMPLETE — FINAL RECERTIFICATION NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment research explícito; 224 pares, 0 violaciones treatment, 188 A + 21 B + 5 D + 1 unresolved; default, CLI/Web y G1 intactos. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -237,7 +237,9 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 - Endurecimiento de cierre actual: **727 passed, 0 failed, 0 skipped**, sin cambio de output, RNG ni semántica de generación.
 - Validación de SAFETY.REMEDIATION.DESIGN: **738 passed, 0 failed, 0 skipped**; shadow/observer sin cambio de output ni RNG.
 - Hardening de SAFETY.REMEDIATION.GATE: **756 passed, 0 failed, 0 skipped**; 224 pares, 215→0 condiciones hard, 188 directos + 22 causales + 5 unresolved, 0 fallos de determinismo/reparse/G1 y 0 RNG del gate.
-- Follow-up focalizado actual: **766 passed, 0 failed, 0 skipped**; 45 tests dirigidos, 5/5 mecanismos demostrados, C11 11/11 y `DocConsistency` PASS, sin matriz completa nueva.
+- Suite histórica al cierre del follow-up focalizado: **766 passed, 0 failed, 0 skipped**; 45 tests dirigidos, 5/5 mecanismos demostrados, C11 11/11 y sin matriz completa nueva.
+- Suite de los guards finales pre-recertificación: **774 passed, 0 failed, 0 skipped**; incluye los controles estructurales y adversariales añadidos después del follow-up. El baseline de esta recertificación reprodujo **774/774** antes de congelar su contrato.
+- Suite pre-freeze de recertificación: **777 passed, 0 failed, 0 skipped**. La única matriz completó 224/224 pares; outcome `NEEDS_REVIEW` por 1 caso sin explicación fuerte y 70.835 divergencias sin atribución, pese a 0 violaciones treatment.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -257,7 +259,7 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE está certificado, pero no promovido; G1.GATE conserva **NEEDS_REVIEW / NO PROMOTION**. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. El siguiente paso exige revisión humana explícita; no existe fase accionable autorizada.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION** tras la recertificación final; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. El siguiente paso exige revisión humana explícita; no existe fase accionable autorizada.
 
 <!-- PROJECT-STATE:BEGIN -->
 Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME NEEDS_REVIEW<br>
@@ -271,7 +273,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 766 passed / 0 failed / 0 skipped
+Tests: 777 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

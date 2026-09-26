@@ -4,6 +4,24 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 5 && args[0] == "safety-remediation-gate-final-prepare")
+{
+    var hash = SafetyRemediationGateFinalRecertificationRunner.Prepare(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]), Path.GetFullPath(args[4]));
+    Console.WriteLine($"SAFETY.REMEDIATION.GATE final contract={hash}");
+    return;
+}
+
+if (args.Length == 7 && args[0] == "safety-remediation-gate-final-run")
+{
+    var outcome = SafetyRemediationGateFinalRecertificationRunner.Run(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]), Path.GetFullPath(args[4]),
+        Path.GetFullPath(args[5]), Path.GetFullPath(args[6]));
+    Console.WriteLine($"SAFETY.REMEDIATION.GATE final outcome={outcome}");
+    Environment.ExitCode = outcome == "RECERTIFIED_WITHIN_C11" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 4 && args[0] == "safety-remediation-gate-followup-prepare")
 {
     var hash = SafetyRemediationGateUnresolvedFollowupRunner.Prepare(Path.GetFullPath(args[1]),

@@ -1,0 +1,100 @@
+{
+  "contract": {
+    "schemaVersion": "safety-remediation-gate-final-recertification-contract.1",
+    "repositoryEntryHead": "3840a58aa02765a98da658a7c65b78aae82cf521",
+    "implementationSnapshotSha256": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+    "harnessSnapshotSha256": "486FF0F6F0982A5B337BE4157E07B5769F7CE2B21C2724D51E1DF583437909C3",
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "hardeningContractSha256": "A95778412E2BBACA190F57B6FCC2522562BBE09728BDFEADEC7618694EC6D748",
+    "dFollowupContractSha256": "8DA70E882A1957D8EB1C87A0749807D3CB3C12BC01CEF5FECEF5140CFA4455FF",
+    "executionMemoryLimit": "0x400000000",
+    "charts": [
+      "02D9D1781418E7442956D4D901C8C611E58256556AE9A828E72128C3B5B8E3EB",
+      "0338ADEB4CDBB086D7819736292CB932608EA53DAD840AD3B8BBEAA605AC8349",
+      "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+      "322F995448A73713DCBECE3D140F4D516EF687DBC43CC140CFF14948566F906B",
+      "B1F847192EBB07C44024AA8A4BA570FCCF04EAA03F92D5FC4DBA1EAF40C42249",
+      "BC0401B460251A3CD37EBB8FB6BCDE3D75B619F692C7E9373BF8FC84D089AD95",
+      "BEF3BB94655D3F4749FA91C3C535FD5CFB8387AB19B951DDA3D3877B705677D4",
+      "DAC0347BBDC54E15A080316356E2E9A0CC2002927FF4B031D5F995C6C832F5AF",
+      "DD5D885E5A72729DF913D1010A32D145596DB465F94271AE54E5ECDD7A3C5C20",
+      "E73B098AA0CB6FA3BECE45E9551EF225412F5E01F6398184093A40B944F0AAE0",
+      "F0E7AD21B536EC13F9EE2F8C09913100A35BA2DFE1338C86F78452AA4391BE7E"
+    ],
+    "primarySeeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "g1CompatibilityPairs": [
+      "02D9D1781418E7442956D4D901C8C611E58256556AE9A828E72128C3B5B8E3EB|9",
+      "02D9D1781418E7442956D4D901C8C611E58256556AE9A828E72128C3B5B8E3EB|11",
+      "02D9D1781418E7442956D4D901C8C611E58256556AE9A828E72128C3B5B8E3EB|17",
+      "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788|11"
+    ],
+    "arms": {
+      "control": "legacy generation; Chance=.50; articulation OFF; canonical authority OFF",
+      "treatment": "same configuration and RNG; canonical playable geometry governs legal lanes before selection"
+    },
+    "denominators": {
+      "primaryPairs": 220,
+      "g1CompatibilityPairs": 4,
+      "totalPairs": 224,
+      "frozenKnownCases": 209,
+      "additionalCases": 6,
+      "historicalCases": 215
+    },
+    "causalDefinition": "A: equivalent selected control commit is rejected by canonical authority before commit. B: active canonical-governed lineage, unequal sufficient parent state, exact historical commit absent, no prior reconvergence. D: target commits identically but every independently audited control blocker is absent in treatment under active unreconverged canonical lineage. Otherwise UNRESOLVED.",
+    "sufficientStateDefinition": "Materialized GenerationState, committed latent geometry, RNG positions, opportunity cursor, pending articulation identity and frozen opportunity sequence; compare complete states, not hashes alone.",
+    "reconvergenceDefinition": "Full sufficient-state equality closes ancestry permanently; a later divergence requires a new stable lineage identity.",
+    "hardValidityOracle": "Independent GeometrySafetyAttributionResearch audit over runtime output and serialized/reparsed integer-ms output; occupied LN endpoint equality remains invalid.",
+    "requiredTestsAndControls": [
+      "774-test baseline",
+      "DocConsistency",
+      "manifest hash attacks",
+      "follow-up leaf bad controls",
+      "OFF/reference equality",
+      "determinism",
+      "reparse",
+      "G1 identity",
+      "gate RNG zero"
+    ],
+    "stopConditions": [
+      "new treatment-only HardValidity",
+      "any historical case unresolved",
+      "unattributed state divergence",
+      "reparse mismatch",
+      "determinism failure",
+      "OFF/reference mismatch",
+      "G1 identity drift",
+      "corpus or implementation identity drift"
+    ],
+    "expectedArtifacts": [
+      "docs/safety_remediation_gate_final_recertification_contract.json",
+      "docs/safety_remediation_gate_final_recertification_runs.csv",
+      "docs/safety_remediation_gate_final_recertification_cases.csv",
+      "docs/safety_remediation_gate_final_recertification_d_cases.json",
+      "docs/safety_remediation_gate_final_recertification_summary.json",
+      "docs/PHASE_SAFETY_REMEDIATION_GATE_FINAL_RECERTIFICATION.md"
+    ]
+  },
+  "canonicalSha256": "4CF7B40D15D9B236DE1A67D3E0E1A01778B673D59F9C0488C6F1FB2852D598AC",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; ordered arrays; no machine paths or timestamps"
+}

@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "safety-remediation-gate-final-recertification-summary.1",
+  "contractSha256": "4CF7B40D15D9B236DE1A67D3E0E1A01778B673D59F9C0488C6F1FB2852D598AC",
+  "repositoryEntryHead": "3840a58aa02765a98da658a7c65b78aae82cf521",
+  "implementationSnapshotSha256": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+  "harnessSnapshotSha256": "486FF0F6F0982A5B337BE4157E07B5769F7CE2B21C2724D51E1DF583437909C3",
+  "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+  "matrix": {
+    "primaryPairs": 220,
+    "g1CompatibilityPairs": 4,
+    "totalPairs": 224,
+    "fullMatrixExecutions": 1
+  },
+  "cases": {
+    "total": 215,
+    "directCanonicalReject": 188,
+    "causallyProvenUnreachable": 21,
+    "conflictingObjectAbsentDemonstratedByFrozenFocusedComponent": 5,
+    "unresolved": 1,
+    "unresolvedIdentity": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788|4|OP-00000466-BaseHead-S466-T35009-ANA"
+  },
+  "runtime": {
+    "controlHardViolations": 215,
+    "treatmentHardViolations": 0,
+    "treatmentOnlyHardViolations": 0,
+    "unexplainedStateDivergences": 70835,
+    "pairsWithReconvergence": 0,
+    "gateRngCalls": 0
+  },
+  "validation": {
+    "defaultEquivalenceFailures": 0,
+    "determinismFailures": 0,
+    "reparseFailures": 0,
+    "g1EvidenceFailures": 0,
+    "focusedDMechanismsDemonstrated": 5,
+    "focusedDContractSha256": "8DA70E882A1957D8EB1C87A0749807D3CB3C12BC01CEF5FECEF5140CFA4455FF"
+  },
+  "failure": {
+    "stage": "post-matrix D consolidation",
+    "exception": "InvalidDataException: Expected exactly five historical C_UNRESOLVED cases; observed 6.",
+    "windowsExceptionCode": "0xe0434352",
+    "matrixArtifactsComplete": true,
+    "finalConsolidationArtifactsComplete": false,
+    "rerunPerformed": false
+  },
+  "outcome": "NEEDS_REVIEW",
+  "boundaries": {
+    "engineBehaviorChanged": false,
+    "defaultsChanged": false,
+    "hardValidityChanged": false,
+    "g1Promoted": false,
+    "successorAuthorized": false,
+    "commitOrPushPerformed": false
+  }
+}

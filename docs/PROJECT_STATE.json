@@ -33,7 +33,7 @@
     { "id": "G1.GATE", "name": "Interior Relation Admission Runtime", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_G1_GATE_INTERIOR_RELATION_ADMISSION_RUNTIME.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "SAFETY.CAUSAL", "name": "Downstream Hard-Validity Causality Forensics", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_SAFETY_CAUSAL_DOWNSTREAM_HARD_VALIDITY.md", "authorization": "RESEARCH_COMPLETED_NO_REMEDIATION" },
     { "id": "SAFETY.REMEDIATION.DESIGN", "name": "Hard-Validity Remediation Design", "status": "COMPLETE", "outcome": "READY_FOR_SEPARATE_REMEDIATION_GATE", "behaviorChange": false, "report": "docs/PHASE_SAFETY_REMEDIATION_DESIGN.md", "authorization": "RESEARCH_COMPLETED_NO_IMPLEMENTATION" },
-    { "id": "SAFETY.REMEDIATION.GATE", "name": "Canonical Playable Geometry Runtime Gate", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_SAFETY_REMEDIATION_GATE_VALIDATION_HARDENING_ADDENDUM.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
+    { "id": "SAFETY.REMEDIATION.GATE", "name": "Canonical Playable Geometry Runtime Gate", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_SAFETY_REMEDIATION_GATE_FINAL_RECERTIFICATION.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "name": "Causal Articulation A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" }
@@ -63,11 +63,11 @@
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 766, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 777, "failed": 0, "skipped": 0 },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "SAFETY_REMEDIATION_GATE_VALIDATION_HARDENING_NEEDS_REVIEW_NO_PROMOTION"
+    "currentBlockingRequirement": "SAFETY_REMEDIATION_GATE_FINAL_RECERTIFICATION_NEEDS_REVIEW_NO_PROMOTION"
   },
   "g10Recertification": {
     "status": "PASS",
@@ -185,6 +185,28 @@
       "implementationSnapshot": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
       "harnessSnapshot": "31FC70DE3C856D4E4EB9046520169C2A9E5899AE6E82777C390D366A3EE6E44F",
       "c11ExplicitCorpusVerified": true,
+      "promotion": "NOT_AUTHORIZED"
+    },
+    "finalRecertification": {
+      "status": "COMPLETE",
+      "outcome": "NEEDS_REVIEW",
+      "report": "docs/PHASE_SAFETY_REMEDIATION_GATE_FINAL_RECERTIFICATION.md",
+      "contract": "docs/safety_remediation_gate_final_recertification_contract.json",
+      "contractHash": "4CF7B40D15D9B236DE1A67D3E0E1A01778B673D59F9C0488C6F1FB2852D598AC",
+      "summary": "docs/safety_remediation_gate_final_recertification_summary.json",
+      "primaryPairs": 220,
+      "g1CompatibilityPairs": 4,
+      "fullMatrixExecutions": 1,
+      "directCanonicalRejects": 188,
+      "causallyProvenUnreachable": 21,
+      "conflictingObjectAbsent": 5,
+      "unresolved": 1,
+      "controlHardViolations": 215,
+      "treatmentHardViolations": 0,
+      "unexplainedStateDivergences": 70835,
+      "implementationSnapshot": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+      "harnessSnapshot": "486FF0F6F0982A5B337BE4157E07B5769F7CE2B21C2724D51E1DF583437909C3",
+      "corpusManifest": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
       "promotion": "NOT_AUTHORIZED"
     },
     "promotion": "NOT_AUTHORIZED",

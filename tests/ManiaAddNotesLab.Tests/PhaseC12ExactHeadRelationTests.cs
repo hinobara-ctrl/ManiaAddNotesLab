@@ -227,8 +227,12 @@ public sealed class PhaseC12ExactHeadRelationTests
         Assert.Contains("Next behavioral phase: none", status);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", readme);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", status);
-        Assert.Contains("Tests: 766 passed / 0 failed / 0 skipped", readme);
-        Assert.Contains("Tests: 766 passed / 0 failed / 0 skipped", status);
+        var testStatus = stateRoot.GetProperty("testStatus");
+        var expectedTests = $"Tests: {testStatus.GetProperty("passed").GetInt32()} passed / "
+            + $"{testStatus.GetProperty("failed").GetInt32()} failed / "
+            + $"{testStatus.GetProperty("skipped").GetInt32()} skipped";
+        Assert.Contains(expectedTests, readme);
+        Assert.Contains(expectedTests, status);
     }
 
     private static string FindRepositoryRoot([CallerFilePath] string sourceFile = "")

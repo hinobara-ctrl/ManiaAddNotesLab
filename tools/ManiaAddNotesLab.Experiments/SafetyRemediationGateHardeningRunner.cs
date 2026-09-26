@@ -83,8 +83,13 @@ internal static class SafetyRemediationGateHardeningRunner
 
     public static string Run(string repositoryRoot, string corpusRoot, string publicDirectory,
         string artifactDirectory, string contractPath)
+        => Run(repositoryRoot, corpusRoot, publicDirectory, publicDirectory, artifactDirectory,
+            contractPath);
+
+    public static string Run(string repositoryRoot, string corpusRoot, string sourceDirectory,
+        string outputDirectory, string artifactDirectory, string contractPath)
     {
-        Directory.CreateDirectory(publicDirectory);
+        Directory.CreateDirectory(outputDirectory);
         Directory.CreateDirectory(artifactDirectory);
         var artifact = JsonSerializer.Deserialize<HardeningContractArtifact>(File.ReadAllText(contractPath), Json)
             ?? throw new InvalidOperationException("Hardening contract could not be read.");
@@ -97,13 +102,13 @@ internal static class SafetyRemediationGateHardeningRunner
             || Snapshot(repositoryRoot, HarnessFiles) != contract.CertificationHarnessSnapshotSha256)
             throw new InvalidOperationException("Hardening contract or frozen snapshots drifted after prepare.");
 
-        var historical = ReadHistoricalCases(Path.Combine(publicDirectory,
+        var historical = ReadHistoricalCases(Path.Combine(sourceDirectory,
             "safety_remediation_gate_known_cases.csv"));
         if (historical.Length != 215 || historical.Count(x => x.FrozenKnown) != 209
             || historical.Count(x => !x.FrozenKnown) != 6)
             throw new InvalidOperationException("Historical 209+6 denominator drifted.");
         var frozenManifest = FrozenC11Manifest.Load(
-            Path.Combine(publicDirectory, "g1_gate_runtime_manifest.json"));
+            Path.Combine(sourceDirectory, "g1_gate_runtime_manifest.json"));
         if (!string.Equals(frozenManifest.CanonicalSha256, ManifestHash,
                 StringComparison.OrdinalIgnoreCase))
             throw new InvalidDataException("Frozen C11 manifest identity drifted from the hardening contract.");
@@ -139,10 +144,10 @@ internal static class SafetyRemediationGateHardeningRunner
         var unresolved = caseRows.Count(x => x.HardenedClass == "C_UNRESOLVED");
         var known = caseRows.Count(x => x.FrozenKnown);
         var additional = caseRows.Count(x => !x.FrozenKnown);
-        WriteCases(Path.Combine(publicDirectory, "safety_remediation_gate_hardened_cases.csv"), caseRows);
-        WriteUnreachable(Path.Combine(publicDirectory, "safety_remediation_gate_causal_unreachable.csv"),
+        WriteCases(Path.Combine(outputDirectory, "safety_remediation_gate_hardened_cases.csv"), caseRows);
+        WriteUnreachable(Path.Combine(outputDirectory, "safety_remediation_gate_causal_unreachable.csv"),
             caseRows.Where(x => x.HardenedClass == "B_CAUSALLY_PROVEN_UNREACHABLE"));
-        WriteRuns(Path.Combine(publicDirectory, "safety_remediation_gate_hardening_runs.csv"), runRows);
+        WriteRuns(Path.Combine(outputDirectory, "safety_remediation_gate_hardening_runs.csv"), runRows);
 
         var pass = direct + unreachable == 215 && unresolved == 0 && known == 209 && additional == 6
             && runRows.Count == 224
@@ -189,7 +194,7 @@ internal static class SafetyRemediationGateHardeningRunner
                 defaultPolicy = "legacy-experimental.1", promotion = "NOT_AUTHORIZED",
                 successor = "NOT_AUTHORIZED" }
         };
-        var summaryPath = Path.Combine(publicDirectory,
+        var summaryPath = Path.Combine(outputDirectory,
             "safety_remediation_gate_validation_hardening_summary.json");
         WriteJson(summaryPath, summary);
         WriteJson(Path.Combine(artifactDirectory,
