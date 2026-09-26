@@ -4,6 +4,25 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 6 && args[0] == "safety-op185-op466-prepare")
+{
+    var hash = SafetyOp185Op466CounterfactualRunner.Prepare(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]), Path.GetFullPath(args[4]),
+        Path.GetFullPath(args[5]));
+    Console.WriteLine($"SAFETY OP-185/OP-466 counterfactual contract={hash}");
+    return;
+}
+
+if (args.Length == 6 && args[0] == "safety-op185-op466-run")
+{
+    var outcome = SafetyOp185Op466CounterfactualRunner.Run(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]), Path.GetFullPath(args[4]),
+        Path.GetFullPath(args[5]));
+    Console.WriteLine($"SAFETY OP-185/OP-466 counterfactual outcome={outcome}");
+    Environment.ExitCode = outcome is "RECOVERED_EXACT" or "ABSENT_BOTH" or "SIMILAR_NOT_EXACT" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 6 && args[0] == "safety-selection-set-remapping-verify-published")
 {
     try

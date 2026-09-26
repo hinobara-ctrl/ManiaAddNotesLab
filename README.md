@@ -54,7 +54,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 807 passed / 0 failed / 0 skipped
+Tests: 826 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

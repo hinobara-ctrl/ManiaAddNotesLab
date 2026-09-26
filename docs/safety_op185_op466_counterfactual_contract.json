@@ -1,0 +1,89 @@
+{
+  "contract": {
+    "schemaVersion": "safety-op185-op466-counterfactual-contract.1",
+    "repositoryEntryHead": "14a07fe0820c1005e8d814adffbbd431d185ac1e",
+    "implementationSnapshotSha256": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+    "harnessSnapshotSha256": "0EA221ECA42C2287820A121BB32A32214F0EA1937C4359156AE1462A7FC7164A",
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "historicalArtifactsSha256": "4BAB6A64C5692117ABC0AA67D47080F4518233893E7D13EADF1249A721FEEABC",
+    "preflightControlsSha256": "A42921C760063EACD2402CB2DEFE17ED9711621E72A66C590FA0AD3199999CF6",
+    "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+    "seed": 4,
+    "sharedPolicy": "canonical remediation treatment in both arms",
+    "interventionOpportunityKey": "OP-00000185-BaseHead-S185-T16399-ANA",
+    "interventionTime": 16399,
+    "canonicalLanes": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "normalLane": 2,
+    "interventionLane": 3,
+    "rngPositionBefore": 260,
+    "rngMaximum": 4,
+    "rngPositionAfter": 261,
+    "sufficientStateDefinition": "complete SafetyRemediationGateSufficientState: materialized, latent, root/stage RNG, opportunity cursor, pending articulation, opportunity sequence",
+    "initialEqualityCriteria": "parents complete and byte/value equal before OP-185; same configuration, key, authentic RNG prefix and independent mutable setup",
+    "nonInterferenceCriteria": "two normal canonical runs and instrumented pass-through are exact in output, commits, RNG, diagnostics and G1-null identity",
+    "exactRecoveryDefinition": "OP-466 recovery requires exact OpportunityKey, provenance S466, lane 2, start 35009 and commit identity 2|35009||Tap|466|HeadOpportunity|74.49995000000002979998|74.49995000000002979998",
+    "outcomes": [
+      "RECOVERED_EXACT",
+      "ABSENT_BOTH",
+      "SIMILAR_NOT_EXACT",
+      "UNEXPECTED_BASELINE",
+      "INVALID",
+      "BLOCKED"
+    ],
+    "stopConditions": [
+      "baseline drift",
+      "pre-OP185 inequality",
+      "RNG call drift",
+      "illegal lane 3",
+      "more than one intervention",
+      "missing frozen dependency",
+      "resource failure"
+    ],
+    "historicalInputs": [
+      {
+        "path": ".artifacts/safety_remediation_gate_final_recertification/frozen/official-matrix/safety_remediation_gate_hardening_runs.csv",
+        "sha256": "0E3D3BAA91B8EA640F380B6E7DA1EAC1EEB684BE01641B917AD42ECADDF23ECD"
+      },
+      {
+        "path": ".artifacts/safety_remediation_gate_final_recertification/frozen/official-matrix/safety_remediation_gate_hardened_cases.csv",
+        "sha256": "DEE28685FABD09750C09D186C67266F13B5C4BAF0CCD9E6C7DFAFB1C62AE5C1B"
+      },
+      {
+        "path": ".artifacts/safety_remediation_gate_forensic_attribution/forensic_attribution_runs.json",
+        "sha256": "F1D19100409B0D67263DB531CE5DDCA13F9CA0F32395DF88596A563FD5586E96"
+      },
+      {
+        "path": ".artifacts/safety_remediation_gate_forensic_attribution/forensic_offline_consolidation_summary.json",
+        "sha256": "E78E521C055AC1ABF45F068009187083A1109F3B0E65749FA3EE7D69A529FCD2"
+      },
+      {
+        "path": ".artifacts/safety_selection_set_remapping/op185_analysis.json",
+        "sha256": "EE5E02019AA9560BC2277A52B5E5A573BE745F2F3D7017900F5936B4E90E14C0"
+      },
+      {
+        "path": ".artifacts/safety_selection_set_remapping/op370_op466_downstream.json",
+        "sha256": "7529D0DF09D90CF64C147D8DB729C2F6F0C41F31BA9DBBB3E80FD3531F79856B"
+      },
+      {
+        "path": ".artifacts/safety_selection_set_remapping/original_decisions.csv",
+        "sha256": "A4605CD1792D2150B85DC3ED98308AF9C23C877EF8C674107DE2CAFC74DD45CF"
+      },
+      {
+        "path": ".artifacts/safety_selection_set_remapping/summary.json",
+        "sha256": "6D2AE46E9EF855A6266813B91CCD17A9A4720789D084AAC964D06F58E9C9E745"
+      },
+      {
+        "path": ".artifacts/safety_selection_set_remapping/sha256sums.txt",
+        "sha256": "5599DE690FFA0E0D102BBB1CEA4C2D7F92FEA785AC435E60B80B35CC3B08E890"
+      }
+    ],
+    "executionMemoryLimit": "0x400000000"
+  },
+  "canonicalSha256": "6A7DA86F3EBCF41A352813372DAB159FBC51F69DD8E7797F7A5F1CFD71110620",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; ordered arrays; no timestamps or machine paths"
+}
