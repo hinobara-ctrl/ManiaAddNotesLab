@@ -1,0 +1,116 @@
+{
+  "contract": {
+    "schemaVersion": "safety-selection-set-remapping-contract.1",
+    "repositoryEntryHead": "52f21af56f8034e07fcaa9d849cb9440b9429e73",
+    "implementationSnapshotSha256": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+    "harnessSnapshotSha256": "D70EB737549542940B69821367C1E837700810F1D1587D4FF99A35D8CE7707C8",
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "executionMemoryLimit": "0x400000000",
+    "population": [
+      {
+        "stratum": "primary",
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "seed": 4,
+        "expectedFirstOpportunity": "OP-00000185-BaseHead-S185-T16399-ANA",
+        "historicalUnattributedObservations": 10007
+      },
+      {
+        "stratum": "primary",
+        "chartId": "02D9D1781418E7442956D4D901C8C611E58256556AE9A828E72128C3B5B8E3EB",
+        "seed": 5,
+        "expectedFirstOpportunity": "OP-00000659-BaseHead-S659-T51279-ANA",
+        "historicalUnattributedObservations": 4823
+      },
+      {
+        "stratum": "primary",
+        "chartId": "02D9D1781418E7442956D4D901C8C611E58256556AE9A828E72128C3B5B8E3EB",
+        "seed": 20,
+        "expectedFirstOpportunity": "OP-00000183-BaseHead-S183-T18552-ANA",
+        "historicalUnattributedObservations": 5305
+      },
+      {
+        "stratum": "primary",
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "seed": 10,
+        "expectedFirstOpportunity": "OP-00000048-BaseHead-S48-T6475-ANA",
+        "historicalUnattributedObservations": 10144
+      },
+      {
+        "stratum": "primary",
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "seed": 11,
+        "expectedFirstOpportunity": "OP-00000055-BaseHead-S55-T6926-ANA",
+        "historicalUnattributedObservations": 10137
+      },
+      {
+        "stratum": "primary",
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "seed": 14,
+        "expectedFirstOpportunity": "OP-00000051-BaseHead-S51-T6700-ANA",
+        "historicalUnattributedObservations": 10141
+      },
+      {
+        "stratum": "primary",
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "seed": 19,
+        "expectedFirstOpportunity": "OP-00000051-BaseHead-S51-T6700-ANA",
+        "historicalUnattributedObservations": 10141
+      },
+      {
+        "stratum": "secondary-g1-compatibility",
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "seed": 11,
+        "expectedFirstOpportunity": "OP-00000055-BaseHead-S55-T6926-ANA",
+        "historicalUnattributedObservations": 10137
+      }
+    ],
+    "authenticSelector": "lanes[rng.Next(lanes.Count)] over an exact replay of SeededRandom prefix",
+    "experimentalCausalDefinition": "E_SELECTION_SET_REMAP requires equal complete parents, same opportunity/configuration, isolated ordered-set intervention, control lane still canonical, authentic different selection with identical RNG prefix/one-call consumption, and materially different complete successors.",
+    "abstentionRule": "ABSTAIN on any failed E criterion; later interventions remain separate and persistence is not target attribution.",
+    "counterfactuals": [
+      "A actual legacy set",
+      "B actual canonical set",
+      "C explicit equal-cardinality fixture",
+      "D explicit reordered fixture",
+      "E-control explicit different-set/same-selection fixture"
+    ],
+    "successCriteria": [
+      "synthetic controls pass",
+      "OP-185 local E and no-interference pass",
+      "eight reference/repeat comparisons pass",
+      "historical counts remain exact"
+    ],
+    "stopConditions": [
+      "identity drift",
+      "RNG prefix mismatch",
+      "non-interference failure",
+      "G1 drift",
+      "missing C11/artifact",
+      "memory/resource failure"
+    ],
+    "historicalInputs": [
+      {
+        "path": ".artifacts/safety_remediation_gate_final_recertification/frozen/official-matrix/safety_remediation_gate_hardening_runs.csv",
+        "sha256": "0E3D3BAA91B8EA640F380B6E7DA1EAC1EEB684BE01641B917AD42ECADDF23ECD"
+      },
+      {
+        "path": ".artifacts/safety_remediation_gate_final_recertification/frozen/official-matrix/safety_remediation_gate_hardened_cases.csv",
+        "sha256": "DEE28685FABD09750C09D186C67266F13B5C4BAF0CCD9E6C7DFAFB1C62AE5C1B"
+      },
+      {
+        "path": ".artifacts/safety_remediation_gate_final_recertification/smoke/followup_result.json",
+        "sha256": "0BAB75FF059D30877E8129BA872A5B33810B189685222B193AE8061D4DAF712F"
+      },
+      {
+        "path": ".artifacts/safety_remediation_gate_forensic_attribution/forensic_attribution_runs.json",
+        "sha256": "F1D19100409B0D67263DB531CE5DDCA13F9CA0F32395DF88596A563FD5586E96"
+      },
+      {
+        "path": ".artifacts/safety_remediation_gate_forensic_attribution/forensic_offline_consolidation_summary.json",
+        "sha256": "E78E521C055AC1ABF45F068009187083A1109F3B0E65749FA3EE7D69A529FCD2"
+      }
+    ]
+  },
+  "canonicalSha256": "1284384EDDBFCB8778F2AC32169AE50052A8E6E8AA37835DCDBC75462CED612D",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; ordered arrays; no timestamps or machine paths"
+}

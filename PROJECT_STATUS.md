@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE cerró su investigación forense **COMPLETE / NEEDS_REVIEW / NO PROMOTION**. La única matriz confirmó 215→0 condiciones HardValidity y `188 A + 21 B + 5 D + 1 unresolved`. Las 70.835 observaciones se reprodujeron como ocho episodios persistentes: un lane-set canónico reducido remapea la misma decisión RNG a otra lane aunque la lane elegida por control siga siendo legal. Ese mecanismo queda fuera de la definición causal congelada; el default no cambió, G1.GATE permanece **NEEDS_REVIEW** y ninguna sucesora está autorizada.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION**. La investigación separada SELECTION-SET-REMAPPING demostró E localmente en 8/8 primeras divergencias mediante replay auténtico del mismo prefijo RNG; no logró aislar una cadena completa a OP-466. La partición continúa `188 A + 21 B + 5 D + 1 unresolved`, el default no cambió, G1.GATE permanece **NEEDS_REVIEW** y ninguna sucesora está autorizada.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -30,6 +30,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics | **COMPLETE — OUTCOME A / NO REMEDIATION** | Ninguno; explica 9/9 treatment-only y 200/200 controles mediante replay exacto. |
 | SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design | **COMPLETE — READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION** | Ninguno; shadow puro selecciona autoridad canónica compartida sin modificar runtime. |
 | SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime | **COMPLETE — FORENSIC ATTRIBUTION NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment research explícito; 224 pares, 0 violaciones treatment, 188 A + 21 B + 5 D + 1 unresolved; ocho episodios explicados pero no certificados por la causalidad congelada. |
+| SAFETY.SELECTION-SET-REMAPPING — Focused Counterfactual Gate | **COMPLETE — E_DEMONSTRATED LOCAL ONLY / NO PROMOTION** | Ninguno; replay aislado demuestra 8/8 primeras divergencias, pero no atribuye completamente OP-466 ni modifica el clasificador oficial. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -273,7 +274,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 781 passed / 0 failed / 0 skipped
+Tests: 796 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.
