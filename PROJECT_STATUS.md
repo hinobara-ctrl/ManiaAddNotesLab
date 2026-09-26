@@ -274,7 +274,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 796 passed / 0 failed / 0 skipped
+Tests: 807 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.
