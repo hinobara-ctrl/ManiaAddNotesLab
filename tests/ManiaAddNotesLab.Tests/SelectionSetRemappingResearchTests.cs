@@ -5,6 +5,79 @@ namespace ManiaAddNotesLab.Tests;
 public sealed class SelectionSetRemappingResearchTests
 {
     [Fact]
+    public void IdenticalOpportunitySequencesAreExact()
+    {
+        var control = Opportunities(("OP-A", 0, "C-A"), ("OP-B", 1, "C-B"));
+        var comparison = SelectionSetOpportunityPairingResearch.Compare(control, control.ToArray());
+        Assert.True(comparison.Equivalent);
+        Assert.Equal(OpportunitySequenceDiagnostic.Exact, comparison.Diagnostic);
+    }
+
+    [Fact]
+    public void MissingTreatmentOpportunityIsDiagnosedBeforePairing()
+    {
+        var control = Opportunities(("OP-A", 0, "C-A"), ("OP-B", 1, "C-B"));
+        var treatment = Opportunities(("OP-A", 0, "T-A"));
+        var comparison = SelectionSetOpportunityPairingResearch.Compare(control, treatment);
+        Assert.Equal(OpportunitySequenceDiagnostic.TreatmentMissingOpportunity, comparison.Diagnostic);
+        Assert.Equal(1, comparison.MismatchIndex);
+        Assert.Throws<InvalidDataException>(() =>
+            SelectionSetOpportunityPairingResearch.Pair(control, treatment, new HashSet<int>()));
+    }
+
+    [Fact]
+    public void AdditionalTreatmentOpportunityIsDiagnosedBeforePairing()
+    {
+        var control = Opportunities(("OP-A", 0, "C-A"));
+        var treatment = Opportunities(("OP-A", 0, "T-A"), ("OP-B", 1, "T-B"));
+        var comparison = SelectionSetOpportunityPairingResearch.Compare(control, treatment);
+        Assert.Equal(OpportunitySequenceDiagnostic.TreatmentAdditionalOpportunity, comparison.Diagnostic);
+        Assert.Equal(1, comparison.MismatchIndex);
+    }
+
+    [Fact]
+    public void SwappedTreatmentOpportunitiesAreDiagnosed()
+    {
+        var control = Opportunities(("OP-A", 0, "C-A"), ("OP-B", 1, "C-B"));
+        var treatment = Opportunities(("OP-B", 1, "T-B"), ("OP-A", 0, "T-A"));
+        Assert.Equal(OpportunitySequenceDiagnostic.OpportunityOrderSwapped,
+            SelectionSetOpportunityPairingResearch.Compare(control, treatment).Diagnostic);
+    }
+
+    [Fact]
+    public void SameLengthWithDifferentOpportunityKeysIsDiagnosed()
+    {
+        var control = Opportunities(("OP-A", 0, "C-A"), ("OP-B", 1, "C-B"));
+        var treatment = Opportunities(("OP-A", 0, "T-A"), ("OP-X", 1, "T-X"));
+        var comparison = SelectionSetOpportunityPairingResearch.Compare(control, treatment);
+        Assert.Equal(OpportunitySequenceDiagnostic.OpportunityKeyMismatch, comparison.Diagnostic);
+        Assert.Equal(1, comparison.MismatchIndex);
+    }
+
+    [Fact]
+    public void EqualSequenceWithDifferentCommitsRemainsExact()
+    {
+        var control = Opportunities(("OP-A", 0, "CONTROL"));
+        var treatment = Opportunities(("OP-A", 0, "TREATMENT"));
+        Assert.Equal(OpportunitySequenceDiagnostic.Exact,
+            SelectionSetOpportunityPairingResearch.Compare(control, treatment).Diagnostic);
+    }
+
+    [Fact]
+    public void CorrectlyValidatedPairingPreservesBothCommitsAndGuarantee()
+    {
+        var control = Opportunities(("OP-A", 0, "CONTROL"));
+        var treatment = Opportunities(("OP-A", 0, "TREATMENT"));
+        var result = SelectionSetOpportunityPairingResearch.Pair(control, treatment,
+            new HashSet<int> { 0 });
+        var pair = Assert.Single(result.Pairs);
+        Assert.True(result.SequenceComparison.Equivalent);
+        Assert.Equal("CONTROL", pair.ControlCommitIdentity);
+        Assert.Equal("TREATMENT", pair.TreatmentCommitIdentity);
+        Assert.True(pair.CanonicalAuthorityChangedCommit);
+    }
+
+    [Fact]
     public void DifferentSetsCanKeepTheSameSelectionAndMustAbstain()
     {
         var evidence = Evidence([0, 1, 2], [0, 1], sameSelection: true);
@@ -182,4 +255,10 @@ public sealed class SelectionSetRemappingResearchTests
 
     private static SafetyRemediationGateSufficientState State(string value, int cursor) =>
         new(value, value + "-M", value + "-L", cursor, cursor, cursor, value + "-P", true);
+
+    private static SafetyRemediationGateOpportunityState[] Opportunities(
+        params (string Key, int Order, string Commit)[] values) => values.Select(x =>
+            new SafetyRemediationGateOpportunityState(x.Key, x.Order,
+                State($"{x.Key}-BEFORE", x.Order), State($"{x.Key}-AFTER", x.Order + 1), x.Commit))
+            .ToArray();
 }

@@ -54,6 +54,100 @@ public sealed record SelectionSetRemappingAssessment(
     public bool Demonstrated => Disposition == SelectionSetRemappingDisposition.ESelectionSetRemap;
 }
 
+public enum OpportunitySequenceDiagnostic
+{
+    Exact,
+    TreatmentMissingOpportunity,
+    TreatmentAdditionalOpportunity,
+    OpportunityOrderSwapped,
+    OpportunityKeyMismatch,
+    OpportunityOrderMismatch
+}
+
+public sealed record OpportunitySequenceComparison(
+    OpportunitySequenceDiagnostic Diagnostic,
+    int? MismatchIndex,
+    string? ControlOpportunityKey,
+    string? TreatmentOpportunityKey,
+    int? ControlOpportunityOrder,
+    int? TreatmentOpportunityOrder)
+{
+    public bool Equivalent => Diagnostic == OpportunitySequenceDiagnostic.Exact;
+
+    public void RequireEquivalent()
+    {
+        if (Equivalent) return;
+        throw new InvalidDataException($"Control/treatment opportunity sequence mismatch: {Diagnostic}"
+            + (MismatchIndex.HasValue ? $" at index {MismatchIndex.Value}" : string.Empty) + ".");
+    }
+}
+
+public sealed record ValidatedOpportunityPairing(
+    OpportunitySequenceComparison SequenceComparison,
+    ImmutableArray<SafetyRemediationGatePairedOpportunity> Pairs);
+
+public static class SelectionSetOpportunityPairingResearch
+{
+    public static OpportunitySequenceComparison Compare(
+        IReadOnlyList<SafetyRemediationGateOpportunityState> control,
+        IReadOnlyList<SafetyRemediationGateOpportunityState> treatment)
+    {
+        var shared = Math.Min(control.Count, treatment.Count);
+        for (var index = 0; index < shared; index++)
+        {
+            var left = control[index];
+            var right = treatment[index];
+            if (left.OpportunityKey == right.OpportunityKey
+                && left.OpportunityOrder == right.OpportunityOrder) continue;
+
+            var controlIdentities = control.Select(Identity).Order(StringComparer.Ordinal).ToArray();
+            var treatmentIdentities = treatment.Select(Identity).Order(StringComparer.Ordinal).ToArray();
+            var swapped = control.Count == treatment.Count
+                && controlIdentities.SequenceEqual(treatmentIdentities, StringComparer.Ordinal);
+            var diagnostic = swapped ? OpportunitySequenceDiagnostic.OpportunityOrderSwapped
+                : left.OpportunityKey != right.OpportunityKey
+                    ? OpportunitySequenceDiagnostic.OpportunityKeyMismatch
+                    : OpportunitySequenceDiagnostic.OpportunityOrderMismatch;
+            return new(diagnostic, index, left.OpportunityKey, right.OpportunityKey,
+                left.OpportunityOrder, right.OpportunityOrder);
+        }
+
+        if (control.Count > treatment.Count)
+        {
+            var missing = control[shared];
+            return new(OpportunitySequenceDiagnostic.TreatmentMissingOpportunity, shared,
+                missing.OpportunityKey, null, missing.OpportunityOrder, null);
+        }
+        if (treatment.Count > control.Count)
+        {
+            var additional = treatment[shared];
+            return new(OpportunitySequenceDiagnostic.TreatmentAdditionalOpportunity, shared,
+                null, additional.OpportunityKey, null, additional.OpportunityOrder);
+        }
+        return new(OpportunitySequenceDiagnostic.Exact, null, null, null, null, null);
+    }
+
+    public static ValidatedOpportunityPairing Pair(
+        IReadOnlyList<SafetyRemediationGateOpportunityState> control,
+        IReadOnlyList<SafetyRemediationGateOpportunityState> treatment,
+        IReadOnlySet<int> canonicalAuthorityRejectedOrders)
+    {
+        var comparison = Compare(control, treatment);
+        comparison.RequireEquivalent();
+        var pairs = control.Zip(treatment).Select(x =>
+            new SafetyRemediationGatePairedOpportunity(x.First.OpportunityKey,
+                x.First.OpportunityOrder, x.First.StateBefore, x.Second.StateBefore,
+                x.First.StateAfter, x.Second.StateAfter, x.First.CommittedObjectIdentity,
+                x.Second.CommittedObjectIdentity,
+                canonicalAuthorityRejectedOrders.Contains(x.First.OpportunityOrder)))
+            .ToImmutableArray();
+        return new(comparison, pairs);
+    }
+
+    private static string Identity(SafetyRemediationGateOpportunityState value) =>
+        $"{value.OpportunityOrder.ToString(System.Globalization.CultureInfo.InvariantCulture)}\0{value.OpportunityKey}";
+}
+
 public static class SelectionSetRemappingResearch
 {
     public const string ExperimentalClass = "E_SELECTION_SET_REMAP";

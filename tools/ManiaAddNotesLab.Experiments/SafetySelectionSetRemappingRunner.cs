@@ -177,7 +177,8 @@ internal static class SafetySelectionSetRemappingRunner
         var repeatExact = Equivalent(treatment, repeat, true);
         if (!referenceExact || !repeatExact)
             throw new InvalidDataException($"Non-interference failed for {identity}.");
-        var pairs = Pair(control.Diagnostics!, treatment.Diagnostics!);
+        var pairing = Pair(control.Diagnostics!, treatment.Diagnostics!);
+        var pairs = pairing.Pairs;
         var lineage = SafetyRemediationGateHardeningResearch.Classify(
             $"{identity.Stratum}|{identity.ChartId}|{identity.Seed}", pairs);
         var first = pairs.First(x =>
@@ -219,7 +220,8 @@ internal static class SafetySelectionSetRemappingRunner
         var assessment = SelectionSetRemappingResearch.Assess(evidence);
         var episodes = SafetyRemediationForensicAttributionResearch.GroupEpisodes(lineage);
         var downstream = identity.ChartId == Chart206 && identity.Seed == 4
-            && identity.Stratum == "primary" ? AnalyzeDownstream(pairs, control, treatment, lineage) : null;
+            && identity.Stratum == "primary" ? AnalyzeDownstream(pairs, pairing.SequenceComparison,
+                control, treatment, lineage) : null;
         var g1Invariant = (control.G1 is null && treatment.G1 is null)
             || (control.G1!.EvidenceIndexHashBefore == control.G1.EvidenceIndexHashAfter
                 && treatment.G1!.EvidenceIndexHashBefore == treatment.G1.EvidenceIndexHashAfter
@@ -236,7 +238,8 @@ internal static class SafetySelectionSetRemappingRunner
     }
 
     private static DownstreamAnalysis AnalyzeDownstream(
-        IReadOnlyList<SafetyRemediationGatePairedOpportunity> pairs, Execution control,
+        IReadOnlyList<SafetyRemediationGatePairedOpportunity> pairs,
+        OpportunitySequenceComparison sequenceComparison, Execution control,
         Execution treatment, IReadOnlyList<SafetyRemediationGateLineageStep> lineage)
     {
         var first = pairs.Single(x => x.OpportunityKey.Contains("OP-00000185-", StringComparison.Ordinal));
@@ -255,7 +258,7 @@ internal static class SafetySelectionSetRemappingRunner
         return new(Inspect(op370, control, treatment, lineage),
             Inspect(op466, control, treatment, lineage), firstRngDifference?.OpportunityKey,
             canonicalInterventions, commitDifferences, stateReconvergences,
-            pairs.Select(x => x.OpportunityKey).SequenceEqual(pairs.Select(x => x.OpportunityKey)),
+            sequenceComparison.Equivalent,
             "E demonstrates the first divergence only. Later canonical interventions and RNG drift are concurrent; no isolated counterfactual trajectory proves OP-466 absence.");
     }
 
@@ -283,25 +286,15 @@ internal static class SafetySelectionSetRemappingRunner
             throw new InvalidDataException("Recorded selection call does not match candidate decision.");
     }
 
-    private static ImmutableArray<SafetyRemediationGatePairedOpportunity> Pair(
+    private static ValidatedOpportunityPairing Pair(
         SafetyRemediationGateRuntimeDiagnostics control,
         SafetyRemediationGateRuntimeDiagnostics treatment)
     {
-        if (control.OpportunityStates.Length != treatment.OpportunityStates.Length)
-            throw new InvalidDataException("Opportunity count mismatch.");
         var rejected = control.CandidateDecisions.Where(x =>
                 SafetyRemediationGateHardeningResearch.CanonicalAuthorityRejectedSelectedCommit([x]))
             .Select(x => x.OpportunityOrder).ToHashSet();
-        return control.OpportunityStates.Zip(treatment.OpportunityStates).Select(x =>
-        {
-            if (x.First.OpportunityOrder != x.Second.OpportunityOrder
-                || x.First.OpportunityKey != x.Second.OpportunityKey)
-                throw new InvalidDataException("Opportunity identity mismatch.");
-            return new SafetyRemediationGatePairedOpportunity(x.First.OpportunityKey,
-                x.First.OpportunityOrder, x.First.StateBefore, x.Second.StateBefore,
-                x.First.StateAfter, x.Second.StateAfter, x.First.CommittedObjectIdentity,
-                x.Second.CommittedObjectIdentity, rejected.Contains(x.First.OpportunityOrder));
-        }).ToImmutableArray();
+        return SelectionSetOpportunityPairingResearch.Pair(control.OpportunityStates,
+            treatment.OpportunityStates, rejected);
     }
 
     private static Execution Execute(ManiaChart chart, AddNotesOptions options,

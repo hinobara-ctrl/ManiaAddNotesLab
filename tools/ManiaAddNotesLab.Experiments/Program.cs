@@ -4,6 +4,24 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 6 && args[0] == "safety-selection-set-remapping-verify-published")
+{
+    try
+    {
+        var identity = SafetySelectionSetRemappingPostPublicationVerifier.Run(
+            Path.GetFullPath(args[1]), Path.GetFullPath(args[2]), Path.GetFullPath(args[3]),
+            Path.GetFullPath(args[4]), Path.GetFullPath(args[5]));
+        Console.WriteLine($"SAFETY selection-set-remapping offline verification=VERIFIED harness={identity}");
+    }
+    catch (Exception exception)
+    {
+        Console.Error.WriteLine($"SAFETY selection-set-remapping offline verification failed: "
+            + $"{exception.GetType().Name}: {exception.Message}");
+        Environment.ExitCode = 1;
+    }
+    return;
+}
+
 if (args.Length == 5 && args[0] == "safety-selection-set-remapping-prepare")
 {
     var hash = SafetySelectionSetRemappingRunner.Prepare(Path.GetFullPath(args[1]),
