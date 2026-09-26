@@ -245,8 +245,9 @@ public sealed class PhaseSafetyRemediationGateTests
                     b.StateAfterComplete, b.OpportunityOrder + 1),
                 a.CommittedObjectIdentity, b.CommittedObjectIdentity,
                 a.CommittedObjectIdentity != b.CommittedObjectIdentity
-                    && control.CandidateDecisions.Any(x => x.OpportunityKey == a.OpportunityKey
-                        && x.GeometrySetsDiffer))).ToArray();
+                    && SafetyRemediationGateHardeningResearch.CanonicalAuthorityRejectedSelectedCommit(
+                        control.CandidateDecisions.Where(x =>
+                            x.OpportunityKey == a.OpportunityKey)))).ToArray();
         }
 
         var fullLineage = SafetyRemediationGateHardeningResearch.Classify("pair",

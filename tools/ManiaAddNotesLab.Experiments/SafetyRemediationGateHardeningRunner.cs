@@ -102,9 +102,12 @@ internal static class SafetyRemediationGateHardeningRunner
         if (historical.Length != 215 || historical.Count(x => x.FrozenKnown) != 209
             || historical.Count(x => !x.FrozenKnown) != 6)
             throw new InvalidOperationException("Historical 209+6 denominator drifted.");
-        var manifestIds = ReadManifestIds(Path.Combine(publicDirectory, "g1_gate_runtime_manifest.json"));
-        var charts = C11CorpusDiscovery.Discover(corpusRoot).UniqueHumanCharts
-            .Where(x => manifestIds.Contains(x.Sha256)).OrderBy(x => x.Sha256, StringComparer.Ordinal).ToArray();
+        var frozenManifest = FrozenC11Manifest.Load(
+            Path.Combine(publicDirectory, "g1_gate_runtime_manifest.json"));
+        if (!string.Equals(frozenManifest.CanonicalSha256, ManifestHash,
+                StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException("Frozen C11 manifest identity drifted from the hardening contract.");
+        var charts = C11CorpusDiscovery.ResolveFrozen(corpusRoot, frozenManifest.Charts).Charts.ToArray();
         if (charts.Length != 11) throw new InvalidOperationException("Frozen C11 did not resolve to 11 charts.");
 
         var caseRows = new List<HardenedCase>();
@@ -255,7 +258,8 @@ internal static class SafetyRemediationGateHardeningRunner
         var allDecisions = control.CandidateDecisions.Concat(treatment.CandidateDecisions).ToArray();
         var keysByOrder = allDecisions.GroupBy(x => x.OpportunityOrder)
             .ToDictionary(x => x.Key, x => x.First().OpportunityKey);
-        var geometryDiff = control.CandidateDecisions.Where(x => x.GeometrySetsDiffer)
+        var canonicalRejectedControlCommit = control.CandidateDecisions
+            .Where(x => SafetyRemediationGateHardeningResearch.CanonicalAuthorityRejectedSelectedCommit([x]))
             .Select(x => x.OpportunityOrder).ToHashSet();
         var targetOrders = new Dictionary<int, List<HistoricalCase>>();
         foreach (var frozen in historical)
@@ -292,8 +296,12 @@ internal static class SafetyRemediationGateHardeningRunner
             }
             var lineageBefore = active;
             var commitsDiffer = left.CommitIdentity != right.CommitIdentity;
-            if (active is null && beforeEqual && commitsDiffer && !afterEqual
-                && geometryDiff.Contains(order))
+            var governed = active is null && beforeEqual && commitsDiffer && !afterEqual
+                && left.CommitIdentity is not null
+                && SafetyRemediationGateHardeningResearch.CanonicalRejectWasNotCommitted(
+                    left.CommitIdentity, right.CommitIdentity)
+                && canonicalRejectedControlCommit.Contains(order);
+            if (governed)
             {
                 var key = keysByOrder[order];
                 var opened = "SRG-DIV-" + HashText(
@@ -302,7 +310,7 @@ internal static class SafetyRemediationGateHardeningRunner
                 origins.Add(opened, new OriginObservation(key, left.AfterHash, right.AfterHash));
                 directDivergences++;
             }
-            if (active is null && !beforeEqual) unexplained++;
+            if (active is null && (!beforeEqual || !afterEqual)) unexplained++;
             if (targetOrders.TryGetValue(order, out var targets))
                 foreach (var target in targets)
                     observations[target.OpportunityKey] = new(beforeEqual, lineageBefore,
@@ -466,13 +474,6 @@ internal static class SafetyRemediationGateHardeningRunner
                 bool.Parse(row[index["frozen_known"]]), row[index["explanation_class"]]));
         }
         return result.ToImmutable();
-    }
-
-    private static HashSet<string> ReadManifestIds(string path)
-    {
-        using var document = JsonDocument.Parse(File.ReadAllText(path));
-        return document.RootElement.GetProperty("manifest").GetProperty("charts").EnumerateArray()
-            .Select(x => x.GetProperty("chartId").GetString()!).ToHashSet(StringComparer.Ordinal);
     }
 
     private static void WriteCases(string path, IEnumerable<HardenedCase> rows)

@@ -37,9 +37,9 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **G1.GATE — COMPLETE, NEEDS_REVIEW, NO PROMOTION:** el treatment runtime congelado suprimió 889/1.006 propuestas sin RNG/reroll, pero SAFETY.PROV atribuyó nueve `TapOnHeldLongNote` nuevos a efectos downstream; se activó el stop condition.
 - **SAFETY.CAUSAL — COMPLETE, OUTCOME A, FORENSICS ONLY:** el replay exacto demuestra que los 9 treatment-only y los 200 controles legacy comparten un mismatch entre el `EndBeat` decimal latente usado por placement y el beat reconstruido desde milisegundos usado por HardValidity. Causa encontrada; remediation y promoción no autorizadas.
 - **SAFETY.REMEDIATION.DESIGN — COMPLETE, READY_FOR_SEPARATE_REMEDIATION_GATE, RESEARCH ONLY:** seleccionó geometría jugable canónica compartida, cubrió en shadow los 209 casos conocidos y halló 6 deltas directos adicionales. No implementó la corrección; el gate conductual separado sigue sin autorización.
-- **SAFETY.REMEDIATION.GATE — COMPLETE, VALIDATION HARDENING NEEDS_REVIEW, NO PROMOTION:** el treatment canónico mantuvo 0 condiciones hard en 224 pares, pero la recertificación causal fuerte solo demuestra 188 rechazos directos y 22 casos downstream; 5/215 permanecen `UNRESOLVED`. Default y promoción siguen intactos.
+- **SAFETY.REMEDIATION.GATE — COMPLETE, FOLLOW-UP CLOSED / HISTORICAL NEEDS_REVIEW, NO PROMOTION:** el hardening histórico conserva 188 rechazos directos + 22 downstream + 5 `C_UNRESOLVED`; el seguimiento focalizado demuestra que en esos cinco el mismo tap se compromete pero su LN bloqueadora está ausente (`D_CONFLICTING_OBJECT_ABSENT`). No se reejecutó la matriz ni se cambió el outcome histórico.
 
-La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. El hardening conserva el resultado runtime de 0 violaciones treatment, pero retira la clausura causal total `188 + 27`: el resultado defendible es `188 + 22 + 5 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
+La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. El hardening conserva `188 + 22 + 5 C` y `NEEDS_REVIEW`; el addendum posterior explica causalmente los cinco mecanismos sin reescribir esa clasificación. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
 Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME NEEDS_REVIEW<br>
@@ -53,7 +53,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 756 passed / 0 failed / 0 skipped
+Tests: 766 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

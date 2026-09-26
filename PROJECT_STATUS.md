@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE cerró su hardening como **COMPLETE / NEEDS_REVIEW / NO PROMOTION**: el treatment de geometría jugable canónica mantuvo cero condiciones hard, pero cinco casos históricos no cumplen la nueva prueba causal fuerte. El default no cambió, G1.GATE permanece **NEEDS_REVIEW** y ninguna sucesora está autorizada.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE conserva su cierre histórico **COMPLETE / NEEDS_REVIEW / NO PROMOTION**. Un seguimiento focalizado corrigió dos defectos del clasificador y demostró el mecanismo de los cinco `C_UNRESOLVED`: el tap histórico sí existe, pero la LN sintética conflictiva está ausente en treatment. No se reejecutó la matriz ni se promovió el resultado. El default no cambió, G1.GATE permanece **NEEDS_REVIEW** y ninguna sucesora está autorizada.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -29,7 +29,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | G1.GATE — Interior Relation Admission Runtime | **COMPLETE — NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment explícito; 9 violaciones hard atribuibles activaron stop. Default intacto. |
 | SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics | **COMPLETE — OUTCOME A / NO REMEDIATION** | Ninguno; explica 9/9 treatment-only y 200/200 controles mediante replay exacto. |
 | SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design | **COMPLETE — READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION** | Ninguno; shadow puro selecciona autoridad canónica compartida sin modificar runtime. |
-| SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime | **COMPLETE — VALIDATION HARDENING NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment research explícito; 0 violations treatment, pero 5/215 causalmente unresolved; default, CLI/Web y G1 intactos. |
+| SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime | **COMPLETE — FOLLOW-UP CLOSED / HISTORICAL NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment research explícito; 5/5 mecanismos explicados como blocker ausente, sin matriz nueva ni reclasificación histórica; default, CLI/Web y G1 intactos. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -141,6 +141,10 @@ El gate autorizado integró `safety-remediation-canonical-playable.1` sólo por 
 
 El gate consumió cero RNG. Default-equivalence, repetición determinista, serialización/reparse independiente e identidad G1 tuvieron cero fallos. El runtime conserva el resultado de cero violaciones treatment, pero la recertificación global es **NEEDS_REVIEW**: cinco casos vuelven a alcanzar y commitear exactamente el lane/objeto histórico pese a una divergencia anterior, por lo que esa divergencia no demuestra su inalcanzabilidad. Default, CLI/Web, G1 utility y sucesoras siguen sin autorización.
 
+El follow-up posterior auditó dos defectos reales del harness: una diferencia de legal-lane sets se confundía con rechazo del commit elegido y una divergencia nacida en el último `StateAfter` podía quedar invisible. Los fixtures focalizados y la equivalencia full/compact cierran ambos. En los cinco `C_UNRESOLVED`, el oracle independiente identifica una LN sintética distinta que termina exactamente en el tap; esa LN fue comprometida en control y está ausente en treatment por una lineage canónica anterior sin reconvergencia. La explicación aditiva es `D_CONFLICTING_OBJECT_ABSENT` para 5/5. El histórico continúa `188 A + 22 B + 5 C / NEEDS_REVIEW`, porque no se sobrescriben clasificaciones ni se ejecutó otra matriz completa.
+
+C11 ahora puede suministrarse como directorio explícito verificado por los once SHA-256 del manifest. La ruta local resolvió 12 ubicaciones, 11 contenidos y un duplicado exacto; coincidió 11/11 con el discovery anterior sobre esa carpeta. No se escanea `Songs`, no se distribuyen `.osu` de terceros y C11 sigue siendo desarrollo histórico, no holdout independiente.
+
 ## Qué afecta realmente la generación
 
 La policy legacy sigue tomando decisiones mediante Bernoulli por oportunidad, factores manuales de chord/contexto, weights LN por distancia y afinidad, gap local con fallback, selección ponderada de forma y lane legal uniforme. Los toggles experimentales documentados sí pueden alterar el resultado cuando se activan o desactivan.
@@ -233,6 +237,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 - Endurecimiento de cierre actual: **727 passed, 0 failed, 0 skipped**, sin cambio de output, RNG ni semántica de generación.
 - Validación de SAFETY.REMEDIATION.DESIGN: **738 passed, 0 failed, 0 skipped**; shadow/observer sin cambio de output ni RNG.
 - Hardening de SAFETY.REMEDIATION.GATE: **756 passed, 0 failed, 0 skipped**; 224 pares, 215→0 condiciones hard, 188 directos + 22 causales + 5 unresolved, 0 fallos de determinismo/reparse/G1 y 0 RNG del gate.
+- Follow-up focalizado actual: **766 passed, 0 failed, 0 skipped**; 45 tests dirigidos, 5/5 mecanismos demostrados, C11 11/11 y `DocConsistency` PASS, sin matriz completa nueva.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -266,7 +271,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 756 passed / 0 failed / 0 skipped
+Tests: 766 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

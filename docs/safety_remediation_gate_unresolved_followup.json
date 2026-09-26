@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "safety-remediation-gate-unresolved-followup.1",
+  "contractSha256": "645DAD6346130FBF0D4753053A35A40890A33FEE8F7F928768B8DDE9F4701083",
+  "implementationSnapshotSha256": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+  "harnessSnapshotSha256": "31FC70DE3C856D4E4EB9046520169C2A9E5899AE6E82777C390D366A3EE6E44F",
+  "repositoryEntryHead": "62615bbf5874bed04a7cdd7dc1fba4b43f31ea45",
+  "historicalState": {
+    "direct": 188,
+    "causallyUnreachable": 22,
+    "unresolved": 5,
+    "outcome": "NEEDS_REVIEW",
+    "retrospectiveClassificationChanged": false
+  },
+  "corpus": {
+    "manifest": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "uniqueCharts": 11,
+    "physicalLocations": 12,
+    "exactDuplicateHashes": 1
+  },
+  "execution": {
+    "pairs": 5,
+    "executionMemoryLimit": "0x400000000",
+    "fullMatrixExecuted": false,
+    "defaultsChanged": false,
+    "hardValidityChanged": false
+  },
+  "result": {
+    "causallyDemonstrated": 5,
+    "stillUnresolved": 0,
+    "proposedMechanisms": [
+      "D_CONFLICTING_OBJECT_ABSENT"
+    ]
+  },
+  "cases": [
+    {
+      "chartId": "02D9D1781418E7442956D4D901C8C611E58256556AE9A828E72128C3B5B8E3EB",
+      "seed": 8,
+      "opportunityKey": "OP-00004470-BaseHead-S4470-T222416-ANA",
+      "historicalTarget": "1|222416|TAP|Tap|4470|HeadOpportunity",
+      "controlReferenceExact": true,
+      "treatmentDeterministic": true,
+      "independentControlViolations": 1,
+      "independentTreatmentViolationAbsent": true,
+      "targetHasActivePriorLineage": true,
+      "conflictingObjects": [
+        {
+          "controlObject": "1|222331|222416|LongNote|4468|HeadOpportunity",
+          "geometrySignature": "L1:LongNote:651.24986666666649300003555556:651.49919999999982626688:222331:222416",
+          "provenance": "HeadOpportunity",
+          "controlCommitOpportunity": "OP-00004468-BaseHead-S4468-T222331-ANA",
+          "controlCommitOrder": 4552,
+          "treatmentCommitAtSameOpportunity": null,
+          "treatmentExactObject": null,
+          "treatmentSameProvenanceAlternatives": [],
+          "exactObjectAbsentOrChanged": true,
+          "lineageId": "SRG-DIV-548ED9D227B29F519914AEE3",
+          "governedOriginOpportunity": "OP-00003072-BaseHead-S3072-T163268-ANA",
+          "governedLineageEstablished": true,
+          "noReconvergenceBeforeTarget": true
+        }
+      ],
+      "proposedMechanism": "D_CONFLICTING_OBJECT_ABSENT",
+      "causalMechanismDemonstrated": true,
+      "conclusion": "The historical tap commits identically, while every independently audited control blocker is absent or changed in treatment under an unreconverged canonical-governed lineage."
+    },
+    {
+      "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+      "seed": 3,
+      "opportunityKey": "OP-00004664-BaseHead-S4664-T242439-ANA",
+      "historicalTarget": "6|242439|TAP|Tap|4664|HeadOpportunity",
+      "controlReferenceExact": true,
+      "treatmentDeterministic": true,
+      "independentControlViolations": 1,
+      "independentTreatmentViolationAbsent": true,
+      "targetHasActivePriorLineage": true,
+      "conflictingObjects": [
+        {
+          "controlObject": "6|242351|242439|LongNote|4663|HeadOpportunity",
+          "geometrySignature": "L6:LongNote:565.94705000000023573652750001:566.19638333333356923608305557:242351:242439",
+          "provenance": "HeadOpportunity",
+          "controlCommitOpportunity": "OP-00004663-BaseHead-S4663-T242351-ANA",
+          "controlCommitOrder": 4695,
+          "treatmentCommitAtSameOpportunity": null,
+          "treatmentExactObject": null,
+          "treatmentSameProvenanceAlternatives": [],
+          "exactObjectAbsentOrChanged": true,
+          "lineageId": "SRG-DIV-BE75AFE7197441CC21BBB903",
+          "governedOriginOpportunity": "OP-00000370-BaseHead-S370-T29933-ANA",
+          "governedLineageEstablished": true,
+          "noReconvergenceBeforeTarget": true
+        }
+      ],
+      "proposedMechanism": "D_CONFLICTING_OBJECT_ABSENT",
+      "causalMechanismDemonstrated": true,
+      "conclusion": "The historical tap commits identically, while every independently audited control blocker is absent or changed in treatment under an unreconverged canonical-governed lineage."
+    },
+    {
+      "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+      "seed": 6,
+      "opportunityKey": "OP-00001515-BaseHead-S1515-T89821-ANA",
+      "historicalTarget": "6|89821|TAP|Tap|1515|HeadOpportunity",
+      "controlReferenceExact": true,
+      "treatmentDeterministic": true,
+      "independentControlViolations": 1,
+      "independentTreatmentViolationAbsent": true,
+      "targetHasActivePriorLineage": true,
+      "conflictingObjects": [
+        {
+          "controlObject": "6|89595|89821|LongNote|1510|HeadOpportunity",
+          "geometrySignature": "L6:LongNote:195.49891666666674486623333333:195.99988333333341173328666667:89595:89821",
+          "provenance": "HeadOpportunity",
+          "controlCommitOpportunity": "OP-00001510-BaseHead-S1510-T89595-ANA",
+          "controlCommitOrder": 1512,
+          "treatmentCommitAtSameOpportunity": null,
+          "treatmentExactObject": null,
+          "treatmentSameProvenanceAlternatives": [],
+          "exactObjectAbsentOrChanged": true,
+          "lineageId": "SRG-DIV-35ABEC50B3D9E55C1F4A852D",
+          "governedOriginOpportunity": "OP-00000370-BaseHead-S370-T29933-ANA",
+          "governedLineageEstablished": true,
+          "noReconvergenceBeforeTarget": true
+        }
+      ],
+      "proposedMechanism": "D_CONFLICTING_OBJECT_ABSENT",
+      "causalMechanismDemonstrated": true,
+      "conclusion": "The historical tap commits identically, while every independently audited control blocker is absent or changed in treatment under an unreconverged canonical-governed lineage."
+    },
+    {
+      "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+      "seed": 7,
+      "opportunityKey": "OP-00001936-BaseHead-S1936-T110572-ANA",
+      "historicalTarget": "5|110572|TAP|Tap|1936|HeadOpportunity",
+      "controlReferenceExact": true,
+      "treatmentDeterministic": true,
+      "independentControlViolations": 1,
+      "independentTreatmentViolationAbsent": true,
+      "targetHasActivePriorLineage": true,
+      "conflictingObjects": [
+        {
+          "controlObject": "5|110460|110572|LongNote|1934|HeadOpportunity",
+          "geometrySignature": "L5:LongNote:241.74966666666676336653333333:241.99793333333343013250666667:110460:110572",
+          "provenance": "HeadOpportunity",
+          "controlCommitOpportunity": "OP-00001934-BaseHead-S1934-T110460-ANA",
+          "controlCommitOrder": 1936,
+          "treatmentCommitAtSameOpportunity": null,
+          "treatmentExactObject": null,
+          "treatmentSameProvenanceAlternatives": [],
+          "exactObjectAbsentOrChanged": true,
+          "lineageId": "SRG-DIV-6E6075896ACA1A85FFD77979",
+          "governedOriginOpportunity": "OP-00000011-BaseHead-S11-T2527-ANA",
+          "governedLineageEstablished": true,
+          "noReconvergenceBeforeTarget": true
+        }
+      ],
+      "proposedMechanism": "D_CONFLICTING_OBJECT_ABSENT",
+      "causalMechanismDemonstrated": true,
+      "conclusion": "The historical tap commits identically, while every independently audited control blocker is absent or changed in treatment under an unreconverged canonical-governed lineage."
+    },
+    {
+      "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+      "seed": 13,
+      "opportunityKey": "OP-00006173-BaseHead-S6173-T296968-ANA",
+      "historicalTarget": "0|296968|TAP|Tap|6173|HeadOpportunity",
+      "controlReferenceExact": true,
+      "treatmentDeterministic": true,
+      "independentControlViolations": 1,
+      "independentTreatmentViolationAbsent": true,
+      "targetHasActivePriorLineage": true,
+      "conflictingObjects": [
+        {
+          "controlObject": "0|296880|296968|LongNote|6170|HeadOpportunity",
+          "geometrySignature": "L0:LongNote:720.44588333333367206908305557:720.69521666666700556863861112:296880:296968",
+          "provenance": "HeadOpportunity",
+          "controlCommitOpportunity": "OP-00006170-BaseHead-S6170-T296880-ANA",
+          "controlCommitOrder": 6208,
+          "treatmentCommitAtSameOpportunity": null,
+          "treatmentExactObject": null,
+          "treatmentSameProvenanceAlternatives": [],
+          "exactObjectAbsentOrChanged": true,
+          "lineageId": "SRG-DIV-06A25634BF670F3AB9325F59",
+          "governedOriginOpportunity": "OP-00001936-BaseHead-S1936-T110572-ANA",
+          "governedLineageEstablished": true,
+          "noReconvergenceBeforeTarget": true
+        }
+      ],
+      "proposedMechanism": "D_CONFLICTING_OBJECT_ABSENT",
+      "causalMechanismDemonstrated": true,
+      "conclusion": "The historical tap commits identically, while every independently audited control blocker is absent or changed in treatment under an unreconverged canonical-governed lineage."
+    }
+  ]
+}

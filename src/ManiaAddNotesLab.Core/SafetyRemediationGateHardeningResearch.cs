@@ -209,6 +209,9 @@ public static class SafetyRemediationGateHardeningResearch
             var lineageBefore = active;
             var commitsDiffer = item.ControlCommitIdentity != item.TreatmentCommitIdentity;
             var governed = active is null && beforeEqual && commitsDiffer && !afterEqual
+                && item.ControlCommitIdentity is not null
+                && CanonicalRejectWasNotCommitted(item.ControlCommitIdentity,
+                    item.TreatmentCommitIdentity)
                 && item.CanonicalAuthorityChangedCommit;
             string? opened = null;
             if (governed)
@@ -217,7 +220,9 @@ public static class SafetyRemediationGateHardeningResearch
                     $"{pairIdentity}|{item.OpportunityKey}|{episode++}")[..24];
                 active = opened;
             }
-            var unexplained = active is null && !beforeEqual;
+            // Inspect the successor of this opportunity immediately. Otherwise a first divergence in the
+            // final opportunity would be invisible because there is no next StateBefore to expose it.
+            var unexplained = active is null && (!beforeEqual || !afterEqual);
             var reconvergedAfter = active is not null && afterEqual;
             if (reconvergedAfter) active = null;
             result.Add(new(item.OpportunityKey, item.OpportunityOrder, beforeEqual, afterEqual,
@@ -229,6 +234,10 @@ public static class SafetyRemediationGateHardeningResearch
 
     public static bool CanonicalRejectWasNotCommitted(string rejectedCommitIdentity,
         string? treatmentCommitIdentity) => treatmentCommitIdentity != rejectedCommitIdentity;
+
+    public static bool CanonicalAuthorityRejectedSelectedCommit(
+        IEnumerable<SafetyRemediationCandidateGeometryDecision> decisions) => decisions.Any(x =>
+        x.SelectedLane is not null && x.LegacyAcceptsSelectedLane && !x.CanonicalAcceptsSelectedLane);
 
     public static ImmutableArray<SafetyRemediationGateCompactOpportunityState> Compact(
         IEnumerable<SafetyRemediationGateOpportunityState> values) => values.Select(x => new

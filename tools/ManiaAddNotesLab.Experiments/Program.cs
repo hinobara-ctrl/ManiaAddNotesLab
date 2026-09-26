@@ -4,6 +4,64 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 4 && args[0] == "safety-remediation-gate-followup-prepare")
+{
+    var hash = SafetyRemediationGateUnresolvedFollowupRunner.Prepare(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]));
+    Console.WriteLine($"SAFETY.REMEDIATION.GATE follow-up contract={hash}");
+    return;
+}
+
+if (args.Length == 3 && args[0] == "c11-frozen-compare")
+{
+    try
+    {
+        FrozenC11CorpusRunner.CompareWithLegacyDiscovery(Path.GetFullPath(args[1]),
+            Path.GetFullPath(args[2]));
+    }
+    catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
+        or InvalidDataException or FormatException or JsonException)
+    {
+        Console.Error.WriteLine($"C11 corpus comparison failed: {exception.Message}");
+        Environment.ExitCode = 1;
+    }
+    return;
+}
+
+if (args.Length == 7 && args[0] == "safety-remediation-gate-followup-unresolved")
+{
+    try
+    {
+        var outcome = SafetyRemediationGateUnresolvedFollowupRunner.Run(Path.GetFullPath(args[1]),
+            Path.GetFullPath(args[2]), Path.GetFullPath(args[3]), Path.GetFullPath(args[4]),
+            Path.GetFullPath(args[5]), Path.GetFullPath(args[6]));
+        Console.WriteLine($"SAFETY.REMEDIATION.GATE unresolved follow-up={outcome}");
+        Environment.ExitCode = outcome == "FIVE_MECHANISMS_DEMONSTRATED" ? 0 : 1;
+    }
+    catch (Exception exception)
+    {
+        Console.Error.WriteLine($"SAFETY.REMEDIATION.GATE unresolved follow-up failed: "
+            + $"{exception.GetType().Name}: {exception.Message}");
+        Environment.ExitCode = 1;
+    }
+    return;
+}
+
+if (args.Length == 3 && args[0] == "c11-frozen-verify")
+{
+    try
+    {
+        FrozenC11CorpusRunner.Verify(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));
+    }
+    catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
+        or InvalidDataException or FormatException or JsonException)
+    {
+        Console.Error.WriteLine($"C11 frozen corpus verification failed: {exception.Message}");
+        Environment.ExitCode = 1;
+    }
+    return;
+}
+
 if (args.Length == 4 && args[0] == "safety-remediation-gate-harden-prepare")
 {
     Console.WriteLine($"SAFETY.REMEDIATION.GATE hardening contract=" +

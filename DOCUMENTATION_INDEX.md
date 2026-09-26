@@ -126,3 +126,5 @@ Los outputs `.osu`, CSV de ejecución y baselines grandes permanecen como artefa
 - `docs/safety_remediation_gate_hardened_cases.csv` — resultado individual de los 215 casos, incluidos los seis adicionales.
 - `docs/safety_remediation_gate_causal_unreachable.csv` — prueba individual de los 22 casos `B_CAUSALLY_PROVEN_UNREACHABLE`.
 - `docs/safety_remediation_gate_validation_hardening_summary.json` — agregado machine-readable `NEEDS_REVIEW`.
+- `docs/PHASE_SAFETY_REMEDIATION_GATE_FOLLOWUP.md` — auditoría focalizada de dos defectos del clasificador, explicación causal 5/5 y acceso C11 explícito sin scan de `Songs`; conserva el cierre histórico `188 + 22 + 5 / NEEDS_REVIEW`.
+- `docs/safety_remediation_gate_followup_contract.json` y `docs/safety_remediation_gate_unresolved_followup.json` — identidades congeladas y evidencia individual machine-readable del seguimiento.

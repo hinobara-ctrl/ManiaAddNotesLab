@@ -1,0 +1,16 @@
+{
+  "contract": {
+    "schemaVersion": "safety-remediation-gate-followup-contract.1",
+    "scope": "SAFETY.REMEDIATION.GATE focused classifier/C11/unresolved follow-up",
+    "repositoryEntryHead": "62615bbf5874bed04a7cdd7dc1fba4b43f31ea45",
+    "implementationSnapshotSha256": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+    "harnessSnapshotSha256": "31FC70DE3C856D4E4EB9046520169C2A9E5899AE6E82777C390D366A3EE6E44F",
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "executionMemoryLimit": "0x400000000",
+    "focusedPairCount": 5,
+    "fullMatrixAuthorized": false,
+    "historicalClassificationRule": "Historical 188/22/5 and NEEDS_REVIEW remain immutable; follow-up mechanisms are additive.",
+    "prohibitedChanges": "No defaults, remediation, G1, lane selection, AddChance, HardValidity or canonical authority changes."
+  },
+  "canonicalSha256": "645DAD6346130FBF0D4753053A35A40890A33FEE8F7F928768B8DDE9F4701083"
+}

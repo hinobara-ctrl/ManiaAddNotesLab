@@ -242,6 +242,87 @@ public sealed class PhaseC11WitnessAgreementTests
         }
     }
 
+    [Fact]
+    public void FrozenCorpusUsesHashesFromAnArbitraryExplicitDirectoryAndReportsDuplicates()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "arbitrary-c11-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(root, "renamed", "nested"));
+        try
+        {
+            var bytes = Encoding.UTF8.GetBytes(BeatmapText());
+            File.WriteAllBytes(Path.Combine(root, "unrelated-name.osu"), bytes);
+            File.WriteAllBytes(Path.Combine(root, "renamed", "nested", "copy.osu"), bytes);
+            var hash = Convert.ToHexString(SHA256.HashData(bytes));
+            var expectation = new C11FrozenCorpusExpectation(hash, "ARTIST | TITLE | MAPPER", 4, 1);
+
+            var result = C11CorpusDiscovery.ResolveFrozen(root, [expectation]);
+
+            Assert.True(result.IsExact);
+            Assert.Equal(2, result.OsuFileCount);
+            Assert.Single(result.Charts);
+            Assert.Equal(hash, result.Charts[0].Sha256);
+            Assert.Equal(2, Assert.Single(result.Duplicates).RelativePaths.Length);
+            Assert.Empty(result.MissingHashes);
+            Assert.Empty(result.UnexpectedContents);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void FrozenCorpusReportsMissingAndUnexpectedContentWithoutParsingTheWholeLibrary()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "strict-c11-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var expectedBytes = Encoding.UTF8.GetBytes(BeatmapText());
+            var expectedHash = Convert.ToHexString(SHA256.HashData(expectedBytes));
+            File.WriteAllText(Path.Combine(root, "other.osu"), BeatmapText().Replace("Title:Title", "Title:Other"));
+            var expectation = new C11FrozenCorpusExpectation(expectedHash, "ARTIST | TITLE | MAPPER", 4, 1);
+
+            var verification = C11CorpusDiscovery.VerifyFrozen(root, [expectation]);
+            var error = Assert.Throws<InvalidDataException>(() =>
+                C11CorpusDiscovery.ResolveFrozen(root, [expectation]));
+
+            Assert.False(verification.IsExact);
+            Assert.Equal(expectedHash, Assert.Single(verification.MissingHashes));
+            Assert.Equal("other.osu", Assert.Single(verification.UnexpectedContents).RelativePath);
+            Assert.Contains("missing hashes", error.Message);
+            Assert.Contains("unexpected content", error.Message);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void FrozenCorpusRejectsHashMatchedManifestMetadataDrift()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "metadata-c11-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var path = Path.Combine(root, "chart.osu");
+            File.WriteAllText(path, BeatmapText());
+            var hash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
+            var wrong = new C11FrozenCorpusExpectation(hash, "WRONG FAMILY", 7, 999);
+
+            var result = C11CorpusDiscovery.VerifyFrozen(root, [wrong]);
+
+            Assert.False(result.IsExact);
+            Assert.Single(result.MetadataMismatches);
+            Assert.Throws<InvalidDataException>(() => C11CorpusDiscovery.ResolveFrozen(root, [wrong]));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
     private static byte[] CanonicalWindowsSerializationBytes(string serialization)
     {
         var canonicalLf = serialization.Replace("\r\n", "\n").Replace('\r', '\n');

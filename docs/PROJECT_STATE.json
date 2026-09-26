@@ -63,7 +63,7 @@
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 756, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 766, "failed": 0, "skipped": 0 },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
@@ -169,6 +169,23 @@
       "individualCases": 215,
       "implementationSnapshot": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
       "harnessSnapshot": "81F2FA4BF462E169CCE8230C70DC792BF927E2BF57A93D4BDC571AD8F542DF72"
+    },
+    "focusedFollowup": {
+      "status": "COMPLETE",
+      "historicalOutcomePreserved": "NEEDS_REVIEW",
+      "historicalClassificationPreserved": { "direct": 188, "causallyProvenUnreachable": 22, "unresolved": 5 },
+      "mechanism": "D_CONFLICTING_OBJECT_ABSENT",
+      "mechanismsDemonstrated": 5,
+      "focusedPairs": 5,
+      "fullMatrixExecuted": false,
+      "report": "docs/PHASE_SAFETY_REMEDIATION_GATE_FOLLOWUP.md",
+      "contract": "docs/safety_remediation_gate_followup_contract.json",
+      "contractHash": "645DAD6346130FBF0D4753053A35A40890A33FEE8F7F928768B8DDE9F4701083",
+      "result": "docs/safety_remediation_gate_unresolved_followup.json",
+      "implementationSnapshot": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+      "harnessSnapshot": "31FC70DE3C856D4E4EB9046520169C2A9E5899AE6E82777C390D366A3EE6E44F",
+      "c11ExplicitCorpusVerified": true,
+      "promotion": "NOT_AUTHORIZED"
     },
     "promotion": "NOT_AUTHORIZED",
     "successorAuthorized": false

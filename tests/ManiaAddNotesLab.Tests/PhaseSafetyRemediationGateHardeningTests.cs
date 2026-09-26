@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text;
 using ManiaAddNotesLab.Core;
 
@@ -45,6 +46,95 @@ public sealed class PhaseSafetyRemediationGateHardeningTests
         Assert.False(step.DirectGovernedDivergence);
         Assert.Null(step.OpenedLineage);
         Assert.Null(step.ActiveLineageAfter);
+    }
+
+    [Fact]
+    public void DifferentLegalLaneSetsWithSameSelectedLaneAreNotARejectedControlCommit()
+    {
+        var decision = Candidate([1, 2, 3], [1, 2], selectedLane: 1);
+
+        Assert.True(decision.GeometrySetsDiffer);
+        Assert.True(decision.LegacyAcceptsSelectedLane);
+        Assert.True(decision.CanonicalAcceptsSelectedLane);
+        Assert.False(SafetyRemediationGateHardeningResearch
+            .CanonicalAuthorityRejectedSelectedCommit([decision]));
+    }
+
+    [Fact]
+    public void SelectionDifferenceWithoutRejectionDoesNotOpenGovernedLineage()
+    {
+        var equal = State("EQUAL", 0);
+        var left = State("LEFT", 1);
+        var right = State("RIGHT", 1);
+        var selectedControl = Candidate([1, 2, 3], [1, 2], selectedLane: 1);
+        var canonicalRejected = SafetyRemediationGateHardeningResearch
+            .CanonicalAuthorityRejectedSelectedCommit([selectedControl]);
+
+        var step = Assert.Single(SafetyRemediationGateHardeningResearch.Classify("pair",
+        [
+            new("O-0", 0, equal, equal, left, right, "COMMIT-L1", "COMMIT-L2",
+                canonicalRejected)
+        ]));
+
+        Assert.False(step.DirectGovernedDivergence);
+        Assert.Null(step.OpenedLineage);
+        Assert.True(step.UnexplainedStateDivergence);
+    }
+
+    [Fact]
+    public void RejectionOfTheActuallySelectedControlLaneOpensGovernedLineage()
+    {
+        var equal = State("EQUAL", 0);
+        var left = State("LEFT", 1);
+        var right = State("RIGHT", 1);
+        var selectedControl = Candidate([1, 2, 3], [1, 2], selectedLane: 3);
+        var canonicalRejected = SafetyRemediationGateHardeningResearch
+            .CanonicalAuthorityRejectedSelectedCommit([selectedControl]);
+
+        var step = Assert.Single(SafetyRemediationGateHardeningResearch.Classify("pair",
+        [
+            new("O-0", 0, equal, equal, left, right, "COMMIT-L3", "COMMIT-L2",
+                canonicalRejected)
+        ]));
+
+        Assert.True(canonicalRejected);
+        Assert.True(step.DirectGovernedDivergence);
+        Assert.NotNull(step.OpenedLineage);
+        Assert.False(step.UnexplainedStateDivergence);
+    }
+
+    [Fact]
+    public void UnexplainedDivergenceInFinalSuccessorIsDetectedWithoutANextOpportunity()
+    {
+        var equal = State("EQUAL", 0);
+        var left = State("LEFT", 1);
+        var right = State("RIGHT", 1);
+
+        var step = Assert.Single(SafetyRemediationGateHardeningResearch.Classify("pair",
+        [
+            new("FINAL", 0, equal, equal, left, right, null, null, false)
+        ]));
+
+        Assert.True(step.BeforeEqual);
+        Assert.False(step.AfterEqual);
+        Assert.False(step.DirectGovernedDivergence);
+        Assert.True(step.UnexplainedStateDivergence);
+    }
+
+    [Fact]
+    public void CanonicalRejectWithoutSuccessorStateDifferenceDoesNotContaminateLineage()
+    {
+        var equal = State("EQUAL", 0);
+        var next = State("NEXT", 1);
+
+        var step = Assert.Single(SafetyRemediationGateHardeningResearch.Classify("pair",
+        [
+            new("O-0", 0, equal, equal, next, next, "REJECTED", null, true)
+        ]));
+
+        Assert.False(step.DirectGovernedDivergence);
+        Assert.Null(step.ActiveLineageAfter);
+        Assert.False(step.UnexplainedStateDivergence);
     }
 
     [Fact]
@@ -233,12 +323,67 @@ public sealed class PhaseSafetyRemediationGateHardeningTests
         Assert.Equal(expected, incremental.CurrentHash);
     }
 
+    [Fact]
+    public void SameHistoricalTapCommitLosesViolationWhenConflictingObjectDisappears()
+    {
+        var tap = ManiaObject.Tap(0, 1000, synthetic: true, sequence: 20);
+        var blocker = ManiaObject.Ln(0, 500, 1000, synthetic: true, sequence: 19,
+            origin: AddedObjectOrigin.HeadOpportunity);
+        var control = GeometrySafetyAttributionResearch.AuditSnapshot("chart", 4,
+        [
+            GeometrySafetyAttributionResearch.Object("chart", GeometrySnapshotRole.Control,
+                blocker, 1m, 2m, 0),
+            GeometrySafetyAttributionResearch.Object("chart", GeometrySnapshotRole.Control,
+                tap, 2m, 2m, 1)
+        ]);
+        var treatment = GeometrySafetyAttributionResearch.AuditSnapshot("chart", 4,
+        [
+            GeometrySafetyAttributionResearch.Object("chart", GeometrySnapshotRole.Treatment,
+                tap, 2m, 2m, 0)
+        ]);
+
+        Assert.Contains(control.HardViolations,
+            x => x.Violation == GeometryHardViolationKind.TapOnHeldLongNote);
+        Assert.DoesNotContain(treatment.HardViolations,
+            x => x.Violation == GeometryHardViolationKind.TapOnHeldLongNote);
+    }
+
+    [Fact]
+    public void SameHistoricalTapCommitLosesViolationWhenPriorConflictingGeometryChangesLane()
+    {
+        var tap = ManiaObject.Tap(0, 1000, synthetic: true, sequence: 20);
+        var controlBlocker = ManiaObject.Ln(0, 500, 1000, synthetic: true, sequence: 19,
+            origin: AddedObjectOrigin.HeadOpportunity);
+        var treatmentBlocker = controlBlocker with { Lane = 1 };
+        GeometrySnapshotAudit Audit(GeometrySnapshotRole role, ManiaObject blocker) =>
+            GeometrySafetyAttributionResearch.AuditSnapshot("chart", 4,
+            [
+                GeometrySafetyAttributionResearch.Object("chart", role, blocker, 1m, 2m, 0),
+                GeometrySafetyAttributionResearch.Object("chart", role, tap, 2m, 2m, 1)
+            ]);
+
+        var control = Audit(GeometrySnapshotRole.Control, controlBlocker);
+        var treatment = Audit(GeometrySnapshotRole.Treatment, treatmentBlocker);
+
+        Assert.Contains(control.HardViolations,
+            x => x.Violation == GeometryHardViolationKind.TapOnHeldLongNote);
+        Assert.DoesNotContain(treatment.HardViolations,
+            x => x.Violation == GeometryHardViolationKind.TapOnHeldLongNote);
+        Assert.Equal(tap, tap with { });
+    }
+
     private static SafetyRemediationGateSufficientState State(string identity, int cursor)
     {
         var materialized = new GenerationStateIdentity(identity, identity, cursor, cursor, cursor,
             "EMPTY", true);
         return SafetyRemediationGateHardeningResearch.State(materialized, "LATENT-" + identity);
     }
+
+    private static SafetyRemediationCandidateGeometryDecision Candidate(
+        IEnumerable<int> legacyLanes, IEnumerable<int> canonicalLanes, int? selectedLane) => new(
+        "O-0", 0, 0, ManiaObjectType.Tap, 100, null, 1m, null, 1m, null,
+        legacyLanes.ToImmutableArray(), canonicalLanes.ToImmutableArray(), "GEOMETRY", 0,
+        selectedLane, false);
 
     private static SafetyRemediationGateSufficientState RecomputeWithoutCache(
         SafetyRemediationGateSufficientState value) =>
