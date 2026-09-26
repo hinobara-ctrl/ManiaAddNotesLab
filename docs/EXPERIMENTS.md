@@ -215,7 +215,9 @@ dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- safety-rem
 dotnet run --project tools/ManiaAddNotesLab.Experiments -c Release -- safety-remediation-gate-run src/ManiaAddNotesLab.Web/batch-results docs .artifacts/safety_remediation_gate
 ```
 
-La primera orden aborta si los cuatro archivos runtime ya no coinciden con el snapshot `93DD2E5E…`. La segunda ejecuta 224 pares, repetición treatment, serialización/reparse independiente y auditoría HardValidity. El resultado congelado es `REMEDIATION_RUNTIME_CERTIFIED`: 215 condiciones control, 0 treatment, 0 inesperadas, 0 RNG del gate y 0 fallos de invariantes. No es un comando de producto ni autoriza tuning o promoción.
+La primera orden aborta si los cuatro archivos runtime ya no coinciden con el snapshot `93DD2E5E…`. La segunda ejecuta 224 pares, repetición treatment, serialización/reparse independiente y auditoría HardValidity. El resultado histórico fue `REMEDIATION_RUNTIME_CERTIFIED`: 215 condiciones control, 0 treatment, 0 RNG del gate y 0 fallos de invariantes.
+
+La recertificación fuerte posterior está en `PHASE_SAFETY_REMEDIATION_GATE_VALIDATION_HARDENING_ADDENDUM.md`. Congeló una identidad de implementación más amplia, comparó traces materializados y streaming, y reejecutó los 220 pares primarios más cuatro G1. El resultado vivo es `NEEDS_REVIEW`: 188 casos son rechazo directo, 22 cumplen causalidad downstream fuerte y 5/215 quedan `UNRESOLVED`; los seis casos adicionales son directos. El treatment conserva 0 condiciones HardValidity, 0 RNG y 0 fallos de determinismo/reparse/G1. No es un comando de producto ni autoriza tuning o promoción.
 
 ## Checklist
 

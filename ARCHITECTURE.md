@@ -220,7 +220,7 @@ latent intent/evidence ───────────────→ G1/resea
 
 `SharedCanonicalPlayableGeometry` y `LatentValuesAsEvidenceOnly` están integrados sólo por el overload research de `AddNotesEngine`. Control conserva la geometría legacy y treatment mantiene un espejo canónico de los mismos commits reales; no hay segunda veto layer ni inserciones ficticias. El gate no acepta RNG, no rerollea y deja la identidad G1 latente intacta. Normal CLI/Web y defaults no pueden activar esta ruta.
 
-La certificación de 224 pares explica los 215 casos congelados: 188 alcanzan la propuesta equivalente y son rechazados directamente, mientras 27 quedan causalmente inaccesibles tras una divergencia gobernada anterior. El treatment termina con cero violaciones HardValidity y cero fallos de serialización/reparse. Este cierre valida la integración experimental; no promueve G1 ni la policy como default.
+El hardening de 224 pares procesa los 215 casos congelados: 188 alcanzan la propuesta equivalente y son rechazados directamente, 22 quedan causalmente inaccesibles bajo la definición fuerte y 5 permanecen `UNRESOLVED`. En esos cinco, treatment vuelve a seleccionar el lane y commitear el objeto histórico; una divergencia anterior no basta para demostrar inalcanzabilidad. El treatment termina con cero violaciones HardValidity y cero fallos de serialización/reparse, pero la recertificación global es `NEEDS_REVIEW`; no promueve G1 ni la policy como default.
 
 ## Invariantes
 

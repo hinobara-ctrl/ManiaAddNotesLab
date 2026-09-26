@@ -119,3 +119,10 @@ Los outputs `.osu`, CSV de ejecución y baselines grandes permanecen como artefa
 - `docs/safety_remediation_gate_runs.csv` — 220 pares C11 y cuatro pares secundarios G1 con output, RNG, HardValidity, reparse y reconvergencia.
 - `docs/safety_remediation_gate_known_cases.csv` — clasificación individual de los 209 casos conocidos y 6 adicionales como rechazo directo o inalcanzable downstream.
 - `docs/safety_remediation_gate_summary.json` — outcome `REMEDIATION_RUNTIME_CERTIFIED`, conteos e invariantes machine-readable.
+- `docs/PHASE_SAFETY_REMEDIATION_GATE_VALIDATION_HARDENING_ADDENDUM.md` — recertificación fuerte que conserva 188 directos, certifica 22 downstream y deja 5/215 `UNRESOLVED`; outcome vivo `NEEDS_REVIEW`.
+- `docs/safety_remediation_gate_validation_hardening_contract.json` — identidades finales de implementación/harness, denominadores, exclusiones y límite de memoria.
+- `docs/safety_remediation_gate_implementation_inventory.csv` — frontera A–E de autoridad conductual, dependencias, instrumentación, certificación y documentación.
+- `docs/safety_remediation_gate_hardening_runs.csv` — invariantes de los 220 pares primarios y cuatro de compatibilidad G1.
+- `docs/safety_remediation_gate_hardened_cases.csv` — resultado individual de los 215 casos, incluidos los seis adicionales.
+- `docs/safety_remediation_gate_causal_unreachable.csv` — prueba individual de los 22 casos `B_CAUSALLY_PROVEN_UNREACHABLE`.
+- `docs/safety_remediation_gate_validation_hardening_summary.json` — agregado machine-readable `NEEDS_REVIEW`.

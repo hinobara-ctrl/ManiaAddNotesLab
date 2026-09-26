@@ -4,6 +4,24 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 4 && args[0] == "safety-remediation-gate-harden-prepare")
+{
+    Console.WriteLine($"SAFETY.REMEDIATION.GATE hardening contract=" +
+        SafetyRemediationGateHardeningRunner.Prepare(Path.GetFullPath(args[1]),
+            Path.GetFullPath(args[2]), Path.GetFullPath(args[3])));
+    return;
+}
+
+if (args.Length == 6 && args[0] == "safety-remediation-gate-harden-run")
+{
+    var outcome = SafetyRemediationGateHardeningRunner.Run(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]), Path.GetFullPath(args[4]),
+        Path.GetFullPath(args[5]));
+    Console.WriteLine($"SAFETY.REMEDIATION.GATE hardening outcome={outcome}");
+    Environment.ExitCode = outcome == "RECERTIFICATION_PASS" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 2 && args[0] == "safety-remediation-gate-contract")
 {
     Console.WriteLine($"SAFETY.REMEDIATION.GATE contract={SafetyRemediationGateRunner.WriteContract(Path.GetFullPath(args[1]))}");

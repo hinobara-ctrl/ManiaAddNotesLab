@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -28,15 +29,28 @@ public sealed class CanonicalPlayableGeometry(BeatTimeline timeline)
 
 public sealed record SafetyRemediationGateRuntimeConfiguration(
     string ContractContentHash,
-    bool TreatmentEnabled)
+    bool TreatmentEnabled,
+    bool CompactDiagnostics,
+    bool RetainCandidateDecisions,
+    ISafetyRemediationGateOpportunitySink? OpportunitySink)
 {
-    public static SafetyRemediationGateRuntimeConfiguration Frozen(bool treatmentEnabled) => new(
+    public static SafetyRemediationGateRuntimeConfiguration Frozen(bool treatmentEnabled,
+        bool compactDiagnostics = false,
+        bool retainCandidateDecisions = true,
+        ISafetyRemediationGateOpportunitySink? opportunitySink = null) => new(
         SafetyRemediationGateContractResearch.ComputeHash(SafetyRemediationGateContractResearch.Create()),
-        treatmentEnabled);
+        treatmentEnabled, compactDiagnostics, retainCandidateDecisions, opportunitySink);
+}
+
+public interface ISafetyRemediationGateOpportunitySink
+{
+    void ObserveCandidate(SafetyRemediationCandidateGeometryDecision decision);
+    void Observe(SafetyRemediationGateCompactOpportunityState state);
 }
 
 public sealed record SafetyRemediationCandidateGeometryDecision(
     string OpportunityKey,
+    int OpportunityOrder,
     int CandidateOrder,
     ManiaObjectType ObjectType,
     int StartTime,
@@ -63,17 +77,93 @@ public sealed record SafetyRemediationGateRuntimeDiagnostics(
     string ContractContentHash,
     bool TreatmentEnabled,
     int GateRngCalls,
-    ImmutableArray<SafetyRemediationCandidateGeometryDecision> CandidateDecisions)
+    ImmutableArray<SafetyRemediationCandidateGeometryDecision> CandidateDecisions,
+    ImmutableArray<SafetyRemediationGateOpportunityState> OpportunityStates,
+    ImmutableArray<SafetyRemediationGateCompactOpportunityState> CompactOpportunityStates,
+    int OpportunityCount,
+    string OpportunityTraceFingerprint,
+    int CandidateDecisionCount,
+    string CandidateTraceFingerprint)
 {
     public int GeometrySetDifferences => CandidateDecisions.Count(x => x.GeometrySetsDiffer);
     public int SelectedLegacyAcceptCanonicalReject => CandidateDecisions.Count(x =>
         x.LegacyAcceptsSelectedLane && !x.CanonicalAcceptsSelectedLane);
 }
 
+public sealed record SafetyRemediationGateOpportunityState(
+    string OpportunityKey,
+    int OpportunityOrder,
+    SafetyRemediationGateSufficientState StateBefore,
+    SafetyRemediationGateSufficientState StateAfter,
+    string? CommittedObjectIdentity);
+
 internal sealed class SafetyRemediationGateRuntimeDiagnosticsBuilder(
-    SafetyRemediationGateRuntimeConfiguration configuration)
+    SafetyRemediationGateRuntimeConfiguration configuration,
+    IReadOnlyList<TimedManiaObject> originals)
 {
     private readonly List<SafetyRemediationCandidateGeometryDecision> decisions = [];
+    private readonly List<SafetyRemediationCandidateGeometryDecision> currentDecisions = [];
+    private readonly List<SafetyRemediationGateOpportunityState> opportunities = [];
+    private readonly List<SafetyRemediationGateCompactOpportunityState> compactOpportunities = [];
+    private readonly CommutativeAccumulator materialized = new(originals.Select(MaterializedIdentity));
+    private readonly CommutativeAccumulator latent = new(originals.Select(LatentIdentity));
+    private readonly SafetyRemediationGateOpportunityFingerprint opportunityFingerprint = new();
+    private readonly SafetyRemediationGateCandidateFingerprint candidateFingerprint = new();
+    private string opportunitySequenceHash = GenerationProvenanceRecorderResearch.Hash(string.Empty);
+    private (string Key, int Order, SafetyRemediationGateSufficientState Before)? pending;
+    private SafetyRemediationGateSufficientState? previousAfter;
+    private int opportunityCount;
+    private int candidateDecisionCount;
+
+    public void BindOpportunitySequence(IEnumerable<string> keys) => opportunitySequenceHash =
+        GenerationProvenanceRecorderResearch.Hash(string.Join('\n', keys));
+
+    public void BeginOpportunity(string key, int order, long rngPosition)
+    {
+        if (pending is not null) throw new InvalidOperationException("Previous remediation opportunity was not completed.");
+        var before = previousAfter is not null
+            && previousAfter.OpportunityCursor == order
+            && previousAfter.RootRngPosition == rngPosition
+            && previousAfter.StageRngPosition == rngPosition
+                ? previousAfter
+                : State(rngPosition, order);
+        pending = (key, order, before);
+    }
+
+    public void CompleteOpportunity(long rngPosition, TimedManiaObject? committed)
+    {
+        var current = pending ?? throw new InvalidOperationException("Remediation opportunity was not started.");
+        string? identity = null;
+        if (committed is not null)
+        {
+            materialized.Add(MaterializedIdentity(committed));
+            latent.Add(LatentIdentity(committed));
+            identity = LatentIdentity(committed);
+        }
+        var after = State(rngPosition, current.Order + 1);
+        var compact = new SafetyRemediationGateCompactOpportunityState(current.Key, current.Order,
+                current.Before.Hash,
+                current.Before.CompleteForCausalLineage, after.Hash,
+                after.CompleteForCausalLineage, identity);
+        opportunityFingerprint.Add(compact);
+        opportunityCount++;
+        foreach (var decision in currentDecisions)
+        {
+            candidateFingerprint.Add(decision);
+            candidateDecisionCount++;
+            configuration.OpportunitySink?.ObserveCandidate(decision);
+            if (configuration.RetainCandidateDecisions) decisions.Add(decision);
+        }
+        currentDecisions.Clear();
+        if (configuration.OpportunitySink is not null)
+            configuration.OpportunitySink.Observe(compact);
+        else if (configuration.CompactDiagnostics)
+            compactOpportunities.Add(compact);
+        else
+            opportunities.Add(new(current.Key, current.Order, current.Before, after, identity));
+        previousAfter = after;
+        pending = null;
+    }
 
     public void Add(string opportunityKey, int candidateOrder, ManiaObjectType type,
         int startTime, int? endTime, decimal latentStartBeat, decimal? latentEndBeat,
@@ -81,7 +171,9 @@ internal sealed class SafetyRemediationGateRuntimeDiagnosticsBuilder(
         IEnumerable<int> legacyLanes, IEnumerable<int> canonicalLanes,
         string materializedGeometryStateHash, long rngPositionBeforeDecision)
     {
-        decisions.Add(new(opportunityKey, candidateOrder, type, startTime, endTime,
+        var opportunityOrder = pending?.Order
+            ?? throw new InvalidOperationException("Candidate remediation decision has no active opportunity.");
+        currentDecisions.Add(new(opportunityKey, opportunityOrder, candidateOrder, type, startTime, endTime,
             latentStartBeat, latentEndBeat, canonicalStartBeat, canonicalEndBeat,
             legacyLanes.ToImmutableArray(), canonicalLanes.ToImmutableArray(),
             materializedGeometryStateHash, rngPositionBeforeDecision, null,
@@ -90,11 +182,11 @@ internal sealed class SafetyRemediationGateRuntimeDiagnosticsBuilder(
 
     public void MarkSelected(string opportunityKey, int candidateOrder, int lane)
     {
-        for (var i = decisions.Count - 1; i >= 0; i--)
+        for (var i = currentDecisions.Count - 1; i >= 0; i--)
         {
-            if (decisions[i].OpportunityKey != opportunityKey
-                || decisions[i].CandidateOrder != candidateOrder) continue;
-            decisions[i] = decisions[i] with { SelectedLane = lane };
+            if (currentDecisions[i].OpportunityKey != opportunityKey
+                || currentDecisions[i].CandidateOrder != candidateOrder) continue;
+            currentDecisions[i] = currentDecisions[i] with { SelectedLane = lane };
             return;
         }
         throw new InvalidOperationException("Selected remediation candidate has no geometry decision.");
@@ -105,7 +197,51 @@ internal sealed class SafetyRemediationGateRuntimeDiagnosticsBuilder(
         configuration.TreatmentEnabled ? SafetyRemediationGatePolicyVersions.Treatment
             : MapperEvidenceProfileBuilder.BehaviorPolicyVersion,
         configuration.ContractContentHash, configuration.TreatmentEnabled, 0,
-        decisions.ToImmutableArray());
+        decisions.ToImmutableArray(), opportunities.ToImmutableArray(),
+        compactOpportunities.ToImmutableArray(), opportunityCount,
+        opportunityFingerprint.Complete(), candidateDecisionCount,
+        candidateFingerprint.Complete());
+
+    private SafetyRemediationGateSufficientState State(long rngPosition, int cursor)
+    {
+        var pendingHash = GenerationProvenanceRecorderResearch.Hash(string.Empty);
+        var geometry = materialized.Hash;
+        var generation = GenerationProvenanceRecorderResearch.Hash(string.Join('|', geometry,
+            rngPosition, rngPosition, cursor, pendingHash, opportunitySequenceHash));
+        return SafetyRemediationGateHardeningResearch.State(new(geometry, generation, rngPosition,
+            rngPosition, cursor, pendingHash, true), latent.Hash);
+    }
+
+    private static string MaterializedIdentity(TimedManiaObject value) =>
+        $"{value.Object.Lane}|{value.Object.StartTime}|{value.Object.EndTime}|{value.Object.Type}|" +
+        $"{value.Object.Sequence}|{value.Object.Origin}";
+
+    private static string LatentIdentity(TimedManiaObject value) => MaterializedIdentity(value) +
+        $"|{value.StartBeat.ToString(CultureInfo.InvariantCulture)}|" +
+        value.EndBeat.ToString(CultureInfo.InvariantCulture);
+
+    private sealed class CommutativeAccumulator
+    {
+        private readonly byte[] value = new byte[32];
+        private string? cachedHash;
+        public CommutativeAccumulator(IEnumerable<string> rows)
+        {
+            foreach (var row in rows) Add(row);
+        }
+        public string Hash => cachedHash ??= Convert.ToHexString(value);
+        public void Add(string row)
+        {
+            var digest = SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(row));
+            var carry = 0;
+            for (var index = value.Length - 1; index >= 0; index--)
+            {
+                var sum = value[index] + digest[index] + carry;
+                value[index] = (byte)sum;
+                carry = sum >> 8;
+            }
+            cachedHash = null;
+        }
+    }
 }
 
 public sealed record SafetyRemediationGateContract(

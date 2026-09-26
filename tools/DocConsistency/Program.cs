@@ -1012,13 +1012,13 @@ void ValidateSafetyRemediationGateClosure(ProjectState value)
     var phase = value.Phases.FirstOrDefault(x => x.Id == "SAFETY.REMEDIATION.GATE");
     var contractState = value.PhaseContracts.FirstOrDefault(x => x.Id == "SAFETY.REMEDIATION.GATE");
     if (phase?.Status != "COMPLETE") return;
-    if (phase.Outcome != "REMEDIATION_RUNTIME_CERTIFIED" || phase.BehaviorChange is not true
+    if (phase.Outcome != "NEEDS_REVIEW" || phase.BehaviorChange is not true
         || phase.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
         || contractState?.Kind != "BehaviorChanging" || contractState.BehaviorChange is not true
         || contractState.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
         || value.CurrentPhase != "SAFETY.REMEDIATION.GATE" || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
-        errors.Add("SAFETY.REMEDIATION.GATE must close certified, experimental-only and without promotion or successor.");
+        errors.Add("SAFETY.REMEDIATION.GATE hardening must close NEEDS_REVIEW, experimental-only and without promotion or successor.");
 
     foreach (var artifact in new[]
     {
@@ -1088,6 +1088,86 @@ void ValidateSafetyRemediationGateClosure(ProjectState value)
     catch (Exception exception)
     {
         errors.Add($"SAFETY.REMEDIATION.GATE closure artifacts cannot be validated: {exception.Message}");
+    }
+
+    foreach (var artifact in new[]
+    {
+        "docs/PHASE_SAFETY_REMEDIATION_GATE_VALIDATION_HARDENING_ADDENDUM.md",
+        "docs/safety_remediation_gate_validation_hardening_contract.json",
+        "docs/safety_remediation_gate_implementation_inventory.csv",
+        "docs/safety_remediation_gate_hardening_runs.csv",
+        "docs/safety_remediation_gate_hardened_cases.csv",
+        "docs/safety_remediation_gate_causal_unreachable.csv",
+        "docs/safety_remediation_gate_validation_hardening_summary.json"
+    })
+    {
+        RequireFile(artifact, "SAFETY.REMEDIATION.GATE hardening artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact,
+            "SAFETY.REMEDIATION.GATE hardening artifact index entry");
+    }
+
+    const string hardeningContractHash = "7E68F1CDC0E2F783794B229939B1E0C28764D1C3646999CFC1F85DABC30B9539";
+    const string hardenedImplementation = "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835";
+    const string frozenHarness = "81F2FA4BF462E169CCE8230C70DC792BF927E2BF57A93D4BDC571AD8F542DF72";
+    try
+    {
+        using var hardeningContractDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "safety_remediation_gate_validation_hardening_contract.json")));
+        var hardeningContract = hardeningContractDocument.RootElement.GetProperty("contract");
+        var actualHardeningHash = Convert.ToHexString(SHA256.HashData(
+            JsonSerializer.SerializeToUtf8Bytes(hardeningContract)));
+        if (actualHardeningHash != hardeningContractHash
+            || hardeningContractDocument.RootElement.GetProperty("canonicalSha256").GetString() != hardeningContractHash
+            || hardeningContract.GetProperty("hardenedImplementationSnapshotSha256").GetString() != hardenedImplementation
+            || hardeningContract.GetProperty("certificationHarnessSnapshotSha256").GetString() != frozenHarness
+            || hardeningContract.GetProperty("executionMemoryLimit").GetString() != "0x400000000"
+            || hardeningContract.GetProperty("successorAuthorization").GetString() != "NOT_AUTHORIZED")
+            errors.Add("SAFETY.REMEDIATION.GATE hardening contract identity or boundary drifted.");
+
+        using var hardeningSummaryDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "safety_remediation_gate_validation_hardening_summary.json")));
+        var hardeningSummary = hardeningSummaryDocument.RootElement;
+        var hardeningCorpus = hardeningSummary.GetProperty("corpus");
+        var hardeningCases = hardeningSummary.GetProperty("cases");
+        var hardeningRuntime = hardeningSummary.GetProperty("runtime");
+        var hardeningValidation = hardeningSummary.GetProperty("validation");
+        var hardeningBoundaries = hardeningSummary.GetProperty("boundaries");
+        if (hardeningSummary.GetProperty("outcome").GetString() != "NEEDS_REVIEW"
+            || hardeningSummary.GetProperty("hardeningContractSha256").GetString() != hardeningContractHash
+            || hardeningSummary.GetProperty("hardenedImplementationSnapshotSha256").GetString() != hardenedImplementation
+            || hardeningSummary.GetProperty("certificationHarnessSnapshotSha256").GetString() != frozenHarness
+            || hardeningCorpus.GetProperty("primaryPairs").GetInt32() != 220
+            || hardeningCorpus.GetProperty("secondaryPairs").GetInt32() != 4
+            || hardeningCorpus.GetProperty("totalPairs").GetInt32() != 224
+            || hardeningCases.GetProperty("total").GetInt32() != 215
+            || hardeningCases.GetProperty("frozenKnown").GetInt32() != 209
+            || hardeningCases.GetProperty("additional").GetInt32() != 6
+            || hardeningCases.GetProperty("directCanonicalReject").GetInt32() != 188
+            || hardeningCases.GetProperty("causallyProvenUnreachable").GetInt32() != 22
+            || hardeningCases.GetProperty("unresolved").GetInt32() != 5
+            || hardeningRuntime.GetProperty("controlHardViolations").GetInt32() != 215
+            || hardeningRuntime.GetProperty("treatmentHardViolations").GetInt32() != 0
+            || hardeningRuntime.GetProperty("treatmentOnlyHardViolations").GetInt32() != 0
+            || hardeningRuntime.GetProperty("unexplainedStateDivergences").GetInt32() != 0
+            || hardeningRuntime.GetProperty("gateRngCalls").GetInt32() != 0
+            || hardeningValidation.GetProperty("defaultEquivalenceFailures").GetInt32() != 0
+            || hardeningValidation.GetProperty("determinismFailures").GetInt32() != 0
+            || hardeningValidation.GetProperty("reparseFailures").GetInt32() != 0
+            || hardeningValidation.GetProperty("g1EvidenceFailures").GetInt32() != 0
+            || hardeningBoundaries.GetProperty("behaviorChanged").GetBoolean()
+            || hardeningBoundaries.GetProperty("originalArtifactsRewritten").GetBoolean()
+            || hardeningBoundaries.GetProperty("promotion").GetString() != "NOT_AUTHORIZED"
+            || hardeningBoundaries.GetProperty("successor").GetString() != "NOT_AUTHORIZED")
+            errors.Add("SAFETY.REMEDIATION.GATE hardening summary does not preserve the NEEDS_REVIEW result and boundaries.");
+
+        if (File.ReadLines(Path.Combine(root, "docs", "safety_remediation_gate_hardening_runs.csv")).Count() != 225
+            || File.ReadLines(Path.Combine(root, "docs", "safety_remediation_gate_hardened_cases.csv")).Count() != 216
+            || File.ReadLines(Path.Combine(root, "docs", "safety_remediation_gate_causal_unreachable.csv")).Count() != 23)
+            errors.Add("SAFETY.REMEDIATION.GATE hardening CSV denominators drifted.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"SAFETY.REMEDIATION.GATE hardening artifacts cannot be validated: {exception.Message}");
     }
 
     CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",

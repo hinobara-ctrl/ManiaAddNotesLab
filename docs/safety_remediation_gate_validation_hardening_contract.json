@@ -1,0 +1,62 @@
+{
+  "contract": {
+    "schemaVersion": "safety-remediation-gate-hardening.1",
+    "phase": "SAFETY.REMEDIATION.GATE.VALIDATION_HARDENING",
+    "repositoryEntryHead": "667fd1d469ed707c5fc28232672327c7e320d4a0",
+    "originalContractSha256": "9415E4710E44163D26BF56123C3166EF9F52C43AA376E53BA7D2E8305E3293D8",
+    "originalImplementationSnapshotSha256": "93DD2E5E2D7FC6C49FB33B34C7CCDCC58870FA6BE835892FF7903A09D4ADCBE7",
+    "hardenedImplementationSnapshotSha256": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+    "certificationHarnessSnapshotSha256": "81F2FA4BF462E169CCE8230C70DC792BF927E2BF57A93D4BDC571AD8F542DF72",
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "executionMemoryLimit": "0x400000000",
+    "implementationFiles": [
+      "src/ManiaAddNotesLab.Core/AddNotesEngine.cs",
+      "src/ManiaAddNotesLab.Core/BeatTimeline.cs",
+      "src/ManiaAddNotesLab.Core/ChartAnalysis.cs",
+      "src/ManiaAddNotesLab.Core/LaneGeometryIndex.cs",
+      "src/ManiaAddNotesLab.Core/Model.cs",
+      "src/ManiaAddNotesLab.Core/OsuBeatmap.cs",
+      "src/ManiaAddNotesLab.Core/SafetyRemediationGateResearch.cs"
+    ],
+    "certificationHarnessFiles": [
+      "src/ManiaAddNotesLab.Core/DownstreamHardValidityCausalityResearch.cs",
+      "src/ManiaAddNotesLab.Core/G1GateRuntimeResearch.cs",
+      "src/ManiaAddNotesLab.Core/GenerationProvenanceResearch.cs",
+      "src/ManiaAddNotesLab.Core/GeometrySafetyAttributionResearch.cs",
+      "src/ManiaAddNotesLab.Core/InteriorRelationMembershipResearch.cs",
+      "src/ManiaAddNotesLab.Core/SafetyRemediationGateHardeningResearch.cs",
+      "tests/ManiaAddNotesLab.Tests/PhaseSafetyRemediationGateTests.cs",
+      "tests/ManiaAddNotesLab.Tests/PhaseSafetyRemediationGateHardeningTests.cs",
+      "tools/ManiaAddNotesLab.Experiments/Program.cs",
+      "tools/ManiaAddNotesLab.Experiments/SafetyRemediationGateHardeningRunner.cs"
+    ],
+    "sufficientStateDefinition": "Materialized GenerationState \u002B committed latent geometry \u002B RNG positions \u002B opportunity cursor \u002B pending articulation identity \u002B frozen opportunity sequence.",
+    "governedDivergenceAndReconvergenceDefinition": "A divergence opens only when equal complete parent states produce different commits and the control commit was rejected by canonical authority; full sufficient-state equality closes ancestry permanently.",
+    "denominators": [
+      "220 primary pairs",
+      "4 frozen G1 compatibility pairs",
+      "209 known cases",
+      "6 additional cases"
+    ],
+    "exclusions": [
+      "engine behavior changes",
+      "new policy",
+      "defaults",
+      "CLI/Web",
+      "G1 promotion",
+      "HardValidity relaxation"
+    ],
+    "expectedArtifacts": [
+      "safety_remediation_gate_validation_hardening_contract.json",
+      "safety_remediation_gate_implementation_inventory.csv",
+      "safety_remediation_gate_hardened_cases.csv",
+      "safety_remediation_gate_causal_unreachable.csv",
+      "safety_remediation_gate_hardening_runs.csv",
+      "safety_remediation_gate_validation_hardening_summary.json",
+      "PHASE_SAFETY_REMEDIATION_GATE_VALIDATION_HARDENING_ADDENDUM.md"
+    ],
+    "successorAuthorization": "NOT_AUTHORIZED"
+  },
+  "canonicalSha256": "7E68F1CDC0E2F783794B229939B1E0C28764D1C3646999CFC1F85DABC30B9539",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; ordered frozen arrays; no timestamps or machine paths"
+}

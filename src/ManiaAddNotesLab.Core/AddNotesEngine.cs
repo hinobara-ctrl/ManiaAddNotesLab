@@ -132,8 +132,9 @@ public sealed class AddNotesEngine
         var d1Diagnostics = d1Experiment is null ? null : new D1BehavioralRunDiagnosticsBuilder(d1Experiment);
         var g1Diagnostics = g1Gate is null ? null : new G1GateRuntimeDiagnosticsBuilder(g1Gate);
         var remediationDiagnostics = safetyRemediationGate is null ? null
-            : new SafetyRemediationGateRuntimeDiagnosticsBuilder(safetyRemediationGate);
+            : new SafetyRemediationGateRuntimeDiagnosticsBuilder(safetyRemediationGate, analysis.Objects);
         var opportunities = BuildOpportunities(analysis, options, stats, trace);
+        remediationDiagnostics?.BindOpportunitySequence(opportunities.Select(D1OpportunityKey));
         provenance?.BindOpportunitySequence(opportunities.Select(D1OpportunityKey));
         var articulationIntents = new List<ArticulationIntent>();
         var effectiveChanceSum = 0d;
@@ -143,6 +144,8 @@ public sealed class AddNotesEngine
         {
             var opportunity = opportunities[opportunityIndex];
             var provenanceKey = D1OpportunityKey(opportunity);
+            remediationDiagnostics?.BeginOpportunity(provenanceKey, opportunityIndex,
+                ((IRandomPositionSource)rng).CallCount);
             var provenanceStage = opportunity.Kind == OpportunityKind.BaseHead
                 ? GenerationProvenanceStage.Pass1BaseOpportunity
                 : GenerationProvenanceStage.InteriorOpportunity;
@@ -197,6 +200,7 @@ public sealed class AddNotesEngine
                         GenerationDecisionDisposition.ProbabilityAbstain, null, provenanceBefore!,
                         provenance.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
                             opportunityIndex + 1, articulationIntents.Select(ArticulationIntentIdentity)));
+                remediationDiagnostics?.CompleteOpportunity(((IRandomPositionSource)rng).CallCount, null);
                 continue;
             }
             stats.SuccessfulProbabilityRolls++;
@@ -236,6 +240,7 @@ public sealed class AddNotesEngine
                         GenerationDecisionDisposition.NoLegalPlacement, null, provenanceBefore!,
                         provenance.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),
                             opportunityIndex + 1, articulationIntents.Select(ArticulationIntentIdentity)));
+                remediationDiagnostics?.CompleteOpportunity(((IRandomPositionSource)rng).CallCount, null);
                 continue;
             }
             if (d1Experiment is not null)
@@ -311,6 +316,7 @@ public sealed class AddNotesEngine
                                 Position(rng), opportunityIndex + 1,
                                 articulationIntents.Select(ArticulationIntentIdentity)),
                             evaluation.State.ToString());
+                    remediationDiagnostics?.CompleteOpportunity(((IRandomPositionSource)rng).CallCount, null);
                     continue;
                 }
             }
@@ -324,6 +330,7 @@ public sealed class AddNotesEngine
             added.Add(placed.Object);
             legacyGeometry.Insert(placed);
             canonicalGeometry?.Insert(playable!.Project(placed));
+            remediationDiagnostics?.CompleteOpportunity(((IRandomPositionSource)rng).CallCount, placed);
             if (provenance is not null)
             {
                 var afterMutation = provenance.State(chart.OriginalObjects, added, [], Position(rng), Position(rng),

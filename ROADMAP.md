@@ -31,7 +31,7 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 | G1.GATE — Interior Relation Admission Runtime | ⛔ **COMPLETE — NEEDS_REVIEW / NO PROMOTION** | Treatment aislado y RNG-free; 9 violaciones hard atribuibles activaron el stop condition. |
 | SAFETY.CAUSAL — Downstream Hard-Validity Causality Forensics | ✅ **COMPLETE — OUTCOME A / CAUSE FOUND / NO REMEDIATION** | 9/9 treatment-only y 200/200 controles comparten el mismatch decimal-latente vs milisegundo canónico; G1.GATE permanece NEEDS_REVIEW. |
 | SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design | ✅ **COMPLETE — READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION** | Autoridad: integer ms + beat canónico derivado; latent queda sólo para intención/evidencia/G1. |
-| SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime | ✅ **COMPLETE — REMEDIATION_RUNTIME_CERTIFIED / NO PROMOTION** | Treatment opt-in elimina 215/215 condiciones control sin nuevas violaciones, RNG ni drift G1; default legacy intacto. |
+| SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime | ⚠️ **COMPLETE — VALIDATION HARDENING NEEDS_REVIEW / NO PROMOTION** | Treatment opt-in mantiene 0 condiciones hard, pero la prueba fuerte cierra 188 directos + 22 causales y conserva 5/215 unresolved; default legacy intacto. |
 | G1 — Interior Relation Semantics A/B | ⏳ **FUTURE / NOT_AUTHORIZED** | Eventual A/B conductual; G1.0 no escogió Contained, EqualEnd, Crossing, lane, endpoint ni cantidad. |
 | G2 — Causal Articulation A/B | ⏳ **FUTURE / NOT_AUTHORIZED** | Articular sólo cuando blockers originales y evidencia retrigger lo justifiquen. |
 | H — ParentArticulationPlan | ⏳ **FUTURE / NOT_AUTHORIZED** | Investigar múltiples cortes como un plan atómico y válido. |
@@ -41,4 +41,4 @@ Resumen humano del plan incremental. El diseño, gates, rollback y criterios com
 
 Regla de avance: shadow y evidencia antes de conducta; una hipótesis principal por A/B; toda modificación conductual requiere versión, rollback y validación atribuible.
 
-SAFETY.REMEDIATION.GATE implementó y certificó `SharedCanonicalPlayableGeometry + LatentValuesAsEvidenceOnly` exclusivamente como treatment research. La dependencia ahora llega hasta: SAFETY.CAUSAL → SAFETY.REMEDIATION.DESIGN → SAFETY.REMEDIATION.GATE certificado → revisión humana. La promoción/default, la reconsideración de G1.GATE, G1 utility, G2, H y toda sucesora permanecen **NOT_AUTHORIZED**.
+SAFETY.REMEDIATION.GATE implementó `SharedCanonicalPlayableGeometry + LatentValuesAsEvidenceOnly` exclusivamente como treatment research. Su hardening confirmó 0 violaciones treatment en 224 pares, pero retiró la clausura causal total: 5 casos históricos permanecen `UNRESOLVED`. La dependencia llega hasta: SAFETY.CAUSAL → SAFETY.REMEDIATION.DESIGN → SAFETY.REMEDIATION.GATE `NEEDS_REVIEW` → revisión humana. La promoción/default, la reconsideración de G1.GATE, G1 utility, G2, H y toda sucesora permanecen **NOT_AUTHORIZED**.

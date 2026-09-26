@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ManiaAddNotesLab.Core;
 
 namespace ManiaAddNotesLab.Tests;
@@ -175,6 +176,95 @@ public sealed class PhaseSafetyRemediationGateTests
             SafetyRemediationGateContractResearch.SerializeArtifact());
     }
 
+    [Fact]
+    public void StreamingCompactDiagnosticsAreExactToFullDiagnosticsEndToEnd()
+    {
+        var chart = Fixture();
+        var options = Options();
+        var profile = MapperEvidenceProfileBuilder.Build(chart);
+
+        (AddNotesResult Result, TranscriptRandom Random) Run(bool treatment, bool compact,
+            ISafetyRemediationGateOpportunitySink? sink = null)
+        {
+            var random = new TranscriptRandom(97);
+            var result = new AddNotesEngine().Apply(chart, options, random, profile,
+                null, null, null, null,
+                SafetyRemediationGateRuntimeConfiguration.Frozen(treatment, compact,
+                    retainCandidateDecisions: sink is null, opportunitySink: sink));
+            return (result, random);
+        }
+
+        var controlFull = Run(false, false);
+        var controlSink = new RecordingOpportunitySink();
+        var controlCompact = Run(false, true, controlSink);
+        var treatmentFull = Run(true, false);
+        var treatmentSink = new RecordingOpportunitySink();
+        var treatmentCompact = Run(true, true, treatmentSink);
+        foreach (var pair in new[]
+                 {
+                     (Full: controlFull, Compact: controlCompact, Rows: controlSink.Rows,
+                         Decisions: controlSink.Candidates),
+                     (Full: treatmentFull, Compact: treatmentCompact, Rows: treatmentSink.Rows,
+                         Decisions: treatmentSink.Candidates)
+                 })
+        {
+            Assert.Equal(OsuBeatmap.Write(pair.Full.Result.ModifiedChart, options.Chance),
+                OsuBeatmap.Write(pair.Compact.Result.ModifiedChart, options.Chance));
+            Assert.Equal(pair.Full.Random.Transcript, pair.Compact.Random.Transcript);
+            var full = pair.Full.Result.SafetyRemediationGateDiagnostics!;
+            var compact = pair.Compact.Result.SafetyRemediationGateDiagnostics!;
+            Assert.Equal(JsonSerializer.Serialize(full.CandidateDecisions),
+                JsonSerializer.Serialize(pair.Decisions));
+            Assert.True(SafetyRemediationGateHardeningResearch.Compact(full.OpportunityStates)
+                .SequenceEqual(pair.Rows));
+            Assert.Equal(SafetyRemediationGateHardeningResearch.DiagnosticsFingerprint(full),
+                SafetyRemediationGateHardeningResearch.DiagnosticsFingerprint(compact));
+            Assert.Empty(compact.OpportunityStates);
+            Assert.Empty(compact.CompactOpportunityStates);
+        }
+
+        static SafetyRemediationGatePairedOpportunity[] Pair(
+            SafetyRemediationGateRuntimeDiagnostics control,
+            SafetyRemediationGateRuntimeDiagnostics treatment)
+        {
+            var left = control.CompactOpportunityStates.IsDefaultOrEmpty
+                ? SafetyRemediationGateHardeningResearch.Compact(control.OpportunityStates)
+                : control.CompactOpportunityStates;
+            var right = treatment.CompactOpportunityStates.IsDefaultOrEmpty
+                ? SafetyRemediationGateHardeningResearch.Compact(treatment.OpportunityStates)
+                : treatment.CompactOpportunityStates;
+            return left.Zip(right, (a, b) => new SafetyRemediationGatePairedOpportunity(
+                a.OpportunityKey, a.OpportunityOrder,
+                SafetyRemediationGateHardeningResearch.LineageState(a.StateBeforeHash,
+                    a.StateBeforeComplete, a.OpportunityOrder),
+                SafetyRemediationGateHardeningResearch.LineageState(b.StateBeforeHash,
+                    b.StateBeforeComplete, b.OpportunityOrder),
+                SafetyRemediationGateHardeningResearch.LineageState(a.StateAfterHash,
+                    a.StateAfterComplete, a.OpportunityOrder + 1),
+                SafetyRemediationGateHardeningResearch.LineageState(b.StateAfterHash,
+                    b.StateAfterComplete, b.OpportunityOrder + 1),
+                a.CommittedObjectIdentity, b.CommittedObjectIdentity,
+                a.CommittedObjectIdentity != b.CommittedObjectIdentity
+                    && control.CandidateDecisions.Any(x => x.OpportunityKey == a.OpportunityKey
+                        && x.GeometrySetsDiffer))).ToArray();
+        }
+
+        var fullLineage = SafetyRemediationGateHardeningResearch.Classify("pair",
+            Pair(controlFull.Result.SafetyRemediationGateDiagnostics!,
+                treatmentFull.Result.SafetyRemediationGateDiagnostics!));
+        var streamedControl = controlCompact.Result.SafetyRemediationGateDiagnostics! with
+            { CompactOpportunityStates = [.. controlSink.Rows],
+                CandidateDecisions = [.. controlSink.Candidates] };
+        var streamedTreatment = treatmentCompact.Result.SafetyRemediationGateDiagnostics! with
+            { CompactOpportunityStates = [.. treatmentSink.Rows],
+                CandidateDecisions = [.. treatmentSink.Candidates] };
+        var compactLineage = SafetyRemediationGateHardeningResearch.Classify("pair",
+            Pair(streamedControl, streamedTreatment));
+        Assert.Equal(fullLineage.Length, compactLineage.Length);
+        for (var index = 0; index < fullLineage.Length; index++)
+            Assert.Equal(fullLineage[index], compactLineage[index]);
+    }
+
     private static string Materialized(ManiaObject value) =>
         $"{value.Lane}|{value.StartTime}|{value.EndTime}|{value.Type}";
 
@@ -221,5 +311,14 @@ public sealed class PhaseSafetyRemediationGateTests
             Transcript.Add($"I:{maximum}:{value}");
             return value;
         }
+    }
+
+    private sealed class RecordingOpportunitySink : ISafetyRemediationGateOpportunitySink
+    {
+        public List<SafetyRemediationGateCompactOpportunityState> Rows { get; } = [];
+        public List<SafetyRemediationCandidateGeometryDecision> Candidates { get; } = [];
+        public void ObserveCandidate(SafetyRemediationCandidateGeometryDecision decision) =>
+            Candidates.Add(decision);
+        public void Observe(SafetyRemediationGateCompactOpportunityState state) => Rows.Add(state);
     }
 }

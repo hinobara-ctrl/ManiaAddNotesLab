@@ -214,21 +214,21 @@ public sealed class PhaseC12ExactHeadRelationTests
         Assert.Equal("READY_FOR_SEPARATE_REMEDIATION_GATE", phases.Single(x =>
                 x.GetProperty("id").GetString() == "SAFETY.REMEDIATION.DESIGN")
             .GetProperty("outcome").GetString());
-        Assert.Equal("REMEDIATION_RUNTIME_CERTIFIED", phases.Single(x =>
+        Assert.Equal("NEEDS_REVIEW", phases.Single(x =>
                 x.GetProperty("id").GetString() == "SAFETY.REMEDIATION.GATE")
             .GetProperty("outcome").GetString());
         Assert.Equal("CONTINUE_CONDITIONALLY", stateRoot.GetProperty("researchBranches")[0]
             .GetProperty("decision").GetString());
-        Assert.Contains("Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME REMEDIATION_RUNTIME_CERTIFIED", readme);
-        Assert.Contains("Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME REMEDIATION_RUNTIME_CERTIFIED", status);
+        Assert.Contains("Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME NEEDS_REVIEW", readme);
+        Assert.Contains("Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME NEEDS_REVIEW", status);
         Assert.Contains("Next actionable research candidate: none", readme);
         Assert.Contains("Next actionable research candidate: none", status);
         Assert.Contains("Next behavioral phase: none", readme);
         Assert.Contains("Next behavioral phase: none", status);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", readme);
         Assert.Contains("Blocked prerequisite: F2.ACQ — BLOCKED", status);
-        Assert.Contains("Tests: 747 passed / 0 failed / 0 skipped", readme);
-        Assert.Contains("Tests: 747 passed / 0 failed / 0 skipped", status);
+        Assert.Contains("Tests: 756 passed / 0 failed / 0 skipped", readme);
+        Assert.Contains("Tests: 756 passed / 0 failed / 0 skipped", status);
     }
 
     private static string FindRepositoryRoot([CallerFilePath] string sourceFile = "")

@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 15,
-  "lastUpdated": "2026-09-23",
+  "schemaVersion": 16,
+  "lastUpdated": "2026-09-25",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -33,7 +33,7 @@
     { "id": "G1.GATE", "name": "Interior Relation Admission Runtime", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_G1_GATE_INTERIOR_RELATION_ADMISSION_RUNTIME.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "SAFETY.CAUSAL", "name": "Downstream Hard-Validity Causality Forensics", "status": "COMPLETE", "outcome": "A", "behaviorChange": false, "report": "docs/PHASE_SAFETY_CAUSAL_DOWNSTREAM_HARD_VALIDITY.md", "authorization": "RESEARCH_COMPLETED_NO_REMEDIATION" },
     { "id": "SAFETY.REMEDIATION.DESIGN", "name": "Hard-Validity Remediation Design", "status": "COMPLETE", "outcome": "READY_FOR_SEPARATE_REMEDIATION_GATE", "behaviorChange": false, "report": "docs/PHASE_SAFETY_REMEDIATION_DESIGN.md", "authorization": "RESEARCH_COMPLETED_NO_IMPLEMENTATION" },
-    { "id": "SAFETY.REMEDIATION.GATE", "name": "Canonical Playable Geometry Runtime Gate", "status": "COMPLETE", "outcome": "REMEDIATION_RUNTIME_CERTIFIED", "behaviorChange": true, "report": "docs/PHASE_SAFETY_REMEDIATION_GATE.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
+    { "id": "SAFETY.REMEDIATION.GATE", "name": "Canonical Playable Geometry Runtime Gate", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_SAFETY_REMEDIATION_GATE_VALIDATION_HARDENING_ADDENDUM.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "name": "Causal Articulation A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" }
@@ -63,11 +63,11 @@
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 747, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 756, "failed": 0, "skipped": 0 },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "SAFETY_REMEDIATION_GATE_COMPLETE_HUMAN_REVIEW_REQUIRED_NO_PROMOTION"
+    "currentBlockingRequirement": "SAFETY_REMEDIATION_GATE_VALIDATION_HARDENING_NEEDS_REVIEW_NO_PROMOTION"
   },
   "g10Recertification": {
     "status": "PASS",
@@ -143,7 +143,8 @@
   },
   "safetyRemediationGate": {
     "status": "COMPLETE",
-    "outcome": "REMEDIATION_RUNTIME_CERTIFIED",
+    "outcome": "NEEDS_REVIEW",
+    "historicalOutcome": "REMEDIATION_RUNTIME_CERTIFIED",
     "behaviorChange": true,
     "defaultBehaviorChange": false,
     "treatmentPolicy": "safety-remediation-canonical-playable.1",
@@ -154,6 +155,21 @@
     "treatmentHardViolations": 0,
     "knownCases": 209,
     "additionalCases": 6,
+    "directCanonicalRejects": 188,
+    "causallyProvenUnreachable": 22,
+    "unresolved": 5,
+    "validationHardening": {
+      "status": "NEEDS_REVIEW",
+      "addendum": "docs/PHASE_SAFETY_REMEDIATION_GATE_VALIDATION_HARDENING_ADDENDUM.md",
+      "contract": "docs/safety_remediation_gate_validation_hardening_contract.json",
+      "contractHash": "7E68F1CDC0E2F783794B229939B1E0C28764D1C3646999CFC1F85DABC30B9539",
+      "summary": "docs/safety_remediation_gate_validation_hardening_summary.json",
+      "primaryPairs": 220,
+      "g1CompatibilityPairs": 4,
+      "individualCases": 215,
+      "implementationSnapshot": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+      "harnessSnapshot": "81F2FA4BF462E169CCE8230C70DC792BF927E2BF57A93D4BDC571AD8F542DF72"
+    },
     "promotion": "NOT_AUTHORIZED",
     "successorAuthorized": false
   },

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "safety-remediation-gate-hardening.1",
+  "phase": "SAFETY.REMEDIATION.GATE.VALIDATION_HARDENING",
+  "repositoryEntryHead": "667fd1d469ed707c5fc28232672327c7e320d4a0",
+  "originalContractSha256": "9415E4710E44163D26BF56123C3166EF9F52C43AA376E53BA7D2E8305E3293D8",
+  "hardeningContractSha256": "7E68F1CDC0E2F783794B229939B1E0C28764D1C3646999CFC1F85DABC30B9539",
+  "originalImplementationSnapshotSha256": "93DD2E5E2D7FC6C49FB33B34C7CCDCC58870FA6BE835892FF7903A09D4ADCBE7",
+  "hardenedImplementationSnapshotSha256": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+  "certificationHarnessSnapshotSha256": "81F2FA4BF462E169CCE8230C70DC792BF927E2BF57A93D4BDC571AD8F542DF72",
+  "corpus": {
+    "charts": 11,
+    "primaryPairs": 220,
+    "secondaryPairs": 4,
+    "totalPairs": 224
+  },
+  "cases": {
+    "total": 215,
+    "frozenKnown": 209,
+    "additional": 6,
+    "directCanonicalReject": 188,
+    "causallyProvenUnreachable": 22,
+    "unresolved": 5,
+    "explainedOnlyByTemporalOrdering": 0
+  },
+  "runtime": {
+    "controlHardViolations": 215,
+    "treatmentHardViolations": 0,
+    "treatmentOnlyHardViolations": 0,
+    "unexplainedStateDivergences": 0,
+    "pairsWithReconvergence": 0,
+    "gateRngCalls": 0
+  },
+  "validation": {
+    "implementationSnapshotComplete": true,
+    "treatmentDefiningMutationBadControlPass": true,
+    "geometrySetDifferenceWithoutCommitDoesNotOpenLineage": true,
+    "fullReconvergenceClearsAncestry": true,
+    "laterDivergenceGetsNewLineage": true,
+    "canonicalRejectCommitInvariantPass": true,
+    "defaultEquivalenceFailures": 0,
+    "determinismFailures": 0,
+    "reparseFailures": 0,
+    "g1EvidenceFailures": 0
+  },
+  "outcome": "NEEDS_REVIEW",
+  "boundaries": {
+    "behaviorChanged": false,
+    "originalArtifactsRewritten": false,
+    "defaultPolicy": "legacy-experimental.1",
+    "promotion": "NOT_AUTHORIZED",
+    "successor": "NOT_AUTHORIZED"
+  }
+}
