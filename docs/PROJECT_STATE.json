@@ -1,6 +1,6 @@
 {
   "schemaVersion": 16,
-  "lastUpdated": "2026-09-25",
+  "lastUpdated": "2026-09-26",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -63,7 +63,7 @@
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 777, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 781, "failed": 0, "skipped": 0 },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
@@ -207,6 +207,23 @@
       "implementationSnapshot": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
       "harnessSnapshot": "486FF0F6F0982A5B337BE4157E07B5769F7CE2B21C2724D51E1DF583437909C3",
       "corpusManifest": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+      "promotion": "NOT_AUTHORIZED"
+    },
+    "forensicAttribution": {
+      "status": "COMPLETE",
+      "outcome": "NEEDS_REVIEW",
+      "report": "docs/PHASE_SAFETY_REMEDIATION_GATE_FORENSIC_ATTRIBUTION.md",
+      "focusedRuns": 8,
+      "distinctChartSeedPairs": 7,
+      "historicalObservationsReproduced": 70835,
+      "diagnosticEpisodes": 8,
+      "firstMaterialDivergences": 8,
+      "strongGovernedOrigins": 0,
+      "fullReconvergences": 0,
+      "mechanism": "CANONICAL_LEGAL_SET_SELECTION_REMAP_WITH_CONTROL_SELECTION_STILL_LEGAL",
+      "offlineConsolidation": { "direct": 188, "causallyUnreachable": 21, "conflictingObjectAbsent": 5, "unresolved": 1 },
+      "fullMatrixExecuted": false,
+      "behaviorChanged": false,
       "promotion": "NOT_AUTHORIZED"
     },
     "promotion": "NOT_AUTHORIZED",

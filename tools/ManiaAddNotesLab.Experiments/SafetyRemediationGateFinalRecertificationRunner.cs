@@ -181,13 +181,65 @@ internal static class SafetyRemediationGateFinalRecertificationRunner
         return outcome;
     }
 
+    public static string ConsolidateOffline(string casesPath, string dPath, string outputDirectory)
+    {
+        Directory.CreateDirectory(outputDirectory);
+        ValidateIndividualDEvidence(dPath);
+        var outputPath = Path.Combine(outputDirectory,
+            "forensic_offline_final_recertification_cases.csv");
+        var finalCases = MergeCases(casesPath, dPath, outputPath);
+        var counts = finalCases.GroupBy(x => x.FinalClass)
+            .ToDictionary(x => x.Key, x => x.Count(), StringComparer.Ordinal);
+        var unresolved = counts.GetValueOrDefault(SafetyRemediationFinalRecertificationResearch.Unresolved);
+        var summary = new
+        {
+            schemaVersion = "safety-remediation-gate-offline-consolidation.1",
+            sourceCasesSha256 = FileHash(casesPath),
+            sourceDEvidenceSha256 = FileHash(dPath),
+            sourceArtifactsModified = false,
+            fullMatrixExecuted = false,
+            measuredCases = finalCases.Length,
+            classes = new
+            {
+                directCanonicalReject = counts.GetValueOrDefault(SafetyRemediationFinalRecertificationResearch.Direct),
+                causallyProvenUnreachable = counts.GetValueOrDefault(SafetyRemediationFinalRecertificationResearch.Unreachable),
+                conflictingObjectAbsent = counts.GetValueOrDefault(SafetyRemediationFinalRecertificationResearch.ConflictingObjectAbsent),
+                unresolved
+            },
+            outcome = unresolved == 0 ? "RECERTIFIED_WITHIN_C11" : "NEEDS_REVIEW",
+            promotion = "NOT_AUTHORIZED"
+        };
+        File.WriteAllText(Path.Combine(outputDirectory, "forensic_offline_consolidation_summary.json"),
+            JsonSerializer.Serialize(summary, Json) + Environment.NewLine, new UTF8Encoding(false));
+        return summary.outcome;
+    }
+
+    private static void ValidateIndividualDEvidence(string dPath)
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(dPath));
+        var cases = document.RootElement.GetProperty("cases").EnumerateArray().ToArray();
+        if (cases.Length != 5 || cases.Any(x =>
+                !x.GetProperty("causalMechanismDemonstrated").GetBoolean()
+                || x.GetProperty("proposedMechanism").GetString()
+                    != SafetyRemediationFinalRecertificationResearch.ConflictingObjectAbsent
+                || !x.GetProperty("independentTreatmentViolationAbsent").GetBoolean()
+                || !x.GetProperty("targetHasActivePriorLineage").GetBoolean()
+                || x.GetProperty("conflictingObjects").GetArrayLength() == 0
+                || x.GetProperty("conflictingObjects").EnumerateArray().Any(blocker =>
+                    !blocker.GetProperty("exactObjectAbsentOrChanged").GetBoolean()
+                    || !blocker.GetProperty("governedLineageEstablished").GetBoolean()
+                    || !blocker.GetProperty("noReconvergenceBeforeTarget").GetBoolean())))
+            throw new InvalidDataException("Offline consolidation requires five individually demonstrated D cases.");
+    }
+
     private static ImmutableArray<FinalRecertificationCase> MergeCases(string casesPath,
         string dPath, string outputPath)
     {
         using var dDocument = JsonDocument.Parse(File.ReadAllText(dPath));
         var d = dDocument.RootElement.GetProperty("cases").EnumerateArray().Select(x =>
-            new FinalRecertificationCaseIdentity(x.GetProperty("chartId").GetString()!,
-                x.GetProperty("seed").GetInt32(), x.GetProperty("opportunityKey").GetString()!)).ToArray();
+            new FinalRecertificationCaseIdentity("primary", x.GetProperty("chartId").GetString()!,
+                x.GetProperty("seed").GetInt32(), "control",
+                x.GetProperty("opportunityKey").GetString()!)).ToArray();
         using var parser = new TextFieldParser(casesPath) { TextFieldType = FieldType.Delimited,
             HasFieldsEnclosedInQuotes = true };
         parser.SetDelimiters(",");
@@ -199,7 +251,8 @@ internal static class SafetyRemediationGateFinalRecertificationRunner
         {
             var row = parser.ReadFields()!;
             rows.Add(row);
-            inputs.Add((new(row[index["chart_id"]], int.Parse(row[index["seed"]]),
+            inputs.Add((new(row[index["stratum"]], row[index["chart_id"]],
+                int.Parse(row[index["seed"]]), row[index["frozen_arm"]],
                 row[index["opportunity_key"]]), row[index["hardened_class"]]));
         }
         var final = SafetyRemediationFinalRecertificationResearch.Finalize(inputs, d);
@@ -215,6 +268,7 @@ internal static class SafetyRemediationGateFinalRecertificationRunner
             new NamedImplementationContent(path, File.ReadAllBytes(Path.Combine(root,
                 path.Replace('/', Path.DirectorySeparatorChar))))));
     private static string Hash(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+    private static string FileHash(string path) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
     private static string GitHead(string root)
     {
         var head = File.ReadAllText(Path.Combine(root, ".git", "HEAD")).Trim();

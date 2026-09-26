@@ -171,6 +171,60 @@ public sealed class PhaseSafetyRemediationGateHardeningTests
     }
 
     [Fact]
+    public void EqualHashesWithIncompleteParentsAreNotCausalEquality()
+    {
+        var complete = State("SAME", 0);
+        var incomplete = complete with { CompleteForCausalLineage = false };
+        var difference = SafetyRemediationForensicAttributionResearch.Compare(incomplete, incomplete);
+        var step = Assert.Single(SafetyRemediationGateHardeningResearch.Classify("pair",
+        [
+            new("O-0", 0, incomplete, incomplete, incomplete, incomplete, null, null, false)
+        ]));
+
+        Assert.Equal(ForensicStateDifferenceKind.EqualHashIncomplete, difference.Kind);
+        Assert.False(step.BeforeEqual);
+        Assert.True(step.UnexplainedStateDivergence);
+        Assert.Null(step.OpenedLineage);
+    }
+
+    [Fact]
+    public void AlreadyDifferentParentsDoNotLetALaterCanonicalRejectClaimTheirOrigin()
+    {
+        var left = State("LEFT", 0);
+        var right = State("RIGHT", 0);
+        var leftAfter = State("LEFT-AFTER", 1);
+        var rightAfter = State("RIGHT-AFTER", 1);
+        var step = Assert.Single(SafetyRemediationGateHardeningResearch.Classify("pair",
+        [
+            new("O-0", 0, left, right, leftAfter, rightAfter, "CONTROL", null, true)
+        ]));
+
+        Assert.False(step.BeforeEqual);
+        Assert.False(step.DirectGovernedDivergence);
+        Assert.True(step.UnexplainedStateDivergence);
+    }
+
+    [Fact]
+    public void ContinuousUnattributedDifferencesAreOneDiagnosticEpisodeNotCausalLineage()
+    {
+        var left0 = State("L0", 0);
+        var right0 = State("R0", 0);
+        var left1 = State("L1", 1);
+        var right1 = State("R1", 1);
+        var left2 = State("L2", 2);
+        var right2 = State("R2", 2);
+        var steps = SafetyRemediationGateHardeningResearch.Classify("pair",
+        [
+            new("O-0", 0, left0, right0, left1, right1, null, null, false),
+            new("O-1", 1, left1, right1, left2, right2, null, null, false)
+        ]);
+
+        var episode = Assert.Single(SafetyRemediationForensicAttributionResearch.GroupEpisodes(steps));
+        Assert.Equal(2, episode.ObservationCount);
+        Assert.All(steps, x => Assert.Null(x.ActiveLineageAfter));
+    }
+
+    [Fact]
     public void CachedAdjacentStatesAreExactlyEquivalentToSimpleUncachedTrace()
     {
         var e0 = State("E0", 0);

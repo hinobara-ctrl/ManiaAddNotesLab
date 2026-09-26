@@ -4,6 +4,24 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 4 && args[0] == "safety-remediation-gate-forensic-run")
+{
+    var outcome = SafetyRemediationGateForensicAttributionRunner.Run(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]));
+    Console.WriteLine($"SAFETY.REMEDIATION.GATE forensic outcome={outcome}");
+    Environment.ExitCode = outcome == "EVIDENCE_REPRODUCED" ? 0 : 1;
+    return;
+}
+
+if (args.Length == 4 && args[0] == "safety-remediation-gate-final-consolidate-offline")
+{
+    var outcome = SafetyRemediationGateFinalRecertificationRunner.ConsolidateOffline(
+        Path.GetFullPath(args[1]), Path.GetFullPath(args[2]), Path.GetFullPath(args[3]));
+    Console.WriteLine($"SAFETY.REMEDIATION.GATE offline consolidation outcome={outcome}");
+    Environment.ExitCode = outcome == "NEEDS_REVIEW" ? 0 : 1;
+    return;
+}
+
 if (args.Length == 5 && args[0] == "safety-remediation-gate-final-prepare")
 {
     var hash = SafetyRemediationGateFinalRecertificationRunner.Prepare(Path.GetFullPath(args[1]),

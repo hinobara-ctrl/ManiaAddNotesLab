@@ -21,6 +21,7 @@ Los documentos maestros describen sólo el estado actual y se actualizan en cada
 
 ## Phase Reports / Historical Evidence
 
+- [SAFETY.REMEDIATION.GATE focused forensic attribution](docs/PHASE_SAFETY_REMEDIATION_GATE_FORENSIC_ATTRIBUTION.md) — primera no equivalencia de las ocho ejecuciones, OP-370/OP-466, descomposición 70.835→8 episodios y consolidación offline `188/21/5/1` sin promoción.
 - [Phase A — Evidence Infrastructure](docs/PHASE_A_EVIDENCE_INFRASTRUCTURE_REPORT.md) — cierre verificable del perfil original-only y regresión conductual nula.
 - [Phase B — Certificates and Failures](docs/PHASE_B_CERTIFICATES_AND_FAILURES_REPORT.md) — cierre de diagnostics, blockers y failure taxonomy en shadow.
 - [Phase C1 — LN Witness Deduplication](docs/PHASE_C1_LN_WITNESS_DEDUP_REPORT.md) — investigación, resultados held-out y decisión HOLD.

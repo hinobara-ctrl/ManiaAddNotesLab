@@ -20,15 +20,17 @@ public sealed class SafetyRemediationFinalRecertificationTests
     }
 
     [Fact]
-    public void MissingOrExtraneousDEvidenceCannotForceClosure()
+    public void MissingDEvidenceRemainsUnresolvedAndExtraneousEvidenceCannotForceClosure()
     {
         var source = Cases();
         var d = source.Where(x => x.HardenedClass == SafetyRemediationFinalRecertificationResearch.Unresolved)
             .Select(x => x.Identity).ToList();
 
-        Assert.Throws<InvalidDataException>(() =>
-            SafetyRemediationFinalRecertificationResearch.Finalize(source, d.Take(4)));
-        d[^1] = new("UNEXPECTED", 999, "UNEXPECTED");
+        var partial = SafetyRemediationFinalRecertificationResearch.Finalize(source, d.Take(4));
+        Assert.Equal(4, partial.Count(x => x.FinalClass ==
+            SafetyRemediationFinalRecertificationResearch.ConflictingObjectAbsent));
+        Assert.Single(partial, x => x.FinalClass == SafetyRemediationFinalRecertificationResearch.Unresolved);
+        d[^1] = new("primary", "UNEXPECTED", 999, "control", "UNEXPECTED");
         Assert.Throws<InvalidDataException>(() =>
             SafetyRemediationFinalRecertificationResearch.Finalize(source, d));
     }
@@ -37,12 +39,29 @@ public sealed class SafetyRemediationFinalRecertificationTests
     public void HistoricalPartitionDriftCannotBeHiddenByDEvidence()
     {
         var source = Cases().ToList();
-        source[0] = (source[0].Identity, SafetyRemediationFinalRecertificationResearch.Unresolved);
-        var d = source.Where(x => x.HardenedClass == SafetyRemediationFinalRecertificationResearch.Unresolved)
-            .Select(x => x.Identity);
+        source[0] = (source[0].Identity, "INVENTED_FAVORABLE_CLASS");
 
         Assert.Throws<InvalidDataException>(() =>
-            SafetyRemediationFinalRecertificationResearch.Finalize(source, d));
+            SafetyRemediationFinalRecertificationResearch.Finalize(source, []));
+    }
+
+    [Fact]
+    public void PrimaryAndSecondaryCasesWithSameChartSeedAndOpportunityRemainDistinct()
+    {
+        var source = Cases().ToList();
+        var first = source[0];
+        source[^1] = (first.Identity with
+        {
+            Stratum = "secondary-g1-compatibility", FrozenArm = "treatment"
+        }, SafetyRemediationFinalRecertificationResearch.Unresolved);
+
+        var result = SafetyRemediationFinalRecertificationResearch.Finalize(source, []);
+
+        Assert.Equal(215, result.Length);
+        Assert.Single(result, x => x.Identity.Stratum == "secondary-g1-compatibility");
+        source[^1] = first;
+        Assert.Throws<InvalidDataException>(() =>
+            SafetyRemediationFinalRecertificationResearch.Finalize(source, []));
     }
 
     private static (FinalRecertificationCaseIdentity Identity, string HardenedClass)[] Cases() =>
@@ -51,6 +70,7 @@ public sealed class SafetyRemediationFinalRecertificationTests
             var classification = i < 188 ? SafetyRemediationFinalRecertificationResearch.Direct
                 : i < 210 ? SafetyRemediationFinalRecertificationResearch.Unreachable
                 : SafetyRemediationFinalRecertificationResearch.Unresolved;
-            return (new FinalRecertificationCaseIdentity($"CHART-{i}", i, $"OP-{i}"), classification);
+            return (new FinalRecertificationCaseIdentity("primary", $"CHART-{i}", i,
+                "control", $"OP-{i}"), classification);
         }).ToArray();
 }

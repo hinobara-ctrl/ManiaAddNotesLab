@@ -2,7 +2,8 @@ using System.Collections.Immutable;
 
 namespace ManiaAddNotesLab.Core;
 
-public sealed record FinalRecertificationCaseIdentity(string ChartId, int Seed, string OpportunityKey);
+public sealed record FinalRecertificationCaseIdentity(
+    string Stratum, string ChartId, int Seed, string FrozenArm, string OpportunityKey);
 public sealed record FinalRecertificationCase(
     FinalRecertificationCaseIdentity Identity, string HardenedClass, string FinalClass);
 
@@ -19,14 +20,14 @@ public static class SafetyRemediationFinalRecertificationResearch
     {
         var source = hardened.ToArray();
         var d = independentlyDemonstratedD.ToHashSet();
-        if (source.Length != 215 || source.Count(x => x.HardenedClass == Direct) != 188
-            || source.Count(x => x.HardenedClass == Unreachable) != 22
-            || source.Count(x => x.HardenedClass == Unresolved) != 5)
-            throw new InvalidDataException("Final recertification requires the measured 188 A / 22 B / 5 unresolved partition before D evidence.");
+        if (source.Length != 215 || source.Select(x => x.Identity).Distinct().Count() != 215
+            || source.Any(x => x.HardenedClass is not (Direct or Unreachable or Unresolved)))
+            throw new InvalidDataException("Final recertification requires 215 unique measured A/B/C cases without invented classes.");
         var unresolved = source.Where(x => x.HardenedClass == Unresolved).Select(x => x.Identity).ToHashSet();
-        if (d.Count != 5 || !d.SetEquals(unresolved))
-            throw new InvalidDataException("D evidence must match all and only the five measured unresolved identities.");
+        if (!d.IsSubsetOf(unresolved))
+            throw new InvalidDataException("D evidence may classify only individually measured unresolved identities.");
         return source.Select(x => new FinalRecertificationCase(x.Identity, x.HardenedClass,
-            x.HardenedClass == Unresolved ? ConflictingObjectAbsent : x.HardenedClass)).ToImmutableArray();
+            x.HardenedClass == Unresolved && d.Contains(x.Identity)
+                ? ConflictingObjectAbsent : x.HardenedClass)).ToImmutableArray();
     }
 }
