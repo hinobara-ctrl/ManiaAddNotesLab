@@ -1,4 +1,3 @@
-using System.Text.Json;
 using ManiaAddNotesLab.Core;
 
 internal sealed record FrozenC11Manifest(
@@ -7,20 +6,8 @@ internal sealed record FrozenC11Manifest(
 {
     public static FrozenC11Manifest Load(string path)
     {
-        using var document = JsonDocument.Parse(File.ReadAllText(path));
-        var root = document.RootElement;
-        var manifest = root.GetProperty("manifest");
-        var declaredHash = root.GetProperty("canonicalSha256").GetString()
-            ?? throw new InvalidDataException("C11 manifest has no canonicalSha256.");
-        var charts = manifest.GetProperty("charts").EnumerateArray().Select(x =>
-            new C11FrozenCorpusExpectation(
-                x.GetProperty("chartId").GetString()
-                    ?? throw new InvalidDataException("C11 chart has no chartId."),
-                x.GetProperty("family").GetString()
-                    ?? throw new InvalidDataException("C11 chart has no family."),
-                x.GetProperty("keyCount").GetInt32(),
-                x.GetProperty("originalObjects").GetInt32())).ToArray();
-        return new(declaredHash.ToUpperInvariant(), charts);
+        var verified = FrozenC11ManifestResearch.Load(path);
+        return new(verified.CanonicalSha256, verified.Charts);
     }
 }
 

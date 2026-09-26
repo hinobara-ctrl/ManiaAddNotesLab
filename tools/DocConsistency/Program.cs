@@ -44,6 +44,7 @@ else
     ValidateSafetyCausalClosure(state);
     ValidateSafetyRemediationDesignClosure(state);
     ValidateSafetyRemediationGateClosure(state);
+    ValidateSafetyRemediationFollowup();
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -1173,6 +1174,21 @@ void ValidateSafetyRemediationGateClosure(ProjectState value)
     CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
         "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
         "legacy default after SAFETY.REMEDIATION.GATE");
+}
+
+void ValidateSafetyRemediationFollowup()
+{
+    const string contract = "docs/safety_remediation_gate_followup_contract.json";
+    const string followup = "docs/safety_remediation_gate_unresolved_followup.json";
+    foreach (var artifact in new[] { contract, followup })
+    {
+        RequireFile(artifact, "SAFETY.REMEDIATION.GATE follow-up artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact,
+            "SAFETY.REMEDIATION.GATE follow-up artifact index entry");
+    }
+    foreach (var error in SafetyRemediationFollowupGuard.Validate(
+                 Path.Combine(root, contract), Path.Combine(root, followup)))
+        errors.Add($"SAFETY.REMEDIATION.GATE follow-up: {error}");
 }
 
 void ValidateFilesAndIndex(ProjectState value)
