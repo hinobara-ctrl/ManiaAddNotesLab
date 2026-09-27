@@ -1,0 +1,80 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-future-held-hardening.2",
+    "publishedRepairHead": "9a8d28f311dc07dc685cc92a23c76b508323fc25",
+    "historicalLane0Head": "12ee8799528d9cf9d64d8d9a9ab4b45ba955db0f",
+    "parentCorrectiveContractSha256": "F28F35AA991F3AF20BEEBBEE6AC1D9D3C182E71C62E4044E4DB0792857F8B0A7",
+    "requiredPublicationBinding": "docs/lane_0_corrective_publication_binding.json",
+    "repairImplementationSha256": "63F8897F39370D41260CEF962E20F82D288F502EA0AEE8AB82C3C1088F92B82E",
+    "repairImplementationFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0FeasibilityRunner.cs"
+    ],
+    "correctiveHarnessSha256": "B4C579411846085DAC6C977BD6D734528358C3A1E103D097D4EA46273FDBD212",
+    "correctiveHarnessFiles": [
+      "tests/ManiaAddNotesLab.Tests/Lane0FeasibilityTests.cs",
+      "tests/ManiaAddNotesLab.Tests/ManiaAddNotesLab.Tests.csproj",
+      "tools/DocConsistency/Program.cs",
+      "tools/ManiaAddNotesLab.Experiments/Program.cs"
+    ],
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "memoryLimit": "0x400000000",
+    "futureHeldIndexSemantics": "Chart-local complete-relation identities are grouped once by AnchorTime; descending cumulative original-ID sets are materialized once per distinct anchor and shared by occurrences at that anchor.",
+    "exclusionCounters": [
+      "temporal_exclusion",
+      "future_held_identity_exclusion",
+      "both_reasons",
+      "unique_excluded",
+      "donors_considered",
+      "admitted"
+    ],
+    "donorPartitionInvariant": "admitted \u002B unique_excluded == donors_considered for every target query; both_reasons is diagnostic and never increments unique_excluded twice.",
+    "requiredControls": [
+      "official-builder-prior-admitted",
+      "official-builder-same-time-excluded",
+      "official-builder-future-excluded",
+      "official-builder-prior-identity-collision-excluded",
+      "official-builder-both-reasons-excluded-once",
+      "missing-anchor-invalid",
+      "target-group-parent-release-event-synthetic-cross-chart-composition-controls",
+      "indexed-builder-naive-equivalence",
+      "zero-rng",
+      "no-chart-mutation"
+    ],
+    "outcomeRules": {
+      "BLOCKED": "A required publication binding, approved HEAD, explicit authorization or manifest verification is absent before corpus access.",
+      "FEASIBILITY_DEMONSTRATED": "Reserved for one later authorized valid C11 evaluation satisfying the frozen scientific criterion.",
+      "INVALID": "Canonical contract, implementation, harness, dependency, integrity, controls, determinism, RNG or non-interference verification fails.",
+      "LIMITED_PARK": "Reserved for one later authorized valid complete C11 evaluation whose corrected evidence is insufficient."
+    },
+    "futureResultColumns": [
+      "chart_id",
+      "family",
+      "keymode",
+      "universe_a_structural",
+      "universe_b_holdout",
+      "universe_c_operational",
+      "historical_support",
+      "corrected_support",
+      "rice_sentinel",
+      "g1_occurrence_id",
+      "donors_considered",
+      "admitted",
+      "temporal_exclusion",
+      "future_held_identity_exclusion",
+      "both_reasons",
+      "unique_excluded",
+      "state",
+      "placement_count_separate_not_inferred"
+    ],
+    "reusedDependencies": {
+      "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md": "7F3B2C3CBAB3965DB9D166DDCDC00C79AC499A0EB75732594E5587AF5498169D",
+      "docs/lane_0_feasibility_contract.json": "908958E6DBB7AD04AF9AE5C5DCF42DB9637F318CFA14ACEB9287B5845691D679",
+      "docs/lane_0_future_held_remediation_contract.json": "C46FBC9640E9CE7712C315F1B6003402C71BED28D3CCA7DA22F394EDF276E517",
+      "src/ManiaAddNotesLab.Core/InteriorRelationFeasibilityResearch.cs": "13D8B422648D6AF38D304C1AE4852D46D48DBEF3A0F82B82791B45C81A930B12",
+      "src/ManiaAddNotesLab.Core/InteriorRelationHoldoutAuditor.cs": "7D63A38B99C847A875BB5FE5281255ECB2DC942791D508F9F2E7EAF40860B2FA",
+      "src/ManiaAddNotesLab.Core/InteriorRelationMembershipResearch.cs": "9E5EEA78550E4F8C7C6FBEC4F2DFFC3D5B31C86B56DC490D1E564BADC232977F"
+    }
+  },
+  "canonicalSha256": "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35",
+  "canonicalization": "UTF-8 System.Text.Json semantic round-trip, camelCase, unindented; ordinal ordered file inventories/maps; file hashes use exact working-tree bytes, therefore CRLF/LF changes identity"
+}
