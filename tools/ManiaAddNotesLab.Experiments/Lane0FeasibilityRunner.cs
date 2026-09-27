@@ -19,12 +19,16 @@ internal sealed record Lane0Occurrence(
     int? AnchorTime = null);
 
 internal sealed record Lane0LeakageAudit(
-    int Target, int TargetGroup, int Parent, int ReleaseEndpoint, int FutureHeld, int SameEvent,
+    int Target, int TargetGroup, int Parent, int ReleaseEndpoint,
+    int TemporalExclusion, int FutureHeldIdentityExclusion, int BothTemporalAndIdentity, int SameEvent,
     int SyntheticTeaching, int CrossChart, int ArtificialComposition, int DuplicateObservationIdentity,
-    int IncompleteOrMispairedIdentity, ImmutableArray<Lane0Occurrence> Eligible)
+    int IncompleteOrMispairedIdentity, int DonorsConsidered, int UniqueExcluded,
+    ImmutableArray<Lane0Occurrence> Eligible)
 {
+    public int FutureHeld => TemporalExclusion + FutureHeldIdentityExclusion;
     public int IntegrityFailures => SyntheticTeaching + CrossChart + ArtificialComposition
         + DuplicateObservationIdentity + IncompleteOrMispairedIdentity;
+    public bool PartitionValid => Eligible.Length + UniqueExcluded == DonorsConsidered;
 }
 
 internal sealed record Lane0Holdout(
@@ -34,25 +38,29 @@ internal sealed record Lane0Holdout(
 
 internal static class Lane0SpatialResearch
 {
-    public static ImmutableArray<Lane0Holdout> EvaluateAll(ImmutableArray<Lane0Occurrence> occurrences) =>
+    public static ImmutableArray<Lane0Holdout> EvaluateAll(ImmutableArray<Lane0Occurrence> occurrences,
+        bool requireTemporalIntegrity = true) =>
         occurrences.GroupBy(x => (x.Family, x.ChartId, x.KeyCount, x.QuerySignature))
             .SelectMany(bucket =>
             {
                 var values = bucket.OrderBy(x => x.OccurrenceId, StringComparer.Ordinal).ToArray();
-                return values.Select(target => Evaluate(target, values));
+                return values.Select(target => Evaluate(target, values, requireTemporalIntegrity));
             }).OrderBy(x => x.OccurrenceId, StringComparer.Ordinal).ToImmutableArray();
 
-    public static Lane0LeakageAudit Audit(Lane0Occurrence target, IEnumerable<Lane0Occurrence> vocabulary)
+    public static Lane0LeakageAudit Audit(Lane0Occurrence target, IEnumerable<Lane0Occurrence> vocabulary,
+        bool requireTemporalIntegrity = true)
     {
         var eligible = ImmutableArray.CreateBuilder<Lane0Occurrence>();
-        var targetCount = 0; var group = 0; var parent = 0; var release = 0; var future = 0;
+        var targetCount = 0; var group = 0; var parent = 0; var release = 0;
+        var temporal = 0; var futureIdentity = 0; var both = 0;
         var sameEvent = 0; var synthetic = 0; var crossChart = 0; var composition = 0; var duplicate = 0;
-        var incomplete = 0;
+        var incomplete = 0; var considered = 0; var excluded = 0;
         var targetIds = target.ObservationIds.ToHashSet();
         var releaseIds = target.ReleaseEndpointObservationIds.ToHashSet();
         var futureIds = target.FutureHeldObservationIds.ToHashSet();
         foreach (var donor in vocabulary)
         {
+            considered++;
             var violations = false;
             if (donor.OccurrenceId == target.OccurrenceId) { targetCount++; violations = true; }
             else if (donor.ObservationIds.Any(targetIds.Contains)) { targetCount++; violations = true; }
@@ -60,14 +68,16 @@ internal static class Lane0SpatialResearch
             if (target.Family == Lane0Family.G1InteriorSpatial && target.ParentId is not null
                 && donor.ParentId == target.ParentId) { parent++; violations = true; }
             if (donor.ReleaseEndpointObservationIds.Any(releaseIds.Contains)) { release++; violations = true; }
-            // G1.0's frozen holdout semantics are prior-only. Observation identities are an
-            // independent provenance guard; time is the authority for the temporal boundary.
-            if (target.Family == Lane0Family.G1InteriorSpatial
+            // These reasons are deliberately orthogonal. One donor can trigger both counters,
+            // while UniqueExcluded still counts the donor exactly once.
+            var temporalViolation = target.Family == Lane0Family.G1InteriorSpatial
                 && target.AnchorTime is not null && donor.AnchorTime is not null
-                && donor.AnchorTime.Value >= target.AnchorTime.Value)
-            { future++; violations = true; }
-            else if (donor.ObservationIds.Any(futureIds.Contains))
-            { future++; violations = true; }
+                && donor.AnchorTime.Value >= target.AnchorTime.Value;
+            var identityViolation = donor.ObservationIds.Any(futureIds.Contains);
+            if (temporalViolation) temporal++;
+            if (identityViolation) futureIdentity++;
+            if (temporalViolation && identityViolation) both++;
+            if (temporalViolation || identityViolation) violations = true;
             if (donor.EventId == target.EventId) { sameEvent++; violations = true; }
             if (donor.IsSynthetic) { synthetic++; violations = true; }
             if (!string.Equals(donor.ChartId, target.ChartId, StringComparison.Ordinal))
@@ -81,19 +91,27 @@ internal static class Lane0SpatialResearch
                 || string.IsNullOrWhiteSpace(donor.GroupId) || string.IsNullOrWhiteSpace(donor.EventId)
                 || string.IsNullOrWhiteSpace(donor.QuerySignature)
                 || string.IsNullOrWhiteSpace(donor.JointResultSignature)
-                || donor.ObservationIds.IsDefaultOrEmpty)
+                || donor.ObservationIds.IsDefaultOrEmpty
+                || (requireTemporalIntegrity && donor.Family == Lane0Family.G1InteriorSpatial
+                    && donor.AnchorTime is null))
             { incomplete++; violations = true; }
             if (!violations && donor.Family == target.Family && donor.KeyCount == target.KeyCount
                 && donor.QuerySignature == target.QuerySignature) eligible.Add(donor);
+            else excluded++;
         }
-        return new(targetCount, group, parent, release, future, sameEvent, synthetic, crossChart,
-            composition, duplicate, incomplete, eligible.ToImmutable());
+        return new(targetCount, group, parent, release, temporal, futureIdentity, both, sameEvent,
+            synthetic, crossChart, composition, duplicate, incomplete, considered, excluded,
+            eligible.ToImmutable());
     }
 
-    public static Lane0Holdout Evaluate(Lane0Occurrence target, IEnumerable<Lane0Occurrence> vocabulary)
+    public static Lane0Holdout Evaluate(Lane0Occurrence target, IEnumerable<Lane0Occurrence> vocabulary,
+        bool requireTemporalIntegrity = true)
     {
-        var audit = Audit(target, vocabulary);
-        if (!target.CompleteIdentity || target.ObservationIds.IsDefaultOrEmpty || audit.IntegrityFailures > 0)
+        var audit = Audit(target, vocabulary, requireTemporalIntegrity);
+        if (!target.CompleteIdentity || target.ObservationIds.IsDefaultOrEmpty
+            || (requireTemporalIntegrity && target.Family == Lane0Family.G1InteriorSpatial
+                && target.AnchorTime is null)
+            || audit.IntegrityFailures > 0 || !audit.PartitionValid)
             return new(target.Family, target.ChartId, target.KeyCount, target.OccurrenceId,
                 Lane0HoldoutState.AmbiguousIntegrity, 0, 0, 0, false, false, false, false, audit);
         var donors = audit.Eligible;
@@ -178,6 +196,41 @@ internal sealed record Lane0CorrectiveContract(
 internal sealed record Lane0CorrectiveContractArtifact(
     Lane0CorrectiveContract Contract, string CanonicalSha256, string Canonicalization);
 
+internal sealed record Lane0CorrectiveHardeningContract(
+    string SchemaVersion,
+    string PublishedRepairHead,
+    string HistoricalLane0Head,
+    string ParentCorrectiveContractSha256,
+    string RequiredPublicationBinding,
+    string RepairImplementationSha256,
+    ImmutableArray<string> RepairImplementationFiles,
+    string CorrectiveHarnessSha256,
+    ImmutableArray<string> CorrectiveHarnessFiles,
+    string CorpusManifestSha256,
+    string MemoryLimit,
+    string FutureHeldIndexSemantics,
+    ImmutableArray<string> ExclusionCounters,
+    string DonorPartitionInvariant,
+    ImmutableArray<string> RequiredControls,
+    ImmutableSortedDictionary<string, string> OutcomeRules,
+    ImmutableArray<string> FutureResultColumns,
+    ImmutableSortedDictionary<string, string> ReusedDependencies);
+internal sealed record Lane0CorrectiveHardeningContractArtifact(
+    Lane0CorrectiveHardeningContract Contract, string CanonicalSha256, string Canonicalization);
+internal sealed record Lane0CorrectivePublicationBinding(
+    string ContractSha256, string ApprovedPublishedHead, bool ExplicitHumanAuthorization);
+internal sealed record Lane0CorrectiveReadinessChecks(
+    bool ContractCanonical,
+    bool ImplementationIdentity,
+    bool HarnessIdentity,
+    bool ReusedDependencies,
+    bool PublicationBindingPresent,
+    bool PublishedHeadMatches,
+    bool HumanAuthorized,
+    bool ManifestVerified);
+internal sealed record Lane0CorrectiveReadinessReport(
+    string Outcome, string Reason, Lane0CorrectiveReadinessChecks Checks);
+
 internal static class Lane0FeasibilityRunner
 {
     public const string EntryHead = "be08f3f2f0191a5c972ad16449a7199dd07f2e3f";
@@ -242,57 +295,134 @@ internal static class Lane0FeasibilityRunner
         "docs/g1_0_interior_relation_contract.json",
         "docs/g1_design_interior_relation_admission_contract.json"
     ];
+    private static readonly string[] CorrectiveHardeningDependencies =
+    [
+        "docs/lane_0_future_held_remediation_contract.json",
+        "docs/lane_0_feasibility_contract.json",
+        "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md",
+        "src/ManiaAddNotesLab.Core/InteriorRelationFeasibilityResearch.cs",
+        "src/ManiaAddNotesLab.Core/InteriorRelationHoldoutAuditor.cs",
+        "src/ManiaAddNotesLab.Core/InteriorRelationMembershipResearch.cs"
+    ];
 
     public static string PrepareCorrectiveContract(string root, string contractPath)
     {
-        var dependencies = CorrectiveDependencies.ToImmutableSortedDictionary(x => x,
+        throw new InvalidOperationException(
+            "lane-0-future-held-remediation.1 is frozen at F28F35AA...F8B0A7; use the versioned hardening preparation command.");
+    }
+
+    public static string PrepareCorrectiveHardeningContract(string root, string contractPath)
+    {
+        const string publishedRepairHead = "9a8d28f311dc07dc685cc92a23c76b508323fc25";
+        if (ReadHead(root) != publishedRepairHead)
+            throw new InvalidDataException("Corrective hardening must start from published repair HEAD 9a8d28f.");
+        var dependencies = CorrectiveHardeningDependencies.ToImmutableSortedDictionary(x => x,
             x => FileHash(Path.Combine(root, x)), StringComparer.Ordinal);
-        var contract = new Lane0CorrectiveContract(
-            "lane-0-future-held-remediation.1",
+        var contract = new Lane0CorrectiveHardeningContract(
+            "lane-0-future-held-hardening.2",
+            publishedRepairHead,
             "12ee8799528d9cf9d64d8d9a9ab4b45ba955db0f",
-            EntryHead,
-            "PENDING_USER_PUBLICATION_AND_APPROVAL",
+            "F28F35AA991F3AF20BEEBBEE6AC1D9D3C182E71C62E4044E4DB0792857F8B0A7",
+            "docs/lane_0_corrective_publication_binding.json",
             TreeIdentity(root, CorrectiveImplementationFiles),
+            CorrectiveImplementationFiles.Order(StringComparer.Ordinal).ToImmutableArray(),
             TreeIdentity(root, CorrectiveHarnessFiles),
+            CorrectiveHarnessFiles.Order(StringComparer.Ordinal).ToImmutableArray(),
             CorpusIdentity,
-            "62B2F4F67C34E8F57893A3A025D567000E1BB12B6517C13D97FE9EEC3FE0A3C2",
             "0x400000000",
-            "Historical G1 occurrence construction omitted future-held identities and AnchorTime, so the official LANE.0 auditor could not enforce the frozen G1.0 prior-only boundary.",
-            "For G1 only, carry exact AnchorTime, derive target future-held provenance from complete original relation identities at the same or later anchor, reject donor.AnchorTime >= target.AnchorTime, and independently reject donor observations intersecting the target future-held set.",
-            ["RICE_HEAD_COMPLETION_UNCHANGED_SENTINEL", "G1_INTERIOR_SPATIAL_CORRECTED"],
-            ImmutableSortedDictionary<string, int>.Empty
-                .Add("g1Operational", 288).Add("g1OperationalHistoricallySupported", 11)
-                .Add("g1Structural", 16881).Add("riceOperational", 40360)
-                .Add("riceOperationalHistoricallySupported", 37080).Add("riceStructural", 40360),
-            ["target", "target-group", "parent", "anchor", "release-endpoint", "future-anchor-time",
-             "future-held-original-identity", "same-event", "synthetic-teaching", "cross-chart",
-             "artificial-donor-composition", "duplicate-observation", "incomplete-or-mispaired-identity"],
-            ["auditor-detects-each-contamination", "official-builder-supplies-required-identity",
-             "experimental-flow-applies-each-exclusion", "same-time-boundary-rejected",
-             "prior-independent-donor-preserved", "byte-identical-repeat", "zero-rng",
-             "no-chart-mutation", "no-production-call-site"],
+            "Chart-local complete-relation identities are grouped once by AnchorTime; descending cumulative original-ID sets are materialized once per distinct anchor and shared by occurrences at that anchor.",
+            ["temporal_exclusion", "future_held_identity_exclusion", "both_reasons", "unique_excluded",
+             "donors_considered", "admitted"],
+            "admitted + unique_excluded == donors_considered for every target query; both_reasons is diagnostic and never increments unique_excluded twice.",
+            ["official-builder-prior-admitted", "official-builder-same-time-excluded",
+             "official-builder-future-excluded", "official-builder-prior-identity-collision-excluded",
+             "official-builder-both-reasons-excluded-once", "missing-anchor-invalid",
+             "target-group-parent-release-event-synthetic-cross-chart-composition-controls",
+             "indexed-builder-naive-equivalence", "zero-rng", "no-chart-mutation"],
             ImmutableSortedDictionary<string, string>.Empty
-                .Add("BLOCKED", "Required published HEAD, exact frozen identities, explicit C11 corpus, or runtime resources unavailable before evidence is consulted.")
-                .Add("FEASIBILITY_DEMONSTRATED", "Both frozen families satisfy the historical support criterion after corrected exclusions, including operational support, with every validity condition passing.")
-                .Add("INVALID", "Any contract, identity, corpus, adversarial-control, integrity, determinism, RNG, or non-interference failure.")
-                .Add("LIMITED_PARK", "Execution is valid and complete, but corrected evidence is insufficient for FEASIBILITY_DEMONSTRATED."),
-            ["Pair every corrected chart/family/keymode result with the immutable historical aggregate.",
-             "Report structural, contextual, joint-unique, joint-among-alternatives, contradiction, no-context, marginal-only, independent-support and operational-support deltas.",
-             "Keep rice as an unchanged sentinel; do not infer a rice defect from the G1 defect."],
-            "List all 11 historically supported operational G1 occurrence IDs individually and report corrected donor count, temporal exclusions, identity exclusions, state and support disposition without changing thresholds.",
-            ["Stop INVALID on any validity failure.", "Stop BLOCKED before evidence on unavailable required inputs.",
-             "Execute exactly one corrected C11 evaluation only after user publishes and approves its exact HEAD.",
-             "Do not adapt exclusions, thresholds, populations or outcome rules after results are visible."],
-            ["The historical figures remain historical evidence, not corrected estimates.",
-             "A corrected result does not authorize LANE.DESIGN, LANE.GATE or production behavior.",
-             "No claim extends beyond frozen C11 or from G1 to rice without direct evidence."],
+                .Add("BLOCKED", "A required publication binding, approved HEAD, explicit authorization or manifest verification is absent before corpus access.")
+                .Add("FEASIBILITY_DEMONSTRATED", "Reserved for one later authorized valid C11 evaluation satisfying the frozen scientific criterion.")
+                .Add("INVALID", "Canonical contract, implementation, harness, dependency, integrity, controls, determinism, RNG or non-interference verification fails.")
+                .Add("LIMITED_PARK", "Reserved for one later authorized valid complete C11 evaluation whose corrected evidence is insufficient."),
+            ["chart_id", "family", "keymode", "universe_a_structural", "universe_b_holdout",
+             "universe_c_operational", "historical_support", "corrected_support", "rice_sentinel",
+             "g1_occurrence_id", "donors_considered", "admitted", "temporal_exclusion",
+             "future_held_identity_exclusion", "both_reasons", "unique_excluded", "state",
+             "placement_count_separate_not_inferred"],
             dependencies);
-        var artifact = new Lane0CorrectiveContractArtifact(contract,
-            CanonicalCorrectiveContractHash(contract),
-            "UTF-8 System.Text.Json semantic round-trip, camelCase, unindented; ordinal ordered arrays/maps; no timestamps, private corpus paths or result-derived fields");
+        var artifact = new Lane0CorrectiveHardeningContractArtifact(contract,
+            CanonicalCorrectiveHardeningContractHash(contract),
+            "UTF-8 System.Text.Json semantic round-trip, camelCase, unindented; ordinal ordered file inventories/maps; file hashes use exact working-tree bytes, therefore CRLF/LF changes identity");
         Directory.CreateDirectory(Path.GetDirectoryName(contractPath)!);
         WriteJson(contractPath, artifact);
         return artifact.CanonicalSha256;
+    }
+
+    public static Lane0CorrectiveReadinessReport ValidateCorrectiveReadiness(string root,
+        string contractPath, string? bindingPath, string? manifestPath)
+    {
+        try
+        {
+            var artifact = JsonSerializer.Deserialize<Lane0CorrectiveHardeningContractArtifact>(
+                File.ReadAllText(contractPath), Json)
+                ?? throw new InvalidDataException("Corrective hardening contract is empty.");
+            var canonical = CanonicalCorrectiveHardeningContractHash(artifact.Contract)
+                == artifact.CanonicalSha256;
+            var implementation = artifact.Contract.RepairImplementationSha256
+                == TreeIdentity(root, artifact.Contract.RepairImplementationFiles);
+            var harness = artifact.Contract.CorrectiveHarnessSha256
+                == TreeIdentity(root, artifact.Contract.CorrectiveHarnessFiles);
+            var dependencies = artifact.Contract.ReusedDependencies.All(pair =>
+                FileHash(Path.Combine(root, pair.Key)) == pair.Value);
+            var bindingPresent = bindingPath is not null && File.Exists(bindingPath);
+            Lane0CorrectivePublicationBinding? binding = null;
+            if (bindingPresent)
+                binding = JsonSerializer.Deserialize<Lane0CorrectivePublicationBinding>(
+                    File.ReadAllText(bindingPath!), Json);
+            var headMatches = binding is not null
+                && binding.ContractSha256 == artifact.CanonicalSha256
+                && binding.ApprovedPublishedHead == ReadHead(root);
+            var authorized = binding?.ExplicitHumanAuthorization == true;
+            var manifestVerified = false;
+            if (canonical && implementation && harness && dependencies && headMatches && authorized
+                && manifestPath is not null && File.Exists(manifestPath))
+                manifestVerified = FrozenC11ManifestResearch.Load(manifestPath).CanonicalSha256
+                    == artifact.Contract.CorpusManifestSha256;
+            var checks = new Lane0CorrectiveReadinessChecks(canonical, implementation, harness,
+                dependencies, bindingPresent, headMatches, authorized, manifestVerified);
+            return ClassifyCorrectiveReadiness(checks);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
+            or InvalidDataException or JsonException)
+        {
+            var checks = new Lane0CorrectiveReadinessChecks(false, false, false, false,
+                false, false, false, false);
+            return new("INVALID", exception.Message, checks);
+        }
+    }
+
+    internal static Lane0CorrectiveReadinessReport ClassifyCorrectiveReadiness(
+        Lane0CorrectiveReadinessChecks checks)
+    {
+        if (!checks.ContractCanonical || !checks.ImplementationIdentity || !checks.HarnessIdentity
+            || !checks.ReusedDependencies)
+            return new("INVALID", "A frozen identity or dependency failed verification.", checks);
+        if (!checks.PublicationBindingPresent || !checks.PublishedHeadMatches
+            || !checks.HumanAuthorized || !checks.ManifestVerified)
+            return new("BLOCKED", "Publication binding, approved HEAD, authorization and verified manifest are prerequisites.", checks);
+        return new("READY_FOR_AUTHORIZED_CORRECTIVE_EXECUTION", "All pre-corpus prerequisites passed.", checks);
+    }
+
+    public static Lane0CorrectiveReadinessReport DenyCorrectiveExecution(string root,
+        string contractPath, string? bindingPath, string? manifestPath)
+    {
+        var readiness = ValidateCorrectiveReadiness(root, contractPath, bindingPath, manifestPath);
+        if (readiness.Outcome != "READY_FOR_AUTHORIZED_CORRECTIVE_EXECUTION") return readiness;
+        return readiness with
+        {
+            Outcome = "BLOCKED",
+            Reason = "This hardening command intentionally contains no C11 evaluation body; Step 2 requires a separately authorized published runner."
+        };
     }
 
     public static string Prepare(string root, string manifestPath, string contractPath, string artifactDirectory)
@@ -361,9 +491,11 @@ internal static class Lane0FeasibilityRunner
             var riceResearch = ChordCompletionResearch.Evaluate(source);
             var g1Research = InteriorRelationFeasibilityResearch.Evaluate(source);
             var rice = RiceOccurrences(descriptor.Sha256, riceResearch);
-            var g1 = BuildG1Occurrences(descriptor.Sha256, g1Research);
+            // This command is the immutable historical runner. Corrective evaluation has a
+            // separate preregistration/validation route and must not reinterpret this result.
+            var g1 = BuildG1Occurrences(descriptor.Sha256, g1Research, reproduceHistoricalDefect: true);
             var riceTrials = Lane0SpatialResearch.EvaluateAll(rice);
-            var g1Trials = Lane0SpatialResearch.EvaluateAll(g1);
+            var g1Trials = Lane0SpatialResearch.EvaluateAll(g1, requireTemporalIntegrity: false);
             var operationalAnchors = g1Research.CurrentGateAudit.Where(x => x.CurrentOpportunity)
                 .Select(x => x.AnchorId).ToHashSet(StringComparer.Ordinal);
             var g1Operational = g1.Count(x => operationalAnchors.Contains(x.GroupId));
@@ -393,10 +525,8 @@ internal static class Lane0FeasibilityRunner
                 supportedCharts >= 2 && keymodes >= 2 && operational > 0 && integrity == 0);
         }).ToImmutableArray();
         var rng = charts.Sum(x => x.ResearchRngCalls);
-        var integrityFailures = charts.Sum(x => x.Rice.IntegrityFailures + x.G1.IntegrityFailures
-            + x.G1LegacyLeakageFailures);
-        var outcome = Lane0OutcomeClassifier.Classify(new(criteria.All(x => x.Passed), false,
-            true, true, integrityFailures, true, true, rng));
+        var outcome = criteria.All(x => x.Passed) && rng == 0
+            ? "FEASIBILITY_DEMONSTRATED" : "LIMITED_PARK";
         return new(Schema, contract, manifest, charts.Length, corpus.OsuFileCount, corpus.Duplicates.Length,
             charts, criteria, outcome, rng, false, false, "PENDING_REPEAT");
     }
@@ -420,6 +550,9 @@ internal static class Lane0FeasibilityRunner
         InteriorRelationFeasibilityResult result, bool reproduceHistoricalDefect = false)
     {
         var anchors = result.StructuralAnchors.ToDictionary(x => x.AnchorId, StringComparer.Ordinal);
+        var futureHeldByAnchorTime = reproduceHistoricalDefect
+            ? ImmutableDictionary<int, ImmutableArray<int>>.Empty
+            : BuildG1FutureHeldIndex(result, anchors);
         return result.CompleteRelations.Select(occurrence =>
         {
             var anchorId = $"{occurrence.ParentLongNoteId}-A{occurrence.AnchorTime}-B{D(occurrence.AnchorBeat)}";
@@ -430,22 +563,40 @@ internal static class Lane0FeasibilityRunner
                 .Concat(anchor.HeadWitnessIds.Select(x => x.Value)).Concat(anchor.ReleaseWitnessIds.Select(x => x.Value))
                 .Distinct().Order().ToImmutableArray();
             var futureHeld = reproduceHistoricalDefect ? ImmutableArray<int>.Empty
-                : result.CompleteRelations.Where(x => x.AnchorTime >= occurrence.AnchorTime)
-                    .SelectMany(x =>
-                    {
-                        var futureAnchorId = $"{x.ParentLongNoteId}-A{x.AnchorTime}-B{D(x.AnchorBeat)}";
-                        var futureAnchor = anchors[futureAnchorId];
-                        return new[] { x.ParentLongNoteId.Value, x.WitnessLongNoteId.Value }
-                            .Concat(futureAnchor.HeadWitnessIds.Select(id => id.Value))
-                            .Concat(futureAnchor.ReleaseWitnessIds.Select(id => id.Value));
-                    })
-                    .Distinct().Order().ToImmutableArray();
+                : futureHeldByAnchorTime[occurrence.AnchorTime];
             return new Lane0Occurrence(Lane0Family.G1InteriorSpatial, chart, result.KeyCount,
                 occurrence.OccurrenceId, anchorId, anchorId, occurrence.ParentLongNoteId.ToString(),
                 $"{occurrence.QuerySignature}|PL:{occurrence.ParentLane}", $"{temporal}|{spatial}", temporal,
                 spatial, ids, anchor.ReleaseWitnessIds.Select(x => x.Value).ToImmutableArray(), futureHeld,
                 AnchorTime: reproduceHistoricalDefect ? null : occurrence.AnchorTime);
         }).OrderBy(x => x.OccurrenceId, StringComparer.Ordinal).ToImmutableArray();
+    }
+
+    internal static ImmutableDictionary<int, ImmutableArray<int>> BuildG1FutureHeldIndex(
+        InteriorRelationFeasibilityResult result) => BuildG1FutureHeldIndex(result,
+            result.StructuralAnchors.ToDictionary(x => x.AnchorId, StringComparer.Ordinal));
+
+    private static ImmutableDictionary<int, ImmutableArray<int>> BuildG1FutureHeldIndex(
+        InteriorRelationFeasibilityResult result,
+        IReadOnlyDictionary<string, InteriorStructuralAnchor> anchors)
+    {
+        var identitiesAtTime = result.CompleteRelations.GroupBy(x => x.AnchorTime)
+            .ToDictionary(group => group.Key, group => group.SelectMany(occurrence =>
+            {
+                var anchorId = $"{occurrence.ParentLongNoteId}-A{occurrence.AnchorTime}-B{D(occurrence.AnchorBeat)}";
+                var anchor = anchors[anchorId];
+                return new[] { occurrence.ParentLongNoteId.Value, occurrence.WitnessLongNoteId.Value }
+                    .Concat(anchor.HeadWitnessIds.Select(id => id.Value))
+                    .Concat(anchor.ReleaseWitnessIds.Select(id => id.Value));
+            }).ToImmutableArray());
+        var cumulative = ImmutableSortedSet<int>.Empty;
+        var index = ImmutableDictionary.CreateBuilder<int, ImmutableArray<int>>();
+        foreach (var time in identitiesAtTime.Keys.OrderDescending())
+        {
+            cumulative = cumulative.Union(identitiesAtTime[time]);
+            index[time] = cumulative.ToImmutableArray();
+        }
+        return index.ToImmutable();
     }
 
     private static Lane0FamilyCounts Counts(ImmutableArray<Lane0Occurrence> occurrences,
@@ -486,11 +637,18 @@ internal static class Lane0FeasibilityRunner
 
     private static void RequireHead(string root)
     {
+        var value = ReadHead(root);
+        if (value != EntryHead) throw new InvalidDataException($"Entry HEAD mismatch: {value}");
+    }
+
+    private static string ReadHead(string root)
+    {
         var start = new ProcessStartInfo("git", "rev-parse HEAD") { WorkingDirectory = root,
             RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
         using var process = Process.Start(start) ?? throw new InvalidOperationException("Cannot run git.");
         var value = process.StandardOutput.ReadToEnd().Trim(); process.WaitForExit();
-        if (process.ExitCode != 0 || value != EntryHead) throw new InvalidDataException($"Entry HEAD mismatch: {value}");
+        if (process.ExitCode != 0) throw new InvalidDataException($"Cannot read repository HEAD: {value}");
+        return value;
     }
 
     private static string TreeIdentity(string root, IEnumerable<string> files)
@@ -513,6 +671,14 @@ internal static class Lane0FeasibilityRunner
         var semanticJson = JsonSerializer.Serialize(contract, Json);
         var normalized = JsonSerializer.Deserialize<Lane0CorrectiveContract>(semanticJson, Json)
             ?? throw new InvalidDataException("Cannot normalize LANE.0 corrective contract.");
+        return Hash(JsonSerializer.SerializeToUtf8Bytes(normalized, CanonicalJson));
+    }
+    internal static string CanonicalCorrectiveHardeningContractHash(
+        Lane0CorrectiveHardeningContract contract)
+    {
+        var semanticJson = JsonSerializer.Serialize(contract, Json);
+        var normalized = JsonSerializer.Deserialize<Lane0CorrectiveHardeningContract>(semanticJson, Json)
+            ?? throw new InvalidDataException("Cannot normalize LANE.0 corrective hardening contract.");
         return Hash(JsonSerializer.SerializeToUtf8Bytes(normalized, CanonicalJson));
     }
     private static string HeadSignature(int keys, IEnumerable<int> taps, IEnumerable<int> lns) =>

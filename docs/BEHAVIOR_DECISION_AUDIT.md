@@ -124,7 +124,7 @@ Una policy contract no es una verdad física ni de formato. Un `HARD_VALIDITY_IN
 | OP-466 candidate-admission observation | runner research aislado | observa el roll auténtico y el punto de abstención antes de candidate/lane selection | No | IMPLEMENTATION_ONLY | Investigación focalizada post-recertificación | No activa | COMPLETE/MECHANISM_IDENTIFIED | A/B consumen `0.7305439518441185` con chance `0.5`; `ProbabilityAbstain` es el stop inmediato observado |
 | OP-466 RNG transcript reconstruction | auditoría research | separa el drift previo, local y posterior sin convertir correlación temporal en causalidad | No | IMPLEMENTATION_ONLY | Investigación focalizada post-recertificación | No activa | COMPLETE/AUDIT_HANDOFF_ONLY | Desfase documentado `+8` antes, `+1` durante y `+9` después de OP-466 |
 | OP-466 passive canonical lane query | observador y runner research v3 | reconstruye ambos estados padres completos y consulta geometría sin RNG, candidate construction ni commit | No | IMPLEMENTATION_ONLY | Investigación focalizada post-recertificación | No activa | COMPLETE/LANE_2_ILLEGAL_A_B | Lane 2 colisiona por endpoint inclusivo con LN sintética `34783→35009`; barrera hipotética, no causa del stop histórico ni commit contrafactual |
-| Exact original-only spatial relation feasibility | LANE.0 runner research | conserva completions rice y relaciones parent/anchor/witness G1 completas con lane/delta exactos, alternativas y holdout independiente | No | IMPLEMENTATION_ONLY | LANE.0 | No activa | COMPLETE/FEASIBILITY_DEMONSTRATED | 37.080 rice + 3.373 G1 supports; 11 G1 operativos; cero leakage/RNG; no selector, frequency, score, mirror ni normalization |
+| Exact original-only spatial relation feasibility | LANE.0 runner research | conserva completions rice y relaciones parent/anchor/witness G1 completas con lane/delta exactos, alternativas y holdout independiente | No | IMPLEMENTATION_ONLY | LANE.0 | No activa | HISTORICAL COMPLETE/FEASIBILITY_DEMONSTRATED — GLOBAL CERTIFICATION SUSPENDED | 37.080 rice + 3.373 G1 supports históricos; 11 G1 operativos históricos; pendiente de recertificación por defecto future-held |
 | Comparable local context | ventanas y conteos | equivalencia temporal aproximada | Sí | OPEN_DESIGN_DECISION | Diseño faltante | Sí | E/F | Requiere mismatch/no-context |
 | Generalization policy | implícita por pooling/fallback | no está versionada como tal | Sí | OPEN_DESIGN_DECISION | Diseño faltante | Sí | F/I | Debe quedar en certificate |
 | Evidence confidence | no existe | no se muestra porcentaje | Sí | OPEN_DESIGN_DECISION | Investigación | Sí | I | Phase A no inventa fórmula |
@@ -135,7 +135,7 @@ Una policy contract no es una verdad física ni de formato. Un `HARD_VALIDITY_IN
 
 ## Resumen
 
-El inventario contiene **112 decisiones**: 3 `USER_INTENT`, 6 `HARD_VALIDITY_INVARIANT`, 9 `CURRENT_POLICY_CONTRACT`, 3 `FUTURE_POLICY_CONTRACT`, 49 `MAPPER_DERIVED_CANDIDATE`, 31 `IMPLEMENTATION_ONLY` y 11 `OPEN_DESIGN_DECISION`. SAFETY.REMEDIATION.GATE conserva evidencia de 0 violaciones treatment, pero su causalidad individual final queda `NEEDS_REVIEW`; LANE.0 demuestra factibilidad representacional sin gobernar el selector normal y el default continúa legacy.
+El inventario contiene **112 decisiones**: 3 `USER_INTENT`, 6 `HARD_VALIDITY_INVARIANT`, 9 `CURRENT_POLICY_CONTRACT`, 3 `FUTURE_POLICY_CONTRACT`, 49 `MAPPER_DERIVED_CANDIDATE`, 31 `IMPLEMENTATION_ONLY` y 11 `OPEN_DESIGN_DECISION`. SAFETY.REMEDIATION.GATE conserva evidencia de 0 violaciones treatment, pero su causalidad individual final queda `NEEDS_REVIEW`; LANE.0 conserva factibilidad representacional histórica con certificación global suspendida y sin gobernar el selector normal. El default continúa legacy.
 
 Se debe actualizar al introducir cada policy version. La reclasificación distingue validez inderrotable de semántica conductual revisable; no modifica generación. Para la futura policy mapper-derived por defecto, el criterio final es `Active manually sourced style decisions = 0`. Cualquier `OPEN_DESIGN_DECISION` estilística debe resolverse o quedar inactiva, y `IMPLEMENTATION_ONLY` requiere evidencia de neutralidad estilística.
 ## SAFETY.CAUSAL — causalidad de HardValidity downstream
@@ -162,6 +162,18 @@ Estos resultados son complementarios y no intercambiables. El roll explica por q
 
 ## LANE.0 — factibilidad de relaciones espaciales original-only
 
-Estado: **COMPLETE — FEASIBILITY_DEMONSTRATED / SHADOW ONLY / NO SUCCESSOR AUTHORIZED**. El preregistro separa universos estructural, reconstruible y operativo. Rice conserva target lane/type como completion conjunta; G1 conserva temporal relation, witness lane, delta exacto y same-lane dentro de la misma occurrence parent/anchor/witness. Whole-group y whole-parent holdout evitan validación constructiva circular.
+Estado histórico en `12ee879`: **COMPLETE — FEASIBILITY_DEMONSTRATED / SHADOW ONLY / NO SUCCESSOR AUTHORIZED**. Estado vigente: **SUSPENDED / PENDING_RECERTIFICATION**. El preregistro separa universos estructural, reconstruible y operativo. Rice conserva target lane/type como completion conjunta; G1 conserva temporal relation, witness lane, delta exacto y same-lane dentro de la misma occurrence parent/anchor/witness. Whole-group y whole-parent holdout evitan validación constructiva circular.
 
 El corpus produjo 37.080/40.360 supports rice y 3.373/16.881 supports G1 espaciales; sólo 11 G1 soportados alcanzan el universo operativo vigente. Los 758 rice y 1.436 G1 marginal-only no se reclasifican como joint. Cero integrity failures, RNG o conducta. Mirror, translation, normalización, winner, frecuencia, score y selector permanecen decisiones abiertas/no implementadas.
+
+## LANE.0.REMEDIATION — future-held instrumental
+
+Estado: **COMPLETE — READY_FOR_CORRECTIVE_EVALUATION / STEP 2 NOT AUTHORIZED**. La revisión comprobó que el builder G1 de LANE.0 omitía `AnchorTime` y dejaba vacía la provenance future-held, por lo que su control manual no certificaba el flujo oficial. La reparación restaura la frontera histórica prior-only `donor.AnchorTime < target.AnchorTime` y un control independiente por identities originales completas.
+
+No se cambió ninguna decisión conductual. Las cifras LANE.0 permanecen históricas, pero su certificación global queda pendiente de recertificación. El contrato correctivo congela outcomes con `INVALID` para fallos de integridad, controles, preregistro, determinismo, RNG o no interferencia. C11 y los 11 casos operativos G1 sólo podrán consultarse después de publicación y autorización expresa.
+
+## LANE.0.HARDENING — guards pre-recertificación
+
+Estado: **COMPLETE — READY_FOR_PUBLICATION_REVIEW / STEP 2 NOT AUTHORIZED**. El auditor conserva motivos temporal e identitario como diagnósticos ortogonales, exige integridad de `AnchorTime` y mantiene la partición única de donors. Un índice chart-local de relaciones completas produce exactamente los mismos future-held IDs que la referencia naive sin repetir materialización por occurrence.
+
+La ruta correctiva v2 verifica hash canónico, identidad de implementación, harness, dependencias, binding de publicación, HEAD, autorización y manifest antes de cualquier acceso al corpus. Falta de insumo indispensable queda `BLOCKED`; drift de identidad queda `INVALID`. Las plantillas de comparación permanecen vacías y C11 no fue consultado. La certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION**; el Paso 2 correctivo C11 está **NO AUTORIZADO**.

@@ -43,12 +43,14 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **SAFETY.OP466.CANDIDATE_ADMISSION — COMPLETE, MECHANISM_IDENTIFIED:** canonical A/B consumen el mismo roll auténtico `0.7305439518441185` con chance `0.5` y se abstienen antes de construir candidato; es la causa inmediata observada.
 - **SAFETY.OP466.RNG_GEOMETRY_AUDIT — COMPLETE, HANDOFF ONLY:** las 30 filas explican `+8` llamadas antes de OP-466, `+1` durante OP-466 y `+9` después; en ese momento los artifacts previos no permitían reconstruir geometría A/B completa.
 - **SAFETY.OP466.GEOMETRY_OBSERVATION — COMPLETE, RESEARCH ONLY:** el contrato oficial v3 reconstruyó ambos padres exactos; lane 2 es ilegal en A y B por una LN sintética que termina inclusivamente en 35009 ms. Es una barrera hipotética adicional, no la causa de la abstención ni una prueba de selección/commit contrafactual.
-- **LANE.0 — COMPLETE, FEASIBILITY_DEMONSTRATED, SHADOW ONLY:** dos familias exactas original-only conservan soporte conjunto, alternativas y holdout independiente. Rice obtuvo 37.080/40.360 targets soportados; G1 espacial 3.373/16.881, con 11 soportes dentro de 288 occurrences operativas. Cero leakage, RNG o cambio conductual; no existe selector ni sucesora autorizada.
+- **LANE.0 — HISTÓRICO COMPLETE / FEASIBILITY_DEMONSTRATED, CERTIFICACIÓN GLOBAL SUSPENDED / PENDING_RECERTIFICATION:** el resultado de `12ee879` conserva 37.080/40.360 supports rice y 3.373/16.881 G1, incluidos 11/288 operativos, pero no se presenta como certificación vigente tras confirmarse el defecto future-held. No existe selector ni sucesora autorizada.
+- **LANE.0.REMEDIATION — COMPLETE, READY_FOR_CORRECTIVE_EVALUATION:** el builder G1 histórico no transportaba `AnchorTime` ni identities future-held. El instrumento ya restaura ambas garantías y congela un contrato correctivo; las cifras anteriores se conservan como históricas y la certificación global queda pendiente de recertificación. C11 todavía no fue ejecutado.
+- **LANE.0.HARDENING — COMPLETE, READY_FOR_PUBLICATION_REVIEW:** separa exclusiones temporales e identitarias, exige integridad temporal, congela una ruta correctiva versionada y deja plantillas vacías para la futura comparación. Paso 2 correctivo C11 **NO AUTORIZADO**; no se consultó el corpus.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. La recertificación final conserva `NEEDS_REVIEW`: seguridad observada 215→0, pero causalidad final `188 A + 21 B + 5 D + 1 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0 — COMPLETE — OUTCOME FEASIBILITY_DEMONSTRATED<br>
+Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -59,12 +61,12 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 834 passed / 0 failed / 0 skipped
+Tests: 860 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.
 
-`LANE.0` cerró únicamente como factibilidad descriptiva en shadow mode. No eligió lane ni introdujo frecuencia, score, selector o conducta. `LANE.DESIGN`, `LANE.GATE` y cualquier integración requieren autorización humana nueva y no son el siguiente paso automático.
+`LANE.0` conserva su cierre histórico, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. La reparación y el hardening no eligieron lane ni introdujeron frecuencia, score, selector o conducta. El paso 2 correctivo C11 está **NO AUTORIZADO** y requiere publicación, binding a un HEAD aprobado y autorización humana expresa; `LANE.DESIGN`, `LANE.GATE` y cualquier integración siguen sin autorización.
 
 ## Ejecutar
 

@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 cerró después como investigación independiente **COMPLETE / FEASIBILITY_DEMONSTRATED / SHADOW ONLY**: 37.080 supports rice y 3.373 G1 espaciales bajo holdout estricto, cero leakage/RNG/conducta. No existe selector ni promoción; G1.GATE continúa **NEEDS_REVIEW** y LANE.DESIGN/GATE o cualquier sucesora requieren autorización nueva.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 conserva su cierre histórico **FEASIBILITY_DEMONSTRATED**, pero una omisión de `AnchorTime` e identities future-held en el builder G1 dejó su certificación global **SUSPENDED / PENDING_RECERTIFICATION**. LANE.0.REMEDIATION reparó el instrumento y LANE.0.HARDENING cerró guards y documentación sin ejecutar C11 ni cambiar conducta. No existe selector ni promoción; G1.GATE continúa **NEEDS_REVIEW** y LANE.DESIGN/GATE o cualquier sucesora requieren autorización nueva.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -35,7 +35,9 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | SAFETY.OP466.CANDIDATE_ADMISSION — Focused Forensics | **COMPLETE — MECHANISM_IDENTIFIED / RESEARCH ONLY** | Ninguno; identifica el fallo del roll `0.7305439518441185 >= 0.5` antes de candidate/lanes en A y B. |
 | SAFETY.OP466.RNG_GEOMETRY_AUDIT — Evidence Handoff | **COMPLETE — AUDIT/HANDOFF ONLY** | Ninguno; reconstruye `+8` llamadas antes, `+1` durante y `+9` después de OP-466 sin completar todavía la geometría A/B. |
 | SAFETY.OP466.GEOMETRY_OBSERVATION — Passive Lane Query | **COMPLETE — LANE_2_ILLEGAL A/B / RESEARCH ONLY** | Ninguno; v3 consulta padres completos sin RNG ni commit y detecta colisión inclusiva con LN sintética `34783→35009`. |
-| LANE.0 — Original-Only Spatial Relation Feasibility / Shadow | **COMPLETE — FEASIBILITY_DEMONSTRATED / NO SUCCESSOR AUTHORIZED** | Ninguno; dos familias exactas recurrentes, universos A/B/C separados, cero leakage/RNG/conducta. No elige lane. |
+| LANE.0 — Original-Only Spatial Relation Feasibility / Shadow | **COMPLETE — FEASIBILITY_DEMONSTRATED / HISTORICAL / SUSPENDED_PENDING_RECERTIFICATION** | Ninguno; resultado histórico de `12ee879`, no certificación global vigente. No elige lane. |
+| LANE.0.REMEDIATION — Future-Held Instrument Remediation / Shadow | **COMPLETE — READY_FOR_CORRECTIVE_EVALUATION / STEP 2 NOT AUTHORIZED** | `AnchorTime` e identities future-held restauradas; certificación global pendiente de recertificación C11 tras publicación y autorización humana. |
+| LANE.0.HARDENING — Future-Held Pre-Recertification Hardening / Shadow | **COMPLETE — READY_FOR_PUBLICATION_REVIEW / STEP 2 NOT AUTHORIZED** | Contadores ortogonales, integridad temporal, ruta correctiva independiente y plantillas futuras; C11 no consultado. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -161,9 +163,9 @@ La forensia de admisión identificó el mecanismo inmediato: ambos brazos canón
 
 Finalmente, la observación pasiva preregistrada v3 reconstruyó los estados padres completos sin modificar `AddNotesEngine`. En A y B, lane 2 es ilegal porque la misma LN sintética lane 2 empieza en 34783 ms y termina exactamente en el tap 35009 ms; la semántica inclusiva de endpoints rechaza la coexistencia y las lanes legales son `{1, 3}`. Esta barrera hipotética no causó el stop histórico —el roll ya había fallado— y no demuestra qué candidato habría sido seleccionado o comprometido tras un roll exitoso. Los intentos instrumentales v1/v2 se invalidaron antes de consultar lane 2; sólo v3 es oficial.
 
-### Resultado LANE.0
+### Resultado histórico LANE.0
 
-LANE.0 cerró **COMPLETE / FEASIBILITY_DEMONSTRATED / SHADOW ONLY** bajo el contrato `62B2F4F6…FE0A3C2`. Reutilizó las occurrences completas de D0 y G1.0 para expresar dos familias espaciales exactas, sin mirror, translation ni normalización: completion rice `(lane,type)` y relación interior conjunta `(temporal,witness lane,delta parent,same-lane)`.
+LANE.0 cerró históricamente **COMPLETE / FEASIBILITY_DEMONSTRATED / SHADOW ONLY** en `12ee879`, bajo el contrato `62B2F4F6…FE0A3C2`. Su certificación global vigente está **SUSPENDED / PENDING_RECERTIFICATION**. Reutilizó las occurrences de D0 y G1.0 para expresar dos familias espaciales exactas, sin mirror, translation ni normalización: completion rice `(lane,type)` y relación interior conjunta `(temporal,witness lane,delta parent,same-lane)`.
 
 Los denominadores permanecen separados. Rice contiene 40.360 occurrences estructurales/holdouts, 39.596 con contexto y 37.080 con soporte conjunto independiente; todas corresponden a base opportunities antes de chance/density. G1 contiene 16.881 occurrences estructurales, 9.540 con contexto, 3.373 soportadas y 288 operativas; sólo 11 son simultáneamente soportadas y operativas. Rice abarca 11 charts y 4K/7K/10K; G1 soportado abarca cinco charts y 4K/7K.
 
@@ -268,6 +270,8 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 - Cierre del contrafactual y auditorías de OP-466 previo a geometría: **826 passed, 0 failed, 0 skipped**.
 - Validación actual tras la observación geométrica v3: **829 passed, 0 failed, 0 skipped**; tres controles focalizados nuevos, build Release sin errores y `DOCUMENTATION CONSISTENCY: PASS`.
 - Validación de cierre LANE.0: **834 passed, 0 failed, 0 skipped**; cinco controles focalizados nuevos, evaluación oficial byte-identical, cero integrity failures y `DOCUMENTATION CONSISTENCY: PASS`.
+- Validación de LANE.0.REMEDIATION: **847 passed, 0 failed, 0 skipped**; fixture builder→auditor, fronteras temporales, provenance, outcomes inválidos y preregistro correctivo, sin ejecutar C11.
+- Hardening pre-recertificación LANE.0: **860 passed, 0 failed, 0 skipped**; integridad temporal, cuatro estados de exclusión, equivalencia índice/naive, guards de readiness y DocConsistency. C11 no ejecutado.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -287,10 +291,10 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION** tras la recertificación final; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. LANE.0 cerró factibilidad representacional, no utilidad ni authority; `LANE.DESIGN`, `LANE.GATE` y toda integración siguen **NOT_AUTHORIZED**. No hay sucesora automática. El siguiente paso inmediato es revisión y publicación humana de este cierre.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION** tras la recertificación final; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. LANE.0 conserva sólo sus cifras históricas y su certificación está **SUSPENDED / PENDING_RECERTIFICATION**. El siguiente paso inmediato es revisión y publicación humana del contrato hardening; el paso 2 correctivo C11 está **NO AUTORIZADO** y requerirá un HEAD aprobado, binding y autorización expresa. `LANE.DESIGN`, `LANE.GATE` y toda integración siguen **NOT_AUTHORIZED**.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0 — COMPLETE — OUTCOME FEASIBILITY_DEMONSTRATED<br>
+Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -301,7 +305,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 834 passed / 0 failed / 0 skipped
+Tests: 860 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

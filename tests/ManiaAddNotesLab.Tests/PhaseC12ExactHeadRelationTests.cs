@@ -190,7 +190,7 @@ public sealed class PhaseC12ExactHeadRelationTests
         var stateRoot = state.RootElement;
         Assert.Equal("legacy-experimental.1", stateRoot.GetProperty("behaviorPolicyVersion").GetString());
         Assert.False(stateRoot.GetProperty("behaviorChange").GetBoolean());
-        Assert.Equal("LANE.0", stateRoot.GetProperty("currentPhase").GetString());
+        Assert.Equal("LANE.0.HARDENING", stateRoot.GetProperty("currentPhase").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextRecommendedPhase").ValueKind);
         Assert.Equal("HUMAN_REVIEW_REQUIRED", stateRoot.GetProperty("nextRecommendedAction").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextBehavioralPhase").ValueKind);
@@ -222,8 +222,11 @@ public sealed class PhaseC12ExactHeadRelationTests
             .GetProperty("outcome").GetString());
         Assert.Equal("CONTINUE_CONDITIONALLY", stateRoot.GetProperty("researchBranches")[0]
             .GetProperty("decision").GetString());
-        Assert.Contains("Current phase: LANE.0 — COMPLETE — OUTCOME FEASIBILITY_DEMONSTRATED", readme);
-        Assert.Contains("Current phase: LANE.0 — COMPLETE — OUTCOME FEASIBILITY_DEMONSTRATED", status);
+        Assert.Equal("READY_FOR_PUBLICATION_REVIEW", phases.Single(x =>
+                x.GetProperty("id").GetString() == "LANE.0.HARDENING")
+            .GetProperty("outcome").GetString());
+        Assert.Contains("Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW", readme);
+        Assert.Contains("Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW", status);
         Assert.Contains("Next actionable research candidate: none", readme);
         Assert.Contains("Next actionable research candidate: none", status);
         Assert.Contains("Next behavioral phase: none", readme);

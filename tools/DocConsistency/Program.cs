@@ -46,6 +46,8 @@ else
     ValidateSafetyRemediationGateClosure(state);
     ValidateSafetyRemediationFollowup();
     ValidateLane0Closure(state);
+    ValidateLane0FutureHeldRemediation(state);
+    ValidateLane0FutureHeldHardening(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -151,7 +153,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ", "LANE.0", "LANE.0.REMEDIATION", "LANE.0.HARDENING" })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -788,7 +790,7 @@ void ValidateG1GateClosure(ProjectState value)
     if (gate?.Status != "COMPLETE") return;
     if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
         || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
 
@@ -861,7 +863,7 @@ void ValidateSafetyCausalClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "A" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_REMEDIATION"
-        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.CAUSAL must close COMPLETE/A with no remediation, promotion or successor.");
 
@@ -944,7 +946,7 @@ void ValidateSafetyRemediationDesignClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "READY_FOR_SEPARATE_REMEDIATION_GATE" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.DESIGN must close READY_FOR_SEPARATE_REMEDIATION_GATE with no implementation or authorized successor.");
 
@@ -1018,7 +1020,7 @@ void ValidateSafetyRemediationGateClosure(ProjectState value)
         || phase.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
         || contractState?.Kind != "BehaviorChanging" || contractState.BehaviorChange is not true
         || contractState.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.GATE hardening must close NEEDS_REVIEW, experimental-only and without promotion or successor.");
 
@@ -1404,8 +1406,8 @@ void ValidateLane0Closure(ProjectState value)
         || phase.Authorization != "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED"
         || phaseContract?.Kind != "ResearchShadow" || phaseContract.BehaviorChange is not false
         || phaseContract.Authorization != "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED"
-        || value.CurrentPhase != "LANE.0" || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
+        || value.NextRecommendedPhase is not null || value.NextBehavioralPhase is not null
+        || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("LANE.0 must close FEASIBILITY_DEMONSTRATED, research-only and without an authorized successor.");
 
     foreach (var artifact in new[]
@@ -1449,6 +1451,177 @@ void ValidateLane0Closure(ProjectState value)
     CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
         "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
         "legacy default after LANE.0");
+}
+
+void ValidateLane0FutureHeldRemediation(ProjectState value)
+{
+    var phase = value.Phases.FirstOrDefault(x => x.Id == "LANE.0.REMEDIATION");
+    var phaseContract = value.PhaseContracts.FirstOrDefault(x => x.Id == "LANE.0.REMEDIATION");
+    if (phase?.Status != "COMPLETE") return;
+    if (phase.Outcome != "READY_FOR_CORRECTIVE_EVALUATION" || phase.BehaviorChange is not false
+        || phase.Authorization != "STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL"
+        || phaseContract?.Kind != "ResearchShadow" || phaseContract.BehaviorChange is not false
+        || phaseContract.Authorization != "STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL"
+        || value.CurrentPhase is not ("LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
+        errors.Add("LANE.0.REMEDIATION must close research-only and keep corrective evaluation unauthorized.");
+
+    const string addendum = "docs/PHASE_LANE_0_FUTURE_HELD_REMEDIATION_ADDENDUM.md";
+    const string contractPath = "docs/lane_0_future_held_remediation_contract.json";
+    RequireFile(addendum, "LANE.0 future-held remediation addendum");
+    RequireFile(contractPath, "LANE.0 future-held remediation contract");
+    CheckContains("DOCUMENTATION_INDEX.md", addendum, "LANE.0 remediation index entry");
+    CheckContains("DOCUMENTATION_INDEX.md", contractPath, "LANE.0 remediation contract index entry");
+    foreach (var marker in new[]
+    {
+        "pendiente de recertificación", "donor.AnchorTime >= target.AnchorTime",
+        "PENDING_USER_PUBLICATION_AND_APPROVAL", "40.360/37.080", "288/11"
+    }) CheckContains(addendum, marker, "LANE.0 corrective finding");
+
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, contractPath)));
+        var artifact = document.RootElement;
+        var contract = artifact.GetProperty("contract");
+        var canonicalOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false
+        };
+        var normalized = JsonSerializer.Deserialize<Lane0CorrectiveContractDocument>(
+            contract.GetRawText(), canonicalOptions)
+            ?? throw new InvalidDataException("Corrective contract cannot be normalized.");
+        var canonicalBytes = JsonSerializer.SerializeToUtf8Bytes(normalized, canonicalOptions);
+        var canonical = Convert.ToHexString(SHA256.HashData(canonicalBytes));
+        if (canonical != "F28F35AA991F3AF20BEEBBEE6AC1D9D3C182E71C62E4044E4DB0792857F8B0A7"
+            || artifact.GetProperty("canonicalSha256").GetString() != canonical
+            || contract.GetProperty("schemaVersion").GetString() != "lane-0-future-held-remediation.1"
+            || contract.GetProperty("approvedOriginalHead").GetString()
+                != "12ee8799528d9cf9d64d8d9a9ab4b45ba955db0f"
+            || contract.GetProperty("historicalBaselineHead").GetString()
+                != "be08f3f2f0191a5c972ad16449a7199dd07f2e3f"
+            || contract.GetProperty("requiredEvaluationPublishedHead").GetString()
+                != "PENDING_USER_PUBLICATION_AND_APPROVAL"
+            || contract.GetProperty("corpusManifestSha256").GetString()
+                != "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
+            || contract.GetProperty("historicalContractSha256").GetString()
+                != "62B2F4F67C34E8F57893A3A025D567000E1BB12B6517C13D97FE9EEC3FE0A3C2"
+            || contract.GetProperty("repairImplementationSha256").GetString()
+                != "A69C084D6631E24B49E66229B5D666E1B8F74BAD306FFE1CAF7BEC9619BBF0B4"
+            || contract.GetProperty("correctiveHarnessSha256").GetString()
+                != "6B1FE0A10C62C6E2D155A2CF279791B5CD431F2F13A6653F4B498696AC0FB49E"
+            || contract.GetProperty("requiredControls").GetArrayLength() < 9
+            || contract.GetProperty("outcomeRules").GetProperty("INVALID").GetString() is null)
+            errors.Add($"LANE.0 corrective contract identity, scope or canonical hash is invalid "
+                + $"(declared={artifact.GetProperty("canonicalSha256").GetString()}, recomputed={canonical}).");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"LANE.0 corrective contract cannot be validated: {exception.Message}");
+    }
+}
+
+void ValidateLane0FutureHeldHardening(ProjectState value)
+{
+    var phase = value.Phases.FirstOrDefault(x => x.Id == "LANE.0.HARDENING");
+    var phaseContract = value.PhaseContracts.FirstOrDefault(x => x.Id == "LANE.0.HARDENING");
+    if (phase?.Status != "COMPLETE") return;
+    if (phase.Outcome != "READY_FOR_PUBLICATION_REVIEW" || phase.BehaviorChange is not false
+        || phase.Authorization != "STEP_2_NOT_AUTHORIZED"
+        || phaseContract?.Kind != "ResearchShadow" || phaseContract.BehaviorChange is not false
+        || phaseContract.Authorization != "STEP_2_NOT_AUTHORIZED"
+        || value.CurrentPhase != "LANE.0.HARDENING" || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
+        errors.Add("LANE.0.HARDENING must close research-only, publication-review-ready and keep Step 2 unauthorized.");
+
+    const string report = "docs/PHASE_LANE_0_FUTURE_HELD_HARDENING.md";
+    const string contractPath = "docs/lane_0_future_held_hardening_contract.json";
+    foreach (var artifact in new[]
+    {
+        report, contractPath, "docs/lane_0_corrective_comparison_template.csv",
+        "docs/lane_0_corrective_g1_operational_template.csv"
+    })
+    {
+        RequireFile(artifact, "LANE.0 hardening artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "LANE.0 hardening index entry");
+    }
+
+    foreach (var marker in new[]
+    {
+        "SUSPENDED / PENDING_RECERTIFICATION", "Paso 2 correctivo C11: **NO AUTORIZADO**",
+        "temporal_exclusion", "future_held_identity_exclusion", "admitted + unique_excluded == donors_considered",
+        "9a8d28f311dc07dc685cc92a23c76b508323fc25"
+    }) CheckContains(report, marker, "LANE.0 hardening boundary");
+
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, contractPath)));
+        var artifact = document.RootElement;
+        var contract = artifact.GetProperty("contract");
+        var canonicalOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false
+        };
+        var normalized = JsonSerializer.Deserialize<Lane0CorrectiveHardeningContractDocument>(
+            contract.GetRawText(), canonicalOptions)
+            ?? throw new InvalidDataException("Hardening contract cannot be normalized.");
+        var canonical = Convert.ToHexString(SHA256.HashData(
+            JsonSerializer.SerializeToUtf8Bytes(normalized, canonicalOptions)));
+        if (artifact.GetProperty("canonicalSha256").GetString() != canonical
+            || contract.GetProperty("schemaVersion").GetString() != "lane-0-future-held-hardening.2"
+            || contract.GetProperty("publishedRepairHead").GetString()
+                != "9a8d28f311dc07dc685cc92a23c76b508323fc25"
+            || contract.GetProperty("historicalLane0Head").GetString()
+                != "12ee8799528d9cf9d64d8d9a9ab4b45ba955db0f"
+            || contract.GetProperty("parentCorrectiveContractSha256").GetString()
+                != "F28F35AA991F3AF20BEEBBEE6AC1D9D3C182E71C62E4044E4DB0792857F8B0A7"
+            || contract.GetProperty("requiredPublicationBinding").GetString()
+                != "docs/lane_0_corrective_publication_binding.json"
+            || contract.GetProperty("corpusManifestSha256").GetString()
+                != "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
+            || contract.GetProperty("memoryLimit").GetString() != "0x400000000"
+            || !contract.GetProperty("exclusionCounters").EnumerateArray().Select(x => x.GetString())
+                .Contains("both_reasons", StringComparer.Ordinal)
+            || contract.GetProperty("donorPartitionInvariant").GetString()
+                != "admitted + unique_excluded == donors_considered for every target query; both_reasons is diagnostic and never increments unique_excluded twice."
+            || contract.GetProperty("futureResultColumns").GetArrayLength() < 18
+            || contract.GetProperty("outcomeRules").GetProperty("INVALID").GetString() is null
+            || contract.GetProperty("outcomeRules").GetProperty("BLOCKED").GetString() is null)
+            errors.Add($"LANE.0 hardening contract identity, scope or canonical hash is invalid "
+                + $"(declared={artifact.GetProperty("canonicalSha256").GetString()}, recomputed={canonical}).");
+
+        using var stateDocument = JsonDocument.Parse(File.ReadAllText(statePath));
+        var stateRoot = stateDocument.RootElement;
+        var closure = stateRoot.GetProperty("lane0Closure");
+        var remediation = stateRoot.GetProperty("lane0FutureHeldRemediation");
+        var hardening = stateRoot.GetProperty("lane0FutureHeldHardening");
+        if (closure.GetProperty("outcomeScope").GetString() != "HISTORICAL_12EE879_ONLY"
+            || closure.GetProperty("certificationStatus").GetString() != "SUSPENDED_PENDING_RECERTIFICATION"
+            || remediation.GetProperty("contractHash").GetString()
+                != "F28F35AA991F3AF20BEEBBEE6AC1D9D3C182E71C62E4044E4DB0792857F8B0A7"
+            || remediation.GetProperty("correctiveEvaluationExecuted").GetBoolean()
+            || hardening.GetProperty("contractHash").GetString() != canonical
+            || hardening.GetProperty("repairImplementationSnapshot").GetString()
+                != contract.GetProperty("repairImplementationSha256").GetString()
+            || hardening.GetProperty("correctiveHarnessSnapshot").GetString()
+                != contract.GetProperty("correctiveHarnessSha256").GetString()
+            || hardening.GetProperty("publicationBinding").GetString() != "ABSENT_BY_DESIGN"
+            || hardening.GetProperty("correctiveEvaluationExecuted").GetBoolean()
+            || hardening.GetProperty("step2Authorized").GetBoolean())
+            errors.Add("PROJECT_STATE does not preserve historical LANE.0, suspended certification and unauthorized Step 2.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"LANE.0 hardening contract cannot be validated: {exception.Message}");
+    }
+
+    foreach (var document in new[] { "README.md", "PROJECT_STATUS.md", "ROADMAP.md",
+                 "docs/MAPPER_DERIVED_IMPLEMENTATION_ROADMAP.md", "docs/BEHAVIOR_DECISION_AUDIT.md" })
+    {
+        CheckContains(document, "SUSPENDED", "LANE.0 certification suspension");
+        CheckContains(document, "PENDING_RECERTIFICATION", "LANE.0 pending recertification");
+    }
 }
 
 void ValidateMasterStateBlocks(ProjectState value)
@@ -1638,3 +1811,46 @@ sealed record CorpusState(
     int? ExactHeadGroups,
     int? ChordGroups,
     int? CompletionTrials);
+
+sealed record Lane0CorrectiveContractDocument(
+    string SchemaVersion,
+    string ApprovedOriginalHead,
+    string HistoricalBaselineHead,
+    string RequiredEvaluationPublishedHead,
+    string RepairImplementationSha256,
+    string CorrectiveHarnessSha256,
+    string CorpusManifestSha256,
+    string HistoricalContractSha256,
+    string MemoryLimit,
+    string Defect,
+    string RepairSemantics,
+    IReadOnlyList<string> Families,
+    SortedDictionary<string, int> HistoricalDenominators,
+    IReadOnlyList<string> Exclusions,
+    IReadOnlyList<string> RequiredControls,
+    SortedDictionary<string, string> OutcomeRules,
+    IReadOnlyList<string> PairedComparison,
+    string HistoricalOperationalG1Analysis,
+    IReadOnlyList<string> StopConditions,
+    IReadOnlyList<string> InferenceLimits,
+    SortedDictionary<string, string> ReusedDependencies);
+
+sealed record Lane0CorrectiveHardeningContractDocument(
+    string SchemaVersion,
+    string PublishedRepairHead,
+    string HistoricalLane0Head,
+    string ParentCorrectiveContractSha256,
+    string RequiredPublicationBinding,
+    string RepairImplementationSha256,
+    IReadOnlyList<string> RepairImplementationFiles,
+    string CorrectiveHarnessSha256,
+    IReadOnlyList<string> CorrectiveHarnessFiles,
+    string CorpusManifestSha256,
+    string MemoryLimit,
+    string FutureHeldIndexSemantics,
+    IReadOnlyList<string> ExclusionCounters,
+    string DonorPartitionInvariant,
+    IReadOnlyList<string> RequiredControls,
+    SortedDictionary<string, string> OutcomeRules,
+    IReadOnlyList<string> FutureResultColumns,
+    SortedDictionary<string, string> ReusedDependencies);

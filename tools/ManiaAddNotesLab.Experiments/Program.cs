@@ -4,6 +4,42 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 3 && args[0] == "lane-0-corrective-hardening-prepare")
+{
+    Console.WriteLine("LANE.0 corrective hardening contract="
+        + Lane0FeasibilityRunner.PrepareCorrectiveHardeningContract(Path.GetFullPath(args[1]),
+            Path.GetFullPath(args[2])));
+    return;
+}
+
+if (args.Length == 5 && args[0] == "lane-0-corrective-validate")
+{
+    var report = Lane0FeasibilityRunner.ValidateCorrectiveReadiness(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), args[3] == "-" ? null : Path.GetFullPath(args[3]),
+        args[4] == "-" ? null : Path.GetFullPath(args[4]));
+    Console.WriteLine($"LANE.0 corrective readiness={report.Outcome}: {report.Reason}");
+    Environment.ExitCode = report.Outcome == "READY_FOR_AUTHORIZED_CORRECTIVE_EXECUTION" ? 0 : 1;
+    return;
+}
+
+if (args.Length == 5 && args[0] == "lane-0-corrective-execute")
+{
+    var report = Lane0FeasibilityRunner.DenyCorrectiveExecution(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), args[3] == "-" ? null : Path.GetFullPath(args[3]),
+        args[4] == "-" ? null : Path.GetFullPath(args[4]));
+    Console.Error.WriteLine($"LANE.0 corrective execution={report.Outcome}: {report.Reason}");
+    Environment.ExitCode = 1;
+    return;
+}
+
+if (args.Length == 3 && args[0] == "lane-0-future-held-prepare")
+{
+    Console.WriteLine("LANE.0 future-held corrective contract="
+        + Lane0FeasibilityRunner.PrepareCorrectiveContract(Path.GetFullPath(args[1]),
+            Path.GetFullPath(args[2])));
+    return;
+}
+
 if (args.Length == 5 && args[0] == "lane-0-prepare")
 {
     Console.WriteLine("LANE.0 contract=" + Lane0FeasibilityRunner.Prepare(Path.GetFullPath(args[1]),

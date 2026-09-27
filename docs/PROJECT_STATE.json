@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 18,
-  "lastUpdated": "2026-09-26",
+  "schemaVersion": 20,
+  "lastUpdated": "2026-09-27",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -37,7 +37,9 @@
     { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "name": "Causal Articulation A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
-    { "id": "LANE.0", "name": "Original-Only Spatial Relation Feasibility / Shadow", "status": "COMPLETE", "outcome": "FEASIBILITY_DEMONSTRATED", "behaviorChange": false, "report": "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md", "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED" }
+    { "id": "LANE.0", "name": "Original-Only Spatial Relation Feasibility / Shadow", "status": "COMPLETE", "outcome": "FEASIBILITY_DEMONSTRATED", "behaviorChange": false, "report": "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md", "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED" },
+    { "id": "LANE.0.REMEDIATION", "name": "Future-Held Instrument Remediation / Shadow", "status": "COMPLETE", "outcome": "READY_FOR_CORRECTIVE_EVALUATION", "behaviorChange": false, "report": "docs/PHASE_LANE_0_FUTURE_HELD_REMEDIATION_ADDENDUM.md", "authorization": "STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL" },
+    { "id": "LANE.0.HARDENING", "name": "Future-Held Pre-Recertification Hardening / Shadow", "status": "COMPLETE", "outcome": "READY_FOR_PUBLICATION_REVIEW", "behaviorChange": false, "report": "docs/PHASE_LANE_0_FUTURE_HELD_HARDENING.md", "authorization": "STEP_2_NOT_AUTHORIZED" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -59,16 +61,20 @@
     { "id": "G1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
-    { "id": "LANE.0", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED" }
+    { "id": "LANE.0", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED" },
+    { "id": "LANE.0.REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL" },
+    { "id": "LANE.0.HARDENING", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "STEP_2_NOT_AUTHORIZED" }
   ],
-  "currentPhase": "LANE.0",
+  "currentPhase": "LANE.0.HARDENING",
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 834, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 860, "failed": 0, "skipped": 0 },
   "lane0Closure": {
     "status": "COMPLETE",
     "outcome": "FEASIBILITY_DEMONSTRATED",
+    "outcomeScope": "HISTORICAL_12EE879_ONLY",
+    "certificationStatus": "SUSPENDED_PENDING_RECERTIFICATION",
     "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED",
     "mode": "ORIGINAL_ONLY_RESEARCH_SHADOW",
     "contract": "docs/lane_0_feasibility_contract.json",
@@ -83,10 +89,39 @@
     "semanticHash": "1C59A127D3DCD564C179EA6103D411251338F02459FCF4677B74CD075F40A8DB",
     "nextAutomatic": false
   },
+  "lane0FutureHeldRemediation": {
+    "status": "COMPLETE",
+    "outcome": "READY_FOR_CORRECTIVE_EVALUATION",
+    "behaviorChange": false,
+    "historicalCertification": "PENDING_RECERTIFICATION",
+    "addendum": "docs/PHASE_LANE_0_FUTURE_HELD_REMEDIATION_ADDENDUM.md",
+    "contract": "docs/lane_0_future_held_remediation_contract.json",
+    "contractHash": "F28F35AA991F3AF20BEEBBEE6AC1D9D3C182E71C62E4044E4DB0792857F8B0A7",
+    "repairImplementationSnapshot": "A69C084D6631E24B49E66229B5D666E1B8F74BAD306FFE1CAF7BEC9619BBF0B4",
+    "correctiveHarnessSnapshot": "6B1FE0A10C62C6E2D155A2CF279791B5CD431F2F13A6653F4B498696AC0FB49E",
+    "approvedOriginalHead": "12ee8799528d9cf9d64d8d9a9ab4b45ba955db0f",
+    "requiredEvaluationPublishedHead": "PENDING_USER_PUBLICATION_AND_APPROVAL",
+    "correctiveEvaluationExecuted": false,
+    "successorAuthorized": false
+  },
+  "lane0FutureHeldHardening": {
+    "status": "COMPLETE",
+    "outcome": "READY_FOR_PUBLICATION_REVIEW",
+    "behaviorChange": false,
+    "report": "docs/PHASE_LANE_0_FUTURE_HELD_HARDENING.md",
+    "contract": "docs/lane_0_future_held_hardening_contract.json",
+    "contractHash": "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35",
+    "repairImplementationSnapshot": "63F8897F39370D41260CEF962E20F82D288F502EA0AEE8AB82C3C1088F92B82E",
+    "correctiveHarnessSnapshot": "B4C579411846085DAC6C977BD6D734528358C3A1E103D097D4EA46273FDBD212",
+    "publishedRepairHead": "9a8d28f311dc07dc685cc92a23c76b508323fc25",
+    "publicationBinding": "ABSENT_BY_DESIGN",
+    "correctiveEvaluationExecuted": false,
+    "step2Authorized": false
+  },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "SAFETY_REMEDIATION_GATE_FINAL_RECERTIFICATION_NEEDS_REVIEW_NO_PROMOTION"
+    "currentBlockingRequirement": "LANE_0_CORRECTIVE_EVALUATION_PENDING_USER_PUBLICATION_AND_APPROVAL"
   },
   "g10Recertification": {
     "status": "PASS",

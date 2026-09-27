@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: estado publicado de `ManiaAddNotesLab`, 26 de septiembre de 2026.
-Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró READY y la recertificación final de `SAFETY.REMEDIATION.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**: partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. Las investigaciones posteriores de selection-set remapping y OP-466 son focalizadas, observacionales y sin autoridad conductual. `LANE.0` cerró **COMPLETE/FEASIBILITY_DEMONSTRATED / SHADOW ONLY** sin selector ni conducta. G1, G2, H, LANE.DESIGN/GATE y cualquier sucesora permanecen **NOT_AUTHORIZED**; el default continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró READY y la recertificación final de `SAFETY.REMEDIATION.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**: partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. Las investigaciones posteriores de selection-set remapping y OP-466 son focalizadas, observacionales y sin autoridad conductual. `LANE.0` conserva un cierre histórico **COMPLETE/FEASIBILITY_DEMONSTRATED**, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. `LANE.0.HARDENING` cerró **COMPLETE/READY_FOR_PUBLICATION_REVIEW** sin consultar C11. G1, G2, H, LANE.DESIGN/GATE y cualquier sucesora permanecen **NOT_AUTHORIZED**; el default continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1161,11 +1161,29 @@ C11 enumeró 4.226 shapes pre-geometry sobre 298 opportunities, todas representa
 
 <!-- PHASE-CONTRACT:LANE.0;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED -->
 
-**LANE.0 COMPLETE — OUTCOME FEASIBILITY_DEMONSTRATED / SHADOW ONLY.** Dos identidades exactas reutilizan D0 y G1.0 sin mirror, translation ni normalización: reduced simultaneous-head state → lane/type para rice; parent/anchor temporal exacto + parent lane → temporal relation/witness lane/delta/same-lane para G1. Los universos estructural, holdout y operativo permanecen separados.
+**LANE.0 COMPLETE — OUTCOME FEASIBILITY_DEMONSTRATED / HISTORICAL SHADOW ONLY / GLOBAL CERTIFICATION SUSPENDED.** El resultado pertenece al commit `12ee879`; se preserva sin reinterpretarlo como certificación vigente. Dos identidades exactas reutilizan D0 y G1.0 sin mirror, translation ni normalización: reduced simultaneous-head state → lane/type para rice; parent/anchor temporal exacto + parent lane → temporal relation/witness lane/delta/same-lane para G1. Los universos estructural, holdout y operativo permanecen separados.
 
 Rice produjo 37.080 supports conjuntos independientes sobre 40.360 trials en 11 charts y 4K/7K/10K. G1 espacial produjo 3.373/16.881 en cinco charts y 4K/7K; sólo 11 soportes pertenecen a las 288 occurrences operativas actuales. Hubo cero leakage, RNG o cambio conductual; alternativas y marginal-only permanecen explícitos.
 
 **NO SUCCESSOR AUTHORIZED.** El resultado demuestra representabilidad, no utilidad, winner, frecuencia, score, probability o selector. `LANE.DESIGN`, `LANE.GATE`, integración G1+LANE y cambios de defaults requieren un contrato y autorización separados.
+
+## Phase LANE.0.REMEDIATION — Future-Held Instrument Remediation
+
+<!-- PHASE-CONTRACT:LANE.0.REMEDIATION;kind=ResearchShadow;behaviorChange=false;authorization=STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL -->
+
+**COMPLETE — READY_FOR_CORRECTIVE_EVALUATION.** El builder G1 ahora transporta tiempo de anchor y provenance original completa para same/later anchors. El auditor aplica tanto `donor.AnchorTime >= target.AnchorTime` como la intersección independiente de identities future-held. Tests sintéticos cubren builder real, fronteras anterior/igual/posterior, release, parent/group/event, composición, duplicates, RNG cero y no mutación.
+
+**CERTIFICATION PENDING.** El cierre y artifacts originales permanecen inmutables; sus cifras no son resultados corregidos. El contrato `lane-0-future-held-remediation.1` requiere comparación emparejada e inspección individual de los 11 G1 operativos históricos. La evaluación C11, LANE.DESIGN y LANE.GATE no están autorizados hasta publicación humana, HEAD aprobado e instrucción expresa.
+
+## Phase LANE.0.HARDENING — Future-Held Pre-Recertification Hardening
+
+<!-- PHASE-CONTRACT:LANE.0.HARDENING;kind=ResearchShadow;behaviorChange=false;authorization=STEP_2_NOT_AUTHORIZED -->
+
+**LANE.0.HARDENING COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW.** Exige `AnchorTime` completo, mantiene independientes `temporal_exclusion` y `future_held_identity_exclusion`, cuenta `both_reasons` sin duplicar `unique_excluded` y verifica `admitted + unique_excluded == donors_considered`. El índice temporal comparte conjuntos acumulativos por anchor y está probado contra una referencia naive acotada.
+
+La ruta `lane-0-corrective-*` separa preparación, validación y ejecución. El contrato v2 fija implementación, harness, dependencias y formatos de resultados; ausencia de binding, HEAD aprobado, autorización o manifest produce `BLOCKED`, mientras una identidad inválida produce `INVALID`. Incluso con readiness completa, el ejecutor de este paso se detiene porque no contiene cuerpo C11. La certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION** y el Paso 2 correctivo C11 está **NO AUTORIZADO**.
+
+Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW.
 
 ## Phase G1 — Interior Relation Semantics A/B
 

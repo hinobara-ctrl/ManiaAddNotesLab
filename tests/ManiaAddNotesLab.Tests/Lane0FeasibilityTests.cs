@@ -25,7 +25,7 @@ public sealed class Lane0FeasibilityTests
     [Fact]
     public void ExactJointSupportPreservesAlternativesAndMarginals()
     {
-        var target = Occurrence("T", "GT", "ET", "P0", "Q", "TJ|SJ", "TJ", "SJ", [1, 2]);
+        var target = Occurrence("T", "GT", "ET", "P0", "Q", "TJ|SJ", "TJ", "SJ", [1, 2], anchorTime: 2000);
         var exact = Occurrence("D1", "G1", "E1", "P1", "Q", "TJ|SJ", "TJ", "SJ", [3, 4]);
         var alternative = Occurrence("D2", "G2", "E2", "P2", "Q", "TA|SA", "TA", "SA", [5, 6]);
         var result = Lane0SpatialResearch.Evaluate(target, [target, exact, alternative]);
@@ -38,7 +38,7 @@ public sealed class Lane0FeasibilityTests
     [Fact]
     public void MarginalFragmentsNeverBecomeJointSupport()
     {
-        var target = Occurrence("T", "GT", "ET", "P0", "Q", "TJ|SJ", "TJ", "SJ", [1, 2]);
+        var target = Occurrence("T", "GT", "ET", "P0", "Q", "TJ|SJ", "TJ", "SJ", [1, 2], anchorTime: 2000);
         var temporal = Occurrence("D1", "G1", "E1", "P1", "Q", "TJ|SX", "TJ", "SX", [3]);
         var spatial = Occurrence("D2", "G2", "E2", "P2", "Q", "TX|SJ", "TX", "SJ", [4]);
         var result = Lane0SpatialResearch.Evaluate(target, [temporal, spatial]);
@@ -51,7 +51,7 @@ public sealed class Lane0FeasibilityTests
     [Fact]
     public void EveryPreregisteredLeakageControlIsInducibleAndDetected()
     {
-        var target = Occurrence("T", "GT", "ET", "P0", "Q", "R", "T", "S", [1, 2], [7], [8]);
+        var target = Occurrence("T", "GT", "ET", "P0", "Q", "R", "T", "S", [1, 2], [7], [8], 2000);
         var candidates = new[]
         {
             target,
@@ -78,7 +78,7 @@ public sealed class Lane0FeasibilityTests
     [Fact]
     public void WholeGroupAndParentHoldoutExcludeConstructiveEvidence()
     {
-        var target = Occurrence("T", "G", "E", "P", "Q", "R", "T", "S", [1]);
+        var target = Occurrence("T", "G", "E", "P", "Q", "R", "T", "S", [1], anchorTime: 2000);
         var sameGroup = Occurrence("D1", "G", "E2", "P2", "Q", "R", "T", "S", [2]);
         var sameParent = Occurrence("D2", "G2", "E3", "P", "Q", "R", "T", "S", [3]);
         var independent = Occurrence("D3", "G3", "E4", "P3", "Q", "R", "T", "S", [4]);
@@ -112,10 +112,25 @@ public sealed class Lane0FeasibilityTests
         Assert.All(repaired, x => Assert.NotEmpty(x.FutureHeldObservationIds));
         Assert.True(repairedTarget.FutureHeldObservationIds.Intersect(repairedFuture.ObservationIds).Any());
         var audit = Lane0SpatialResearch.Audit(repairedTarget, [repairedFuture]);
-        Assert.Equal(1, audit.FutureHeld);
+        Assert.Equal(1, audit.TemporalExclusion);
+        Assert.Equal(1, audit.FutureHeldIdentityExclusion);
+        Assert.Equal(1, audit.BothTemporalAndIdentity);
+        Assert.Equal(1, audit.UniqueExcluded);
         Assert.Empty(audit.Eligible);
         Assert.Equal(before, MapperEvidenceProfileBuilder.ComputeFingerprint(chart));
         Assert.Equal(0, census.ResearchRngCalls);
+    }
+
+    [Fact]
+    public void HistoricalEvaluationModePreservesPublishedMissingTimeSemantics()
+    {
+        var census = InteriorRelationFeasibilityResearch.Evaluate(RepeatedG1Relations());
+        var historical = Lane0FeasibilityRunner.BuildG1Occurrences("CHART", census,
+            reproduceHistoricalDefect: true);
+        var trials = Lane0SpatialResearch.EvaluateAll(historical, requireTemporalIntegrity: false);
+
+        Assert.All(historical, x => Assert.Null(x.AnchorTime));
+        Assert.DoesNotContain(trials, x => x.State == Lane0HoldoutState.AmbiguousIntegrity);
     }
 
     [Fact]
@@ -144,11 +159,15 @@ public sealed class Lane0FeasibilityTests
         };
         var boundaryAudit = Lane0SpatialResearch.Audit(middle, [sameTime]);
 
-        Assert.Equal(2, earlyAudit.FutureHeld);
+        Assert.Equal(2, earlyAudit.TemporalExclusion);
+        Assert.Equal(2, earlyAudit.FutureHeldIdentityExclusion);
+        Assert.Equal(2, earlyAudit.BothTemporalAndIdentity);
+        Assert.Equal(2, earlyAudit.UniqueExcluded);
         Assert.Empty(earlyAudit.Eligible);
-        Assert.Equal(0, lateAudit.FutureHeld);
+        Assert.Equal(0, lateAudit.TemporalExclusion);
+        Assert.Equal(0, lateAudit.FutureHeldIdentityExclusion);
         Assert.Single(lateAudit.Eligible);
-        Assert.Equal(1, boundaryAudit.FutureHeld);
+        Assert.Equal(1, boundaryAudit.TemporalExclusion);
         Assert.Empty(boundaryAudit.Eligible);
     }
 
@@ -167,6 +186,14 @@ public sealed class Lane0FeasibilityTests
         Assert.All(atRelease, x => Assert.NotEmpty(x.ReleaseEndpointObservationIds));
         Assert.All(atRelease, x => Assert.True(x.ReleaseEndpointObservationIds
             .All(id => x.ObservationIds.Contains(id))));
+        var target = atRelease[0];
+        var releaseCollision = target with
+        {
+            OccurrenceId = "release-control", GroupId = "release-group", EventId = "release-event",
+            ParentId = "release-parent", ObservationIds = [9001, 9002],
+            AnchorTime = target.AnchorTime - 1
+        };
+        Assert.Equal(1, Lane0SpatialResearch.Audit(target, [releaseCollision]).ReleaseEndpoint);
     }
 
     [Theory]
@@ -214,6 +241,150 @@ public sealed class Lane0FeasibilityTests
         Assert.Empty(audit.Eligible);
     }
 
+    [Fact]
+    public void OfficialBuilderExposesFourOrthogonalTemporalIdentityStatesWithoutDoubleCounting()
+    {
+        var census = InteriorRelationFeasibilityResearch.Evaluate(RepeatedG1Relations());
+        var bucket = Lane0FeasibilityRunner.BuildG1Occurrences("CHART", census)
+            .GroupBy(x => x.QuerySignature).OrderByDescending(x => x.Count()).First()
+            .OrderBy(x => x.AnchorTime).ToArray();
+        var prior = bucket[0];
+        var target = bucket[1];
+        var future = bucket[2];
+        var futureIdentity = target.FutureHeldObservationIds.First();
+        var temporalOnly = future with
+        {
+            OccurrenceId = "temporal-only", GroupId = "tg", EventId = "te", ParentId = "tp",
+            ObservationIds = [9001, 9002], ReleaseEndpointObservationIds = []
+        };
+        var identityOnly = prior with
+        {
+            OccurrenceId = "identity-only", GroupId = "ig", EventId = "ie", ParentId = "ip",
+            ObservationIds = [futureIdentity, 9003], ReleaseEndpointObservationIds = []
+        };
+        var both = future with
+        {
+            OccurrenceId = "both", GroupId = "bg", EventId = "be", ParentId = "bp"
+        };
+        var audit = Lane0SpatialResearch.Audit(target, [prior, temporalOnly, identityOnly, both]);
+
+        Assert.Equal(4, audit.DonorsConsidered);
+        Assert.Single(audit.Eligible);
+        Assert.Equal(3, audit.UniqueExcluded);
+        Assert.Equal(2, audit.TemporalExclusion);
+        Assert.Equal(2, audit.FutureHeldIdentityExclusion);
+        Assert.Equal(1, audit.BothTemporalAndIdentity);
+        Assert.True(audit.PartitionValid);
+        Assert.Equal(4, audit.Eligible.Length + audit.UniqueExcluded);
+    }
+
+    [Fact]
+    public void MissingG1AnchorTimeIsExplicitIntegrityFailure()
+    {
+        var census = InteriorRelationFeasibilityResearch.Evaluate(RepeatedG1Relations());
+        var occurrences = Lane0FeasibilityRunner.BuildG1Occurrences("CHART", census);
+        var target = occurrences[0] with { AnchorTime = null };
+        var result = Lane0SpatialResearch.Evaluate(target, occurrences.Skip(1));
+
+        Assert.Equal(Lane0HoldoutState.AmbiguousIntegrity, result.State);
+        Assert.False(result.IndependentSupported);
+    }
+
+    [Fact]
+    public void OfficialBuilderOccurrencesDriveNonTemporalAdversarialControls()
+    {
+        var census = InteriorRelationFeasibilityResearch.Evaluate(RepeatedG1Relations());
+        var built = Lane0FeasibilityRunner.BuildG1Occurrences("CHART", census)
+            .OrderBy(x => x.AnchorTime).ToArray();
+        var target = built[^1];
+        var prior = built[0];
+        var candidates = new[]
+        {
+            target,
+            prior with { OccurrenceId = "group", GroupId = target.GroupId },
+            prior with { OccurrenceId = "parent", ParentId = target.ParentId },
+            prior with { OccurrenceId = "event", EventId = target.EventId },
+            prior with { OccurrenceId = "synthetic", IsSynthetic = true },
+            prior with { OccurrenceId = "cross-chart", ChartId = "OTHER" },
+            prior with { OccurrenceId = "composition", ComponentOccurrenceIds = ["T", "S"] }
+        };
+        var audit = Lane0SpatialResearch.Audit(target, candidates);
+
+        Assert.True(audit.Target > 0);
+        Assert.True(audit.TargetGroup > 0);
+        Assert.True(audit.Parent > 0);
+        Assert.True(audit.SameEvent > 0);
+        Assert.True(audit.SyntheticTeaching > 0);
+        Assert.True(audit.CrossChart > 0);
+        Assert.True(audit.ArtificialComposition > 0);
+        Assert.True(audit.PartitionValid);
+        Assert.Empty(audit.Eligible);
+    }
+
+    [Fact]
+    public void IndexedFutureHeldBuilderEqualsSimpleBoundedReferenceAndSharesAnchorSnapshot()
+    {
+        var chart = Chart(Ln(0, 0, 5000), Ln(1, 1000, 2000), Ln(2, 1000, 2500),
+            Ln(0, 6000, 11000), Ln(1, 7000, 8000));
+        var census = InteriorRelationFeasibilityResearch.Evaluate(chart);
+        var occurrences = Lane0FeasibilityRunner.BuildG1Occurrences("CHART", census);
+        var anchors = census.StructuralAnchors.ToDictionary(x => x.AnchorId, StringComparer.Ordinal);
+
+        foreach (var occurrence in census.CompleteRelations)
+        {
+            var expected = census.CompleteRelations.Where(x => x.AnchorTime >= occurrence.AnchorTime)
+                .SelectMany(x =>
+                {
+                    var anchor = anchors[$"{x.ParentLongNoteId}-A{x.AnchorTime}-B{x.AnchorBeat}"];
+                    return new[] { x.ParentLongNoteId.Value, x.WitnessLongNoteId.Value }
+                        .Concat(anchor.HeadWitnessIds.Select(id => id.Value))
+                        .Concat(anchor.ReleaseWitnessIds.Select(id => id.Value));
+                }).Distinct().Order().ToArray();
+            var actual = occurrences.Single(x => x.OccurrenceId == occurrence.OccurrenceId);
+            Assert.Equal(expected, actual.FutureHeldObservationIds);
+        }
+        foreach (var group in occurrences.GroupBy(x => x.AnchorTime).Where(x => x.Count() > 1))
+        {
+            var values = group.ToArray();
+            Assert.True(values.Skip(1).All(x => x.FutureHeldObservationIds == values[0].FutureHeldObservationIds));
+        }
+    }
+
+    [Theory]
+    [InlineData(false, true, true, true, true, true, true, true, "INVALID")]
+    [InlineData(true, false, true, true, true, true, true, true, "INVALID")]
+    [InlineData(true, true, false, true, true, true, true, true, "INVALID")]
+    [InlineData(true, true, true, false, true, true, true, true, "INVALID")]
+    [InlineData(true, true, true, true, false, false, false, false, "BLOCKED")]
+    [InlineData(true, true, true, true, true, true, true, false, "BLOCKED")]
+    [InlineData(true, true, true, true, true, true, true, true, "READY_FOR_AUTHORIZED_CORRECTIVE_EXECUTION")]
+    public void CorrectiveReadinessUsesVerifiedConditionsAndPrecedence(bool contract, bool implementation,
+        bool harness, bool dependencies, bool binding, bool head, bool authorized, bool manifest,
+        string expected)
+    {
+        var report = Lane0FeasibilityRunner.ClassifyCorrectiveReadiness(new(contract, implementation,
+            harness, dependencies, binding, head, authorized, manifest));
+        Assert.Equal(expected, report.Outcome);
+    }
+
+    [Fact]
+    public void CorrectiveRouteVerifiesFrozenFilesThenBlocksBeforeManifestWithoutPublicationBinding()
+    {
+        var root = FindRepositoryRoot();
+        var contract = Path.Combine(root, "docs", "lane_0_future_held_hardening_contract.json");
+        var readiness = Lane0FeasibilityRunner.ValidateCorrectiveReadiness(root, contract, null, null);
+        var execution = Lane0FeasibilityRunner.DenyCorrectiveExecution(root, contract, null, null);
+
+        Assert.Equal("BLOCKED", readiness.Outcome);
+        Assert.True(readiness.Checks.ContractCanonical);
+        Assert.True(readiness.Checks.ImplementationIdentity);
+        Assert.True(readiness.Checks.HarnessIdentity);
+        Assert.True(readiness.Checks.ReusedDependencies);
+        Assert.False(readiness.Checks.PublicationBindingPresent);
+        Assert.False(readiness.Checks.ManifestVerified);
+        Assert.Equal("BLOCKED", execution.Outcome);
+    }
+
     private static ManiaChart RepeatedG1Relations() => Chart(
         Ln(0, 0, 4000), Ln(1, 1000, 2000),
         Ln(0, 5000, 9000), Ln(1, 6000, 7000),
@@ -229,9 +400,18 @@ public sealed class Lane0FeasibilityTests
 
     private static ManiaObject Ln(int lane, int start, int end) => ManiaObject.Ln(lane, start, end);
 
+    private static string FindRepositoryRoot()
+    {
+        for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null;
+             directory = directory.Parent)
+            if (File.Exists(Path.Combine(directory.FullName, "ManiaAddNotesLab.sln")))
+                return directory.FullName;
+        throw new DirectoryNotFoundException("Repository root not found.");
+    }
+
     private static Lane0Occurrence Occurrence(string id, string group, string eventId, string parent,
         string query, string joint, string temporal, string spatial, int[] ids, int[]? releases = null,
-        int[]? future = null) => new(Lane0Family.G1InteriorSpatial, "CHART", 7, id, group, eventId,
+        int[]? future = null, int anchorTime = 1000) => new(Lane0Family.G1InteriorSpatial, "CHART", 7, id, group, eventId,
             parent, query, joint, temporal, spatial, ids.ToImmutableArray(),
-            (releases ?? []).ToImmutableArray(), (future ?? []).ToImmutableArray());
+            (releases ?? []).ToImmutableArray(), (future ?? []).ToImmutableArray(), AnchorTime: anchorTime);
 }
