@@ -1,0 +1,87 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-future-held-remediation.1",
+    "approvedOriginalHead": "12ee8799528d9cf9d64d8d9a9ab4b45ba955db0f",
+    "historicalBaselineHead": "be08f3f2f0191a5c972ad16449a7199dd07f2e3f",
+    "requiredEvaluationPublishedHead": "PENDING_USER_PUBLICATION_AND_APPROVAL",
+    "repairImplementationSha256": "A69C084D6631E24B49E66229B5D666E1B8F74BAD306FFE1CAF7BEC9619BBF0B4",
+    "correctiveHarnessSha256": "6B1FE0A10C62C6E2D155A2CF279791B5CD431F2F13A6653F4B498696AC0FB49E",
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "historicalContractSha256": "62B2F4F67C34E8F57893A3A025D567000E1BB12B6517C13D97FE9EEC3FE0A3C2",
+    "memoryLimit": "0x400000000",
+    "defect": "Historical G1 occurrence construction omitted future-held identities and AnchorTime, so the official LANE.0 auditor could not enforce the frozen G1.0 prior-only boundary.",
+    "repairSemantics": "For G1 only, carry exact AnchorTime, derive target future-held provenance from complete original relation identities at the same or later anchor, reject donor.AnchorTime \u003E= target.AnchorTime, and independently reject donor observations intersecting the target future-held set.",
+    "families": [
+      "RICE_HEAD_COMPLETION_UNCHANGED_SENTINEL",
+      "G1_INTERIOR_SPATIAL_CORRECTED"
+    ],
+    "historicalDenominators": {
+      "g1Operational": 288,
+      "g1OperationalHistoricallySupported": 11,
+      "g1Structural": 16881,
+      "riceOperational": 40360,
+      "riceOperationalHistoricallySupported": 37080,
+      "riceStructural": 40360
+    },
+    "exclusions": [
+      "target",
+      "target-group",
+      "parent",
+      "anchor",
+      "release-endpoint",
+      "future-anchor-time",
+      "future-held-original-identity",
+      "same-event",
+      "synthetic-teaching",
+      "cross-chart",
+      "artificial-donor-composition",
+      "duplicate-observation",
+      "incomplete-or-mispaired-identity"
+    ],
+    "requiredControls": [
+      "auditor-detects-each-contamination",
+      "official-builder-supplies-required-identity",
+      "experimental-flow-applies-each-exclusion",
+      "same-time-boundary-rejected",
+      "prior-independent-donor-preserved",
+      "byte-identical-repeat",
+      "zero-rng",
+      "no-chart-mutation",
+      "no-production-call-site"
+    ],
+    "outcomeRules": {
+      "BLOCKED": "Required published HEAD, exact frozen identities, explicit C11 corpus, or runtime resources unavailable before evidence is consulted.",
+      "FEASIBILITY_DEMONSTRATED": "Both frozen families satisfy the historical support criterion after corrected exclusions, including operational support, with every validity condition passing.",
+      "INVALID": "Any contract, identity, corpus, adversarial-control, integrity, determinism, RNG, or non-interference failure.",
+      "LIMITED_PARK": "Execution is valid and complete, but corrected evidence is insufficient for FEASIBILITY_DEMONSTRATED."
+    },
+    "pairedComparison": [
+      "Pair every corrected chart/family/keymode result with the immutable historical aggregate.",
+      "Report structural, contextual, joint-unique, joint-among-alternatives, contradiction, no-context, marginal-only, independent-support and operational-support deltas.",
+      "Keep rice as an unchanged sentinel; do not infer a rice defect from the G1 defect."
+    ],
+    "historicalOperationalG1Analysis": "List all 11 historically supported operational G1 occurrence IDs individually and report corrected donor count, temporal exclusions, identity exclusions, state and support disposition without changing thresholds.",
+    "stopConditions": [
+      "Stop INVALID on any validity failure.",
+      "Stop BLOCKED before evidence on unavailable required inputs.",
+      "Execute exactly one corrected C11 evaluation only after user publishes and approves its exact HEAD.",
+      "Do not adapt exclusions, thresholds, populations or outcome rules after results are visible."
+    ],
+    "inferenceLimits": [
+      "The historical figures remain historical evidence, not corrected estimates.",
+      "A corrected result does not authorize LANE.DESIGN, LANE.GATE or production behavior.",
+      "No claim extends beyond frozen C11 or from G1 to rice without direct evidence."
+    ],
+    "reusedDependencies": {
+      "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md": "7F3B2C3CBAB3965DB9D166DDCDC00C79AC499A0EB75732594E5587AF5498169D",
+      "docs/g1_0_interior_relation_contract.json": "C7D79283A190026DC4D2A4A7A73049E1D8732C4CC243CF9FEBFF51771540CAF3",
+      "docs/g1_design_interior_relation_admission_contract.json": "A42B21975458E39252762380977BF66B82E115BEAE999BB44C5BDD881D541970",
+      "docs/lane_0_feasibility_contract.json": "908958E6DBB7AD04AF9AE5C5DCF42DB9637F318CFA14ACEB9287B5845691D679",
+      "src/ManiaAddNotesLab.Core/InteriorRelationFeasibilityResearch.cs": "13D8B422648D6AF38D304C1AE4852D46D48DBEF3A0F82B82791B45C81A930B12",
+      "src/ManiaAddNotesLab.Core/InteriorRelationHoldoutAuditor.cs": "7D63A38B99C847A875BB5FE5281255ECB2DC942791D508F9F2E7EAF40860B2FA",
+      "src/ManiaAddNotesLab.Core/InteriorRelationMembershipResearch.cs": "9E5EEA78550E4F8C7C6FBEC4F2DFFC3D5B31C86B56DC490D1E564BADC232977F"
+    }
+  },
+  "canonicalSha256": "F28F35AA991F3AF20BEEBBEE6AC1D9D3C182E71C62E4044E4DB0792857F8B0A7",
+  "canonicalization": "UTF-8 System.Text.Json semantic round-trip, camelCase, unindented; ordinal ordered arrays/maps; no timestamps, private corpus paths or result-derived fields"
+}
