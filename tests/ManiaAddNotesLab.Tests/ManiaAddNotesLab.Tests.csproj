@@ -22,6 +22,7 @@
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\SafetySelectionSetRemappingPostPublicationVerifier.cs" Link="SafetySelectionSetRemappingPostPublicationVerifier.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\SafetyOp185Op466CounterfactualRunner.cs" Link="SafetyOp185Op466CounterfactualRunner.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\SafetyOp466GeometryObservationRunner.cs" Link="SafetyOp466GeometryObservationRunner.cs" />
+    <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0FeasibilityRunner.cs" Link="Lane0FeasibilityRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\samples\*.osu" Link="samples\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

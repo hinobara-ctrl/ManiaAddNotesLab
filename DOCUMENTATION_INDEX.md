@@ -21,6 +21,7 @@ Los documentos maestros describen sólo el estado actual y se actualizan en cada
 
 ## Phase Reports / Historical Evidence
 
+- [LANE.0 design](docs/PHASE_LANE_0_FEASIBILITY_DESIGN.md), [frozen contract](docs/lane_0_feasibility_contract.json) y [feasibility report](docs/PHASE_LANE_0_FEASIBILITY_REPORT.md) — dos familias espaciales original-only, universos A/B/C separados, holdout independiente, controles adversariales y cierre `FEASIBILITY_DEMONSTRATED` sin selector ni conducta.
 - [SAFETY.REMEDIATION.GATE focused forensic attribution](docs/PHASE_SAFETY_REMEDIATION_GATE_FORENSIC_ATTRIBUTION.md) — primera no equivalencia de las ocho ejecuciones, OP-370/OP-466, descomposición 70.835→8 episodios y consolidación offline `188/21/5/1` sin promoción.
 - [Selection-set remapping design](docs/PHASE_SAFETY_SELECTION_SET_REMAPPING_DESIGN.md), [frozen contract](docs/safety_selection_set_remapping_contract.json) y [focused gate report](docs/PHASE_SAFETY_SELECTION_SET_REMAPPING_GATE.md) — replay auténtico, definición experimental E, 8/8 orígenes locales y límite downstream que conserva OP-466 unresolved.
 - [Phase A — Evidence Infrastructure](docs/PHASE_A_EVIDENCE_INFRASTRUCTURE_REPORT.md) — cierre verificable del perfil original-only y regresión conductual nula.

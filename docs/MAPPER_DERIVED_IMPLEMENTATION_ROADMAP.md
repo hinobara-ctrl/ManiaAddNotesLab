@@ -1,8 +1,8 @@
 # Mapper-Derived Implementation Roadmap
 
 Estado: roadmap de transición aprobado para implementación incremental.  
-Baseline revisado: copia local de `ManiaAddNotesLab`, 19 de septiembre de 2026.  
-Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró READY y el validation hardening de `SAFETY.REMEDIATION.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**: 188 directos + 22 causales + 5 unresolved. G1, G2, H y cualquier sucesora permanecen **NOT_AUTHORIZED**; el default continúa en `legacy-experimental.1`.
+Baseline revisado: estado publicado de `ManiaAddNotesLab`, 26 de septiembre de 2026.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró READY y la recertificación final de `SAFETY.REMEDIATION.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**: partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. Las investigaciones posteriores de selection-set remapping y OP-466 son focalizadas, observacionales y sin autoridad conductual. `LANE.0` cerró **COMPLETE/FEASIBILITY_DEMONSTRATED / SHADOW ONLY** sin selector ni conducta. G1, G2, H, LANE.DESIGN/GATE y cualquier sucesora permanecen **NOT_AUTHORIZED**; el default continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1137,11 +1137,35 @@ C11 enumeró 4.226 shapes pre-geometry sobre 298 opportunities, todas representa
 
 <!-- PHASE-CONTRACT:SAFETY.REMEDIATION.GATE;kind=BehaviorChanging;behaviorChange=true;authorization=EXPERIMENT_COMPLETED_NO_PROMOTION -->
 
-**SAFETY.REMEDIATION.GATE COMPLETE — OUTCOME NEEDS_REVIEW — VALIDATION HARDENING.**
+**SAFETY.REMEDIATION.GATE COMPLETE — OUTCOME NEEDS_REVIEW — FINAL RECERTIFICATION.**
 
-**COMPLETE / VALIDATION HARDENING NEEDS_REVIEW / EXPERIMENTAL ONLY.** El treatment `safety-remediation-canonical-playable.1` usa integer milliseconds y beats canónicos derivados como autoridad de collision, manteniendo latent values sólo para intent/evidence/G1. En 220 pares C11 y cuatro pares secundarios G1, las 215 condiciones control bajaron a cero; hubo 0 violaciones nuevas, 0 RNG del gate, 0 fallos de determinismo/reparse y 0 drift de identidad G1. La prueba individual fuerte cerró 188 rechazos directos y 22 casos downstream; 5 permanecen `UNRESOLVED`, por lo que se retira la clausura causal total del informe histórico.
+**COMPLETE / FINAL RECERTIFICATION NEEDS_REVIEW / EXPERIMENTAL ONLY.** El treatment `safety-remediation-canonical-playable.1` usa integer milliseconds y beats canónicos derivados como autoridad de collision, manteniendo latent values sólo para intent/evidence/G1. La única matriz final cubrió 220 pares C11 y cuatro pares secundarios G1: las 215 condiciones control bajaron a cero; hubo 0 violaciones nuevas, 0 RNG del gate, 0 fallos de determinismo/reparse y 0 drift de identidad G1. La partición oficial cerró `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. La partición anterior `188 directos + 22 downstream + 5 unresolved` permanece documentada como resultado histórico del hardening, no como estado vigente.
 
 **NO PROMOTION / NO SUCCESSOR.** La ruta existe sólo en configuración research explícita. Default, CLI/Web, G1 utility, G2, H y cualquier fase posterior requieren autorización humana separada.
+
+## Phase SAFETY.SELECTION-SET-REMAPPING — Focused Counterfactual Gate
+
+<!-- PHASE-CONTRACT:SAFETY.SELECTION-SET-REMAPPING;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_NO_PROMOTION -->
+
+**COMPLETE — E_DEMONSTRATED LOCAL ONLY / NO PROMOTION.** El replay aislado con selector auténtico reproduce 8/8 primeras divergencias causadas por la reducción del legal-lane set. No demuestra la cadena completa hasta OP-466, no cambia A/B/C/D, no repite la matriz y no autoriza policy.
+
+## Phase SAFETY.OP185→OP466 — Focused observational sequence
+
+<!-- PHASE-CONTRACT:SAFETY.OP185-OP466;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_NO_PROMOTION -->
+
+**COMPLETE / RESEARCH ONLY.** El contrafactual de una sola selección OP-185 obtuvo `ABSENT_BOTH`; la admisión de OP-466 identificó `ProbabilityAbstain` antes de candidate y lanes; la auditoría RNG reconstruyó el desfase `+8` previo, `+1` local y `+9` posterior; la observación pasiva v3 reconstruyó ambos padres completos y encontró lane 2 ilegal por colisión inclusiva con la LN sintética `34783→35009`.
+
+**LÍMITE.** La barrera geométrica es posterior e hipotética, no la causa del stop histórico. Estas investigaciones no reejecutaron la matriz de 224 pares, no alteraron el clasificador congelado y no autorizan selección, commit contrafactual, default ni sucesora.
+
+## Phase LANE.0 — Original-Only Spatial Relation Feasibility
+
+<!-- PHASE-CONTRACT:LANE.0;kind=ResearchShadow;behaviorChange=false;authorization=RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED -->
+
+**LANE.0 COMPLETE — OUTCOME FEASIBILITY_DEMONSTRATED / SHADOW ONLY.** Dos identidades exactas reutilizan D0 y G1.0 sin mirror, translation ni normalización: reduced simultaneous-head state → lane/type para rice; parent/anchor temporal exacto + parent lane → temporal relation/witness lane/delta/same-lane para G1. Los universos estructural, holdout y operativo permanecen separados.
+
+Rice produjo 37.080 supports conjuntos independientes sobre 40.360 trials en 11 charts y 4K/7K/10K. G1 espacial produjo 3.373/16.881 en cinco charts y 4K/7K; sólo 11 soportes pertenecen a las 288 occurrences operativas actuales. Hubo cero leakage, RNG o cambio conductual; alternativas y marginal-only permanecen explícitos.
+
+**NO SUCCESSOR AUTHORIZED.** El resultado demuestra representabilidad, no utilidad, winner, frecuencia, score, probability o selector. `LANE.DESIGN`, `LANE.GATE`, integración G1+LANE y cambios de defaults requieren un contrato y autorización separados.
 
 ## Phase G1 — Interior Relation Semantics A/B
 

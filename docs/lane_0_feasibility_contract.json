@@ -1,0 +1,48 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-original-spatial-feasibility.1",
+    "repositoryEntryHead": "be08f3f2f0191a5c972ad16449a7199dd07f2e3f",
+    "implementationSha256": "34B98782D6B0522D8F5E58440B5DBE83C45349C76044519AC72BB099249F9A68",
+    "harnessSha256": "4805E09DC139E7020CA9D6A05A88735FCB28BAF5E3660D05D3114F14E5422918",
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "memoryLimit": "0x400000000",
+    "question": "Do exact complete original-only rice and G1 spatial relations recur under strict chart-local holdout in \u003E=2 charts and \u003E=2 keymodes per family, including current operational occurrences, with zero integrity failures?",
+    "families": [
+      "RICE_HEAD_COMPLETION",
+      "G1_INTERIOR_SPATIAL"
+    ],
+    "populationUniverses": [
+      "A_STRUCTURAL_ORIGINAL",
+      "B_HOLDOUT_RECONSTRUCTIBLE",
+      "C_CURRENT_OPERATIONAL"
+    ],
+    "leakageControls": [
+      "target",
+      "target-group",
+      "parent",
+      "release-endpoint",
+      "future-held",
+      "same-event",
+      "synthetic-teaching",
+      "cross-chart",
+      "artificial-donor-composition",
+      "duplicate-observation",
+      "incomplete-or-mispaired-identity"
+    ],
+    "outcomes": [
+      "FEASIBILITY_DEMONSTRATED",
+      "LIMITED_PARK",
+      "BLOCKED",
+      "INVALID"
+    ],
+    "demonstratedCriterion": "Each family has independent joint support in \u003E=2 charts and \u003E=2 keymodes, at least one supported operational target, zero integrity failures, zero RNG, no behavior change and byte-identical repeat.",
+    "reusedIdentities": {
+      "docs/PHASE_D0_CHORD_COMPLETION_RECONSTRUCTION_REPORT.md": "5C0F8325C17CB9047EB971DB43D056BB5C58AD5EFA7B79B59000E1626BEE0FAC",
+      "docs/g1_0_interior_relation_contract.json": "C7D79283A190026DC4D2A4A7A73049E1D8732C4CC243CF9FEBFF51771540CAF3",
+      "docs/g1_design_interior_relation_admission_contract.json": "A42B21975458E39252762380977BF66B82E115BEAE999BB44C5BDD881D541970",
+      "docs/safety_remediation_gate_final_recertification_contract.json": "F98D5668D9C73615ED2BDCC8046188E32FCDB086D5595D9DF5DC37A61BBB06B9"
+    }
+  },
+  "canonicalSha256": "62B2F4F67C34E8F57893A3A025D567000E1BB12B6517C13D97FE9EEC3FE0A3C2",
+  "canonicalization": "UTF-8 System.Text.Json semantic round-trip, camelCase, unindented; ordered arrays/maps; no timestamps or private corpus paths"
+}

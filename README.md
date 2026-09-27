@@ -43,11 +43,12 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **SAFETY.OP466.CANDIDATE_ADMISSION — COMPLETE, MECHANISM_IDENTIFIED:** canonical A/B consumen el mismo roll auténtico `0.7305439518441185` con chance `0.5` y se abstienen antes de construir candidato; es la causa inmediata observada.
 - **SAFETY.OP466.RNG_GEOMETRY_AUDIT — COMPLETE, HANDOFF ONLY:** las 30 filas explican `+8` llamadas antes de OP-466, `+1` durante OP-466 y `+9` después; en ese momento los artifacts previos no permitían reconstruir geometría A/B completa.
 - **SAFETY.OP466.GEOMETRY_OBSERVATION — COMPLETE, RESEARCH ONLY:** el contrato oficial v3 reconstruyó ambos padres exactos; lane 2 es ilegal en A y B por una LN sintética que termina inclusivamente en 35009 ms. Es una barrera hipotética adicional, no la causa de la abstención ni una prueba de selección/commit contrafactual.
+- **LANE.0 — COMPLETE, FEASIBILITY_DEMONSTRATED, SHADOW ONLY:** dos familias exactas original-only conservan soporte conjunto, alternativas y holdout independiente. Rice obtuvo 37.080/40.360 targets soportados; G1 espacial 3.373/16.881, con 11 soportes dentro de 288 occurrences operativas. Cero leakage, RNG o cambio conductual; no existe selector ni sucesora autorizada.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. La recertificación final conserva `NEEDS_REVIEW`: seguridad observada 215→0, pero causalidad final `188 A + 21 B + 5 D + 1 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME NEEDS_REVIEW<br>
+Current phase: LANE.0 — COMPLETE — OUTCOME FEASIBILITY_DEMONSTRATED<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
@@ -55,15 +56,15 @@ Next behavioral authorization: N/A<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
-Behavior change: true<br>
+Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 829 passed / 0 failed / 0 skipped
+Tests: 834 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.
 
-`LANE.0` existe únicamente como propuesta descriptiva en shadow mode, pendiente de autorización humana explícita. No está activa, autorizada ni definida como siguiente paso automático.
+`LANE.0` cerró únicamente como factibilidad descriptiva en shadow mode. No eligió lane ni introdujo frecuencia, score, selector o conducta. `LANE.DESIGN`, `LANE.GATE` y cualquier integración requieren autorización humana nueva y no son el siguiente paso automático.
 
 ## Ejecutar
 

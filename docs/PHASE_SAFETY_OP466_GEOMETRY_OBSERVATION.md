@@ -27,6 +27,12 @@ This is an additional hypothetical geometric barrier, not the observed cause of 
 
 The historical inputs from `safety_op185_op466_counterfactual`, `safety_op466_candidate_admission` and `safety_op466_jules_handoff` were treated as read-only. Their individual hashes are frozen in the new contract, including the Jules ZIP.
 
+### Reproducing the historical v3 environment
+
+The v3 contract intentionally binds `repositoryEntryHead` to `e6a0fbe748c32b6ad39b823e031e8ccce9f963cf`, implementation identity `B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835`, harness identity `0165ACDD45F8122F553E797D16436D22133F88BA23EF70843B5AF9FCC8761B1B`, and C11 identity `AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445`. The experiment sources and evidence were published later in closure commit `be08f3f2f0191a5c972ad16449a7199dd07f2e3f`; therefore a clean checkout of that later commit is suitable for inspecting and hashing the published evidence, but it is not by itself the exact v3 entry environment and must fail the frozen entry-HEAD guard by design.
+
+An exact replay must use an isolated worktree at the frozen entry HEAD, overlay the exact published experiment files whose combined identities match the frozen implementation and harness hashes, supply only the explicit C11 directory verified against its frozen manifest, and preserve every historical input at the hashes listed in the contract. Run sequentially with `DOTNET_GCHeapHardLimit=0x400000000` and `DOTNET_GCConserveMemory=9`. The contract, entry-HEAD check, canonicalization rule and identity checks must not be edited or relaxed to make a later checkout pass; doing so would create a different experiment. If the historical overlay cannot be reconstructed exactly, the honest result is `BLOCKED`, while artifact verification remains possible independently.
+
 ## Technical viability and inspected authority
 
 The observation was viable without adding a product hook. The audit covered `AddNotesEngine`, `LaneGeometryIndex`, `CanonicalPlayableGeometry`, `SafetyRemediationGateSufficientState`, `SeededRandom`, `IRandomSource`, `SafetyOp185Op466CounterfactualRunner` and `SafetyOp466CandidateAdmissionRunner`.

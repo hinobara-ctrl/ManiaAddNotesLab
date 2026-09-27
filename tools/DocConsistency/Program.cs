@@ -45,6 +45,7 @@ else
     ValidateSafetyRemediationDesignClosure(state);
     ValidateSafetyRemediationGateClosure(state);
     ValidateSafetyRemediationFollowup();
+    ValidateLane0Closure(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -787,7 +788,7 @@ void ValidateG1GateClosure(ProjectState value)
     if (gate?.Status != "COMPLETE") return;
     if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
         || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
 
@@ -860,7 +861,7 @@ void ValidateSafetyCausalClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "A" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_REMEDIATION"
-        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.CAUSAL must close COMPLETE/A with no remediation, promotion or successor.");
 
@@ -943,7 +944,7 @@ void ValidateSafetyRemediationDesignClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "READY_FOR_SEPARATE_REMEDIATION_GATE" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.DESIGN must close READY_FOR_SEPARATE_REMEDIATION_GATE with no implementation or authorized successor.");
 
@@ -1017,7 +1018,7 @@ void ValidateSafetyRemediationGateClosure(ProjectState value)
         || phase.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
         || contractState?.Kind != "BehaviorChanging" || contractState.BehaviorChange is not true
         || contractState.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase != "SAFETY.REMEDIATION.GATE" || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.GATE hardening must close NEEDS_REVIEW, experimental-only and without promotion or successor.");
 
@@ -1392,6 +1393,62 @@ void ValidateVersionContracts(ProjectState value)
     CheckContains("src/ManiaAddNotesLab.Core/DecisionDiagnostics.cs",
         $"public const string Current = \"{value.DiagnosticVersion}\";",
         "compiled diagnostic version");
+}
+
+void ValidateLane0Closure(ProjectState value)
+{
+    var phase = value.Phases.FirstOrDefault(x => x.Id == "LANE.0");
+    var phaseContract = value.PhaseContracts.FirstOrDefault(x => x.Id == "LANE.0");
+    if (phase?.Status != "COMPLETE") return;
+    if (phase.Outcome != "FEASIBILITY_DEMONSTRATED" || phase.BehaviorChange is not false
+        || phase.Authorization != "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED"
+        || phaseContract?.Kind != "ResearchShadow" || phaseContract.BehaviorChange is not false
+        || phaseContract.Authorization != "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED"
+        || value.CurrentPhase != "LANE.0" || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
+        errors.Add("LANE.0 must close FEASIBILITY_DEMONSTRATED, research-only and without an authorized successor.");
+
+    foreach (var artifact in new[]
+    {
+        "docs/PHASE_LANE_0_FEASIBILITY_DESIGN.md",
+        "docs/lane_0_feasibility_contract.json",
+        "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md"
+    })
+    {
+        RequireFile(artifact, "LANE.0 closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "LANE.0 closure artifact index entry");
+    }
+
+    const string frozen = "62B2F4F67C34E8F57893A3A025D567000E1BB12B6517C13D97FE9EEC3FE0A3C2";
+    const string manifest = "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445";
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "lane_0_feasibility_contract.json")));
+        var artifact = document.RootElement;
+        var contract = artifact.GetProperty("contract");
+        if (artifact.GetProperty("canonicalSha256").GetString() != frozen
+            || contract.GetProperty("schemaVersion").GetString() != "lane-0-original-spatial-feasibility.1"
+            || contract.GetProperty("repositoryEntryHead").GetString() != "be08f3f2f0191a5c972ad16449a7199dd07f2e3f"
+            || contract.GetProperty("corpusManifestSha256").GetString() != manifest
+            || contract.GetProperty("memoryLimit").GetString() != "0x400000000"
+            || contract.GetProperty("families").GetArrayLength() != 2
+            || contract.GetProperty("populationUniverses").GetArrayLength() != 3
+            || contract.GetProperty("leakageControls").GetArrayLength() != 11
+            || contract.GetProperty("outcomes").EnumerateArray().All(x =>
+                x.GetString() != "FEASIBILITY_DEMONSTRATED"))
+            errors.Add("LANE.0 contract does not preserve its frozen identity, scope and outcome rule.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"LANE.0 contract cannot be validated: {exception.Message}");
+    }
+
+    foreach (var marker in new[] { "40,360", "37,080", "16,881", "3,373", "11" })
+        CheckContains("docs/PHASE_LANE_0_FEASIBILITY_REPORT.md", marker, "LANE.0 frozen result");
+    CheckContains("src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+        "public const string BehaviorPolicyVersion = \"legacy-experimental.1\";",
+        "legacy default after LANE.0");
 }
 
 void ValidateMasterStateBlocks(ProjectState value)

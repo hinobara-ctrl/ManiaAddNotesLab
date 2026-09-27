@@ -4,6 +4,30 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 5 && args[0] == "lane-0-prepare")
+{
+    Console.WriteLine("LANE.0 contract=" + Lane0FeasibilityRunner.Prepare(Path.GetFullPath(args[1]),
+        Path.GetFullPath(args[2]), Path.GetFullPath(args[3]), Path.GetFullPath(args[4])));
+    return;
+}
+
+if (args.Length == 6 && args[0] == "lane-0-run")
+{
+    try
+    {
+        var outcome = Lane0FeasibilityRunner.Run(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]),
+            Path.GetFullPath(args[3]), Path.GetFullPath(args[4]), Path.GetFullPath(args[5]));
+        Console.WriteLine("LANE.0 outcome=" + outcome);
+        Environment.ExitCode = outcome is "FEASIBILITY_DEMONSTRATED" or "LIMITED_PARK" ? 0 : 1;
+    }
+    catch (Exception exception)
+    {
+        Console.Error.WriteLine($"LANE.0 INVALID: {exception.GetType().Name}: {exception.Message}");
+        Environment.ExitCode = 1;
+    }
+    return;
+}
+
 if (args.Length == 5 && args[0] == "safety-op466-geometry-prepare")
 {
     Console.WriteLine("SAFETY OP-466 geometry contract=" + SafetyOp466GeometryObservationRunner.Prepare(

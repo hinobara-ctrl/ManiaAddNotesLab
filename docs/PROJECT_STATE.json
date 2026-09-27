@@ -1,10 +1,10 @@
 {
-  "schemaVersion": 17,
+  "schemaVersion": 18,
   "lastUpdated": "2026-09-26",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
-  "behaviorChange": true,
+  "behaviorChange": false,
   "phases": [
     { "id": "A", "name": "Evidence Infrastructure", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_A_EVIDENCE_INFRASTRUCTURE_REPORT.md" },
     { "id": "B", "name": "Certificates and Failures", "status": "COMPLETE", "outcome": null, "behaviorChange": false, "report": "docs/PHASE_B_CERTIFICATES_AND_FAILURES_REPORT.md" },
@@ -37,7 +37,7 @@
     { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "name": "Causal Articulation A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
-    { "id": "LANE.0", "name": "Descriptive Lane Research / Shadow", "status": "PENDING", "outcome": "PROPOSED", "behaviorChange": false, "report": null, "authorization": "PENDING_HUMAN_AUTHORIZATION" }
+    { "id": "LANE.0", "name": "Original-Only Spatial Relation Feasibility / Shadow", "status": "COMPLETE", "outcome": "FEASIBILITY_DEMONSTRATED", "behaviorChange": false, "report": "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md", "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -58,21 +58,29 @@
     { "id": "SAFETY.REMEDIATION.GATE", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "G1", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
-    { "id": "H", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" }
+    { "id": "H", "kind": "BehaviorChanging", "behaviorChange": true, "authorization": "NOT_AUTHORIZED" },
+    { "id": "LANE.0", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED" }
   ],
-  "currentPhase": "SAFETY.REMEDIATION.GATE",
+  "currentPhase": "LANE.0",
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 829, "failed": 0, "skipped": 0 },
-  "lane0Proposal": {
-    "status": "PROPOSED",
-    "authorization": "PENDING_HUMAN_AUTHORIZATION",
-    "intendedMode": "DESCRIPTIVE_SHADOW_ONLY",
-    "contractWritten": false,
-    "runnerImplemented": false,
-    "corpusPrepared": false,
-    "experimentsExecuted": false,
+  "testStatus": { "passed": 834, "failed": 0, "skipped": 0 },
+  "lane0Closure": {
+    "status": "COMPLETE",
+    "outcome": "FEASIBILITY_DEMONSTRATED",
+    "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED",
+    "mode": "ORIGINAL_ONLY_RESEARCH_SHADOW",
+    "contract": "docs/lane_0_feasibility_contract.json",
+    "contractHash": "62B2F4F67C34E8F57893A3A025D567000E1BB12B6517C13D97FE9EEC3FE0A3C2",
+    "corpusManifest": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "rice": { "structural": 40360, "holdouts": 40360, "independentJointSupport": 37080, "operational": 40360, "operationalIndependentSupport": 37080, "supportedCharts": 11, "supportedKeymodes": 3 },
+    "g1Interior": { "structural": 16881, "holdouts": 16881, "independentJointSupport": 3373, "operational": 288, "operationalIndependentSupport": 11, "supportedCharts": 5, "supportedKeymodes": 2 },
+    "integrityFailures": 0,
+    "rngCalls": 0,
+    "behaviorChanged": false,
+    "deterministic": true,
+    "semanticHash": "1C59A127D3DCD564C179EA6103D411251338F02459FCF4677B74CD075F40A8DB",
     "nextAutomatic": false
   },
   "reviewRequirements": {
