@@ -37,8 +37,12 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **G1.GATE — COMPLETE, NEEDS_REVIEW, NO PROMOTION:** el treatment runtime congelado suprimió 889/1.006 propuestas sin RNG/reroll, pero SAFETY.PROV atribuyó nueve `TapOnHeldLongNote` nuevos a efectos downstream; se activó el stop condition.
 - **SAFETY.CAUSAL — COMPLETE, OUTCOME A, FORENSICS ONLY:** el replay exacto demuestra que los 9 treatment-only y los 200 controles legacy comparten un mismatch entre el `EndBeat` decimal latente usado por placement y el beat reconstruido desde milisegundos usado por HardValidity. Causa encontrada; remediation y promoción no autorizadas.
 - **SAFETY.REMEDIATION.DESIGN — COMPLETE, READY_FOR_SEPARATE_REMEDIATION_GATE, RESEARCH ONLY:** seleccionó geometría jugable canónica compartida, cubrió en shadow los 209 casos conocidos y halló 6 deltas directos adicionales. No implementó la corrección; el gate conductual separado sigue sin autorización.
-- **SAFETY.REMEDIATION.GATE — COMPLETE, FORENSIC ATTRIBUTION NEEDS_REVIEW / NO PROMOTION:** la única matriz final confirmó cero violaciones treatment y `188 A + 21 B + 6 C`; cinco C conservan mecanismo D. La investigación focal reprodujo las 70.835 observaciones como 8 episodios persistentes iniciados por remapping de selección al reducirse el lane set, fuera de la definición causal congelada. El sexto caso sigue unresolved.
+- **SAFETY.REMEDIATION.GATE — COMPLETE, FORENSIC ATTRIBUTION NEEDS_REVIEW / NO PROMOTION:** la única matriz final confirmó cero violaciones treatment y midió inicialmente `188 A + 21 B + 6 C`; la consolidación oficial preservó cinco mecanismos D ya demostrados y cerró `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. La investigación focal reprodujo las 70.835 observaciones como 8 episodios persistentes iniciados por remapping de selección al reducirse el lane set, fuera de la definición causal congelada.
 - **SAFETY.SELECTION-SET-REMAPPING — COMPLETE, E_DEMONSTRATED LOCAL ONLY:** un contrato separado reprodujo con el selector auténtico las 8/8 primeras divergencias usando el mismo prefijo y una llamada RNG. E no demuestra la cadena completa a OP-466, no cambia A/B/C/D y no autoriza promoción.
+- **SAFETY.OP185→OP466 — COMPLETE, ABSENT_BOTH:** la intervención única preregistrada cambió lane 2→3 en OP-185, pero ninguno de los dos brazos canónicos produjo ni comprometió el target OP-466.
+- **SAFETY.OP466.CANDIDATE_ADMISSION — COMPLETE, MECHANISM_IDENTIFIED:** canonical A/B consumen el mismo roll auténtico `0.7305439518441185` con chance `0.5` y se abstienen antes de construir candidato; es la causa inmediata observada.
+- **SAFETY.OP466.RNG_GEOMETRY_AUDIT — COMPLETE, HANDOFF ONLY:** las 30 filas explican `+8` llamadas antes de OP-466, `+1` durante OP-466 y `+9` después; en ese momento los artifacts previos no permitían reconstruir geometría A/B completa.
+- **SAFETY.OP466.GEOMETRY_OBSERVATION — COMPLETE, RESEARCH ONLY:** el contrato oficial v3 reconstruyó ambos padres exactos; lane 2 es ilegal en A y B por una LN sintética que termina inclusivamente en 35009 ms. Es una barrera hipotética adicional, no la causa de la abstención ni una prueba de selección/commit contrafactual.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. La recertificación final conserva `NEEDS_REVIEW`: seguridad observada 215→0, pero causalidad final `188 A + 21 B + 5 D + 1 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
@@ -54,10 +58,12 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 826 passed / 0 failed / 0 skipped
+Tests: 829 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.
+
+`LANE.0` existe únicamente como propuesta descriptiva en shadow mode, pendiente de autorización humana explícita. No está activa, autorizada ni definida como siguiente paso automático.
 
 ## Ejecutar
 

@@ -1,0 +1,86 @@
+{
+  "contract": {
+    "schemaVersion": "safety-op466-geometry-observation-contract.3",
+    "repositoryEntryHead": "e6a0fbe748c32b6ad39b823e031e8ccce9f963cf",
+    "implementationSnapshotSha256": "B7AA67D389AE71A775397997BCEC3185CD0E763ED19E12770CE03D1C18AF2835",
+    "harnessSnapshotSha256": "0165ACDD45F8122F553E797D16436D22133F88BA23EF70843B5AF9FCC8761B1B",
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "memoryLimit": "0x400000000",
+    "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+    "seed": 4,
+    "interventionOpportunity": "OP-00000185-BaseHead-S185-T16399-ANA",
+    "targetOpportunity": "OP-00000466-BaseHead-S466-T35009-ANA",
+    "targetOrder": 468,
+    "targetLane": 2,
+    "targetTime": 35009,
+    "arms": "Canonical A normal; canonical B authentic Next(4)=2 delivered once as index 3 at RNG position 260; chance .50; articulation OFF; G1 absent.",
+    "completeGeometryState": "All original TimedManiaObjects plus every observer-captured committed TimedManiaObject before OP-466, retaining durable times, latent beats, provenance and commit order.",
+    "validSnapshot": "Snapshot is valid only if materialized and latent accumulator hashes equal the historical parent, commit identities pair exactly, output/RNG/diagnostics are frozen-exact, and OP-466 parent is order 468 at RNG 659.",
+    "laneQuery": "Build product-equivalent canonical LaneGeometryIndex, then compare InspectTapLane(2, canonicalBeat) with FindLegalTapLanes(canonicalBeat); no insert or candidate construction.",
+    "nonInterference": "Observer output/RNG/diagnostics/sequence/commits/states exact; observer RNG calls zero; query preserves geometry hash, RNG count, commits and objects.",
+    "outcomes": [
+      "LANE_2_LEGAL",
+      "LANE_2_ILLEGAL",
+      "GEOMETRY_INCOMPLETE",
+      "INVALID",
+      "BLOCKED"
+    ],
+    "stopConditions": [
+      "identity drift",
+      "historical mismatch",
+      "snapshot hash mismatch",
+      "observer interference",
+      "opportunity mismatch",
+      "unexpected intervention",
+      "query mutation"
+    ],
+    "historicalInputs": [
+      {
+        "path": "docs/safety_op185_op466_counterfactual_contract.json",
+        "sha256": "3AF17B19E134EAC0324B318D6CCD73BE6236FBA5FF92EDFAACDD16999B648537"
+      },
+      {
+        "path": ".artifacts/safety_op185_op466_counterfactual/summary.json",
+        "sha256": "7BEFDA6D4C2BA2C4B56F85415899ACD22B0881EB703B2CDF2239DADD495DA304"
+      },
+      {
+        "path": ".artifacts/safety_op185_op466_counterfactual/op466_result.json",
+        "sha256": "6FDAF64E34906D22698BFA9A230E8F0935944006CFC09CD5C8EE0AA447AD9C8B"
+      },
+      {
+        "path": ".artifacts/safety_op185_op466_counterfactual/rng_transcripts.json",
+        "sha256": "A76E1D8EE040A45FBE78C25F46875F773FD5C99BCF5764D585CAFEC85F7052C5"
+      },
+      {
+        "path": ".artifacts/safety_op185_op466_counterfactual/sha256sums.txt",
+        "sha256": "1D8D34146A4124592212595190F54B7281B6EB534E8603DBC38A73ED86B915C7"
+      },
+      {
+        "path": ".artifacts/safety_op466_candidate_admission/admission_decisions.json",
+        "sha256": "3BE43CBDA9DFCA4B918ACB5421B3597965C4B432E507B0237E937BADA4E8221B"
+      },
+      {
+        "path": ".artifacts/safety_op466_candidate_admission/no_interference.json",
+        "sha256": "0A29DA5D528F6CEA39971F5022CA351B06F7CCF046A735084EB3C9EFA91572CA"
+      },
+      {
+        "path": ".artifacts/safety_op466_candidate_admission/sha256sums.txt",
+        "sha256": "16813D20805F50CC9155089E6EB5BAC185E1B1D5E6255A87910FA13E18B20613"
+      },
+      {
+        "path": ".artifacts/safety_op466_jules_handoff/manifest.json",
+        "sha256": "8D43372C8B8283CEE1A4753E18409C26ABD326F5E404AF1D51CDBC47B4DF4A5E"
+      },
+      {
+        "path": ".artifacts/safety_op466_jules_handoff/sha256sums.txt",
+        "sha256": "FC59A7CFFB274015C7188B3965430FF72F18AD5EDFD4DE4FF507047409657E77"
+      },
+      {
+        "path": ".artifacts/safety_op466_jules_handoff.zip",
+        "sha256": "72F07EC2E947F9A3859A28C2E790DA1399E79B29D677A83F4D2FC0DBDDD9CF43"
+      }
+    ]
+  },
+  "canonicalSha256": "07B5678CD73B40583A5C79321846FB8B6D856EF99B75C4B68AF488ED3AF86928",
+  "canonicalization": "UTF-8 System.Text.Json camelCase; ordered arrays; no timestamps or private paths"
+}

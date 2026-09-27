@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 16,
+  "schemaVersion": 17,
   "lastUpdated": "2026-09-26",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
@@ -36,7 +36,8 @@
     { "id": "SAFETY.REMEDIATION.GATE", "name": "Canonical Playable Geometry Runtime Gate", "status": "COMPLETE", "outcome": "NEEDS_REVIEW", "behaviorChange": true, "report": "docs/PHASE_SAFETY_REMEDIATION_GATE_FINAL_RECERTIFICATION.md", "authorization": "EXPERIMENT_COMPLETED_NO_PROMOTION" },
     { "id": "G1", "name": "Interior Relation Semantics A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
     { "id": "G2", "name": "Causal Articulation A/B", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
-    { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" }
+    { "id": "H", "name": "ParentArticulationPlan", "status": "FUTURE", "outcome": null, "behaviorChange": true, "report": null, "authorization": "NOT_AUTHORIZED" },
+    { "id": "LANE.0", "name": "Descriptive Lane Research / Shadow", "status": "PENDING", "outcome": "PROPOSED", "behaviorChange": false, "report": null, "authorization": "PENDING_HUMAN_AUTHORIZATION" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -63,7 +64,17 @@
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 826, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 829, "failed": 0, "skipped": 0 },
+  "lane0Proposal": {
+    "status": "PROPOSED",
+    "authorization": "PENDING_HUMAN_AUTHORIZATION",
+    "intendedMode": "DESCRIPTIVE_SHADOW_ONLY",
+    "contractWritten": false,
+    "runnerImplemented": false,
+    "corpusPrepared": false,
+    "experimentsExecuted": false,
+    "nextAutomatic": false
+  },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
@@ -238,6 +249,72 @@
       "focusedRuns": 8,
       "eDemonstrated": 8,
       "targetOp466Attributed": false,
+      "fullMatrixExecuted": false,
+      "behaviorChanged": false,
+      "promotion": "NOT_AUTHORIZED"
+    },
+    "selectionSetRemappingHarnessHardening": {
+      "status": "PASS",
+      "report": "docs/PHASE_SAFETY_SELECTION_SET_REMAPPING_HARNESS_HARDENING.md",
+      "historicalOutcomePreserved": "E_DEMONSTRATED_LOCAL_ONLY",
+      "suitePassed": 807,
+      "experimentRerun": false,
+      "behaviorChanged": false
+    },
+    "op185Op466Counterfactual": {
+      "status": "COMPLETE",
+      "outcome": "ABSENT_BOTH",
+      "design": "docs/PHASE_SAFETY_OP185_OP466_COUNTERFACTUAL_DESIGN.md",
+      "report": "docs/PHASE_SAFETY_OP185_OP466_COUNTERFACTUAL_GATE.md",
+      "contract": "docs/safety_op185_op466_counterfactual_contract.json",
+      "contractHash": "6A7DA86F3EBCF41A352813372DAB159FBC51F69DD8E7797F7A5F1CFD71110620",
+      "interventionCount": 1,
+      "targetRecovered": false,
+      "historicalClassificationChanged": false,
+      "behaviorChanged": false,
+      "promotion": "NOT_AUTHORIZED"
+    },
+    "op466CandidateAdmission": {
+      "status": "COMPLETE",
+      "outcome": "MECHANISM_IDENTIFIED",
+      "report": "docs/PHASE_SAFETY_OP466_CANDIDATE_ADMISSION_FORENSICS.md",
+      "effectiveChance": 0.5,
+      "canonicalAuthenticRoll": 0.7305439518441185,
+      "canonicalResult": "ProbabilityAbstain",
+      "candidateConstructed": false,
+      "historicalClassificationChanged": false,
+      "behaviorChanged": false
+    },
+    "op466RngGeometryAudit": {
+      "status": "COMPLETE",
+      "outcome": "AUDIT_HANDOFF_ONLY",
+      "report": "docs/PHASE_SAFETY_OP466_RNG_GEOMETRY_AUDIT_HANDOFF.md",
+      "completeRows": 30,
+      "rngDeltaBeforeOp466": 8,
+      "rngDeltaAtOp466": 1,
+      "rngDeltaAfterOp466": 9,
+      "geometryAtAudit": "INCOMPLETE",
+      "behaviorChanged": false
+    },
+    "op466GeometryObservation": {
+      "status": "COMPLETE",
+      "outcomeA": "LANE_2_ILLEGAL",
+      "outcomeB": "LANE_2_ILLEGAL",
+      "report": "docs/PHASE_SAFETY_OP466_GEOMETRY_OBSERVATION.md",
+      "officialContract": "docs/safety_op466_geometry_observation_contract_v3.json",
+      "officialContractHash": "07B5678CD73B40583A5C79321846FB8B6D856EF99B75C4B68AF488ED3AF86928",
+      "invalidatedContracts": [
+        "docs/safety_op466_geometry_observation_contract_v1_invalidated_before_query.json",
+        "docs/safety_op466_geometry_observation_contract_v2_invalidated_before_query.json"
+      ],
+      "blockingLane": 2,
+      "blockingLongNoteStartTime": 34783,
+      "blockingLongNoteEndTime": 35009,
+      "targetTime": 35009,
+      "legalLanes": [1, 3],
+      "historicalStopCause": "ProbabilityAbstain",
+      "historicalClassification": "C_UNRESOLVED",
+      "globalStatus": "NEEDS_REVIEW",
       "fullMatrixExecuted": false,
       "behaviorChanged": false,
       "promotion": "NOT_AUTHORIZED"

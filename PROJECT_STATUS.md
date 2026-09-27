@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION**. La investigación separada SELECTION-SET-REMAPPING demostró E localmente en 8/8 primeras divergencias mediante replay auténtico del mismo prefijo RNG; no logró aislar una cadena completa a OP-466. La partición continúa `188 A + 21 B + 5 D + 1 unresolved`, el default no cambió, G1.GATE permanece **NEEDS_REVIEW** y ninguna sucesora está autorizada.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION**. Después de SELECTION-SET-REMAPPING se cerraron cuatro investigaciones focalizadas de OP-466: el contrafactual OP-185 obtuvo `ABSENT_BOTH`; la admisión identificó `ProbabilityAbstain`; la auditoría RNG reconstruyó el desfase `+8` previo, `+1` en OP-466 y `+9` posterior; y la observación geométrica v3 demostró `LANE_2_ILLEGAL` en ambos padres exactos. Ninguna equivale a una nueva recertificación ni autoriza conducta. La partición oficial continúa `188 A + 21 B + 5 D + 1 C_UNRESOLVED`, el default no cambió, G1.GATE permanece **NEEDS_REVIEW** y ninguna sucesora está autorizada.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -31,6 +31,11 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | SAFETY.REMEDIATION.DESIGN — Hard-Validity Remediation Design | **COMPLETE — READY_FOR_SEPARATE_REMEDIATION_GATE / NO IMPLEMENTATION** | Ninguno; shadow puro selecciona autoridad canónica compartida sin modificar runtime. |
 | SAFETY.REMEDIATION.GATE — Canonical Playable Geometry Runtime | **COMPLETE — FORENSIC ATTRIBUTION NEEDS_REVIEW / NO PROMOTION** | Sí, sólo treatment research explícito; 224 pares, 0 violaciones treatment, 188 A + 21 B + 5 D + 1 unresolved; ocho episodios explicados pero no certificados por la causalidad congelada. |
 | SAFETY.SELECTION-SET-REMAPPING — Focused Counterfactual Gate | **COMPLETE — E_DEMONSTRATED LOCAL ONLY / NO PROMOTION** | Ninguno; replay aislado demuestra 8/8 primeras divergencias, pero no atribuye completamente OP-466 ni modifica el clasificador oficial. |
+| SAFETY.OP185→OP466 — Single-Intervention Counterfactual | **COMPLETE — ABSENT_BOTH / NO RECLASSIFICATION** | Ninguno productivo; la intervención research única lane 2→3 no recuperó target exacto ni similar en OP-466. |
+| SAFETY.OP466.CANDIDATE_ADMISSION — Focused Forensics | **COMPLETE — MECHANISM_IDENTIFIED / RESEARCH ONLY** | Ninguno; identifica el fallo del roll `0.7305439518441185 >= 0.5` antes de candidate/lanes en A y B. |
+| SAFETY.OP466.RNG_GEOMETRY_AUDIT — Evidence Handoff | **COMPLETE — AUDIT/HANDOFF ONLY** | Ninguno; reconstruye `+8` llamadas antes, `+1` durante y `+9` después de OP-466 sin completar todavía la geometría A/B. |
+| SAFETY.OP466.GEOMETRY_OBSERVATION — Passive Lane Query | **COMPLETE — LANE_2_ILLEGAL A/B / RESEARCH ONLY** | Ninguno; v3 consulta padres completos sin RNG ni commit y detecta colisión inclusiva con LN sintética `34783→35009`. |
+| LANE.0 — Descriptive Lane Research / Shadow | **PROPOSED — PENDING HUMAN AUTHORIZATION** | Ninguno; no existe contrato, runner, corpus preparado ni ejecución autorizada. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -146,6 +151,16 @@ El follow-up posterior auditó dos defectos reales del harness: una diferencia d
 
 C11 ahora puede suministrarse como directorio explícito verificado por los once SHA-256 del manifest. La ruta local resolvió 12 ubicaciones, 11 contenidos y un duplicado exacto; coincidió 11/11 con el discovery anterior sobre esa carpeta. No se escanea `Songs`, no se distribuyen `.osu` de terceros y C11 sigue siendo desarrollo histórico, no holdout independiente.
 
+### Investigaciones focalizadas posteriores de OP-466
+
+La recertificación final reemplazó el snapshot de hardening anterior únicamente en su partición oficial: 220 pares C11 más cuatro pares G1, 215 condiciones HardValidity en control y cero en treatment, con `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. El reparto previo `188 A + 22 B + 5 C` se conserva sólo como resultado histórico del hardening/follow-up, no como estado actual.
+
+SELECTION-SET-REMAPPING demostró `E_SELECTION_SET_REMAP` en 8/8 primeras divergencias, pero dejó OP-466 unresolved por intervenciones posteriores y límites de atribución downstream. El contrafactual separado OP-185→OP-466 sustituyó una sola selección autenticada, mantuvo el transcript RNG y obtuvo `ABSENT_BOTH`: A y B alcanzaron OP-466 sin construir candidato ni comprometer el target.
+
+La forensia de admisión identificó el mecanismo inmediato: ambos brazos canónicos consumen `NextDouble() = 0.7305439518441185` con chance efectiva `0.5` y toman `ProbabilityAbstain` antes de `PlaceTap`. La auditoría posterior documentó correctamente el desfase legacy/canonical como `+8` llamadas antes de OP-466, `+1` durante esa oportunidad y `+9` después; no confunde el delta final con el previo.
+
+Finalmente, la observación pasiva preregistrada v3 reconstruyó los estados padres completos sin modificar `AddNotesEngine`. En A y B, lane 2 es ilegal porque la misma LN sintética lane 2 empieza en 34783 ms y termina exactamente en el tap 35009 ms; la semántica inclusiva de endpoints rechaza la coexistencia y las lanes legales son `{1, 3}`. Esta barrera hipotética no causó el stop histórico —el roll ya había fallado— y no demuestra qué candidato habría sido seleccionado o comprometido tras un roll exitoso. Los intentos instrumentales v1/v2 se invalidaron antes de consultar lane 2; sólo v3 es oficial.
+
 ## Qué afecta realmente la generación
 
 La policy legacy sigue tomando decisiones mediante Bernoulli por oportunidad, factores manuales de chord/contexto, weights LN por distancia y afinidad, gap local con fallback, selección ponderada de forma y lane legal uniforme. Los toggles experimentales documentados sí pueden alterar el resultado cuando se activan o desactivan.
@@ -241,6 +256,9 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 - Suite histórica al cierre del follow-up focalizado: **766 passed, 0 failed, 0 skipped**; 45 tests dirigidos, 5/5 mecanismos demostrados, C11 11/11 y sin matriz completa nueva.
 - Suite de los guards finales pre-recertificación: **774 passed, 0 failed, 0 skipped**; incluye los controles estructurales y adversariales añadidos después del follow-up. El baseline de esta recertificación reprodujo **774/774** antes de congelar su contrato.
 - Suite pre-freeze de recertificación: **777 passed, 0 failed, 0 skipped**. La única matriz completó 224/224 pares; outcome `NEEDS_REVIEW` por 1 caso sin explicación fuerte y 70.835 divergencias sin atribución, pese a 0 violaciones treatment.
+- Hardening post-publicación de SELECTION-SET-REMAPPING: **807 passed, 0 failed, 0 skipped**; corrigió una comprobación tautológica sin repetir el experimento ni cambiar E 8/8.
+- Cierre del contrafactual y auditorías de OP-466 previo a geometría: **826 passed, 0 failed, 0 skipped**.
+- Validación actual tras la observación geométrica v3: **829 passed, 0 failed, 0 skipped**; tres controles focalizados nuevos, build Release sin errores y `DOCUMENTATION CONSISTENCY: PASS`.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -260,7 +278,7 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION** tras la recertificación final; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. El siguiente paso exige revisión humana explícita; no existe fase accionable autorizada.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION** tras la recertificación final; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. `LANE.0` se registra sólo como **PROPOSED / PENDING HUMAN AUTHORIZATION**, para una eventual investigación descriptiva en shadow mode; no es una fase accionable, activa ni siguiente automática. El siguiente paso inmediato es revisión y publicación humana de este cierre documental.
 
 <!-- PROJECT-STATE:BEGIN -->
 Current phase: SAFETY.REMEDIATION.GATE — COMPLETE — OUTCOME NEEDS_REVIEW<br>
@@ -274,7 +292,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: true<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 826 passed / 0 failed / 0 skipped
+Tests: 829 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

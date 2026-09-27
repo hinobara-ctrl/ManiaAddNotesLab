@@ -4,6 +4,32 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManiaAddNotesLab.Core;
 
+if (args.Length == 5 && args[0] == "safety-op466-geometry-prepare")
+{
+    Console.WriteLine("SAFETY OP-466 geometry contract=" + SafetyOp466GeometryObservationRunner.Prepare(
+        Path.GetFullPath(args[1]), Path.GetFullPath(args[2]), Path.GetFullPath(args[3]),
+        Path.GetFullPath(args[4])));
+    return;
+}
+
+if (args.Length == 6 && args[0] == "safety-op466-geometry-run")
+{
+    try
+    {
+        var outcome = SafetyOp466GeometryObservationRunner.Run(Path.GetFullPath(args[1]),
+            Path.GetFullPath(args[2]), Path.GetFullPath(args[3]), Path.GetFullPath(args[4]),
+            Path.GetFullPath(args[5]));
+        Console.WriteLine($"SAFETY OP-466 geometry observation {outcome}");
+    }
+    catch (Exception exception)
+    {
+        Console.Error.WriteLine($"SAFETY OP-466 geometry observation INVALID: "
+            + $"{exception.GetType().Name}: {exception.Message}");
+        Environment.ExitCode = 1;
+    }
+    return;
+}
+
 if (args.Length == 5 && args[0] == "safety-op466-candidate-admission-run")
 {
     var outcome = SafetyOp466CandidateAdmissionRunner.Run(Path.GetFullPath(args[1]),
