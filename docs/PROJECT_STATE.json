@@ -1,6 +1,6 @@
 {
   "schemaVersion": 21,
-  "lastUpdated": "2026-09-27",
+  "lastUpdated": "2026-09-28",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -69,7 +69,7 @@
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 868, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 921, "failed": 0, "skipped": 0 },
   "lane0Closure": {
     "status": "COMPLETE",
     "outcome": "FEASIBILITY_DEMONSTRATED",

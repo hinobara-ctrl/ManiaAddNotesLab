@@ -1,7 +1,7 @@
 # Behavior Decision Audit
 
 Estado: inventario vivo; conserva la historia de Phase A y sus refinamientos posteriores.
-Última actualización: 2026-09-26.
+Última actualización: 2026-09-28.
 Alcance: Core, parser/writer, CLI, Web y política experimental vigente.
 
 Esta auditoría no elimina ni modifica decisiones. Identifica números y elecciones no numéricas que pueden afectar el resultado para que futuras sustituciones sean versionadas y atribuibles.
@@ -177,3 +177,5 @@ No se cambió ninguna decisión conductual. Las cifras LANE.0 permanecen histór
 Estado: **COMPLETE — READY_FOR_PUBLICATION_REVIEW / STEP 2 NOT AUTHORIZED**. El auditor conserva motivos temporal e identitario como diagnósticos ortogonales, exige integridad de `AnchorTime` y mantiene la partición única de donors. Un índice chart-local de relaciones completas produce exactamente los mismos future-held IDs que la referencia naive sin repetir materialización por occurrence.
 
 La ruta correctiva v2 verifica hash canónico, identidad de implementación, harness, dependencias, binding de publicación, HEAD, autorización y manifest antes de cualquier acceso al corpus. Falta de insumo indispensable queda `BLOCKED`; drift de identidad queda `INVALID`. Las plantillas de comparación permanecen vacías y C11 no fue consultado. La certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION**; el Paso 2 correctivo C11 está **NO AUTORIZADO**.
+
+El successor `f303726` fue publicado con un corrective evaluator research-only, in-memory, RNG-free y no mutante. La auditoría post-publicación cerró F01-F04: inputs científicos obligatorios, contradicciones históricas `INVALID`, snapshot RICE externo y rechazo de destinos no vacíos. No existe call site desde CLI, Web o producción, ni corpus adapter, binding o autorización C11. Esta publicación no modificó ninguna decisión conductual: `legacy-experimental.1` permanece intacta y LANE.0 continúa pendiente de recertificación científica.
