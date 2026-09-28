@@ -77,6 +77,13 @@ internal sealed record Lane0G1BranchComparison(
 internal static class Lane0CorrectiveEvaluationRunner
 {
     internal const string SchemaVersion = "lane-0-corrective-evaluation-core.1";
+    internal static readonly Lane0FrozenSnapshot FrozenHistoricalSnapshot = new(
+        new(40360, 39596, 37080, 693, 36387, 2516, 764, 40360, 37080, 11, 3),
+        new(16881, 9540, 3373, 192, 3181, 6167, 7341, 288, 11, 5, 2));
+    internal static readonly Lane0HistoricalCaseRule FrozenHistoricalG1CaseRule = new(11,
+        ImmutableSortedDictionary<string, int>.Empty.WithComparers(StringComparer.Ordinal)
+            .Add("20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788", 9)
+            .Add("E73B098A4D4C99D716D2C53B3EA3A4BFD1A75059881F30DB416631B5EDB972D4", 2), 7);
     private static readonly JsonSerializerOptions Json = new()
     {
         WriteIndented = true,
@@ -145,11 +152,14 @@ internal static class Lane0CorrectiveEvaluationRunner
             .ThenBy(x => x.OccurrenceId, StringComparer.Ordinal).ToImmutableArray();
         var criteria = BuildCriteria(orderedRows);
         var blocked = ImmutableArray.CreateBuilder<string>();
-        if (!options.PrerequisitesComplete) blocked.Add("Required future publication/authorization inputs are absent.");
-        if (options.RequiredHistoricalSnapshot is not null)
-            failures.AddRange(ValidateHistoricalSnapshot(orderedRows, options.RequiredHistoricalSnapshot));
+        ValidateRequiredScientificInputs(options, blocked, failures);
+        var scientificInputsComplete = options.PrerequisitesComplete
+            && options.RequiredHistoricalSnapshot is not null
+            && options.RequiredHistoricalG1Cases is not null;
+        if (scientificInputsComplete)
+            failures.AddRange(ValidateHistoricalSnapshot(orderedRows, options.RequiredHistoricalSnapshot!));
         var historicalCases = ResolveHistoricalCases(orderedTransitions,
-            options.RequiredHistoricalG1Cases, blocked);
+            scientificInputsComplete ? options.RequiredHistoricalG1Cases : null, failures);
         if (!RiceSentinelMatches(orderedRows)) failures.Add("RICE_SENTINEL_NON_INTERFERENCE_FAILURE");
 
         var outcome = Classify(failures.Count == 0, blocked.Count > 0,
@@ -217,7 +227,7 @@ internal static class Lane0CorrectiveEvaluationRunner
 
     internal static ImmutableArray<Lane0HistoricalOperationalCase> ResolveHistoricalCases(
         ImmutableArray<Lane0G1Transition> transitions, Lane0HistoricalCaseRule? rule,
-        ImmutableArray<string>.Builder blocked)
+        ImmutableArray<string>.Builder failures)
     {
         var cases = transitions.Where(x => x.HistoricalOperational && x.HistoricalJointSupported)
             .OrderBy(x => x.ChartId, StringComparer.Ordinal).ThenBy(x => x.OccurrenceId, StringComparer.Ordinal)
@@ -227,13 +237,13 @@ internal static class Lane0CorrectiveEvaluationRunner
                 x.UniqueFutureHeldExcluded, x.UniqueExcluded, x.CorrectedJointSupported)).ToImmutableArray();
         if (rule is null) return cases;
         if (cases.Length != rule.ExpectedCount)
-            blocked.Add($"Historical operational G1 case count mismatch: {cases.Length}/{rule.ExpectedCount}.");
+            failures.Add($"Historical operational G1 case count mismatch: {cases.Length}/{rule.ExpectedCount}.");
         var distribution = cases.GroupBy(x => x.ChartId, StringComparer.Ordinal)
             .ToImmutableSortedDictionary(x => x.Key, x => x.Count(), StringComparer.Ordinal);
         if (!distribution.SequenceEqual(rule.ExpectedChartDistribution))
-            blocked.Add("Historical operational G1 chart distribution mismatch.");
+            failures.Add("Historical operational G1 chart distribution mismatch.");
         if (cases.Any(x => x.KeyCount != rule.ExpectedKeymode))
-            blocked.Add("Historical operational G1 keymode mismatch.");
+            failures.Add("Historical operational G1 keymode mismatch.");
         return cases;
     }
 
@@ -277,14 +287,41 @@ internal static class Lane0CorrectiveEvaluationRunner
 
     internal static void WriteArtifacts(Lane0CorrectiveEvaluationResult result, string outputDirectory)
     {
-        Directory.CreateDirectory(outputDirectory);
         var artifacts = SerializeArtifacts(result);
-        foreach (var pair in artifacts) File.WriteAllBytes(Path.Combine(outputDirectory, pair.Key), pair.Value);
         var checksums = string.Join('\n', artifacts.Select(x =>
             $"{Convert.ToHexString(SHA256.HashData(x.Value))}  {x.Key}")) + "\n";
+        if (Directory.Exists(outputDirectory)
+            && Directory.EnumerateFileSystemEntries(outputDirectory).Any())
+            throw new InvalidOperationException(
+                "Output directory must be nonexistent or completely empty.");
+        Directory.CreateDirectory(outputDirectory);
+        foreach (var pair in artifacts) File.WriteAllBytes(Path.Combine(outputDirectory, pair.Key), pair.Value);
         File.WriteAllText(Path.Combine(outputDirectory, "sha256sums.txt"), checksums,
             new UTF8Encoding(false));
     }
+
+    internal static void ValidateRequiredScientificInputs(Lane0CorrectiveEvaluationOptions options,
+        ImmutableArray<string>.Builder blocked, ImmutableArray<string>.Builder failures)
+    {
+        if (!options.PrerequisitesComplete)
+            blocked.Add("Required future publication/authorization inputs are absent.");
+        if (options.RequiredHistoricalSnapshot is null)
+            blocked.Add("Required frozen historical snapshot was not supplied.");
+        if (options.RequiredHistoricalG1Cases is null)
+            blocked.Add("Required frozen historical G1 case rule was not supplied.");
+
+        if (!options.PrerequisitesComplete || options.RequiredHistoricalSnapshot is null
+            || options.RequiredHistoricalG1Cases is null) return;
+        if (options.RequiredHistoricalSnapshot != FrozenHistoricalSnapshot)
+            failures.Add("Supplied frozen historical snapshot contradicts the canonical snapshot.");
+        if (!HistoricalCaseRuleEquals(options.RequiredHistoricalG1Cases, FrozenHistoricalG1CaseRule))
+            failures.Add("Supplied frozen historical G1 case rule contradicts the canonical rule.");
+    }
+
+    private static bool HistoricalCaseRuleEquals(Lane0HistoricalCaseRule actual,
+        Lane0HistoricalCaseRule expected) => actual.ExpectedCount == expected.ExpectedCount
+        && actual.ExpectedKeymode == expected.ExpectedKeymode
+        && actual.ExpectedChartDistribution.SequenceEqual(expected.ExpectedChartDistribution);
 
     private static ImmutableArray<Lane0Occurrence> BuildFrozenRiceOccurrences(string chart,
         ChordCompletionResearchResult result) => result.ChordGroups.SelectMany(group => group.Members.Select(target =>

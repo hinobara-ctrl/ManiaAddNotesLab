@@ -159,30 +159,30 @@ public sealed class Lane0CorrectiveEvaluatorDesignTests
     }
 
     [Fact]
-    public void HistoricalCaseCountMismatchBlocks()
+    public void HistoricalCaseCountMismatchIsInvalidFailure()
     {
-        var blocked = ImmutableArray.CreateBuilder<string>();
+        var failures = ImmutableArray.CreateBuilder<string>();
         Lane0CorrectiveEvaluationRunner.ResolveHistoricalCases(ElevenHistoricalTransitions(),
-            new Lane0HistoricalCaseRule(10, Distribution(11), 7), blocked);
-        Assert.Contains(blocked, x => x.Contains("count mismatch", StringComparison.Ordinal));
+            new Lane0HistoricalCaseRule(10, Distribution(11), 7), failures);
+        Assert.Contains(failures, x => x.Contains("count mismatch", StringComparison.Ordinal));
     }
 
     [Fact]
-    public void HistoricalCaseDistributionMismatchBlocks()
+    public void HistoricalCaseDistributionMismatchIsInvalidFailure()
     {
-        var blocked = ImmutableArray.CreateBuilder<string>();
+        var failures = ImmutableArray.CreateBuilder<string>();
         Lane0CorrectiveEvaluationRunner.ResolveHistoricalCases(ElevenHistoricalTransitions(),
-            new Lane0HistoricalCaseRule(11, Distribution(10), 7), blocked);
-        Assert.Contains(blocked, x => x.Contains("distribution mismatch", StringComparison.Ordinal));
+            new Lane0HistoricalCaseRule(11, Distribution(10), 7), failures);
+        Assert.Contains(failures, x => x.Contains("distribution mismatch", StringComparison.Ordinal));
     }
 
     [Fact]
-    public void HistoricalCaseKeymodeMismatchBlocks()
+    public void HistoricalCaseKeymodeMismatchIsInvalidFailure()
     {
-        var blocked = ImmutableArray.CreateBuilder<string>();
+        var failures = ImmutableArray.CreateBuilder<string>();
         Lane0CorrectiveEvaluationRunner.ResolveHistoricalCases(ElevenHistoricalTransitions(),
-            new Lane0HistoricalCaseRule(11, Distribution(11), 4), blocked);
-        Assert.Contains(blocked, x => x.Contains("keymode mismatch", StringComparison.Ordinal));
+            new Lane0HistoricalCaseRule(11, Distribution(11), 4), failures);
+        Assert.Contains(failures, x => x.Contains("keymode mismatch", StringComparison.Ordinal));
     }
 
     [Fact]

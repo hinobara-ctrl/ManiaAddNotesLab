@@ -1,0 +1,121 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-evaluator-hardening.1",
+    "parentPublishedHead": "d005534fc9b27827ebd3951368c3eb5eb714ee87",
+    "parentDesignContractPath": "docs/lane_0_corrective_evaluator_design_contract.json",
+    "parentDesignContractCanonicalSha256": "074B84F57D0ED3870C744ABCD1F00E2BA9B9C587F917A9823C76F46D06DF01EB",
+    "parentEvaluatorImplementationFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveEvaluationRunner.cs"
+    ],
+    "parentEvaluatorImplementationSha256": "9CA35582CCB70B5D85434373709D511A3B896BCDF1353137F8FE6724DBA53128",
+    "parentEvaluatorHarnessFiles": [
+      "tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests/Lane0CorrectiveEvaluatorDesignTests.cs",
+      "tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests.csproj",
+      "tools/VerifyLane0CorrectiveEvaluatorDesign.ps1"
+    ],
+    "parentEvaluatorHarnessSha256": "F00289DF36021C0211F3EE888A1EFF0D332390F1219EFC3391EEF487D9CC63D0",
+    "parentPreregistrationCanonicalSha256": "6392C579B87EC318C1DE381201D797B004650AB961398E3E2AB23F7A49A83D33",
+    "instrumentV3CanonicalSha256": "221D5133D8058FEBEAEA0A13F83058219D900261B033282EE389A82BA20FAAF7",
+    "instrumentImplementationSha256": "2F938F18D98C6299214C080195633A68B68C688CABF49DC0F4DEFFCA9C1897D9",
+    "instrumentHarnessSha256": "1EFC2B824FAA6F0798C3FFA679FCA073939D88B2C751612C06BB75C240E96309",
+    "preparationHarnessSha256": "AC1DD7469AC2876B1A31226DDB311CDF74F5D64ABEACC6C442C461F5F87964E3",
+    "expectedC11Manifest": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "identityAlgorithm": "Strict UTF-8; remove optional BOM; normalize CRLF and CR to LF; SHA-256 normalized UTF-8 bytes; tree SHA-256 over ordinal path|fileHash rows joined by LF.",
+    "evaluatorImplementationFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveEvaluationRunner.cs"
+    ],
+    "evaluatorImplementationSha256": "20D0AC6BB0AF197ACC6BE1B5E71D1DF65BD2CDC0FCAB0E49FD6F036D03A0D8F4",
+    "evaluatorHarnessFiles": [
+      "tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests/Lane0CorrectiveEvaluatorDesignTests.cs",
+      "tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests/Lane0CorrectiveEvaluatorHardeningTests.cs",
+      "tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests.csproj",
+      "tools/VerifyLane0CorrectiveEvaluatorHardening.ps1"
+    ],
+    "evaluatorHarnessSha256": "724837E42F2308DA3159BAE00F3339656C03EE936B9E350F416124A7E92AA173",
+    "solutionPath": "ManiaAddNotesLab.sln",
+    "solutionNormalizedSha256": "BFEB1689414A2FB712170A967B9BA6DAD70BFE656D307A25821A976D81942A37",
+    "correctiveTestProjectReference": "tests\\ManiaAddNotesLab.CorrectiveEvaluator.Tests\\ManiaAddNotesLab.CorrectiveEvaluator.Tests.csproj",
+    "scientificRequiredInputs": [
+      "historicalSnapshot",
+      "historicalG1CaseRule"
+    ],
+    "missingRequiredScientificInputOutcome": "BLOCKED",
+    "suppliedHistoricalFactMismatchOutcome": "INVALID",
+    "classificationPrecedence": [
+      "INVALID",
+      "BLOCKED",
+      "FEASIBILITY_DEMONSTRATED",
+      "LIMITED_PARK"
+    ],
+    "frozenHistoricalSnapshot": {
+      "rice": {
+        "structural": 40360,
+        "comparableContext": 39596,
+        "jointSupport": 37080,
+        "jointUnique": 693,
+        "jointAmongAlternatives": 36387,
+        "contradiction": 2516,
+        "noContext": 764,
+        "operational": 40360,
+        "operationalSupported": 37080,
+        "supportedCharts": 11,
+        "supportedKeymodes": 3
+      },
+      "g1": {
+        "structural": 16881,
+        "comparableContext": 9540,
+        "jointSupport": 3373,
+        "jointUnique": 192,
+        "jointAmongAlternatives": 3181,
+        "contradiction": 6167,
+        "noContext": 7341,
+        "operational": 288,
+        "operationalSupported": 11,
+        "supportedCharts": 5,
+        "supportedKeymodes": 2
+      }
+    },
+    "frozenHistoricalG1CaseRule": {
+      "total": 11,
+      "keymode": 7,
+      "chartDistribution": {
+        "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788": 9,
+        "E73B098A4D4C99D716D2C53B3EA3A4BFD1A75059881F30DB416631B5EDB972D4": 2
+      }
+    },
+    "riceSentinelPolicy": {
+      "externalHistoricalSnapshotRequired": true,
+      "reconstructedHistoricalMustMatchFrozen": true,
+      "historicalMustEqualCorrected": true,
+      "alternativeCorrectedRiceAlgorithm": false
+    },
+    "outputDirectoryPolicy": "NONEXISTENT_OR_EMPTY_ONLY",
+    "outputDirectoryRules": [
+      "Reject any existing file",
+      "Reject any existing subdirectory",
+      "Validate emptiness before writing",
+      "Never delete, clean, merge or overwrite prior outputs",
+      "Write deterministic UTF-8 without BOM and LF",
+      "Exclude sha256sums.txt from its own checksum"
+    ],
+    "validationRoutes": [
+      "dotnet test ManiaAddNotesLab.sln -c Release -m:1",
+      "dotnet test tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests.csproj -c Release -m:1"
+    ],
+    "nonInterference": {
+      "researchRngCalls": 0,
+      "behaviorChanged": false,
+      "inputFingerprintMustRemainEqual": true,
+      "semanticArtifactsMustBeByteDeterministic": true,
+      "timestampsAbsolutePathsMachineNamesAndGuidsForbidden": true
+    },
+    "corpusLoaderPresent": false,
+    "cliExecutionExposed": false,
+    "authorizationBindingPresent": false,
+    "humanAuthorizationGranted": false,
+    "c11AccessAuthorized": false,
+    "currentState": "READY_FOR_PUBLICATION_AND_AUDIT / EXECUTION_BLOCKED"
+  },
+  "canonicalSha256": "A61F0933A49534857096D3A568E9C07F37805F9468CC94001546767073CD2E18",
+  "canonicalization": "UTF-8 JSON; recursively sort object properties ordinally; preserve array order and primitive values; no insignificant whitespace; hash only the contract object."
+}
