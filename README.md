@@ -46,6 +46,7 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **LANE.0 — HISTÓRICO COMPLETE / FEASIBILITY_DEMONSTRATED, CERTIFICACIÓN GLOBAL SUSPENDED / PENDING_RECERTIFICATION:** el resultado de `12ee879` conserva 37.080/40.360 supports rice y 3.373/16.881 G1, incluidos 11/288 operativos, pero no se presenta como certificación vigente tras confirmarse el defecto future-held. No existe selector ni sucesora autorizada.
 - **LANE.0.REMEDIATION — COMPLETE, READY_FOR_CORRECTIVE_EVALUATION:** el builder G1 histórico no transportaba `AnchorTime` ni identities future-held. El instrumento ya restaura ambas garantías y congela un contrato correctivo; las cifras anteriores se conservan como históricas y la certificación global queda pendiente de recertificación. C11 todavía no fue ejecutado.
 - **LANE.0.HARDENING — COMPLETE, READY_FOR_PUBLICATION_REVIEW:** separa exclusiones temporales e identitarias, exige integridad temporal, congela una ruta correctiva versionada y deja plantillas vacías para la futura comparación. Paso 2 correctivo C11 **NO AUTORIZADO**; no se consultó el corpus.
+- **LANE.0 counter closure — LOCAL RECERTIFICATION READY:** `UniqueFutureHeldExcluded` representa la unión sin doble conteo y un contrato sucesor conserva v2 mientras normaliza identidades de código frente a CRLF/LF. No cambia resultados ni autoriza C11.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. La recertificación final conserva `NEEDS_REVIEW`: seguridad observada 215→0, pero causalidad final `188 A + 21 B + 5 D + 1 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
@@ -61,7 +62,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 860 passed / 0 failed / 0 skipped
+Tests: 863 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

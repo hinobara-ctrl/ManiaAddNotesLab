@@ -1,0 +1,50 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-future-held-counter-closure.3",
+    "auditedBaselineHead": "c471d10ed48e42ab33b8a981ef22c6eb26774f3d",
+    "parentHardeningContractSha256": "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35",
+    "identityAlgorithm": "Decode UTF-8 with optional BOM removed; normalize CRLF and CR to LF; hash normalized UTF-8 bytes; tree hash is SHA-256 of ordinal path|fileHash rows joined by LF.",
+    "requiredPublicationBinding": "docs/lane_0_counter_closure_publication_binding.json",
+    "repairImplementationSha256": "2F938F18D98C6299214C080195633A68B68C688CABF49DC0F4DEFFCA9C1897D9",
+    "repairImplementationFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0FeasibilityRunner.cs"
+    ],
+    "correctiveHarnessSha256": "1EFC2B824FAA6F0798C3FFA679FCA073939D88B2C751612C06BB75C240E96309",
+    "correctiveHarnessFiles": [
+      "tests/ManiaAddNotesLab.Tests/Lane0FeasibilityTests.cs",
+      "tests/ManiaAddNotesLab.Tests/ManiaAddNotesLab.Tests.csproj",
+      "tools/DocConsistency/Program.cs",
+      "tools/IndependentLane0IdentityVerifier.ps1",
+      "tools/ManiaAddNotesLab.Experiments/Program.cs"
+    ],
+    "corpusManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "memoryLimit": "0x400000000",
+    "counterSemantics": "temporal_exclusion and future_held_identity_exclusion are overlapping diagnostics; both_reasons is their intersection; unique_future_held_excluded is their union; unique_excluded is the union of every exclusion barrier.",
+    "requiredControls": [
+      "five-counter-states",
+      "donor-partition",
+      "official-builder",
+      "independent-identity-verifier",
+      "historical-runner-preserved",
+      "bad-identity-invalid",
+      "missing-authorization-blocked",
+      "manifest-last-before-corpus",
+      "corrective-execution-denied"
+    ],
+    "outcomeRules": {
+      "BLOCKED": "Publication binding, approved HEAD, explicit authorization or manifest verification is absent before corpus access.",
+      "INVALID": "Canonical contract, normalized implementation/harness identity or dependency verification fails.",
+      "READY_FOR_AUTHORIZED_CORRECTIVE_EXECUTION": "Reserved for a later separately published and explicitly authorized C11 runner."
+    },
+    "reusedDependencies": {
+      "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md": "7F3B2C3CBAB3965DB9D166DDCDC00C79AC499A0EB75732594E5587AF5498169D",
+      "docs/lane_0_feasibility_contract.json": "DF686F4AFD99B04B0C0A9882BEC8433632E1DDDCE4809223062E0EB6DD9BE9B6",
+      "docs/lane_0_future_held_remediation_contract.json": "0D6B4AF9414055A5D5CE07B6C922A01E91B854FC76980EC0656E3976FFFE0E8C",
+      "src/ManiaAddNotesLab.Core/InteriorRelationFeasibilityResearch.cs": "AB1DD8CC6CA9B8A926F96C02C3060083C4FFA21F566342186F3DDD7F20A3E5BF",
+      "src/ManiaAddNotesLab.Core/InteriorRelationHoldoutAuditor.cs": "D7C45179066AAB35054707388DBD35285178C94E3A263790F91A219F117A04DD",
+      "src/ManiaAddNotesLab.Core/InteriorRelationMembershipResearch.cs": "9E5EEA78550E4F8C7C6FBEC4F2DFFC3D5B31C86B56DC490D1E564BADC232977F"
+    }
+  },
+  "canonicalSha256": "221D5133D8058FEBEAEA0A13F83058219D900261B033282EE389A82BA20FAAF7",
+  "canonicalization": "UTF-8 System.Text.Json typed semantic round-trip, camelCase, unindented; code identities use the separately declared UTF-8/LF-normalized tree algorithm"
+}

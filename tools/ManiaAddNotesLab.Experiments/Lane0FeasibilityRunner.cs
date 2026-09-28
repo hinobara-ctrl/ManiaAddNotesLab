@@ -25,7 +25,8 @@ internal sealed record Lane0LeakageAudit(
     int IncompleteOrMispairedIdentity, int DonorsConsidered, int UniqueExcluded,
     ImmutableArray<Lane0Occurrence> Eligible)
 {
-    public int FutureHeld => TemporalExclusion + FutureHeldIdentityExclusion;
+    public int UniqueFutureHeldExcluded => TemporalExclusion + FutureHeldIdentityExclusion
+        - BothTemporalAndIdentity;
     public int IntegrityFailures => SyntheticTeaching + CrossChart + ArtificialComposition
         + DuplicateObservationIdentity + IncompleteOrMispairedIdentity;
     public bool PartitionValid => Eligible.Length + UniqueExcluded == DonorsConsidered;
@@ -217,6 +218,24 @@ internal sealed record Lane0CorrectiveHardeningContract(
     ImmutableSortedDictionary<string, string> ReusedDependencies);
 internal sealed record Lane0CorrectiveHardeningContractArtifact(
     Lane0CorrectiveHardeningContract Contract, string CanonicalSha256, string Canonicalization);
+internal sealed record Lane0CounterClosureContract(
+    string SchemaVersion,
+    string AuditedBaselineHead,
+    string ParentHardeningContractSha256,
+    string IdentityAlgorithm,
+    string RequiredPublicationBinding,
+    string RepairImplementationSha256,
+    ImmutableArray<string> RepairImplementationFiles,
+    string CorrectiveHarnessSha256,
+    ImmutableArray<string> CorrectiveHarnessFiles,
+    string CorpusManifestSha256,
+    string MemoryLimit,
+    string CounterSemantics,
+    ImmutableArray<string> RequiredControls,
+    ImmutableSortedDictionary<string, string> OutcomeRules,
+    ImmutableSortedDictionary<string, string> ReusedDependencies);
+internal sealed record Lane0CounterClosureContractArtifact(
+    Lane0CounterClosureContract Contract, string CanonicalSha256, string Canonicalization);
 internal sealed record Lane0CorrectivePublicationBinding(
     string ContractSha256, string ApprovedPublishedHead, bool ExplicitHumanAuthorization);
 internal sealed record Lane0CorrectiveReadinessChecks(
@@ -303,6 +322,14 @@ internal static class Lane0FeasibilityRunner
         "src/ManiaAddNotesLab.Core/InteriorRelationFeasibilityResearch.cs",
         "src/ManiaAddNotesLab.Core/InteriorRelationHoldoutAuditor.cs",
         "src/ManiaAddNotesLab.Core/InteriorRelationMembershipResearch.cs"
+    ];
+    private static readonly string[] CounterClosureHarnessFiles =
+    [
+        "tools/ManiaAddNotesLab.Experiments/Program.cs",
+        "tests/ManiaAddNotesLab.Tests/Lane0FeasibilityTests.cs",
+        "tests/ManiaAddNotesLab.Tests/ManiaAddNotesLab.Tests.csproj",
+        "tools/DocConsistency/Program.cs",
+        "tools/IndependentLane0IdentityVerifier.ps1"
     ];
 
     public static string PrepareCorrectiveContract(string root, string contractPath)
@@ -422,6 +449,95 @@ internal static class Lane0FeasibilityRunner
         {
             Outcome = "BLOCKED",
             Reason = "This hardening command intentionally contains no C11 evaluation body; Step 2 requires a separately authorized published runner."
+        };
+    }
+
+    public static string PrepareCounterClosureContract(string root, string contractPath)
+    {
+        const string baseline = "c471d10ed48e42ab33b8a981ef22c6eb26774f3d";
+        if (ReadHead(root) != baseline)
+            throw new InvalidDataException("Counter closure must start from published baseline c471d10.");
+        var dependencies = CorrectiveHardeningDependencies.ToImmutableSortedDictionary(x => x,
+            x => NormalizedTextFileHash(Path.Combine(root, x)), StringComparer.Ordinal);
+        var contract = new Lane0CounterClosureContract(
+            "lane-0-future-held-counter-closure.3",
+            baseline,
+            "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35",
+            "Decode UTF-8 with optional BOM removed; normalize CRLF and CR to LF; hash normalized UTF-8 bytes; tree hash is SHA-256 of ordinal path|fileHash rows joined by LF.",
+            "docs/lane_0_counter_closure_publication_binding.json",
+            NormalizedTextTreeIdentity(root, CorrectiveImplementationFiles),
+            CorrectiveImplementationFiles.Order(StringComparer.Ordinal).ToImmutableArray(),
+            NormalizedTextTreeIdentity(root, CounterClosureHarnessFiles),
+            CounterClosureHarnessFiles.Order(StringComparer.Ordinal).ToImmutableArray(),
+            CorpusIdentity,
+            "0x400000000",
+            "temporal_exclusion and future_held_identity_exclusion are overlapping diagnostics; both_reasons is their intersection; unique_future_held_excluded is their union; unique_excluded is the union of every exclusion barrier.",
+            ["five-counter-states", "donor-partition", "official-builder", "independent-identity-verifier",
+             "historical-runner-preserved", "bad-identity-invalid", "missing-authorization-blocked",
+             "manifest-last-before-corpus", "corrective-execution-denied"],
+            ImmutableSortedDictionary<string, string>.Empty
+                .Add("BLOCKED", "Publication binding, approved HEAD, explicit authorization or manifest verification is absent before corpus access.")
+                .Add("INVALID", "Canonical contract, normalized implementation/harness identity or dependency verification fails.")
+                .Add("READY_FOR_AUTHORIZED_CORRECTIVE_EXECUTION", "Reserved for a later separately published and explicitly authorized C11 runner."),
+            dependencies);
+        var artifact = new Lane0CounterClosureContractArtifact(contract,
+            CanonicalCounterClosureContractHash(contract),
+            "UTF-8 System.Text.Json typed semantic round-trip, camelCase, unindented; code identities use the separately declared UTF-8/LF-normalized tree algorithm");
+        Directory.CreateDirectory(Path.GetDirectoryName(contractPath)!);
+        WriteJson(contractPath, artifact);
+        return artifact.CanonicalSha256;
+    }
+
+    public static Lane0CorrectiveReadinessReport ValidateCounterClosureReadiness(string root,
+        string contractPath, string? bindingPath, string? manifestPath)
+    {
+        try
+        {
+            var artifact = JsonSerializer.Deserialize<Lane0CounterClosureContractArtifact>(
+                File.ReadAllText(contractPath), Json)
+                ?? throw new InvalidDataException("Counter closure contract is empty.");
+            var canonical = CanonicalCounterClosureContractHash(artifact.Contract)
+                == artifact.CanonicalSha256;
+            var implementation = artifact.Contract.RepairImplementationSha256
+                == NormalizedTextTreeIdentity(root, artifact.Contract.RepairImplementationFiles);
+            var harness = artifact.Contract.CorrectiveHarnessSha256
+                == NormalizedTextTreeIdentity(root, artifact.Contract.CorrectiveHarnessFiles);
+            var dependencies = artifact.Contract.ReusedDependencies.All(pair =>
+                NormalizedTextFileHash(Path.Combine(root, pair.Key)) == pair.Value);
+            var bindingPresent = bindingPath is not null && File.Exists(bindingPath);
+            Lane0CorrectivePublicationBinding? binding = null;
+            if (bindingPresent)
+                binding = JsonSerializer.Deserialize<Lane0CorrectivePublicationBinding>(
+                    File.ReadAllText(bindingPath!), Json);
+            var headMatches = binding is not null
+                && binding.ContractSha256 == artifact.CanonicalSha256
+                && binding.ApprovedPublishedHead == ReadHead(root);
+            var authorized = binding?.ExplicitHumanAuthorization == true;
+            var manifestVerified = false;
+            if (canonical && implementation && harness && dependencies && headMatches && authorized
+                && manifestPath is not null && File.Exists(manifestPath))
+                manifestVerified = FrozenC11ManifestResearch.Load(manifestPath).CanonicalSha256
+                    == artifact.Contract.CorpusManifestSha256;
+            return ClassifyCorrectiveReadiness(new(canonical, implementation, harness, dependencies,
+                bindingPresent, headMatches, authorized, manifestVerified));
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
+            or InvalidDataException or JsonException)
+        {
+            return new("INVALID", exception.Message, new(false, false, false, false,
+                false, false, false, false));
+        }
+    }
+
+    public static Lane0CorrectiveReadinessReport DenyCounterClosureExecution(string root,
+        string contractPath, string? bindingPath, string? manifestPath)
+    {
+        var readiness = ValidateCounterClosureReadiness(root, contractPath, bindingPath, manifestPath);
+        if (readiness.Outcome != "READY_FOR_AUTHORIZED_CORRECTIVE_EXECUTION") return readiness;
+        return readiness with
+        {
+            Outcome = "BLOCKED",
+            Reason = "Counter closure contains no C11 evaluation body; execution remains separately unauthorized."
         };
     }
 
@@ -657,6 +773,19 @@ internal static class Lane0FeasibilityRunner
             $"{path.Replace('\\','/')}|{FileHash(Path.Combine(root, path))}"));
         return Hash(Encoding.UTF8.GetBytes(canonical));
     }
+    private static string NormalizedTextTreeIdentity(string root, IEnumerable<string> files)
+    {
+        var canonical = string.Join('\n', files.Order(StringComparer.Ordinal).Select(path =>
+            $"{path.Replace('\\','/')}|{NormalizedTextFileHash(Path.Combine(root, path))}"));
+        return Hash(Encoding.UTF8.GetBytes(canonical));
+    }
+    private static string NormalizedTextFileHash(string path)
+    {
+        var text = File.ReadAllText(path, Encoding.UTF8).TrimStart('\uFEFF')
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace('\r', '\n');
+        return Hash(new UTF8Encoding(false).GetBytes(text));
+    }
     private static string FileHash(string path) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
     private static string Hash(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes));
     internal static string CanonicalContractHash(Lane0Contract contract)
@@ -679,6 +808,13 @@ internal static class Lane0FeasibilityRunner
         var semanticJson = JsonSerializer.Serialize(contract, Json);
         var normalized = JsonSerializer.Deserialize<Lane0CorrectiveHardeningContract>(semanticJson, Json)
             ?? throw new InvalidDataException("Cannot normalize LANE.0 corrective hardening contract.");
+        return Hash(JsonSerializer.SerializeToUtf8Bytes(normalized, CanonicalJson));
+    }
+    internal static string CanonicalCounterClosureContractHash(Lane0CounterClosureContract contract)
+    {
+        var semanticJson = JsonSerializer.Serialize(contract, Json);
+        var normalized = JsonSerializer.Deserialize<Lane0CounterClosureContract>(semanticJson, Json)
+            ?? throw new InvalidDataException("Cannot normalize LANE.0 counter closure contract.");
         return Hash(JsonSerializer.SerializeToUtf8Bytes(normalized, CanonicalJson));
     }
     private static string HeadSignature(int keys, IEnumerable<int> taps, IEnumerable<int> lns) =>

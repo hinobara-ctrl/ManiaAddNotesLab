@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 20,
+  "schemaVersion": 21,
   "lastUpdated": "2026-09-27",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
@@ -69,7 +69,7 @@
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 860, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 863, "failed": 0, "skipped": 0 },
   "lane0Closure": {
     "status": "COMPLETE",
     "outcome": "FEASIBILITY_DEMONSTRATED",
@@ -114,6 +114,21 @@
     "repairImplementationSnapshot": "63F8897F39370D41260CEF962E20F82D288F502EA0AEE8AB82C3C1088F92B82E",
     "correctiveHarnessSnapshot": "B4C579411846085DAC6C977BD6D734528358C3A1E103D097D4EA46273FDBD212",
     "publishedRepairHead": "9a8d28f311dc07dc685cc92a23c76b508323fc25",
+    "publicationBinding": "ABSENT_BY_DESIGN",
+    "correctiveEvaluationExecuted": false,
+    "step2Authorized": false
+  },
+  "lane0FutureHeldCounterClosure": {
+    "status": "COMPLETE",
+    "outcome": "READY_FOR_PUBLICATION_REVIEW",
+    "behaviorChange": false,
+    "addendum": "docs/PHASE_LANE_0_COUNTER_CLOSURE_ADDENDUM.md",
+    "contract": "docs/lane_0_future_held_counter_closure_contract.json",
+    "contractHash": "221D5133D8058FEBEAEA0A13F83058219D900261B033282EE389A82BA20FAAF7",
+    "repairImplementationSnapshot": "2F938F18D98C6299214C080195633A68B68C688CABF49DC0F4DEFFCA9C1897D9",
+    "correctiveHarnessSnapshot": "1EFC2B824FAA6F0798C3FFA679FCA073939D88B2C751612C06BB75C240E96309",
+    "parentContractHash": "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35",
+    "auditedBaselineHead": "c471d10ed48e42ab33b8a981ef22c6eb26774f3d",
     "publicationBinding": "ABSENT_BY_DESIGN",
     "correctiveEvaluationExecuted": false,
     "step2Authorized": false

@@ -4,7 +4,7 @@
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 conserva su cierre histórico **FEASIBILITY_DEMONSTRATED**, pero una omisión de `AnchorTime` e identities future-held en el builder G1 dejó su certificación global **SUSPENDED / PENDING_RECERTIFICATION**. LANE.0.REMEDIATION reparó el instrumento y LANE.0.HARDENING cerró guards y documentación sin ejecutar C11 ni cambiar conducta. No existe selector ni promoción; G1.GATE continúa **NEEDS_REVIEW** y LANE.DESIGN/GATE o cualquier sucesora requieren autorización nueva.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 conserva su cierre histórico **FEASIBILITY_DEMONSTRATED**, pero su certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION**. El cierre instrumental distingue la unión unique future-held de la exclusión global y versiona una identidad portable CRLF/LF sin ejecutar C11 ni cambiar conducta. No existe selector ni promoción; G1.GATE continúa **NEEDS_REVIEW** y LANE.DESIGN/GATE o cualquier sucesora requieren autorización nueva.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -272,6 +272,7 @@ La rama exact-recurrence queda **PARKED**: la diagnosis es útil, pero añadir e
 - Validación de cierre LANE.0: **834 passed, 0 failed, 0 skipped**; cinco controles focalizados nuevos, evaluación oficial byte-identical, cero integrity failures y `DOCUMENTATION CONSISTENCY: PASS`.
 - Validación de LANE.0.REMEDIATION: **847 passed, 0 failed, 0 skipped**; fixture builder→auditor, fronteras temporales, provenance, outcomes inválidos y preregistro correctivo, sin ejecutar C11.
 - Hardening pre-recertificación LANE.0: **860 passed, 0 failed, 0 skipped**; integridad temporal, cuatro estados de exclusión, equivalencia índice/naive, guards de readiness y DocConsistency. C11 no ejecutado.
+- Cierre instrumental de contadores LANE.0: **863 passed, 0 failed, 0 skipped**; cinco estados adversariales, unión sin doble conteo, contrato alterado `INVALID`, verificación oficial y cruzada de identidades, ruta sucesora bloqueada. C11 no ejecutado.
 - Cinco fixtures conductuales permanecen byte a byte iguales a Phase B.
 - Spring ADD 50 seed 100 conserva el hash histórico documentado.
 
@@ -305,7 +306,7 @@ Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 860 passed / 0 failed / 0 skipped
+Tests: 863 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

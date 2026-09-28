@@ -48,6 +48,7 @@ else
     ValidateLane0Closure(state);
     ValidateLane0FutureHeldRemediation(state);
     ValidateLane0FutureHeldHardening(state);
+    ValidateLane0CounterClosure(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -1624,6 +1625,80 @@ void ValidateLane0FutureHeldHardening(ProjectState value)
     }
 }
 
+void ValidateLane0CounterClosure(ProjectState value)
+{
+    const string addendum = "docs/PHASE_LANE_0_COUNTER_CLOSURE_ADDENDUM.md";
+    const string contractPath = "docs/lane_0_future_held_counter_closure_contract.json";
+    foreach (var artifact in new[] { addendum, contractPath })
+    {
+        RequireFile(artifact, "LANE.0 counter closure artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "LANE.0 counter closure index entry");
+    }
+    foreach (var marker in new[]
+    {
+        "HISTORICAL FEASIBILITY_DEMONSTRATED", "GLOBAL CERTIFICATION SUSPENDED",
+        "PENDING_RECERTIFICATION", "C11 STEP 2 NOT_AUTHORIZED", "NO BEHAVIORAL PROMOTION",
+        "UniqueFutureHeldExcluded"
+    }) CheckContains(addendum, marker, "LANE.0 counter closure boundary");
+
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, contractPath)));
+        var artifact = document.RootElement;
+        var contractElement = artifact.GetProperty("contract");
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false
+        };
+        var contract = JsonSerializer.Deserialize<Lane0CounterClosureContractDocument>(
+            contractElement.GetRawText(), options)
+            ?? throw new InvalidDataException("Counter closure contract cannot be normalized.");
+        var canonical = Convert.ToHexString(SHA256.HashData(
+            JsonSerializer.SerializeToUtf8Bytes(contract, options)));
+        var implementation = NormalizedTextTreeIdentity(contract.RepairImplementationFiles);
+        var harness = NormalizedTextTreeIdentity(contract.CorrectiveHarnessFiles);
+        var dependencies = contract.ReusedDependencies.All(pair =>
+            NormalizedTextFileHash(pair.Key) == pair.Value);
+        if (artifact.GetProperty("canonicalSha256").GetString() != canonical
+            || contract.SchemaVersion != "lane-0-future-held-counter-closure.3"
+            || contract.AuditedBaselineHead != "c471d10ed48e42ab33b8a981ef22c6eb26774f3d"
+            || contract.ParentHardeningContractSha256
+                != "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35"
+            || contract.RequiredPublicationBinding
+                != "docs/lane_0_counter_closure_publication_binding.json"
+            || contract.CorpusManifestSha256
+                != "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
+            || contract.MemoryLimit != "0x400000000"
+            || contract.RepairImplementationSha256 != implementation
+            || contract.CorrectiveHarnessSha256 != harness
+            || !dependencies
+            || !contract.CounterSemantics.Contains("unique_future_held_excluded is their union",
+                StringComparison.Ordinal)
+            || !contract.RequiredControls.Contains("corrective-execution-denied", StringComparer.Ordinal))
+            errors.Add($"LANE.0 counter closure identity or boundary is invalid "
+                + $"(declared={artifact.GetProperty("canonicalSha256").GetString()}, canonical={canonical}, "
+                + $"implementation={implementation}, harness={harness}).");
+
+        using var stateDocument = JsonDocument.Parse(File.ReadAllText(statePath));
+        var state = stateDocument.RootElement.GetProperty("lane0FutureHeldCounterClosure");
+        if (state.GetProperty("contractHash").GetString() != canonical
+            || state.GetProperty("repairImplementationSnapshot").GetString() != implementation
+            || state.GetProperty("correctiveHarnessSnapshot").GetString() != harness
+            || state.GetProperty("parentContractHash").GetString()
+                != "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35"
+            || state.GetProperty("publicationBinding").GetString() != "ABSENT_BY_DESIGN"
+            || state.GetProperty("correctiveEvaluationExecuted").GetBoolean()
+            || state.GetProperty("step2Authorized").GetBoolean()
+            || state.GetProperty("behaviorChange").GetBoolean())
+            errors.Add("PROJECT_STATE does not preserve the counter closure identities and unauthorized C11 boundary.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"LANE.0 counter closure contract cannot be validated: {exception.Message}");
+    }
+}
+
 void ValidateMasterStateBlocks(ProjectState value)
 {
     var current = value.Phases.FirstOrDefault(x => x.Id == value.CurrentPhase);
@@ -1771,6 +1846,23 @@ void CheckBlockContains(string relative, string block, string expected, string m
 static string Normalize(string value) => new(value.Where(char.IsLetterOrDigit)
     .Select(char.ToUpperInvariant).ToArray());
 
+string NormalizedTextTreeIdentity(IEnumerable<string> files)
+{
+    var rows = files.Order(StringComparer.Ordinal)
+        .Select(path => $"{path.Replace('\\', '/')}|{NormalizedTextFileHash(path)}");
+    return Convert.ToHexString(SHA256.HashData(
+        System.Text.Encoding.UTF8.GetBytes(string.Join('\n', rows))));
+}
+
+string NormalizedTextFileHash(string relative)
+{
+    var text = File.ReadAllText(Path.Combine(root, relative.Replace('/', Path.DirectorySeparatorChar)),
+            System.Text.Encoding.UTF8)
+        .TrimStart('\uFEFF').Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
+    return Convert.ToHexString(SHA256.HashData(
+        new System.Text.UTF8Encoding(false).GetBytes(text)));
+}
+
 static string FindRoot(string start)
 {
     for (var directory = new DirectoryInfo(start); directory is not null; directory = directory.Parent)
@@ -1853,4 +1945,21 @@ sealed record Lane0CorrectiveHardeningContractDocument(
     IReadOnlyList<string> RequiredControls,
     SortedDictionary<string, string> OutcomeRules,
     IReadOnlyList<string> FutureResultColumns,
+    SortedDictionary<string, string> ReusedDependencies);
+
+sealed record Lane0CounterClosureContractDocument(
+    string SchemaVersion,
+    string AuditedBaselineHead,
+    string ParentHardeningContractSha256,
+    string IdentityAlgorithm,
+    string RequiredPublicationBinding,
+    string RepairImplementationSha256,
+    IReadOnlyList<string> RepairImplementationFiles,
+    string CorrectiveHarnessSha256,
+    IReadOnlyList<string> CorrectiveHarnessFiles,
+    string CorpusManifestSha256,
+    string MemoryLimit,
+    string CounterSemantics,
+    IReadOnlyList<string> RequiredControls,
+    SortedDictionary<string, string> OutcomeRules,
     SortedDictionary<string, string> ReusedDependencies);

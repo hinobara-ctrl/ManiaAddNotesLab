@@ -69,7 +69,8 @@ public sealed class Lane0FeasibilityTests
         };
         var audit = Lane0SpatialResearch.Audit(target, candidates);
         Assert.True(audit.Target > 0); Assert.True(audit.TargetGroup > 0); Assert.True(audit.Parent > 0);
-        Assert.True(audit.ReleaseEndpoint > 0); Assert.True(audit.FutureHeld > 0); Assert.True(audit.SameEvent > 0);
+        Assert.True(audit.ReleaseEndpoint > 0); Assert.True(audit.UniqueFutureHeldExcluded > 0);
+        Assert.True(audit.SameEvent > 0);
         Assert.True(audit.SyntheticTeaching > 0); Assert.True(audit.CrossChart > 0);
         Assert.True(audit.ArtificialComposition > 0); Assert.True(audit.DuplicateObservationIdentity > 0);
         Assert.True(audit.IncompleteOrMispairedIdentity > 0);
@@ -274,8 +275,62 @@ public sealed class Lane0FeasibilityTests
         Assert.Equal(2, audit.TemporalExclusion);
         Assert.Equal(2, audit.FutureHeldIdentityExclusion);
         Assert.Equal(1, audit.BothTemporalAndIdentity);
+        Assert.Equal(3, audit.UniqueFutureHeldExcluded);
         Assert.True(audit.PartitionValid);
         Assert.Equal(4, audit.Eligible.Length + audit.UniqueExcluded);
+    }
+
+    [Fact]
+    public void FutureHeldUnionAndGlobalExclusionRemainDistinctAcrossFiveDonorStates()
+    {
+        var census = InteriorRelationFeasibilityResearch.Evaluate(RepeatedG1Relations());
+        var bucket = Lane0FeasibilityRunner.BuildG1Occurrences("CHART", census)
+            .GroupBy(x => x.QuerySignature).OrderByDescending(x => x.Count()).First()
+            .OrderBy(x => x.AnchorTime).ToArray();
+        var prior = bucket[0];
+        var target = bucket[1];
+        var future = bucket[2];
+        var futureIdentity = target.FutureHeldObservationIds.First();
+        var temporalOnly = future with
+        {
+            OccurrenceId = "temporal-only", GroupId = "tg", EventId = "te", ParentId = "tp",
+            ObservationIds = [9001, 9002], ReleaseEndpointObservationIds = []
+        };
+        var identityOnly = prior with
+        {
+            OccurrenceId = "identity-only", GroupId = "ig", EventId = "ie", ParentId = "ip",
+            ObservationIds = [futureIdentity, 9003], ReleaseEndpointObservationIds = []
+        };
+        var both = future with
+        {
+            OccurrenceId = "both", GroupId = "bg", EventId = "be", ParentId = "bp"
+        };
+        var otherBarrier = prior with
+        {
+            OccurrenceId = "other", GroupId = target.GroupId, EventId = "oe", ParentId = "op",
+            ObservationIds = [9010, 9011], ReleaseEndpointObservationIds = []
+        };
+
+        AssertAudit(prior, 0, 0, 0, 0, 0, 1);
+        AssertAudit(temporalOnly, 1, 0, 0, 1, 1, 0);
+        AssertAudit(identityOnly, 0, 1, 0, 1, 1, 0);
+        AssertAudit(both, 1, 1, 1, 1, 1, 0);
+        AssertAudit(otherBarrier, 0, 0, 0, 0, 1, 0);
+
+        void AssertAudit(Lane0Occurrence donor, int temporal, int identity, int bothReasons,
+            int uniqueFutureHeld, int uniqueExcluded, int eligible)
+        {
+            var audit = Lane0SpatialResearch.Audit(target, [donor]);
+            Assert.Equal(temporal, audit.TemporalExclusion);
+            Assert.Equal(identity, audit.FutureHeldIdentityExclusion);
+            Assert.Equal(bothReasons, audit.BothTemporalAndIdentity);
+            Assert.Equal(uniqueFutureHeld, audit.UniqueFutureHeldExcluded);
+            Assert.Equal(uniqueExcluded, audit.UniqueExcluded);
+            Assert.Equal(1, audit.DonorsConsidered);
+            Assert.Equal(eligible, audit.Eligible.Length);
+            Assert.True(audit.PartitionValid);
+            Assert.Equal(audit.DonorsConsidered, audit.Eligible.Length + audit.UniqueExcluded);
+        }
     }
 
     [Fact]
@@ -368,12 +423,26 @@ public sealed class Lane0FeasibilityTests
     }
 
     [Fact]
-    public void CorrectiveRouteVerifiesFrozenFilesThenBlocksBeforeManifestWithoutPublicationBinding()
+    public void HistoricalV2RouteRejectsChangedInstrumentIdentity()
     {
         var root = FindRepositoryRoot();
         var contract = Path.Combine(root, "docs", "lane_0_future_held_hardening_contract.json");
         var readiness = Lane0FeasibilityRunner.ValidateCorrectiveReadiness(root, contract, null, null);
-        var execution = Lane0FeasibilityRunner.DenyCorrectiveExecution(root, contract, null, null);
+
+        Assert.Equal("INVALID", readiness.Outcome);
+        Assert.True(readiness.Checks.ContractCanonical);
+        Assert.True(readiness.Checks.ReusedDependencies);
+        Assert.False(readiness.Checks.ImplementationIdentity);
+        Assert.False(readiness.Checks.HarnessIdentity);
+    }
+
+    [Fact]
+    public void CounterClosureRouteVerifiesNormalizedIdentitiesThenBlocksBeforeManifest()
+    {
+        var root = FindRepositoryRoot();
+        var contract = Path.Combine(root, "docs", "lane_0_future_held_counter_closure_contract.json");
+        var readiness = Lane0FeasibilityRunner.ValidateCounterClosureReadiness(root, contract, null, null);
+        var execution = Lane0FeasibilityRunner.DenyCounterClosureExecution(root, contract, null, null);
 
         Assert.Equal("BLOCKED", readiness.Outcome);
         Assert.True(readiness.Checks.ContractCanonical);
@@ -383,6 +452,30 @@ public sealed class Lane0FeasibilityTests
         Assert.False(readiness.Checks.PublicationBindingPresent);
         Assert.False(readiness.Checks.ManifestVerified);
         Assert.Equal("BLOCKED", execution.Outcome);
+    }
+
+    [Fact]
+    public void CounterClosureRouteRejectsTamperedCanonicalIdentityBeforeCorpusAccess()
+    {
+        var root = FindRepositoryRoot();
+        var contract = Path.Combine(root, "docs", "lane_0_future_held_counter_closure_contract.json");
+        var temporary = Path.Combine(Path.GetTempPath(), $"lane0-counter-{Guid.NewGuid():N}.json");
+        try
+        {
+            var node = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(contract))!;
+            node["canonicalSha256"] = new string('0', 64);
+            File.WriteAllText(temporary, node.ToJsonString());
+            var readiness = Lane0FeasibilityRunner.ValidateCounterClosureReadiness(
+                root, temporary, null, null);
+
+            Assert.Equal("INVALID", readiness.Outcome);
+            Assert.False(readiness.Checks.ContractCanonical);
+            Assert.False(readiness.Checks.ManifestVerified);
+        }
+        finally
+        {
+            if (File.Exists(temporary)) File.Delete(temporary);
+        }
     }
 
     private static ManiaChart RepeatedG1Relations() => Chart(
