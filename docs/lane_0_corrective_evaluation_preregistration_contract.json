@@ -1,0 +1,249 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-evaluation-preregistration.1",
+    "preparationBaselineHead": "f40e4d3e4be29909c54be33528d4e167f4593dbe",
+    "remoteVerification": "PENDING_LIVE_GITHUB_VERIFICATION",
+    "publicationState": "UNCOMMITTED_AWAITING_MANUAL_PUBLICATION_AND_INDEPENDENT_AUDIT",
+    "instrumentVersion": "lane-0-future-held-counter-closure.3",
+    "instrumentContractSha256": "221D5133D8058FEBEAEA0A13F83058219D900261B033282EE389A82BA20FAAF7",
+    "repairImplementationSha256": "2F938F18D98C6299214C080195633A68B68C688CABF49DC0F4DEFFCA9C1897D9",
+    "instrumentImplementationFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0FeasibilityRunner.cs"
+    ],
+    "instrumentHarnessSha256": "1EFC2B824FAA6F0798C3FFA679FCA073939D88B2C751612C06BB75C240E96309",
+    "instrumentHarnessFiles": [
+      "tests/ManiaAddNotesLab.Tests/Lane0FeasibilityTests.cs",
+      "tests/ManiaAddNotesLab.Tests/ManiaAddNotesLab.Tests.csproj",
+      "tools/DocConsistency/Program.cs",
+      "tools/IndependentLane0IdentityVerifier.ps1",
+      "tools/ManiaAddNotesLab.Experiments/Program.cs"
+    ],
+    "preparationHarnessSha256": "AC1DD7469AC2876B1A31226DDB311CDF74F5D64ABEACC6C442C461F5F87964E3",
+    "preparationHarnessFiles": [
+      "tests/ManiaAddNotesLab.Tests/Lane0CorrectivePreparationTests.cs",
+      "tests/ManiaAddNotesLab.Tests/ManiaAddNotesLab.Tests.csproj",
+      "tools/VerifyLane0CorrectivePreparation.ps1"
+    ],
+    "identityAlgorithm": "Decode UTF-8 with optional BOM removed; normalize CRLF and CR to LF; hash normalized UTF-8 bytes; tree hash is SHA-256 of ordinal path|fileHash rows joined by LF.",
+    "expectedC11ManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "expectedC11Inventory": {
+      "uniqueContents": 11,
+      "osuPaths": 12,
+      "historicalFamilies": 11,
+      "keymodes": [4, 7, 10],
+      "originalObjects": 50836
+    },
+    "memoryLimit": "0x400000000",
+    "question": "Do RICE_HEAD_COMPLETION and G1_INTERIOR_SPATIAL retain legitimate reproducible joint support after corrected future-held exclusion, without temporal contamination or reuse of original identities?",
+    "excludedQuestions": [
+      "preferred-column",
+      "difficulty-improvement",
+      "player-preference",
+      "selection-probability",
+      "behavioral-promotion"
+    ],
+    "families": [
+      "RICE_HEAD_COMPLETION",
+      "G1_INTERIOR_SPATIAL"
+    ],
+    "populations": [
+      {
+        "id": "A_STRUCTURAL_ORIGINAL",
+        "unit": "complete original occurrence",
+        "definition": "Frozen original-only structural universe: reduced simultaneous original-head occurrence for rice; complete original parent/anchor/witness occurrence for G1.",
+        "riceHistoricalDenominator": 40360,
+        "g1HistoricalDenominator": 16881
+      },
+      {
+        "id": "B_HOLDOUT_RECONSTRUCTIBLE",
+        "unit": "one strict chart-local holdout trial per structural occurrence",
+        "definition": "Exact complete-result reconstruction after target, group, parent, release, temporal, future-held identity, same-event, synthetic, cross-chart, composition, duplicate and incomplete-identity controls.",
+        "riceHistoricalDenominator": 40360,
+        "g1HistoricalDenominator": 16881
+      },
+      {
+        "id": "C_CURRENT_OPERATIONAL",
+        "unit": "eligible original occurrence before the probability decision, never a proposal or placement",
+        "definition": "Intersection of structural occurrences with the frozen current eligibility/ranking/cap pipeline; placement counts remain separate and cannot be inferred.",
+        "riceHistoricalDenominator": 40360,
+        "g1HistoricalDenominator": 288
+      }
+    ],
+    "queries": {
+      "RICE_HEAD_COMPLETION": "Exact reduced simultaneous original-head state -> target lane plus head type; no mirror, translation or cross-keymode normalization.",
+      "G1_INTERIOR_SPATIAL": "Exact temporal G1 query plus parent lane -> one complete occurrence containing temporal relation, witness lane, exact witness-parent delta and same-lane flag; marginal donors cannot be assembled."
+    },
+    "historicalSnapshot": {
+      "scope": "HISTORICAL_12EE879_ONLY_NOT_CORRECTED_EVIDENCE",
+      "riceHeadCompletion": {
+        "universeAB": 40360,
+        "comparableContext": 39596,
+        "jointSupport": 37080,
+        "unique": 693,
+        "alternatives": 36387,
+        "contradiction": 2516,
+        "noContext": 764,
+        "universeCOperational": 40360,
+        "historicallySupportedOperational": 37080
+      },
+      "g1InteriorSpatial": {
+        "universeAB": 16881,
+        "comparableContext": 9540,
+        "jointSupport": 3373,
+        "unique": 192,
+        "alternatives": 3181,
+        "contradiction": 6167,
+        "noContext": 7341,
+        "universeCOperational": 288,
+        "historicallySupportedOperational": 11
+      }
+    },
+    "historicalG1OperationalReferences": [
+      {
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "family": "G1_INTERIOR_SPATIAL",
+        "keymode": 7,
+        "historicallySupportedCount": 9,
+        "exactOccurrenceIds": "NOT_EMITTED_BY_HISTORICAL_AGGREGATE_ARTIFACTS"
+      },
+      {
+        "chartId": "E73B098A4D4C99D716D2C53B3EA3A4BFD1A75059881F30DB416631B5EDB972D4",
+        "family": "G1_INTERIOR_SPATIAL",
+        "keymode": 7,
+        "historicallySupportedCount": 2,
+        "exactOccurrenceIds": "NOT_EMITTED_BY_HISTORICAL_AGGREGATE_ARTIFACTS"
+      }
+    ],
+    "g1IndividualResultColumns": [
+      "chart_id",
+      "family",
+      "keymode",
+      "g1_occurrence_id",
+      "donors_considered",
+      "donors_legitimate",
+      "temporal_exclusion",
+      "future_held_identity_exclusion",
+      "both_temporal_and_identity",
+      "unique_future_held_excluded",
+      "unique_excluded",
+      "joint_support_survives",
+      "final_state"
+    ],
+    "counterSemantics": "TemporalExclusion and FutureHeldIdentityExclusion overlap; BothTemporalAndIdentity is their intersection; UniqueFutureHeldExcluded is their union; UniqueExcluded is the union of every exclusion barrier; admitted + UniqueExcluded equals DonorsConsidered.",
+    "requiredControls": [
+      "target-leakage",
+      "target-group-leakage",
+      "donor-same-or-later-anchor",
+      "prior-donor-future-held-identity-collision",
+      "donor-both-temporal-and-identity",
+      "parent",
+      "release-endpoint",
+      "same-event",
+      "synthetic-teaching",
+      "cross-chart",
+      "artificial-joint-support-composition",
+      "independent-prior-donor-admitted",
+      "deterministic-repeat",
+      "zero-rng",
+      "no-chart-mutation",
+      "rice-regression-sentinel"
+    ],
+    "demonstratedCriterion": "Reuse the historical frozen criterion without new thresholds: each family has independent joint support in at least two charts and two keymodes, at least one supported operational target, zero integrity failures, zero RNG, no behavior change and byte-identical repeat.",
+    "outcomes": [
+      "INVALID",
+      "BLOCKED",
+      "FEASIBILITY_DEMONSTRATED",
+      "LIMITED_PARK"
+    ],
+    "outcomeRules": {
+      "INVALID": "Any contract, identity, dependency, manifest, adversarial-control, integrity, determinism, RNG or non-interference failure.",
+      "BLOCKED": "A required published SHA, live remote verification, audited preparation, human authorization, manifest, corpus input or exact historical-reference prerequisite is absent before evaluation.",
+      "FEASIBILITY_DEMONSTRATED": "A valid complete authorized evaluation satisfies every reused frozen scientific criterion for both families.",
+      "LIMITED_PARK": "A valid complete authorized evaluation preserves integrity but fails one or more reused support criteria."
+    },
+    "riceRegression": "Recompute every frozen rice population and state with the corrected evaluation and compare against the historical snapshot; report and trace every difference without assuming either contamination or invariance.",
+    "comparisons": [
+      "paired chart/family/keymode historical-versus-corrected aggregates",
+      "eleven historically supported operational G1 slots individually",
+      "rice family regression sentinel",
+      "corrected results never overwrite historical artifacts"
+    ],
+    "stopConditions": [
+      "C11_NOT_AUTHORIZED",
+      "LIVE_GITHUB_BASELINE_NOT_VERIFIED",
+      "PREPARATION_NOT_PUBLISHED_AND_AUDITED",
+      "EXACT_HISTORICAL_G1_IDENTITIES_NOT_AVAILABLE_BEFORE_AUTHORIZED_RECONSTRUCTION",
+      "CONTRACT_OR_IDENTITY_DRIFT",
+      "ADVERSARIAL_CONTROL_FAILURE",
+      "DETERMINISM_RNG_OR_NON_INTERFERENCE_FAILURE",
+      "MANIFEST_OR_INDIVIDUAL_CHART_HASH_FAILURE",
+      "UNPREREGISTERED_METHODOLOGICAL_CHANGE"
+    ],
+    "executionOrder": [
+      "PREREGISTRATION",
+      "VALIDATION",
+      "FREEZE",
+      "MANUAL_PUBLICATION",
+      "INDEPENDENT_AUDIT",
+      "HUMAN_AUTHORIZATION",
+      "ONE_CORRECTIVE_EVALUATION"
+    ],
+    "executionRoute": {
+      "evaluationBodyPresent": false,
+      "authorizationBindingPresent": false,
+      "humanAuthorizationGranted": false,
+      "currentState": "BLOCKED",
+      "futureBindingPath": "docs/lane_0_corrective_evaluation_publication_binding.json",
+      "bindingCreationAuthorizedByThisContract": false,
+      "corpusAccessAuthorizedByThisContract": false
+    },
+    "artifactFormat": {
+      "aggregateTemplate": "docs/lane_0_corrective_evaluation_comparison_template.csv",
+      "g1IndividualTemplate": "docs/lane_0_corrective_g1_case_template.csv",
+      "requiredPrivateOutputs": [
+        "scientific_summary.json",
+        "chart_family_keymode_results.csv",
+        "g1_historical_operational_cases.csv",
+        "integrity.json",
+        "sha256sums.txt"
+      ],
+      "privateOutputLocation": ".artifacts/lane_0_corrective/",
+      "thirdPartyOsuPublication": false
+    },
+    "preparedArtifactIdentities": {
+      "docs/lane_0_corrective_evaluation_comparison_template.csv": "98A6B418FD14636691F8B15FE7F4ECF9DFDCA347C418C63EE84B3999466AF16B",
+      "docs/lane_0_corrective_g1_case_template.csv": "8855C17D03ED9F44C34B2F5DB447ADBFE379D890BD7AA8CDCDB9DE1AB0AD07B2"
+    },
+    "historicalScientificContracts": {
+      "lane0FeasibilityCanonicalSha256": "62B2F4F67C34E8F57893A3A025D567000E1BB12B6517C13D97FE9EEC3FE0A3C2",
+      "futureHeldRemediationCanonicalSha256": "F28F35AA991F3AF20BEEBBEE6AC1D9D3C182E71C62E4044E4DB0792857F8B0A7",
+      "futureHeldHardeningCanonicalSha256": "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35",
+      "counterClosureCanonicalSha256": "221D5133D8058FEBEAEA0A13F83058219D900261B033282EE389A82BA20FAAF7"
+    },
+    "reusedDependencies": {
+      "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md": "7F3B2C3CBAB3965DB9D166DDCDC00C79AC499A0EB75732594E5587AF5498169D",
+      "docs/lane_0_feasibility_contract.json": "DF686F4AFD99B04B0C0A9882BEC8433632E1DDDCE4809223062E0EB6DD9BE9B6",
+      "docs/lane_0_future_held_remediation_contract.json": "0D6B4AF9414055A5D5CE07B6C922A01E91B854FC76980EC0656E3976FFFE0E8C",
+      "src/ManiaAddNotesLab.Core/InteriorRelationFeasibilityResearch.cs": "AB1DD8CC6CA9B8A926F96C02C3060083C4FFA21F566342186F3DDD7F20A3E5BF",
+      "src/ManiaAddNotesLab.Core/InteriorRelationHoldoutAuditor.cs": "D7C45179066AAB35054707388DBD35285178C94E3A263790F91A219F117A04DD",
+      "src/ManiaAddNotesLab.Core/InteriorRelationMembershipResearch.cs": "9E5EEA78550E4F8C7C6FBEC4F2DFFC3D5B31C86B56DC490D1E564BADC232977F"
+    },
+    "behaviorBoundary": {
+      "researchOnly": true,
+      "originalOnly": true,
+      "behaviorChange": false,
+      "rngChange": false,
+      "defaultChange": false,
+      "successorAuthorized": false,
+      "statusTruth": [
+        "LANE.0 HISTORICAL FEASIBILITY_DEMONSTRATED",
+        "GLOBAL CERTIFICATION SUSPENDED",
+        "PENDING_RECERTIFICATION",
+        "C11 NOT AUTHORIZED",
+        "NO BEHAVIORAL PROMOTION"
+      ]
+    }
+  },
+  "canonicalSha256": "6392C579B87EC318C1DE381201D797B004650AB961398E3E2AB23F7A49A83D33",
+  "canonicalization": "UTF-8 JSON; recursively sort object properties ordinally; preserve array order and primitive values; no insignificant whitespace; hash only the contract object."
+}
