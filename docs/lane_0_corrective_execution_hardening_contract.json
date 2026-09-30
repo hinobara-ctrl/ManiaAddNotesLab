@@ -1,0 +1,180 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-execution-hardening.1",
+    "baselinePublishedHead": "b3a87c5420371af212ff5f0512e5137dffb1e2bc",
+    "parentPreparationContractPath": "docs/lane_0_corrective_execution_preparation_contract.json",
+    "parentPreparationContractCanonicalSha256": "61C05856AC8BB48ABFC5BCFD3AA47599D2D5F567CBA6E39EC7AF27DD235B8F1E",
+    "parentPreparationImplementationFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveExecutionPreparation.cs"
+    ],
+    "parentPreparationImplementationSha256": "A518278E7B0CCBEA8C7916720035C598073382CFF2616E790340DD6F45F8D219",
+    "parentPreparationHarnessFiles": [
+      "tests/ManiaAddNotesLab.CorrectiveExecutionPreparation.Tests/Lane0CorrectiveExecutionPreparationTests.cs",
+      "tests/ManiaAddNotesLab.CorrectiveExecutionPreparation.Tests/ManiaAddNotesLab.CorrectiveExecutionPreparation.Tests.csproj"
+    ],
+    "parentPreparationHarnessSha256": "0501B1AA2625259AB66249A749C0963CE725C6678E2591CEF5D3CC3D7ADDC170",
+    "parentPreparationVerifierPath": "tools/VerifyLane0CorrectiveExecutionPreparation.ps1",
+    "parentPreparationVerifierSha256": "182CBAEFCD3B010EBA7C4505DA8F105BF3732E9D5D2BCD4D042531B920B201E0",
+    "parentPreparationFiles": [
+      "docs/PHASE_LANE_0_CORRECTIVE_EXECUTION_PREPARATION.md",
+      "docs/lane_0_corrective_execution_preparation_contract.json",
+      "tests/ManiaAddNotesLab.CorrectiveExecutionPreparation.Tests/Lane0CorrectiveExecutionPreparationTests.cs",
+      "tests/ManiaAddNotesLab.CorrectiveExecutionPreparation.Tests/ManiaAddNotesLab.CorrectiveExecutionPreparation.Tests.csproj",
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveExecutionPreparation.cs",
+      "tools/VerifyLane0CorrectiveExecutionPreparation.ps1"
+    ],
+    "preregistrationContractPath": "docs/lane_0_corrective_evaluation_preregistration_contract.json",
+    "preregistrationCanonicalSha256": "6392C579B87EC318C1DE381201D797B004650AB961398E3E2AB23F7A49A83D33",
+    "evaluatorHardeningContractPath": "docs/lane_0_corrective_evaluator_hardening_contract.json",
+    "evaluatorHardeningCanonicalSha256": "A61F0933A49534857096D3A568E9C07F37805F9468CC94001546767073CD2E18",
+    "evaluatorImplementationFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveEvaluationRunner.cs"
+    ],
+    "evaluatorImplementationSha256": "20D0AC6BB0AF197ACC6BE1B5E71D1DF65BD2CDC0FCAB0E49FD6F036D03A0D8F4",
+    "evaluatorHarnessFiles": [
+      "tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests/Lane0CorrectiveEvaluatorDesignTests.cs",
+      "tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests/Lane0CorrectiveEvaluatorHardeningTests.cs",
+      "tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests/ManiaAddNotesLab.CorrectiveEvaluator.Tests.csproj",
+      "tools/VerifyLane0CorrectiveEvaluatorHardening.ps1"
+    ],
+    "evaluatorHarnessSha256": "724837E42F2308DA3159BAE00F3339656C03EE936B9E350F416124A7E92AA173",
+    "solutionPath": "ManiaAddNotesLab.sln",
+    "solutionNormalizedSha256": "BFEB1689414A2FB712170A967B9BA6DAD70BFE656D307A25821A976D81942A37",
+    "manifestPath": "docs/g1_gate_runtime_manifest.json",
+    "expectedC11ManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "identityAlgorithm": "Strict UTF-8; remove optional BOM; normalize CRLF and CR to LF; SHA-256 normalized UTF-8 bytes; tree SHA-256 over ordinal path|fileHash rows joined by LF.",
+    "runtimeScientificFiles": [
+      "src/ManiaAddNotesLab.Core/AddNotesEngine.cs",
+      "src/ManiaAddNotesLab.Core/BeatTimeline.cs",
+      "src/ManiaAddNotesLab.Core/C11CorpusDiscovery.cs",
+      "src/ManiaAddNotesLab.Core/ChartAnalysis.cs",
+      "src/ManiaAddNotesLab.Core/ChordCompletionResearch.cs",
+      "src/ManiaAddNotesLab.Core/ExactHeadRelationResearch.cs",
+      "src/ManiaAddNotesLab.Core/FrozenC11ManifestResearch.cs",
+      "src/ManiaAddNotesLab.Core/InteriorRelationFeasibilityResearch.cs",
+      "src/ManiaAddNotesLab.Core/InteriorRelationHoldoutAuditor.cs",
+      "src/ManiaAddNotesLab.Core/InteriorRelationMembershipResearch.cs",
+      "src/ManiaAddNotesLab.Core/LaneGeometryIndex.cs",
+      "src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+      "src/ManiaAddNotesLab.Core/Model.cs",
+      "src/ManiaAddNotesLab.Core/OsuBeatmap.cs",
+      "src/ManiaAddNotesLab.Core/ResultingStateCompositionResearch.cs",
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveEvaluationRunner.cs",
+      "tools/ManiaAddNotesLab.Experiments/Lane0FeasibilityRunner.cs"
+    ],
+    "runtimeScientificTreeSha256": "CD0FCFA43EC457CF2B49B07F1F18CDFB1515D112AEDA6C579A128B6630FF6BD8",
+    "hardeningImplementationFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveExecutionHardening.cs"
+    ],
+    "hardeningImplementationSha256": "41362B4685B345A0BB1FB89E0874EBF48886AD70D969866E106C9C0820D64BF1",
+    "officialRunnerFiles": [
+      "tools/ManiaAddNotesLab.CorrectiveExecution/ManiaAddNotesLab.CorrectiveExecution.csproj",
+      "tools/ManiaAddNotesLab.CorrectiveExecution/Program.cs"
+    ],
+    "officialRunnerTreeSha256": "96DB4A9EA0D12A8A60D69B47F327D4EA93B2551161C1CA59D2BC4EA6A329AC8D",
+    "officialRunnerProgramPath": "tools/ManiaAddNotesLab.CorrectiveExecution/Program.cs",
+    "officialCommandShape": "dotnet run --project tools/ManiaAddNotesLab.CorrectiveExecution/ManiaAddNotesLab.CorrectiveExecution.csproj -c Release -- --repo-root . --corpus-root <EXPLICIT_FROZEN_C11_ROOT>",
+    "hardeningHarnessFiles": [
+      "tests/ManiaAddNotesLab.CorrectiveExecutionHardening.Tests/Lane0CorrectiveExecutionHardeningTests.cs",
+      "tests/ManiaAddNotesLab.CorrectiveExecutionHardening.Tests/ManiaAddNotesLab.CorrectiveExecutionHardening.Tests.csproj"
+    ],
+    "hardeningHarnessSha256": "FFCF02548CD8198B2AB45DD7C8C030779663688DC5783EF79FE9D5DFE54DFCE3",
+    "verifierPath": "tools/VerifyLane0CorrectiveExecutionHardening.ps1",
+    "verifierNormalizedSha256": "35EFC2F99D9C958E4F751CB2A468BB02330C80972BE11954FEFB4554E4C785BA",
+    "bindingSchema": "lane-0-corrective-evaluation-publication-binding.2",
+    "bindingCanonicalPath": "docs/lane_0_corrective_evaluation_publication_binding.json",
+    "attemptReceiptPath": ".artifacts/lane_0_corrective.attempt.json",
+    "stagingPath": ".artifacts/lane_0_corrective.staging",
+    "finalOutputPath": ".artifacts/lane_0_corrective",
+    "guardOrder": [
+      "A_VALIDATE_HARDENING_CONTRACT_CANONICAL",
+      "B_VALIDATE_HEAD",
+      "C_VALIDATE_TRACKED_CLEAN",
+      "D_VALIDATE_RUNTIME_SCIENTIFIC_SOURCE_IDENTITIES",
+      "E_VALIDATE_HARDENING_AND_RUNNER_IDENTITIES",
+      "F_READ_CANONICAL_BINDING",
+      "G_VALIDATE_BINDING_V2_SCHEMA_AND_SHAPE",
+      "H_VALIDATE_BINDING_CONTRACT_HASH",
+      "I_VALIDATE_PARENT_AND_MANIFEST_HASH_DECLARATIONS",
+      "J_REQUIRE_APPROVED_HEAD_EQUALS_HEAD",
+      "K_REQUIRE_EXPLICIT_HUMAN_AUTHORIZATION",
+      "L_REQUIRE_AUTHORIZED_EXECUTION_COUNT_ONE",
+      "M_REQUIRE_FINAL_ABSENT",
+      "N_REQUIRE_STAGING_ABSENT",
+      "O_REQUIRE_ATTEMPT_RECEIPT_ABSENT",
+      "P_LOAD_AND_VERIFY_PUBLIC_MANIFEST",
+      "Q_CREATE_ATTEMPT_RECEIPT_WITH_CREATE_NEW",
+      "R_RESOLVE_EXPLICIT_CORPUS_ROOT",
+      "S_READ_HASH_AND_PARSE_SAME_BYTES",
+      "T_BUILD_ORDINAL_INPUTS",
+      "U_REPEAT_INDEPENDENT_LOAD_HASH_AND_PARSE",
+      "V_RUN_TWO_REAL_EVALUATIONS",
+      "W_BUILD_TWO_COMPLETE_SIX_ARTIFACT_PACKAGES",
+      "X_COMPARE_PACKAGES_BYTE_FOR_BYTE",
+      "Y_WRITE_STAGING_PACKAGE",
+      "Z_VERIFY_STAGING_NAMES_HASHES_AND_BYTES",
+      "AA_DIRECTORY_MOVE_STAGING_TO_FINAL"
+    ],
+    "oneShotSemantics": "One atomic CreateNew receipt consumes one ATTEMPT before first corpus access; receipt is immutable and is never deleted, retried or rearmed automatically.",
+    "atomicPublicationSemantics": "Final and staging must be absent; write and verify exactly six files in sibling staging; publish final only with Directory.Move after complete verification.",
+    "classification": {
+      "invalid": [
+        "contract canonical drift",
+        "tracked working tree dirty",
+        "runtime scientific identity drift",
+        "runner identity drift",
+        "malformed binding",
+        "binding hash drift",
+        "HEAD mismatch",
+        "manifest identity mismatch",
+        "evaluated byte SHA mismatch",
+        "corpus identity or inventory mismatch",
+        "scientific integrity failure",
+        "non-determinism",
+        "RNG or non-interference failure"
+      ],
+      "blocked": [
+        "binding absent",
+        "explicit authorization false",
+        "attempt receipt exists",
+        "final output exists",
+        "staging exists",
+        "pre-corpus environment prerequisite unavailable"
+      ]
+    },
+    "allowedArtifactNames": [
+      "chart_family_keymode_results.csv",
+      "g1_historical_operational_cases.csv",
+      "g1_state_transitions.csv",
+      "integrity.json",
+      "scientific_summary.json",
+      "sha256sums.txt"
+    ],
+    "forbiddenSurfaces": [
+      "old execution-preparation Execute route",
+      "product CLI",
+      "Web",
+      "C11CorpusDiscovery.Discover",
+      "Songs discovery",
+      "parent-directory discovery",
+      "arbitrary executable path",
+      "--no-build",
+      "retry",
+      "receipt deletion",
+      "overwrite"
+    ],
+    "bindingPresent": false,
+    "humanAuthorization": false,
+    "attemptReceiptPresent": false,
+    "corpusAccessPerformed": false,
+    "correctiveEvaluationExecuted": false,
+    "behaviorChange": false,
+    "rngChange": false,
+    "defaultChange": false,
+    "scientificSemanticsChanged": false,
+    "successorAuthorization": false,
+    "currentState": "READY FOR MANUAL PUBLICATION AND FINAL INDEPENDENT AUDIT / BINDING V2 NOT YET ISSUED / C11 EXECUTION BLOCKED"
+  },
+  "canonicalSha256": "AABF22D6ED17FEC1D62A83C23C164DABBF9A0D98A7347E2AB5172A7ECB5B372B",
+  "canonicalization": "Recursively sort JSON object properties ordinally; preserve array order; emit compact UTF-8 JSON; SHA-256 uppercase hex over contract only."
+}
