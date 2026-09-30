@@ -1,0 +1,142 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-execution-preparation.1",
+    "baselinePublishedHead": "9b065535248e7dd7581822af80cf6534b16922eb",
+    "baselineParentHead": "f3037260f3f5d7e74e906885b6b7ed1c3f2d1510",
+    "preregistrationContractPath": "docs/lane_0_corrective_evaluation_preregistration_contract.json",
+    "preregistrationCanonicalSha256": "6392C579B87EC318C1DE381201D797B004650AB961398E3E2AB23F7A49A83D33",
+    "evaluatorHardeningContractPath": "docs/lane_0_corrective_evaluator_hardening_contract.json",
+    "evaluatorHardeningCanonicalSha256": "A61F0933A49534857096D3A568E9C07F37805F9468CC94001546767073CD2E18",
+    "evaluatorImplementationSha256": "20D0AC6BB0AF197ACC6BE1B5E71D1DF65BD2CDC0FCAB0E49FD6F036D03A0D8F4",
+    "evaluatorHarnessSha256": "724837E42F2308DA3159BAE00F3339656C03EE936B9E350F416124A7E92AA173",
+    "solutionPath": "ManiaAddNotesLab.sln",
+    "solutionNormalizedSha256": "BFEB1689414A2FB712170A967B9BA6DAD70BFE656D307A25821A976D81942A37",
+    "expectedC11ManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "identityAlgorithm": "Strict UTF-8; remove optional BOM; normalize CRLF and CR to LF; SHA-256 normalized UTF-8 bytes; tree SHA-256 over ordinal path|fileHash rows joined by LF.",
+    "executionPreparationImplementationFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveExecutionPreparation.cs"
+    ],
+    "executionPreparationImplementationSha256": "A518278E7B0CCBEA8C7916720035C598073382CFF2616E790340DD6F45F8D219",
+    "successorHarnessFiles": [
+      "tests/ManiaAddNotesLab.CorrectiveExecutionPreparation.Tests/Lane0CorrectiveExecutionPreparationTests.cs",
+      "tests/ManiaAddNotesLab.CorrectiveExecutionPreparation.Tests/ManiaAddNotesLab.CorrectiveExecutionPreparation.Tests.csproj"
+    ],
+    "successorHarnessSha256": "0501B1AA2625259AB66249A749C0963CE725C6678E2591CEF5D3CC3D7ADDC170",
+    "verifierPath": "tools/VerifyLane0CorrectiveExecutionPreparation.ps1",
+    "verifierNormalizedSha256": "182CBAEFCD3B010EBA7C4505DA8F105BF3732E9D5D2BCD4D042531B920B201E0",
+    "bindingSchema": "lane-0-corrective-evaluation-publication-binding.1",
+    "bindingCanonicalPath": "docs/lane_0_corrective_evaluation_publication_binding.json",
+    "bindingRequiredProperties": [
+      "schemaVersion",
+      "approvedPublishedHead",
+      "executionPreparationContractSha256",
+      "preregistrationCanonicalSha256",
+      "evaluatorHardeningCanonicalSha256",
+      "expectedC11ManifestSha256",
+      "explicitHumanAuthorization",
+      "authorizedExecutionCount"
+    ],
+    "bindingPresent": false,
+    "humanAuthorization": false,
+    "authorizedExecutionCount": 1,
+    "corpusAdapterPresent": true,
+    "corpusAccessPerformed": false,
+    "correctiveEvaluationExecuted": false,
+    "officialOutputPath": ".artifacts/lane_0_corrective",
+    "outputDirectoryPolicy": "NONEXISTENT_OR_COMPLETELY_EMPTY_ONLY",
+    "guardOrder": [
+      "A_VALIDATE_PUBLISHED_CONTRACTS_AND_IDENTITIES",
+      "B_READ_AND_VALIDATE_CANONICAL_PUBLICATION_BINDING",
+      "C_REQUIRE_APPROVED_PUBLISHED_HEAD_EQUALS_CURRENT_HEAD",
+      "D_REQUIRE_EXPLICIT_HUMAN_AUTHORIZATION_TRUE",
+      "E_REQUIRE_EXACTLY_ONE_CORRECTIVE_EVALUATION",
+      "F_LOAD_AND_VERIFY_FROZEN_MANIFEST",
+      "G_RESOLVE_AND_OPEN_EXPLICIT_CORPUS_ROOT",
+      "H_BUILD_ORDINAL_UNIQUE_CHART_INPUTS",
+      "I_RUN_TWO_INDEPENDENT_EVALUATIONS_AND_COMPARE_BYTES",
+      "J_WRITE_ONLY_ONE_COMPLETE_MATCHING_RESULT"
+    ],
+    "preflightClassification": {
+      "publishedContractOrIdentityInvalid": "INVALID",
+      "bindingAbsent": "BLOCKED",
+      "bindingMalformedOrExtraOrMissingProperty": "INVALID",
+      "bindingIdentityMismatch": "INVALID",
+      "approvedHeadMismatch": "INVALID",
+      "explicitHumanAuthorizationFalse": "BLOCKED",
+      "authorizedExecutionCountNotOne": "INVALID"
+    },
+    "adapterInventory": {
+      "physicalOsuLocations": 12,
+      "uniqueContents": 11,
+      "exactDuplicateLocations": 1,
+      "historicalFamilies": 11,
+      "keymodes": [4, 7, 10],
+      "identity": "SHA-256 content, never local path",
+      "ordering": "ChartId ordinal",
+      "corpusRoot": "explicit only; no parent ascent or Songs discovery"
+    },
+    "frozenHistoricalSnapshot": {
+      "rice": {
+        "structural": 40360,
+        "comparableContext": 39596,
+        "jointSupport": 37080,
+        "jointUnique": 693,
+        "jointAmongAlternatives": 36387,
+        "contradiction": 2516,
+        "noContext": 764,
+        "operational": 40360,
+        "operationalSupported": 37080,
+        "supportedCharts": 11,
+        "supportedKeymodes": 3
+      },
+      "g1": {
+        "structural": 16881,
+        "comparableContext": 9540,
+        "jointSupport": 3373,
+        "jointUnique": 192,
+        "jointAmongAlternatives": 3181,
+        "contradiction": 6167,
+        "noContext": 7341,
+        "operational": 288,
+        "operationalSupported": 11,
+        "supportedCharts": 5,
+        "supportedKeymodes": 2
+      }
+    },
+    "frozenHistoricalG1CaseRule": {
+      "total": 11,
+      "keymode": 7,
+      "chartDistribution": {
+        "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788": 9,
+        "E73B098A4D4C99D716D2C53B3EA3A4BFD1A75059881F30DB416631B5EDB972D4": 2
+      }
+    },
+    "independentEvaluationCount": 2,
+    "determinismRequirement": "artifact-by-artifact byte identity before any write",
+    "allowedArtifactNames": [
+      "scientific_summary.json",
+      "chart_family_keymode_results.csv",
+      "g1_state_transitions.csv",
+      "g1_historical_operational_cases.csv",
+      "integrity.json",
+      "sha256sums.txt"
+    ],
+    "forbiddenSurfaces": [
+      "AddNotesEngine",
+      "SeededRandom",
+      "product CLI",
+      "Web",
+      "Songs discovery",
+      "parent-directory corpus discovery",
+      "retry",
+      "overwrite"
+    ],
+    "behaviorChange": false,
+    "rngChange": false,
+    "defaultChange": false,
+    "successorAuthorization": false,
+    "currentState": "READY FOR MANUAL PUBLICATION AND INDEPENDENT AUDIT / BINDING NOT YET ISSUED / C11 EXECUTION BLOCKED"
+  },
+  "canonicalSha256": "61C05856AC8BB48ABFC5BCFD3AA47599D2D5F567CBA6E39EC7AF27DD235B8F1E",
+  "canonicalization": "Recursively sort JSON object properties ordinally; preserve array order; emit compact UTF-8 JSON; SHA-256 uppercase hex over contract only."
+}
