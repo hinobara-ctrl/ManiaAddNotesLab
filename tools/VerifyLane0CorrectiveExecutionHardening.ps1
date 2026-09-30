@@ -80,6 +80,7 @@ $body = $artifact.contract
 $canonical = [Lane0ExecutionHardeningCanonicalJson]::HashContract($raw)
 $implementation = Get-TreeIdentity @($body.hardeningImplementationFiles)
 $runner = Get-TreeIdentity @($body.officialRunnerFiles)
+$launcher = Get-NormalizedHash $body.isolatedLauncherPath
 $harness = Get-TreeIdentity @($body.hardeningHarnessFiles)
 $runtime = Get-TreeIdentity @($body.runtimeScientificFiles)
 $verifier = Get-NormalizedHash $body.verifierPath
@@ -88,12 +89,14 @@ $failed = $false
 Write-Output "contract declared=$($artifact.canonicalSha256) calculated=$canonical"
 Write-Output "hardening implementation tree declared=$($body.hardeningImplementationSha256) working=$implementation"
 Write-Output "official runner tree declared=$($body.officialRunnerTreeSha256) working=$runner"
+Write-Output "isolated launcher normalized file declared=$($body.isolatedLauncherNormalizedSha256) working=$launcher"
 Write-Output "hardening harness tree declared=$($body.hardeningHarnessSha256) working=$harness"
 Write-Output "runtime scientific tree declared=$($body.runtimeScientificTreeSha256) working=$runtime"
 Write-Output "verifier normalized file declared=$($body.verifierNormalizedSha256) working=$verifier"
 
 if ($canonical -ne $artifact.canonicalSha256 -or $implementation -ne $body.hardeningImplementationSha256 `
     -or $runner -ne $body.officialRunnerTreeSha256 -or $harness -ne $body.hardeningHarnessSha256 `
+    -or $launcher -ne $body.isolatedLauncherNormalizedSha256 `
     -or $runtime -ne $body.runtimeScientificTreeSha256 -or $verifier -ne $body.verifierNormalizedSha256) {
     $failed = $true
 }
@@ -112,6 +115,8 @@ $expected = @{
     solutionNormalizedSha256 = 'BFEB1689414A2FB712170A967B9BA6DAD70BFE656D307A25821A976D81942A37'
     expectedC11ManifestSha256 = 'AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445'
     bindingSchema = 'lane-0-corrective-evaluation-publication-binding.2'
+    officialExecutionMode = 'LOCAL_ISOLATED_CLONE_OF_PUBLISHED_HEAD'
+    officialCommandShape = 'pwsh -NoProfile -File tools/InvokeLane0CorrectiveExecutionIsolated.ps1 -RepositoryRoot . -ExecutionRoot <DEDICATED_NONEXISTENT_PATH> -CorpusRoot <EXPLICIT_FROZEN_C11_ROOT>'
     currentState = 'READY FOR MANUAL PUBLICATION AND FINAL INDEPENDENT AUDIT / BINDING V2 NOT YET ISSUED / C11 EXECUTION BLOCKED'
 }
 foreach ($pair in $expected.GetEnumerator()) {
@@ -161,12 +166,39 @@ foreach ($path in $frozen) {
 }
 
 $runnerSource = [Text.UTF8Encoding]::new($false).GetString((Get-NormalizedBytes $body.officialRunnerProgramPath))
+$launcherSource = [Text.UTF8Encoding]::new($false).GetString((Get-NormalizedBytes $body.isolatedLauncherPath))
+$hardeningSource = [Text.UTF8Encoding]::new($false).GetString((Get-NormalizedBytes $body.hardeningImplementationFiles[0]))
 $solutionText = [Text.UTF8Encoding]::new($false).GetString((Get-NormalizedBytes $body.solutionPath))
 if (-not $runnerSource.Contains('Lane0CorrectiveExecutionHardening.Execute', [StringComparison]::Ordinal) `
     -or $runnerSource.Contains('Lane0CorrectiveExecutionPreparation.Execute', [StringComparison]::Ordinal) `
     -or $solutionText.Contains('ManiaAddNotesLab.CorrectiveExecution.csproj', [StringComparison]::Ordinal) `
     -or $body.bindingSchema -eq 'lane-0-corrective-evaluation-publication-binding.1') {
     Write-Error 'Official runner exposure or binding schema is invalid.'; $failed = $true
+}
+if (@($body.preBuildAllowedUntracked).Count -ne 1 `
+    -or $body.preBuildAllowedUntracked[0] -ne $body.bindingCanonicalPath `
+    -or $body.executionRootPolicy -ne 'NONEXISTENT / PRESERVE_AFTER_ATTEMPT' `
+    -or $body.sourceWorkingTreeUntrackedPolicy -ne 'NOT_COPIED_TO_EXECUTION_ROOT' `
+    -or $body.isolatedExecutionTreePolicy -ne 'TRACKED_HEAD_PLUS_CANONICAL_BINDING_ONLY_BEFORE_BUILD' `
+    -or -not $launcherSource.Contains("'clone', '--no-hardlinks', '--no-checkout'", [StringComparison]::Ordinal) `
+    -or -not $launcherSource.Contains("'checkout', '--detach'", [StringComparison]::Ordinal) `
+    -or -not $launcherSource.Contains("'status', '--porcelain=v1', '--untracked-files=all', '--ignored'", [StringComparison]::Ordinal) `
+    -or -not $launcherSource.Contains('[IO.File]::Exists($execution)', [StringComparison]::Ordinal) `
+    -or -not $launcherSource.Contains('[IO.Directory]::Exists($execution)', [StringComparison]::Ordinal) `
+    -or -not $launcherSource.Contains('[IO.File]::WriteAllBytes($bindingDestination, $bindingBytes)', [StringComparison]::Ordinal) `
+    -or -not $launcherSource.Contains("'run', '--project', `$RunnerProject, '-c', 'Release'", [StringComparison]::Ordinal) `
+    -or $launcherSource.Contains("'fetch'", [StringComparison]::OrdinalIgnoreCase) `
+    -or $launcherSource.Contains("'pull'", [StringComparison]::OrdinalIgnoreCase) `
+    -or $launcherSource.Contains('retry', [StringComparison]::OrdinalIgnoreCase) `
+    -or $launcherSource.Contains('--no-build', [StringComparison]::OrdinalIgnoreCase) `
+    -or $launcherSource.Contains('Remove-Item', [StringComparison]::OrdinalIgnoreCase) `
+    -or $launcherSource.Contains('Directory]::Delete', [StringComparison]::OrdinalIgnoreCase) `
+    -or $launcherSource.Contains('File]::Delete', [StringComparison]::OrdinalIgnoreCase) `
+    -or $launcherSource.Contains('Copy-Item', [StringComparison]::OrdinalIgnoreCase) `
+    -or $launcherSource -match '(Resolve-Path|Test-Path|GetFullPath|EnumerateFiles|ReadAllBytes)[^\r\n]*CorpusRoot' `
+    -or -not $hardeningSource.Contains('Directory.EnumerateFileSystemEntries(staging)', [StringComparison]::Ordinal) `
+    -or -not $hardeningSource.Contains('actualEntries.Any(path => !File.Exists(path))', [StringComparison]::Ordinal)) {
+    Write-Error 'Isolated launcher or all-entry staging semantics are invalid.'; $failed = $true
 }
 foreach ($path in @('tools/ManiaAddNotesLab.Experiments/Program.cs','src/ManiaAddNotesLab.Cli/Program.cs','src/ManiaAddNotesLab.Web/Program.cs')) {
     if (Test-Path -LiteralPath (Join-Path $Root $path)) {

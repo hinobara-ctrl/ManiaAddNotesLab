@@ -66,27 +66,47 @@
     "hardeningImplementationFiles": [
       "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveExecutionHardening.cs"
     ],
-    "hardeningImplementationSha256": "41362B4685B345A0BB1FB89E0874EBF48886AD70D969866E106C9C0820D64BF1",
+    "hardeningImplementationSha256": "D1781679967C6050C9F38012506408C3C55E8B2E23C5B8C47305E52A3779226F",
     "officialRunnerFiles": [
       "tools/ManiaAddNotesLab.CorrectiveExecution/ManiaAddNotesLab.CorrectiveExecution.csproj",
       "tools/ManiaAddNotesLab.CorrectiveExecution/Program.cs"
     ],
     "officialRunnerTreeSha256": "96DB4A9EA0D12A8A60D69B47F327D4EA93B2551161C1CA59D2BC4EA6A329AC8D",
     "officialRunnerProgramPath": "tools/ManiaAddNotesLab.CorrectiveExecution/Program.cs",
-    "officialCommandShape": "dotnet run --project tools/ManiaAddNotesLab.CorrectiveExecution/ManiaAddNotesLab.CorrectiveExecution.csproj -c Release -- --repo-root . --corpus-root <EXPLICIT_FROZEN_C11_ROOT>",
+    "isolatedLauncherPath": "tools/InvokeLane0CorrectiveExecutionIsolated.ps1",
+    "isolatedLauncherNormalizedSha256": "B602DCB9394100FC65947592285E50CA72231615862CB43B427E8BBA04552F2D",
+    "officialExecutionMode": "LOCAL_ISOLATED_CLONE_OF_PUBLISHED_HEAD",
+    "officialCommandShape": "pwsh -NoProfile -File tools/InvokeLane0CorrectiveExecutionIsolated.ps1 -RepositoryRoot . -ExecutionRoot <DEDICATED_NONEXISTENT_PATH> -CorpusRoot <EXPLICIT_FROZEN_C11_ROOT>",
+    "preBuildAllowedUntracked": [
+      "docs/lane_0_corrective_evaluation_publication_binding.json"
+    ],
+    "executionRootPolicy": "NONEXISTENT / PRESERVE_AFTER_ATTEMPT",
+    "sourceWorkingTreeUntrackedPolicy": "NOT_COPIED_TO_EXECUTION_ROOT",
+    "isolatedExecutionTreePolicy": "TRACKED_HEAD_PLUS_CANONICAL_BINDING_ONLY_BEFORE_BUILD",
     "hardeningHarnessFiles": [
       "tests/ManiaAddNotesLab.CorrectiveExecutionHardening.Tests/Lane0CorrectiveExecutionHardeningTests.cs",
       "tests/ManiaAddNotesLab.CorrectiveExecutionHardening.Tests/ManiaAddNotesLab.CorrectiveExecutionHardening.Tests.csproj"
     ],
-    "hardeningHarnessSha256": "FFCF02548CD8198B2AB45DD7C8C030779663688DC5783EF79FE9D5DFE54DFCE3",
+    "hardeningHarnessSha256": "6EB62EE22013FDCC702E6D08C94004D7BF9D0F0945B20BC562E14174F5A7F492",
     "verifierPath": "tools/VerifyLane0CorrectiveExecutionHardening.ps1",
-    "verifierNormalizedSha256": "35EFC2F99D9C958E4F751CB2A468BB02330C80972BE11954FEFB4554E4C785BA",
+    "verifierNormalizedSha256": "3D1C13F767FABF90FAFACDDB1814AC9F30DCDEB9A7138D2D1DE86DAB5E3036CA",
     "bindingSchema": "lane-0-corrective-evaluation-publication-binding.2",
     "bindingCanonicalPath": "docs/lane_0_corrective_evaluation_publication_binding.json",
     "attemptReceiptPath": ".artifacts/lane_0_corrective.attempt.json",
     "stagingPath": ".artifacts/lane_0_corrective.staging",
     "finalOutputPath": ".artifacts/lane_0_corrective",
     "guardOrder": [
+      "LA_RESOLVE_SOURCE_REPOSITORY_ROOT_ONLY",
+      "LB_READ_SOURCE_HEAD",
+      "LC_REQUIRE_SOURCE_TRACKED_CLEAN",
+      "LD_REQUIRE_CANONICAL_UNTRACKED_BINDING_AT_HEAD",
+      "LE_REQUIRE_NONEXISTENT_EXTERNAL_EXECUTION_ROOT",
+      "LF_LOCAL_CLONE_NO_HARDLINKS_NO_CHECKOUT",
+      "LG_DETACHED_CHECKOUT_EXACT_SOURCE_HEAD",
+      "LH_REQUIRE_PRISTINE_ISOLATED_TREE_BEFORE_COPY",
+      "LI_COPY_ONLY_EXACT_BINDING_BYTES",
+      "LJ_REQUIRE_ONLY_BINDING_UNTRACKED_AND_SAME_SHA256",
+      "LK_DOTNET_RUN_WITH_BUILD_AND_OPAQUE_CORPUS_ROOT",
       "A_VALIDATE_HARDENING_CONTRACT_CANONICAL",
       "B_VALIDATE_HEAD",
       "C_VALIDATE_TRACKED_CLEAN",
@@ -116,13 +136,17 @@
       "AA_DIRECTORY_MOVE_STAGING_TO_FINAL"
     ],
     "oneShotSemantics": "One atomic CreateNew receipt consumes one ATTEMPT before first corpus access; receipt is immutable and is never deleted, retried or rearmed automatically.",
-    "atomicPublicationSemantics": "Final and staging must be absent; write and verify exactly six files in sibling staging; publish final only with Directory.Move after complete verification.",
+    "atomicPublicationSemantics": "Final and staging must be absent; write and verify exactly six filesystem entries, all regular files with the six allowed names and exact bytes, in sibling staging; publish final only with Directory.Move after complete verification.",
     "classification": {
       "invalid": [
         "contract canonical drift",
         "tracked working tree dirty",
         "runtime scientific identity drift",
         "runner identity drift",
+        "isolated launcher identity drift",
+        "source tracked working tree dirty",
+        "isolated clone contains any pre-build untracked ignored or build input other than the canonical binding",
+        "staging contains any directory or extra filesystem entry",
         "malformed binding",
         "binding hash drift",
         "HEAD mismatch",
@@ -158,6 +182,9 @@
       "Songs discovery",
       "parent-directory discovery",
       "arbitrary executable path",
+      "build or execution from the source working tree",
+      "copy of source untracked or ignored inputs other than canonical binding",
+      "network fetch or pull",
       "--no-build",
       "retry",
       "receipt deletion",
@@ -175,6 +202,6 @@
     "successorAuthorization": false,
     "currentState": "READY FOR MANUAL PUBLICATION AND FINAL INDEPENDENT AUDIT / BINDING V2 NOT YET ISSUED / C11 EXECUTION BLOCKED"
   },
-  "canonicalSha256": "AABF22D6ED17FEC1D62A83C23C164DABBF9A0D98A7347E2AB5172A7ECB5B372B",
+  "canonicalSha256": "20D8B5A4A6EC34D76496BCB3DF093C17F6C02999136D52D07EA2246C3810E3AA",
   "canonicalization": "Recursively sort JSON object properties ordinally; preserve array order; emit compact UTF-8 JSON; SHA-256 uppercase hex over contract only."
 }

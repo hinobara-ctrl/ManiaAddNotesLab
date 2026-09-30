@@ -238,6 +238,45 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
             Directory.EnumerateFiles(paths.Final).Select(Path.GetFileName).Order(StringComparer.Ordinal));
         Assert.All(package, pair => Assert.Equal(pair.Value,
             File.ReadAllBytes(Path.Combine(paths.Final, pair.Key))));
+        Assert.Empty(Directory.EnumerateDirectories(paths.Final));
+        Assert.Equal(6, Directory.EnumerateFileSystemEntries(paths.Final).Count());
+    }
+
+    [Fact]
+    public void UnexpectedStagingDirectoryPreventsFinalPublicationAndRemainsAsEvidence()
+    {
+        using var paths = new ExecutionPaths();
+        var package = Lane0CorrectiveExecutionHardening.BuildPackage(BlockedResult());
+        var injected = false;
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveExecutionHardening.PublishPackageAtomically(
+            package, paths.Staging, paths.Final, (path, bytes) =>
+            {
+                File.WriteAllBytes(path, bytes);
+                if (injected) return;
+                Directory.CreateDirectory(Path.Combine(paths.Staging, "unexpected-directory"));
+                injected = true;
+            }));
+        Assert.False(Directory.Exists(paths.Final));
+        Assert.True(Directory.Exists(paths.Staging));
+        Assert.True(Directory.Exists(Path.Combine(paths.Staging, "unexpected-directory")));
+    }
+
+    [Fact]
+    public void UnexpectedStagingFilePreventsFinalPublicationAndRemainsAsEvidence()
+    {
+        using var paths = new ExecutionPaths();
+        var package = Lane0CorrectiveExecutionHardening.BuildPackage(BlockedResult());
+        var injected = false;
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveExecutionHardening.PublishPackageAtomically(
+            package, paths.Staging, paths.Final, (path, bytes) =>
+            {
+                File.WriteAllBytes(path, bytes);
+                if (injected) return;
+                File.WriteAllText(Path.Combine(paths.Staging, "unexpected.txt"), "evidence");
+                injected = true;
+            }));
+        Assert.False(Directory.Exists(paths.Final));
+        Assert.True(File.Exists(Path.Combine(paths.Staging, "unexpected.txt")));
     }
 
     [Fact]
@@ -293,15 +332,123 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
     }
 
     [Fact]
-    public void BindingAbsentBlocksOfficialRouteWithoutCorpusAccess()
+    public void BindingAbsentBlocksIsolatedLauncherBeforeCloneOrCorpusProbe()
     {
-        var root = RepositoryRoot();
-        Assert.False(File.Exists(Path.Combine(root, Lane0CorrectiveExecutionHardening.BindingPath)));
-        var adapter = new FakeAdapter(_ => throw new InvalidOperationException("must not run"));
-        var result = Lane0CorrectiveExecutionHardening.Execute(
-            new(root, Path.Combine(Path.GetTempPath(), "nonexistent-synthetic-corpus")), adapter);
-        Assert.Equal("BLOCKED", result.Outcome);
-        Assert.Equal(0, adapter.AccessCalls);
+        using var repository = SyntheticLauncherRepository(bindingPresent: false);
+        var execution = NonexistentTempPath("lane0-isolated-absent");
+        var result = RunIsolatedLauncher(repository.Path, execution, "Z:\\opaque-never-probed");
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains("BLOCKED: canonical publication binding is absent", result.AllOutput,
+            StringComparison.Ordinal);
+        Assert.False(Directory.Exists(execution));
+    }
+
+    [Fact]
+    public void IsolatedLauncherClonesExactHeadAndExcludesAllSourceOnlyInputs()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        File.WriteAllText(Path.Combine(repository.Path, "benign-note.txt"), "local only");
+        File.WriteAllText(Path.Combine(repository.Path, "Evil.cs"), "this is not valid C#");
+        File.WriteAllText(Path.Combine(repository.Path, "Directory.Build.props"), "<not-xml>");
+        File.WriteAllText(Path.Combine(repository.Path, "ignored.local"), "ignored local input");
+        var execution = NonexistentTempPath("lane0-isolated-success");
+        try
+        {
+            const string opaqueCorpus = "Z:\\opaque-c11-root-that-is-not-probed";
+            var result = RunIsolatedLauncher(repository.Path, execution, opaqueCorpus);
+            Assert.True(result.ExitCode == 0, result.AllOutput);
+            Assert.Contains($"--corpus-root|{opaqueCorpus}", result.AllOutput, StringComparison.Ordinal);
+            Assert.Equal(GitOutput(repository.Path, "rev-parse", "HEAD"),
+                GitOutput(execution, "rev-parse", "HEAD"));
+            Assert.NotEqual(0, GitExitCode(execution, "symbolic-ref", "-q", "HEAD"));
+            Assert.False(File.Exists(Path.Combine(execution, "benign-note.txt")));
+            Assert.False(File.Exists(Path.Combine(execution, "Evil.cs")));
+            Assert.False(File.Exists(Path.Combine(execution, "Directory.Build.props")));
+            Assert.False(File.Exists(Path.Combine(execution, "ignored.local")));
+            var sourceBinding = File.ReadAllBytes(Path.Combine(repository.Path,
+                Lane0CorrectiveExecutionHardening.BindingPath));
+            var isolatedBinding = File.ReadAllBytes(Path.Combine(execution,
+                Lane0CorrectiveExecutionHardening.BindingPath));
+            Assert.Equal(sourceBinding, isolatedBinding);
+            Assert.Equal(Lane0CorrectiveExecutionHardening.BindingPath,
+                GitOutput(execution, "ls-files", "--others", "--exclude-standard"));
+        }
+        finally { DeleteTree(execution); }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void IsolatedLauncherRejectsTrackedDirtySourceBeforeClone(bool staged)
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        File.AppendAllText(Path.Combine(repository.Path, "tracked.txt"), "dirty");
+        if (staged) Git(repository.Path, "add", "tracked.txt");
+        var execution = NonexistentTempPath("lane0-isolated-dirty");
+        var result = RunIsolatedLauncher(repository.Path, execution, "opaque");
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains("INVALID: source repository contains tracked staged or unstaged changes",
+            result.AllOutput, StringComparison.Ordinal);
+        Assert.False(Directory.Exists(execution));
+    }
+
+    [Fact]
+    public void IsolatedLauncherRejectsPreexistingExecutionRootWithoutChangingIt()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        var execution = TempRoot();
+        var marker = Path.Combine(execution, "keep.txt");
+        File.WriteAllText(marker, "preserve");
+        try
+        {
+            var result = RunIsolatedLauncher(repository.Path, execution, "opaque");
+            Assert.NotEqual(0, result.ExitCode);
+            Assert.Contains("ExecutionRoot must be absolutely nonexistent", result.AllOutput,
+                StringComparison.Ordinal);
+            Assert.Equal("preserve", File.ReadAllText(marker));
+        }
+        finally { DeleteTree(execution); }
+    }
+
+    [Fact]
+    public void IsolatedLauncherRejectsRelativeOrInsideRepositoryExecutionRoot()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        var relative = RunIsolatedLauncher(repository.Path, "relative-execution-root", "opaque");
+        Assert.NotEqual(0, relative.ExitCode);
+        Assert.Contains("ExecutionRoot must be an absolute path", relative.AllOutput,
+            StringComparison.Ordinal);
+
+        var inside = Path.Combine(repository.Path, "nonexistent-execution-root");
+        var nested = RunIsolatedLauncher(repository.Path, inside, "opaque");
+        Assert.NotEqual(0, nested.ExitCode);
+        Assert.Contains("ExecutionRoot must be outside RepositoryRoot", nested.AllOutput,
+            StringComparison.Ordinal);
+        Assert.False(Directory.Exists(inside));
+    }
+
+    [Fact]
+    public void IsolatedLauncherRejectsBindingTrackedAtSourceHead()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true, bindingTracked: true);
+        var execution = NonexistentTempPath("lane0-isolated-tracked-binding");
+        var result = RunIsolatedLauncher(repository.Path, execution, "opaque");
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains("canonical publication binding is tracked at source HEAD", result.AllOutput,
+            StringComparison.Ordinal);
+        Assert.False(Directory.Exists(execution));
+    }
+
+    [Fact]
+    public void IsolatedLauncherHasNoFetchPullCleanupRetryOrNoBuildPath()
+    {
+        var source = File.ReadAllText(IsolatedLauncherPath());
+        Assert.Contains("'clone', '--no-hardlinks', '--no-checkout'", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("'fetch'", source, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("'pull'", source, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("--no-build", source, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Remove-Item", source, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Directory]::Delete", source, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -377,6 +524,7 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
         {
             "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveExecutionHardening.cs",
             "tools/ManiaAddNotesLab.CorrectiveExecution/Program.cs",
+            "tools/InvokeLane0CorrectiveExecutionIsolated.ps1",
             "tests/ManiaAddNotesLab.CorrectiveExecutionHardening.Tests/Lane0CorrectiveExecutionHardeningTests.cs"
         })
             Assert.DoesNotContain(forbidden, File.ReadAllText(Path.Combine(root, path)),
@@ -463,14 +611,102 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
         return new(root);
     }
 
-    private static void Git(string root, params string[] arguments)
+    private static SyntheticRepository SyntheticLauncherRepository(bool bindingPresent,
+        bool bindingTracked = false)
+    {
+        var root = TempRoot();
+        Git(root, "init");
+        Git(root, "config", "user.email", "synthetic@example.invalid");
+        Git(root, "config", "user.name", "Synthetic Test");
+        File.WriteAllText(Path.Combine(root, ".gitignore"), "bin/\nobj/\nignored.local\n");
+        File.WriteAllText(Path.Combine(root, "tracked.txt"), "clean");
+        var runner = Path.Combine(root, "tools", "ManiaAddNotesLab.CorrectiveExecution");
+        Directory.CreateDirectory(runner);
+        File.WriteAllText(Path.Combine(runner, "ManiaAddNotesLab.CorrectiveExecution.csproj"),
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><OutputType>Exe</OutputType>" +
+            "<TargetFramework>net8.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings>" +
+            "</PropertyGroup></Project>");
+        File.WriteAllText(Path.Combine(runner, "Program.cs"),
+            "Console.WriteLine(string.Join(\"|\", args)); return 0;");
+        Directory.CreateDirectory(Path.Combine(root, "docs"));
+        File.WriteAllText(Path.Combine(root, "docs", ".gitkeep"), string.Empty);
+        if (bindingPresent && bindingTracked)
+            File.WriteAllBytes(Path.Combine(root, Lane0CorrectiveExecutionHardening.BindingPath),
+                Encoding.UTF8.GetBytes("synthetic tracked binding bytes\n"));
+        Git(root, "add", ".gitignore", "tracked.txt", "tools", "docs");
+        Git(root, "commit", "-m", "synthetic launcher baseline");
+        if (bindingPresent && !bindingTracked)
+            File.WriteAllBytes(Path.Combine(root, Lane0CorrectiveExecutionHardening.BindingPath),
+                Encoding.UTF8.GetBytes("synthetic binding bytes\n"));
+        return new(root);
+    }
+
+    private static ProcessResult RunIsolatedLauncher(string repository, string execution, string corpus)
+    {
+        var start = new ProcessStartInfo("pwsh")
+        {
+            WorkingDirectory = RepositoryRoot(), RedirectStandardOutput = true,
+            RedirectStandardError = true, UseShellExecute = false
+        };
+        foreach (var argument in new[]
+        {
+            "-NoProfile", "-File", IsolatedLauncherPath(), "-RepositoryRoot", repository,
+            "-ExecutionRoot", execution, "-CorpusRoot", corpus
+        }) start.ArgumentList.Add(argument);
+        start.Environment["DOTNET_GCHeapHardLimit"] = "0x400000000";
+        start.Environment["DOTNET_GCConserveMemory"] = "9";
+        using var process = Process.Start(start) ?? throw new InvalidOperationException("Cannot run pwsh.");
+        var stdout = process.StandardOutput.ReadToEnd();
+        var stderr = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        return new(process.ExitCode, stdout, stderr);
+    }
+
+    private static string IsolatedLauncherPath() => Path.Combine(RepositoryRoot(),
+        "tools", "InvokeLane0CorrectiveExecutionIsolated.ps1");
+
+    private static string NonexistentTempPath(string prefix) => Path.Combine(Path.GetTempPath(),
+        $"{prefix}-{Guid.NewGuid():N}");
+
+    private static string GitOutput(string root, params string[] arguments)
+    {
+        var result = RunGit(root, arguments);
+        if (result.ExitCode != 0) throw new InvalidOperationException(result.StandardError);
+        return result.StandardOutput.Trim();
+    }
+
+    private static int GitExitCode(string root, params string[] arguments) =>
+        RunGit(root, arguments).ExitCode;
+
+    private static ProcessResult RunGit(string root, params string[] arguments)
     {
         var start = new ProcessStartInfo("git") { WorkingDirectory = root,
             RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
         foreach (var argument in arguments) start.ArgumentList.Add(argument);
         using var process = Process.Start(start) ?? throw new InvalidOperationException("Cannot run git.");
+        var stdout = process.StandardOutput.ReadToEnd();
+        var stderr = process.StandardError.ReadToEnd();
         process.WaitForExit();
-        if (process.ExitCode != 0) throw new InvalidOperationException(process.StandardError.ReadToEnd());
+        return new(process.ExitCode, stdout, stderr);
+    }
+
+    private static void Git(string root, params string[] arguments)
+    {
+        var result = RunGit(root, arguments);
+        if (result.ExitCode != 0) throw new InvalidOperationException(result.StandardError);
+    }
+
+    private static void DeleteTree(string path)
+    {
+        if (!Directory.Exists(path)) return;
+        foreach (var entry in Directory.EnumerateFileSystemEntries(path, "*", SearchOption.AllDirectories))
+            File.SetAttributes(entry, FileAttributes.Normal);
+        Directory.Delete(path, true);
+    }
+
+    private sealed record ProcessResult(int ExitCode, string StandardOutput, string StandardError)
+    {
+        public string AllOutput => StandardOutput + StandardError;
     }
 
     private sealed class FakeAdapter(Func<int, ImmutableArray<Lane0CorrectiveChartInput>> factory)
@@ -495,10 +731,7 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
         public string Path { get; } = path;
         public void Dispose()
         {
-            if (!Directory.Exists(Path)) return;
-            foreach (var entry in Directory.EnumerateFileSystemEntries(Path, "*", SearchOption.AllDirectories))
-                File.SetAttributes(entry, FileAttributes.Normal);
-            Directory.Delete(Path, true);
+            DeleteTree(Path);
         }
     }
 }

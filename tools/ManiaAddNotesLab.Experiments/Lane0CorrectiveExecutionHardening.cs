@@ -325,8 +325,10 @@ internal static class Lane0CorrectiveExecutionHardening
         Directory.CreateDirectory(staging);
         foreach (var pair in package) writeFile(Path.Combine(staging, pair.Key), pair.Value);
 
-        var actualNames = Directory.EnumerateFiles(staging).Select(Path.GetFileName)
-            .Order(StringComparer.Ordinal).ToArray();
+        var actualEntries = Directory.EnumerateFileSystemEntries(staging).ToArray();
+        if (actualEntries.Length != ArtifactNames.Length || actualEntries.Any(path => !File.Exists(path)))
+            throw new InvalidDataException("Staging must contain exactly six regular file entries.");
+        var actualNames = actualEntries.Select(Path.GetFileName).Order(StringComparer.Ordinal).ToArray();
         if (!actualNames.SequenceEqual(ArtifactNames))
             throw new InvalidDataException("Staging contains missing or extra artifacts.");
         foreach (var pair in package)
@@ -460,6 +462,8 @@ internal static class Lane0CorrectiveExecutionHardening
             RequiredString(contract, "hardeningImplementationSha256"), "hardening implementation tree");
         Equal(TreeIdentity(root, ReadStringArray(contract, "officialRunnerFiles")),
             RequiredString(contract, "officialRunnerTreeSha256"), "official runner tree");
+        Equal(NormalizedFileHash(Path.Combine(root, RequiredString(contract, "isolatedLauncherPath"))),
+            RequiredString(contract, "isolatedLauncherNormalizedSha256"), "isolated launcher identity");
 
         var evaluatorContract = evaluatorHardening.RootElement.GetProperty("contract");
         var snapshot = ParseSnapshot(evaluatorContract.GetProperty("frozenHistoricalSnapshot"));
