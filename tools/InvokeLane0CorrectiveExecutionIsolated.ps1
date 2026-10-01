@@ -114,6 +114,11 @@ finally {
     if ($null -ne $bindingDocument) { $bindingDocument.Dispose() }
 }
 
+$AttemptReceiptSource = Join-Path $repository '.artifacts/lane_0_corrective.attempt.json'
+if ([IO.File]::Exists($AttemptReceiptSource) -or [IO.Directory]::Exists($AttemptReceiptSource)) {
+    throw 'BLOCKED: durable authorization-root attempt receipt already exists.'
+}
+
 if (-not [IO.Path]::IsPathFullyQualified($ExecutionRoot)) {
     throw 'BLOCKED: ExecutionRoot must be an absolute path.'
 }
@@ -176,7 +181,8 @@ $dotnet.WorkingDirectory = $execution
 $dotnet.UseShellExecute = $false
 foreach ($argument in @(
     'run', '--project', $RunnerProject, '-c', 'Release', '--',
-    '--repo-root', $execution, '--corpus-root', $CorpusRoot
+    '--repo-root', $execution, '--authorization-root', $repository,
+    '--corpus-root', $CorpusRoot
 )) { $dotnet.ArgumentList.Add($argument) }
 $runner = [Diagnostics.Process]::Start($dotnet)
 if ($null -eq $runner) { throw 'Unable to start the official corrective runner.' }

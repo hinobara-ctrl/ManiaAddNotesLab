@@ -15,7 +15,15 @@ internal sealed record Lane0HardenedPublicationBinding(
     bool ExplicitHumanAuthorization,
     int AuthorizedExecutionCount);
 
-internal sealed record Lane0HardenedExecutionRequest(string RepositoryRoot, string CorpusRoot);
+internal sealed record Lane0HardenedExecutionRequest(
+    string ExecutionRepositoryRoot,
+    string AuthorizationRoot,
+    string CorpusRoot);
+
+internal sealed record Lane0HardenedAuthorizationState(
+    string Root,
+    string ReceiptPath,
+    byte[] BindingBytes);
 
 internal sealed record Lane0HardenedExecutionResult(
     string Outcome,
@@ -56,21 +64,25 @@ internal sealed class Lane0HardenedCorpusAdapter : ILane0HardenedCorpusAdapter
 internal static class Lane0CorrectiveExecutionCommand
 {
     internal static bool TryParseArguments(string[] args, out string? repositoryRoot,
-        out string? corpusRoot, out string error)
+        out string? authorizationRoot, out string? corpusRoot, out string error)
     {
         repositoryRoot = null;
+        authorizationRoot = null;
         corpusRoot = null;
-        error = "Usage: --repo-root <path> --corpus-root <explicit-frozen-c11-root>";
-        if (args.Length != 4) return false;
+        error = "Usage: --repo-root <isolated-path> --authorization-root <source-path> " +
+            "--corpus-root <explicit-frozen-c11-root>";
+        if (args.Length != 6) return false;
         for (var index = 0; index < args.Length; index += 2)
         {
             var value = args[index + 1];
             if (string.IsNullOrWhiteSpace(value)) return false;
             if (args[index] == "--repo-root" && repositoryRoot is null) repositoryRoot = value;
+            else if (args[index] == "--authorization-root" && authorizationRoot is null)
+                authorizationRoot = value;
             else if (args[index] == "--corpus-root" && corpusRoot is null) corpusRoot = value;
             else return false;
         }
-        return repositoryRoot is not null && corpusRoot is not null;
+        return repositoryRoot is not null && authorizationRoot is not null && corpusRoot is not null;
     }
 }
 
@@ -110,7 +122,7 @@ internal static class Lane0CorrectiveExecutionHardening
     public static Lane0HardenedExecutionResult Execute(
         Lane0HardenedExecutionRequest request, ILane0HardenedCorpusAdapter? adapter = null)
     {
-        var root = Path.GetFullPath(request.RepositoryRoot);
+        var root = Path.GetFullPath(request.ExecutionRepositoryRoot);
         Lane0HardenedPublishedState state;
         try
         {
@@ -140,9 +152,25 @@ internal static class Lane0CorrectiveExecutionHardening
         var authorization = ValidateBinding(state, binding);
         if (authorization is not null) return authorization;
 
+        Lane0HardenedAuthorizationState authorizationState;
+        try
+        {
+            authorizationState = LoadAuthorizationRoot(
+                root, request.AuthorizationRoot, state, bindingBytes);
+        }
+        catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
+        {
+            return new("BLOCKED", "Authorization-root binding prerequisite is unavailable.",
+                false, false, false);
+        }
+        catch (Exception exception) when (IsValidationException(exception))
+        {
+            return new("INVALID", exception.Message, false, false, false);
+        }
+
         var final = Path.Combine(root, FinalOutputPath);
         var staging = Path.Combine(root, StagingOutputPath);
-        var receipt = Path.Combine(root, AttemptReceiptPath);
+        var receipt = authorizationState.ReceiptPath;
         var readiness = ValidateOutputReadiness(final, staging, receipt);
         if (readiness is not null) return readiness;
 
@@ -165,6 +193,42 @@ internal static class Lane0CorrectiveExecutionHardening
 
         adapter ??= new Lane0HardenedCorpusAdapter(request.CorpusRoot);
         return ExecuteAuthorized(state, bindingBytes, manifest.Charts, adapter, final, staging, receipt);
+    }
+
+    internal static Lane0HardenedAuthorizationState LoadAuthorizationRoot(
+        string executionRepositoryRoot,
+        string authorizationRoot,
+        Lane0HardenedPublishedState state,
+        byte[] executionBindingBytes)
+    {
+        var execution = Path.GetFullPath(executionRepositoryRoot);
+        var source = Path.GetFullPath(authorizationRoot);
+        var comparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+        if (string.Equals(execution, source, comparison))
+            throw new InvalidDataException(
+                "Authorization root must differ from the isolated execution repository root.");
+
+        var sourceHead = ReadHead(source);
+        if (!string.Equals(sourceHead, state.CurrentHead, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException("Authorization-root HEAD differs from execution HEAD.");
+        if (!IsTrackedClean(source))
+            throw new InvalidDataException("Authorization-root tracked working tree is dirty.");
+
+        var bindingPath = Path.Combine(source, BindingPath);
+        if (!File.Exists(bindingPath))
+            throw new FileNotFoundException("Canonical authorization-root binding is absent.", bindingPath);
+        var trackedBinding = RunGit(source, "cat-file", "-e", $"{sourceHead}:{BindingPath}");
+        if (trackedBinding == 0)
+            throw new InvalidDataException("Canonical binding is tracked at authorization-root HEAD.");
+        if (trackedBinding != 128)
+            throw new InvalidDataException("Cannot determine authorization-root binding tracked state.");
+
+        var sourceBindingBytes = File.ReadAllBytes(bindingPath);
+        if (!sourceBindingBytes.AsSpan().SequenceEqual(executionBindingBytes))
+            throw new InvalidDataException(
+                "Authorization-root and execution-root binding bytes differ.");
+        return new(source, Path.Combine(source, AttemptReceiptPath), sourceBindingBytes);
     }
 
     internal static Lane0HardenedExecutionResult ExecuteAuthorized(
@@ -439,6 +503,24 @@ internal static class Lane0CorrectiveExecutionHardening
             "attempt receipt path declaration");
         Equal(RequiredString(contract, "stagingPath"), StagingOutputPath, "staging path declaration");
         Equal(RequiredString(contract, "finalOutputPath"), FinalOutputPath, "final path declaration");
+        if (!contract.GetProperty("authorizationRootRequired").GetBoolean()
+            || !contract.GetProperty("durableAttemptReceiptPreflightRequired").GetBoolean())
+            throw new InvalidDataException("Authorization-root safety declarations are not enabled.");
+        Equal(RequiredString(contract, "authorizationRootPolicy"),
+            "SOURCE_REPOSITORY_MATCHING_APPROVED_HEAD_TRACKED_CLEAN_WITH_BYTE_IDENTICAL_CANONICAL_BINDING",
+            "authorization root policy");
+        Equal(RequiredString(contract, "attemptReceiptRoot"), "AUTHORIZATION_ROOT",
+            "attempt receipt root");
+        Equal(RequiredString(contract, "attemptReceiptDurability"),
+            "SHARED_ACROSS_ISOLATED_EXECUTION_ROOTS_FOR_CANONICAL_AUTHORIZATION_ROOT",
+            "attempt receipt durability");
+        Equal(RequiredString(contract, "executionOutputRoot"), "ISOLATED_EXECUTION_ROOT",
+            "execution output root");
+        Equal(RequiredString(contract, "oneShotScope"),
+            "CANONICAL_AUTHORIZATION_ROOT_AND_BINDING_CEREMONY", "one-shot scope");
+        if (!ReadStringArray(contract, "officialRunnerArgumentSet")
+                .SequenceEqual(["--repo-root", "--authorization-root", "--corpus-root"]))
+            throw new InvalidDataException("Official runner argument set drifted.");
 
         var head = ReadHead(root);
         if (!IsTrackedClean(root)) throw new InvalidDataException("Tracked working tree is dirty.");

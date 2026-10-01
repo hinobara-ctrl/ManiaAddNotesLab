@@ -120,8 +120,15 @@ $expected = @{
     externalPreflightRequired = $true
     approvedHeadInvariant = 'BINDING_HEAD_EQUALS_SOURCE_HEAD_EQUALS_ISOLATED_HEAD_EQUALS_RUNTIME_HEAD'
     launcherDefenseInDepthBindingHeadCheck = $true
+    authorizationRootRequired = $true
+    authorizationRootPolicy = 'SOURCE_REPOSITORY_MATCHING_APPROVED_HEAD_TRACKED_CLEAN_WITH_BYTE_IDENTICAL_CANONICAL_BINDING'
+    attemptReceiptRoot = 'AUTHORIZATION_ROOT'
+    attemptReceiptDurability = 'SHARED_ACROSS_ISOLATED_EXECUTION_ROOTS_FOR_CANONICAL_AUTHORIZATION_ROOT'
+    executionOutputRoot = 'ISOLATED_EXECUTION_ROOT'
+    durableAttemptReceiptPreflightRequired = $true
+    oneShotScope = 'CANONICAL_AUTHORIZATION_ROOT_AND_BINDING_CEREMONY'
     officialCommandShape = 'HOST_PRECHECK_APPROVED_HEAD_AND_TRACKED_CLEAN -> pwsh -NoProfile -File tools/InvokeLane0CorrectiveExecutionIsolated.ps1 -RepositoryRoot . -ExecutionRoot <DEDICATED_NONEXISTENT_PATH> -CorpusRoot <EXPLICIT_FROZEN_C11_ROOT>'
-    currentState = 'READY FOR MANUAL PUBLICATION AND FINAL INDEPENDENT AUDIT / BINDING V2 NOT YET ISSUED / C11 EXECUTION BLOCKED'
+    currentState = 'READY FOR MANUAL PUBLICATION AND FINAL INDEPENDENT AUDIT / NEW BINDING V2 NOT YET ISSUED / C11 EXECUTION BLOCKED'
 }
 foreach ($pair in $expected.GetEnumerator()) {
     if ($body.($pair.Key) -ne $pair.Value) { Write-Error "Frozen declaration mismatch: $($pair.Key)"; $failed = $true }
@@ -134,6 +141,7 @@ $expectedExternalPreflight = @(
     'REQUIRE_SOURCE_TRACKED_UNSTAGED_CLEAN',
     'REQUIRE_SOURCE_TRACKED_STAGED_CLEAN',
     'REQUIRE_CANONICAL_BINDING_UNTRACKED_AT_HEAD',
+    'REQUIRE_DURABLE_ATTEMPT_RECEIPT_ABSENT',
     'ONLY_THEN_INVOKE_TRACKED_ISOLATED_LAUNCHER'
 )
 if (@($body.externalPreflightSteps).Count -ne $expectedExternalPreflight.Count) {
@@ -142,6 +150,16 @@ if (@($body.externalPreflightSteps).Count -ne $expectedExternalPreflight.Count) 
     for ($index = 0; $index -lt $expectedExternalPreflight.Count; $index++) {
         if ($body.externalPreflightSteps[$index] -cne $expectedExternalPreflight[$index]) {
             Write-Error "External host preflight step drifted at index $index."; $failed = $true
+        }
+    }
+}
+$expectedRunnerArguments = @('--repo-root', '--authorization-root', '--corpus-root')
+if (@($body.officialRunnerArgumentSet).Count -ne $expectedRunnerArguments.Count) {
+    Write-Error 'Official runner argument count drifted.'; $failed = $true
+} else {
+    for ($index = 0; $index -lt $expectedRunnerArguments.Count; $index++) {
+        if ($body.officialRunnerArgumentSet[$index] -cne $expectedRunnerArguments[$index]) {
+            Write-Error "Official runner argument drifted at index $index."; $failed = $true
         }
     }
 }
@@ -198,6 +216,7 @@ $bindingHeadIndex = $launcherSource.IndexOf('[string]::Equals($approvedPublished
 $executionRootIndex = $launcherSource.IndexOf('[IO.Path]::IsPathFullyQualified($ExecutionRoot)', [StringComparison]::Ordinal)
 $cloneIndex = $launcherSource.IndexOf("'clone', '--no-hardlinks', '--no-checkout'", [StringComparison]::Ordinal)
 $dotnetIndex = $launcherSource.IndexOf("'run', '--project', `$RunnerProject, '-c', 'Release'", [StringComparison]::Ordinal)
+$receiptPrecheckIndex = $launcherSource.IndexOf("`$AttemptReceiptSource = Join-Path `$repository '.artifacts/lane_0_corrective.attempt.json'", [StringComparison]::Ordinal)
 if (-not $runnerSource.Contains('Lane0CorrectiveExecutionHardening.Execute', [StringComparison]::Ordinal) `
     -or $runnerSource.Contains('Lane0CorrectiveExecutionPreparation.Execute', [StringComparison]::Ordinal) `
     -or $solutionText.Contains('ManiaAddNotesLab.CorrectiveExecution.csproj', [StringComparison]::Ordinal) `
@@ -211,7 +230,8 @@ if (@($body.preBuildAllowedUntracked).Count -ne 1 `
     -or $body.isolatedExecutionTreePolicy -ne 'TRACKED_HEAD_PLUS_CANONICAL_BINDING_ONLY_BEFORE_BUILD' `
     -or $bindingParseIndex -lt 0 -or $bindingSchemaIndex -le $bindingParseIndex `
     -or $bindingHeadIndex -le $bindingSchemaIndex -or $executionRootIndex -le $bindingHeadIndex `
-    -or $cloneIndex -le $executionRootIndex -or $dotnetIndex -le $cloneIndex `
+    -or $receiptPrecheckIndex -le $bindingHeadIndex -or $cloneIndex -le $receiptPrecheckIndex `
+    -or $dotnetIndex -le $cloneIndex `
     -or -not $launcherSource.Contains('TryGetInt32([ref]$authorizedExecutionCount)', [StringComparison]::Ordinal) `
     -or -not $launcherSource.Contains("'clone', '--no-hardlinks', '--no-checkout'", [StringComparison]::Ordinal) `
     -or -not $launcherSource.Contains("'checkout', '--detach'", [StringComparison]::Ordinal) `
@@ -220,6 +240,9 @@ if (@($body.preBuildAllowedUntracked).Count -ne 1 `
     -or -not $launcherSource.Contains('[IO.Directory]::Exists($execution)', [StringComparison]::Ordinal) `
     -or -not $launcherSource.Contains('[IO.File]::WriteAllBytes($bindingDestination, $bindingBytes)', [StringComparison]::Ordinal) `
     -or -not $launcherSource.Contains("'run', '--project', `$RunnerProject, '-c', 'Release'", [StringComparison]::Ordinal) `
+    -or -not $launcherSource.Contains("'--repo-root', `$execution, '--authorization-root', `$repository", [StringComparison]::Ordinal) `
+    -or -not $launcherSource.Contains('[IO.File]::Exists($AttemptReceiptSource)', [StringComparison]::Ordinal) `
+    -or -not $launcherSource.Contains('[IO.Directory]::Exists($AttemptReceiptSource)', [StringComparison]::Ordinal) `
     -or $launcherSource.Contains("'fetch'", [StringComparison]::OrdinalIgnoreCase) `
     -or $launcherSource.Contains("'pull'", [StringComparison]::OrdinalIgnoreCase) `
     -or $launcherSource.Contains('retry', [StringComparison]::OrdinalIgnoreCase) `
@@ -229,6 +252,12 @@ if (@($body.preBuildAllowedUntracked).Count -ne 1 `
     -or $launcherSource.Contains('File]::Delete', [StringComparison]::OrdinalIgnoreCase) `
     -or $launcherSource.Contains('Copy-Item', [StringComparison]::OrdinalIgnoreCase) `
     -or $launcherSource -match '(Resolve-Path|Test-Path|GetFullPath|EnumerateFiles|ReadAllBytes)[^\r\n]*CorpusRoot' `
+    -or -not $runnerSource.Contains('out var authorizationRoot', [StringComparison]::Ordinal) `
+    -or -not $runnerSource.Contains('new Lane0HardenedExecutionRequest(repositoryRoot!, authorizationRoot!, corpusRoot!)', [StringComparison]::Ordinal) `
+    -or -not $hardeningSource.Contains('Path.Combine(source, AttemptReceiptPath)', [StringComparison]::Ordinal) `
+    -or $hardeningSource.Contains('Path.Combine(root, AttemptReceiptPath)', [StringComparison]::Ordinal) `
+    -or -not $hardeningSource.Contains('sourceBindingBytes.AsSpan().SequenceEqual(executionBindingBytes)', [StringComparison]::Ordinal) `
+    -or -not $hardeningSource.Contains('FileMode.CreateNew, FileAccess.Write, FileShare.None', [StringComparison]::Ordinal) `
     -or -not $hardeningSource.Contains('Directory.EnumerateFileSystemEntries(staging)', [StringComparison]::Ordinal) `
     -or -not $hardeningSource.Contains('actualEntries.Any(path => !File.Exists(path))', [StringComparison]::Ordinal)) {
     Write-Error 'Isolated launcher or all-entry staging semantics are invalid.'; $failed = $true

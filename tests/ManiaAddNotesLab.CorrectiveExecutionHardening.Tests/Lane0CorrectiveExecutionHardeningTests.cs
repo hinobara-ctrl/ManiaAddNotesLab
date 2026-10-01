@@ -171,6 +171,49 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
     }
 
     [Fact]
+    public void DurableReceiptBlocksSecondAttemptAcrossDifferentExecutionRoots()
+    {
+        var authorizationRoot = TempRoot();
+        var executionOne = TempRoot();
+        var executionTwo = TempRoot();
+        try
+        {
+            var receipt = Path.Combine(authorizationRoot,
+                Lane0CorrectiveExecutionHardening.AttemptReceiptPath);
+            var firstAdapter = new FakeAdapter(_ =>
+                throw new InvalidDataException("synthetic post-receipt failure"));
+            var first = Lane0CorrectiveExecutionHardening.ExecuteAuthorized(
+                State(), [7], [], firstAdapter,
+                Path.Combine(executionOne, "final"), Path.Combine(executionOne, "staging"), receipt);
+            Assert.Equal("INVALID", first.Outcome);
+            Assert.Equal(1, firstAdapter.AccessCalls);
+            Assert.True(File.Exists(receipt));
+            var originalReceipt = File.ReadAllBytes(receipt);
+
+            var secondAdapter = new FakeAdapter(_ =>
+                throw new InvalidOperationException("second attempt must not access corpus"));
+            var secondFinal = Path.Combine(executionTwo, "final");
+            var second = Lane0CorrectiveExecutionHardening.ExecuteAuthorized(
+                State(), [7], [], secondAdapter, secondFinal,
+                Path.Combine(executionTwo, "staging"), receipt);
+            Assert.Equal("BLOCKED", second.Outcome);
+            Assert.Equal(0, secondAdapter.AccessCalls);
+            Assert.Equal(originalReceipt, File.ReadAllBytes(receipt));
+            Assert.False(Directory.Exists(secondFinal));
+            Assert.Equal(Path.Combine(authorizationRoot,
+                Lane0CorrectiveExecutionHardening.AttemptReceiptPath), receipt);
+            Assert.NotEqual(Path.Combine(executionOne,
+                Lane0CorrectiveExecutionHardening.AttemptReceiptPath), receipt);
+        }
+        finally
+        {
+            DeleteTree(authorizationRoot);
+            DeleteTree(executionOne);
+            DeleteTree(executionTwo);
+        }
+    }
+
+    [Fact]
     public void InvalidEvaluationAfterReceiptLeavesReceipt()
     {
         using var paths = new ExecutionPaths();
@@ -225,6 +268,143 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
             package, paths.Staging, paths.Final, (_, _) => throw new IOException("injected")));
         Assert.True(File.Exists(paths.Receipt));
         Assert.False(Directory.Exists(paths.Final));
+    }
+
+    [Fact]
+    public void SuccessfulPublicationDoesNotRelocateOrDeleteDurableReceipt()
+    {
+        var authorizationRoot = TempRoot();
+        using var paths = new ExecutionPaths();
+        try
+        {
+            var receipt = Path.Combine(authorizationRoot,
+                Lane0CorrectiveExecutionHardening.AttemptReceiptPath);
+            CreateReceipt(receipt);
+            var before = File.ReadAllBytes(receipt);
+            Lane0CorrectiveExecutionHardening.PublishPackageAtomically(
+                Lane0CorrectiveExecutionHardening.BuildPackage(BlockedResult()),
+                paths.Staging, paths.Final);
+            Assert.Equal(before, File.ReadAllBytes(receipt));
+            Assert.False(File.Exists(Path.Combine(paths.Root,
+                Lane0CorrectiveExecutionHardening.AttemptReceiptPath)));
+        }
+        finally { DeleteTree(authorizationRoot); }
+    }
+
+    [Fact]
+    public void AuthorizationRootValidationDerivesDurableReceiptAndMatchesBindingBytes()
+    {
+        using var source = SyntheticLauncherRepository(bindingPresent: true);
+        var execution = TempRoot();
+        try
+        {
+            var bytes = File.ReadAllBytes(Path.Combine(source.Path,
+                Lane0CorrectiveExecutionHardening.BindingPath));
+            var head = GitOutput(source.Path, "rev-parse", "HEAD");
+            var state = Lane0CorrectiveExecutionHardening.LoadAuthorizationRoot(
+                execution, source.Path, State(head), bytes);
+            Assert.Equal(Path.GetFullPath(source.Path), state.Root);
+            Assert.Equal(bytes, state.BindingBytes);
+            Assert.Equal(Path.Combine(source.Path,
+                Lane0CorrectiveExecutionHardening.AttemptReceiptPath), state.ReceiptPath);
+            Assert.NotEqual(Path.Combine(execution,
+                Lane0CorrectiveExecutionHardening.AttemptReceiptPath), state.ReceiptPath);
+        }
+        finally { DeleteTree(execution); }
+    }
+
+    [Fact]
+    public void AuthorizationRootHeadMismatchIsRejected()
+    {
+        using var source = SyntheticLauncherRepository(bindingPresent: true);
+        var execution = TempRoot();
+        try
+        {
+            var bytes = File.ReadAllBytes(Path.Combine(source.Path,
+                Lane0CorrectiveExecutionHardening.BindingPath));
+            Assert.Throws<InvalidDataException>(() =>
+                Lane0CorrectiveExecutionHardening.LoadAuthorizationRoot(
+                    execution, source.Path, State(new string('A', 40)), bytes));
+        }
+        finally { DeleteTree(execution); }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void AuthorizationRootTrackedDirtyIsRejected(bool staged)
+    {
+        using var source = SyntheticLauncherRepository(bindingPresent: true);
+        var execution = TempRoot();
+        try
+        {
+            var bytes = File.ReadAllBytes(Path.Combine(source.Path,
+                Lane0CorrectiveExecutionHardening.BindingPath));
+            var head = GitOutput(source.Path, "rev-parse", "HEAD");
+            File.AppendAllText(Path.Combine(source.Path, "tracked.txt"), "dirty");
+            if (staged) Git(source.Path, "add", "tracked.txt");
+            Assert.Throws<InvalidDataException>(() =>
+                Lane0CorrectiveExecutionHardening.LoadAuthorizationRoot(
+                    execution, source.Path, State(head), bytes));
+        }
+        finally { DeleteTree(execution); }
+    }
+
+    [Fact]
+    public void AuthorizationRootBindingAbsentIsRejected()
+    {
+        using var source = SyntheticLauncherRepository(bindingPresent: false);
+        var execution = TempRoot();
+        try
+        {
+            var head = GitOutput(source.Path, "rev-parse", "HEAD");
+            Assert.Throws<FileNotFoundException>(() =>
+                Lane0CorrectiveExecutionHardening.LoadAuthorizationRoot(
+                    execution, source.Path, State(head), [1]));
+        }
+        finally { DeleteTree(execution); }
+    }
+
+    [Fact]
+    public void AuthorizationRootTrackedBindingIsRejected()
+    {
+        using var source = SyntheticLauncherRepository(bindingPresent: true, bindingTracked: true);
+        var execution = TempRoot();
+        try
+        {
+            var head = GitOutput(source.Path, "rev-parse", "HEAD");
+            Assert.Throws<InvalidDataException>(() =>
+                Lane0CorrectiveExecutionHardening.LoadAuthorizationRoot(
+                    execution, source.Path, State(head), [1]));
+        }
+        finally { DeleteTree(execution); }
+    }
+
+    [Fact]
+    public void AuthorizationRootBindingByteMismatchIsRejected()
+    {
+        using var source = SyntheticLauncherRepository(bindingPresent: true);
+        var execution = TempRoot();
+        try
+        {
+            var head = GitOutput(source.Path, "rev-parse", "HEAD");
+            Assert.Throws<InvalidDataException>(() =>
+                Lane0CorrectiveExecutionHardening.LoadAuthorizationRoot(
+                    execution, source.Path, State(head), Encoding.UTF8.GetBytes("different")));
+        }
+        finally { DeleteTree(execution); }
+    }
+
+    [Fact]
+    public void AuthorizationRootCannotEqualExecutionRepositoryRoot()
+    {
+        using var source = SyntheticLauncherRepository(bindingPresent: true);
+        var head = GitOutput(source.Path, "rev-parse", "HEAD");
+        var bytes = File.ReadAllBytes(Path.Combine(source.Path,
+            Lane0CorrectiveExecutionHardening.BindingPath));
+        Assert.Throws<InvalidDataException>(() =>
+            Lane0CorrectiveExecutionHardening.LoadAuthorizationRoot(
+                source.Path, source.Path, State(head), bytes));
     }
 
     [Fact]
@@ -342,6 +522,23 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
     }
 
     [Fact]
+    public void ExternalHostPreflightExistingDurableReceiptNeverInvokesLauncher()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        var receipt = Path.Combine(repository.Path,
+            Lane0CorrectiveExecutionHardening.AttemptReceiptPath);
+        Directory.CreateDirectory(Path.GetDirectoryName(receipt)!);
+        File.WriteAllText(receipt, "durable receipt");
+        var invoked = false;
+
+        Assert.Throws<InvalidDataException>(() =>
+            RunExternalHostPreflight(repository.Path, () => invoked = true));
+
+        Assert.False(invoked);
+        Assert.Equal("durable receipt", File.ReadAllText(receipt));
+    }
+
+    [Fact]
     public void ExternalHostPreflightHeadMismatchNeverExecutesUnauthorizedRepositoryLauncher()
     {
         using var repository = SyntheticLauncherRepository(bindingPresent: true);
@@ -438,6 +635,8 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
             var result = RunIsolatedLauncher(repository.Path, execution, opaqueCorpus);
             Assert.True(result.ExitCode == 0, result.AllOutput);
             Assert.Contains($"--corpus-root|{opaqueCorpus}", result.AllOutput, StringComparison.Ordinal);
+            Assert.Contains($"--authorization-root|{repository.Path}", result.AllOutput,
+                StringComparison.Ordinal);
             Assert.Equal(GitOutput(repository.Path, "rev-parse", "HEAD"),
                 GitOutput(execution, "rev-parse", "HEAD"));
             Assert.NotEqual(0, GitExitCode(execution, "symbolic-ref", "-q", "HEAD"));
@@ -521,6 +720,23 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
     }
 
     [Fact]
+    public void IsolatedLauncherBlocksOnDurableSourceReceiptBeforeClone()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        var receipt = Path.Combine(repository.Path,
+            Lane0CorrectiveExecutionHardening.AttemptReceiptPath);
+        Directory.CreateDirectory(Path.GetDirectoryName(receipt)!);
+        File.WriteAllText(receipt, "consumed");
+        var execution = NonexistentTempPath("lane0-durable-receipt-block");
+        var result = RunIsolatedLauncher(repository.Path, execution, "opaque");
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains("durable authorization-root attempt receipt already exists",
+            result.AllOutput, StringComparison.Ordinal);
+        Assert.False(Directory.Exists(execution));
+        Assert.Equal("consumed", File.ReadAllText(receipt));
+    }
+
+    [Fact]
     public void IsolatedLauncherRejectsRelativeOrInsideRepositoryExecutionRoot()
     {
         using var repository = SyntheticLauncherRepository(bindingPresent: true);
@@ -595,15 +811,18 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
         Lane0CorrectiveExecutionHardening.ParseBinding(Encoding.UTF8.GetBytes(json)));
 
     [Fact]
-    public void RunnerAcceptsOnlyRepositoryAndExplicitCorpusRoot()
+    public void RunnerAcceptsOnlyExecutionAuthorizationAndExplicitCorpusRoots()
     {
         Assert.True(Lane0CorrectiveExecutionCommand.TryParseArguments(
-            ["--repo-root", ".", "--corpus-root", "synthetic"], out _, out _, out _));
+            ["--repo-root", "isolated", "--authorization-root", "source",
+                "--corpus-root", "synthetic"], out _, out _, out _, out _));
         Assert.False(Lane0CorrectiveExecutionCommand.TryParseArguments(
-            ["--repo-root", ".", "--corpus-root", "synthetic", "--output", "elsewhere"],
-            out _, out _, out _));
+            ["--repo-root", "isolated", "--corpus-root", "synthetic"],
+            out _, out _, out _, out _));
         Assert.False(Lane0CorrectiveExecutionCommand.TryParseArguments(
-            ["--binding", "elsewhere", "--corpus-root", "synthetic"], out _, out _, out _));
+            ["--repo-root", "isolated", "--authorization-root", "source",
+                "--corpus-root", "synthetic", "--output", "elsewhere"],
+            out _, out _, out _, out _));
     }
 
     [Fact]
@@ -641,7 +860,8 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
                 StringComparison.OrdinalIgnoreCase);
     }
 
-    private static Lane0HardenedPublishedState State() => new(new string('2', 40), new string('B', 64),
+    private static Lane0HardenedPublishedState State(string? head = null) => new(
+        head ?? new string('2', 40), new string('B', 64),
         "unused", Lane0CorrectiveEvaluationRunner.FrozenHistoricalSnapshot,
         Lane0CorrectiveEvaluationRunner.FrozenHistoricalG1CaseRule);
 
@@ -791,6 +1011,9 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
         if (GitExitCode(repository, "cat-file", "-e",
                 $"{sourceHead}:{Lane0CorrectiveExecutionHardening.BindingPath}") == 0)
             throw new InvalidDataException("Canonical binding is tracked at source HEAD.");
+        var receipt = Path.Combine(repository, Lane0CorrectiveExecutionHardening.AttemptReceiptPath);
+        if (File.Exists(receipt) || Directory.Exists(receipt))
+            throw new InvalidDataException("Durable authorization-root receipt already exists.");
         invokeTrackedLauncher();
     }
 
