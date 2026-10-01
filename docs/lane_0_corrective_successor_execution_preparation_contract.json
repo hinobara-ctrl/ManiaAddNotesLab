@@ -1,0 +1,188 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-successor-execution-preparation.1",
+    "phaseId": "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION",
+    "baselinePublicHead": "9e239f8d74d3624d54568af74ff1e420e48c7083",
+    "phase1ContractSha256": "66B0D27535B8EEE5B466DDAB1209DD0C548B982C24913E1993E611D57E1BE505",
+    "verifiedManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "manifestAuthorityModel": "VERIFIED_MANIFEST_OBJECT_COUPLING",
+    "authorization": "NO_C11_AUTHORIZATION",
+    "outcome": "READY_FOR_INDEPENDENT_EXECUTION_AUDIT",
+    "scientificQuestion": "Do RICE_HEAD_COMPLETION and G1_INTERIOR_SPATIAL retain legitimate reproducible joint support after corrected future-held exclusion, without temporal contamination or reuse of original identities?",
+    "families": [
+      "RICE_HEAD_COMPLETION",
+      "G1_INTERIOR_SPATIAL"
+    ],
+    "references": [
+      {
+        "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+        "expectedManifestFamily": "KIKUO | KARA KARA KARA NO KARA | XNETT",
+        "keymode": 7,
+        "historicallySupportedCount": 9
+      },
+      {
+        "chartId": "E73B098AA0CB6FA3BECE45E9551EF225412F5E01F6398184093A40B944F0AAE0",
+        "expectedManifestFamily": "NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",
+        "keymode": 7,
+        "historicallySupportedCount": 2
+      }
+    ],
+    "historicalInvalidSpringB": "E73B098A4D4C99D716D2C53B3EA3A4BFD1A75059881F30DB416631B5EDB972D4",
+    "historicalDistribution": "9+2=11",
+    "successorScientificSchema": "lane-0-corrective-successor-evaluation.1",
+    "scientificBoundaries": {
+      "riceCriterion": "UNCHANGED_FROM_PHASE_1",
+      "g1Criterion": "UNCHANGED_FROM_PHASE_1",
+      "jointSupportSemantics": "UNCHANGED",
+      "wholeGroupHoldoutSemantics": "UNCHANGED",
+      "anchorTimeSemantics": "UNCHANGED",
+      "futureHeldTemporalExclusion": "UNCHANGED",
+      "futureHeldIdentityExclusion": "UNCHANGED",
+      "familyThreshold": "joint support >= 2 charts AND >= 2 keymodes AND >= 1 supported operational target",
+      "zeroIntegrityFailures": true,
+      "zeroRng": true,
+      "behaviorChange": false,
+      "defaultChange": false
+    },
+    "identityMethod": "Normalized UTF-8 text; strip BOM; normalize CRLF/CR to LF; SHA-256 each file; ordinal path|hash rows joined by LF; SHA-256 the joined rows.",
+    "scientificImplementationFiles": [
+      "src/ManiaAddNotesLab.Core/Lane0CorrectiveSuccessorReferenceValidator.cs",
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorEvaluator.cs"
+    ],
+    "scientificImplementationSha256": "8F9AE545027F0F1364E3378324646C7F7711CDF7EFFC8CC879660644A3D905D0",
+    "executionHarnessFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorExecutionPreparation.cs"
+    ],
+    "executionHarnessSha256": "15DC978C24119E9832DD70C0C61F5BFB1BBAF11520A107A7728220009B793A61",
+    "packageVerifierFiles": [
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorPackage.cs"
+    ],
+    "packageVerifierSha256": "DFF48221A6FB087367B1C6B1062B7355806C53668C6876A4BB4EC59983232D38",
+    "frozenDependencyFiles": [
+      "src/ManiaAddNotesLab.Core/ChordCompletionResearch.cs",
+      "src/ManiaAddNotesLab.Core/FrozenC11ManifestResearch.cs",
+      "src/ManiaAddNotesLab.Core/InteriorRelationFeasibilityResearch.cs",
+      "src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+      "src/ManiaAddNotesLab.Core/Model.cs",
+      "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveEvaluationRunner.cs",
+      "tools/ManiaAddNotesLab.Experiments/Lane0FeasibilityRunner.cs"
+    ],
+    "frozenDependenciesSha256": "D5931A815701C0FAB854B878373A8ED03F3E29BDEA17C98A428C7AF6B0F7023B",
+    "packageArtifacts": [
+      "chart_family_keymode_results.csv",
+      "execution_identity.json",
+      "g1_historical_operational_cases.csv",
+      "g1_state_transitions.csv",
+      "integrity.json",
+      "scientific_summary.json",
+      "sha256sums.txt",
+      "successor_references.json"
+    ],
+    "determinism": {
+      "independentPasses": 2,
+      "mutableStateReuse": false,
+      "comparison": "BYTE_IDENTICAL_COMPLETE_PACKAGE",
+      "mismatchDisposition": "INVALID"
+    },
+    "nonInterference": {
+      "rngCalls": 0,
+      "behaviorChanged": false,
+      "defaultChanged": false,
+      "sourceManifestChanged": false,
+      "sourceContractChanged": false,
+      "inputBytesChanged": false,
+      "packageMutatesInputs": false
+    },
+    "authorityNamespace": {
+      "bindingPath": "docs/lane_0_corrective_successor_publication_binding.json",
+      "receiptPath": ".artifacts/lane_0_corrective_successor.attempt.json",
+      "receiptPathDerivation": "AUTHORIZATION_ROOT_PLUS_FROZEN_RELATIVE_PATH",
+      "outputPath": ".artifacts/lane_0_corrective_successor",
+      "outputPathDerivation": "EXECUTION_ROOT_PLUS_FROZEN_RELATIVE_PATH",
+      "historicalBindingPath": "docs/lane_0_corrective_evaluation_publication_binding.json",
+      "historicalReceiptPath": ".artifacts/lane_0_corrective.attempt.json",
+      "bindingPresent": false,
+      "receiptPresent": false,
+      "executionAuthorized": false,
+      "scientificEvaluationExecuted": false
+    },
+    "rootSeparation": {
+      "authorizationRoot": "SOURCE_PUBLIC_HEAD_TRACKED_CLEAN_AND_DURABLE_AUTHORITY",
+      "executionRoot": "ISOLATED_BUILD_EVALUATION_STAGING_AND_ARTIFACTS",
+      "corpusRoot": "OPAQUE_UNTIL_DURABLE_RECEIPT",
+      "allRootsDistinct": true,
+      "equalRootsRejected": true,
+      "ancestorOrDescendantRootsRejected": true,
+      "containmentComparison": "PATH_SEGMENT_AWARE_AND_OS_CASE_SENSITIVE_RULES",
+      "physicalSymlinkOrJunctionResolution": false,
+      "threatBoundary": "LOCAL_RESEARCH_USER; HOSTILE_ADMIN_ROOT_OR_OS_AND_PHYSICAL_SYMLINK_JUNCTION_ALIASING_OUT_OF_SCOPE"
+    },
+    "headInvariant": "BINDING_HEAD == SOURCE_HEAD == ISOLATED_HEAD == RUNTIME_HEAD",
+    "oneShotReceipt": {
+      "schemaVersion": "lane-0-corrective-successor-attempt.1",
+      "exclusiveCreate": true,
+      "durableFlush": true,
+      "attemptCount": 1,
+      "successConsumesAuthority": true,
+      "failureConsumesAuthority": true,
+      "invalidConsumesAuthority": true,
+      "exceptionConsumesAuthority": true,
+      "retry": false,
+      "rearm": false,
+      "deleteToRetry": false
+    },
+    "bindingCanonicalization": {
+      "encoding": "UTF-8",
+      "jsonPropertyNaming": "camelCase",
+      "whitespace": "COMPACT",
+      "terminator": "LF",
+      "canonicalByteEqualityRequired": true,
+      "receiptHashesExactVerifiedCanonicalBytes": true
+    },
+    "scientificOutcomePolicy": {
+      "INVALID": "INVALID",
+      "BLOCKED_AFTER_RECEIPT": "INVALID",
+      "FEASIBILITY_DEMONSTRATED": "MAY_PROCEED_IF_MECHANICALLY_VALID",
+      "LIMITED_PARK": "MAY_PROCEED_IF_MECHANICALLY_VALID",
+      "unknown": "INVALID"
+    },
+    "postReceiptProvenance": {
+      "receiptCreated": true,
+      "corpusAccessCalls": true,
+      "scientificPassesStarted": true,
+      "scientificPassesCompleted": true,
+      "anyLaterFailureConsumesAuthority": true
+    },
+    "preCorpusOrder": [
+      "PHASE_1_CONTRACT_IDENTITY",
+      "PHASE_2_CONTRACT_IDENTITY",
+      "VERIFIED_MANIFEST_LOAD_AND_IDENTITY",
+      "CORRECTED_REFERENCE_SEMANTIC_JOIN",
+      "EXACT_9_PLUS_2_DISTRIBUTION",
+      "SCIENTIFIC_IMPLEMENTATION_IDENTITY",
+      "HARNESS_AND_PACKAGE_IDENTITIES",
+      "FROZEN_DEPENDENCIES",
+      "FUTURE_BINDING_IDENTITY_AND_AUTHORIZATION",
+      "SOURCE_HEAD_AND_TRACKED_CLEAN",
+      "SOURCE_AND_EXECUTION_ROOT_CANONICALIZATION_AND_SEPARATION",
+      "RECEIPT_ABSENT",
+      "EXECUTION_DESTINATION_READY",
+      "DURABLE_ONE_SHOT_RECEIPT",
+      "CORPUS_ROOT_CANONICALIZATION_AND_SEPARATION",
+      "CORPUS_ACCESS"
+    ],
+    "phaseBoundary": {
+      "realBindingCreationAuthorized": false,
+      "realReceiptCreationAuthorized": false,
+      "realC11AccessAuthorized": false,
+      "realExecutionAuthorized": false,
+      "scientificOutcomeProduced": false,
+      "publicationRequiresIndependentAudit": true,
+      "publicationIsAuthorization": false,
+      "auditIsAuthorization": false,
+      "passingTestsIsAuthorization": false
+    }
+  },
+  "canonicalSha256": "11F55A6770BA78F008A6690C88561C714CAF45BA15B96E472C0C80B219C4D5B6",
+  "canonicalization": "UTF-8 JSON; recursively sort object properties ordinally; preserve array order and primitive values; no insignificant whitespace; hash only the contract object."
+}

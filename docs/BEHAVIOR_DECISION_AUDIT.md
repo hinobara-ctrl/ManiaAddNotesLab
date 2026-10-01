@@ -188,6 +188,10 @@ Estado: **COMPLETE — POST_ATTEMPT_FORENSIC_DOCUMENTED / NO_SUCCESSOR_AUTHORIZE
 
 Estado: **COMPLETE — READY_FOR_HUMAN_REVIEW / NO_C11_AUTHORIZATION**. Phase 1 crea únicamente un preregistro y validator estático successor-specific. La referencia B histórica permanece intacta; la nueva configuración usa A y conserva `9+2`, pregunta, thresholds, RICE, G1 y future-held. No hay binding, receipt, corpus adapter, ejecución, RNG, cambio conductual ni promoción.
 
-## LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT — estado actual
+## LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT — cierre publicado
 
 Estado: **COMPLETE — AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS / NO_C11_AUTHORIZATION**. Phase 1 fue publicada en `6a7c44d` y auditada sin defecto científico. Phase 2 no ha comenzado: debe acoplar el validator a `VerifiedFrozenC11Manifest` antes de cualquier autoridad y permanece `NOT_AUTHORIZED`. No existe binding, receipt, C11, RNG, conducta ni cambio de defaults.
+
+## LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION — estado actual
+
+Estado: **COMPLETE — READY_FOR_INDEPENDENT_EXECUTION_AUDIT / NO_C11_AUTHORIZATION**. La preparación successor cierra `VERIFIED_MANIFEST_OBJECT_COUPLING`, separa su ruta del evaluator consumido, congela A+segundo chart/`9+2`, exige dos paquetes byte-idénticos y prueba one-shot/concurrencia sólo en temp. No se creó binding ni receipt canónico, no se accedió C11, no hubo resultado científico ni cambio de comportamiento/RNG/default. Publicación y auditoría siguen sin constituir autorización.

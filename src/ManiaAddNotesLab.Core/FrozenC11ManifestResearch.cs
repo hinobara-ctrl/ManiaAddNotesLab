@@ -5,9 +5,23 @@ using System.Text.Json.Serialization;
 
 namespace ManiaAddNotesLab.Core;
 
-public sealed record VerifiedFrozenC11Manifest(
-    string CanonicalSha256,
-    ImmutableArray<C11FrozenCorpusExpectation> Charts);
+/// <summary>
+/// A manifest whose canonical content, declared identity and historical trusted identity were
+/// validated together. Construction is intentionally restricted to the verified loader so an
+/// execution path cannot pair a trusted hash with an unrelated chart collection.
+/// </summary>
+public sealed class VerifiedFrozenC11Manifest
+{
+    public string CanonicalSha256 { get; }
+    public ImmutableArray<C11FrozenCorpusExpectation> Charts { get; }
+
+    internal VerifiedFrozenC11Manifest(string canonicalSha256,
+        ImmutableArray<C11FrozenCorpusExpectation> charts)
+    {
+        CanonicalSha256 = canonicalSha256;
+        Charts = charts;
+    }
+}
 
 public static class FrozenC11ManifestResearch
 {
@@ -43,7 +57,7 @@ public static class FrozenC11ManifestResearch
                 RequiredString(x, "family", "C11 chart"),
                 x.GetProperty("keyCount").GetInt32(),
                 x.GetProperty("originalObjects").GetInt32())).ToImmutableArray();
-        return new(actualHash, charts);
+        return new VerifiedFrozenC11Manifest(actualHash, charts);
     }
 
     public static string ComputeCanonicalSha256(JsonElement manifest)

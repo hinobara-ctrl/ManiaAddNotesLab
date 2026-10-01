@@ -35,7 +35,31 @@ public static class Lane0CorrectiveSuccessorReferenceValidator
     public static ImmutableArray<Lane0CorrectiveSuccessorReference> FrozenReferences =>
         [Expected[SecondHistoricalIdentity], Expected[CorrectedSpringIdentity]];
 
+    /// <summary>
+    /// Execution-facing validation. Manifest identity and contents arrive as one verified value;
+    /// callers cannot independently substitute either half of the trust decision.
+    /// </summary>
     public static Lane0CorrectiveSuccessorReferenceValidation Validate(
+        VerifiedFrozenC11Manifest manifest,
+        IEnumerable<Lane0CorrectiveSuccessorReference> references,
+        int expectedTotalHistoricalOperationalCount)
+    {
+        ArgumentNullException.ThrowIfNull(manifest);
+        return ValidateCore(manifest.CanonicalSha256, manifest.Charts, references,
+            expectedTotalHistoricalOperationalCount);
+    }
+
+    // Historical Phase 1 surface retained for its published static-validation tests. Future
+    // execution code must use the VerifiedFrozenC11Manifest overload above.
+    public static Lane0CorrectiveSuccessorReferenceValidation Validate(
+        string manifestCanonicalSha256,
+        IEnumerable<C11FrozenCorpusExpectation> manifestCharts,
+        IEnumerable<Lane0CorrectiveSuccessorReference> references,
+        int expectedTotalHistoricalOperationalCount)
+        => ValidateCore(manifestCanonicalSha256, manifestCharts, references,
+            expectedTotalHistoricalOperationalCount);
+
+    private static Lane0CorrectiveSuccessorReferenceValidation ValidateCore(
         string manifestCanonicalSha256,
         IEnumerable<C11FrozenCorpusExpectation> manifestCharts,
         IEnumerable<Lane0CorrectiveSuccessorReference> references,

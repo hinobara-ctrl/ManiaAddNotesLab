@@ -18,5 +18,8 @@
     <ProjectReference Include="..\..\src\ManiaAddNotesLab.Core\ManiaAddNotesLab.Core.csproj" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0FeasibilityRunner.cs" Link="Lane0FeasibilityRunner.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveEvaluationRunner.cs" Link="Lane0CorrectiveEvaluationRunner.cs" />
+    <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorEvaluator.cs" Link="Lane0CorrectiveSuccessorEvaluator.cs" />
+    <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorPackage.cs" Link="Lane0CorrectiveSuccessorPackage.cs" />
+    <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorExecutionPreparation.cs" Link="Lane0CorrectiveSuccessorExecutionPreparation.cs" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: estado publicado de `ManiaAddNotesLab`, 28 de septiembre de 2026.
-Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró READY y la recertificación final de `SAFETY.REMEDIATION.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**: partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. Las investigaciones posteriores de selection-set remapping y OP-466 son focalizadas, observacionales y sin autoridad conductual. `LANE.0` conserva un cierre histórico **COMPLETE/FEASIBILITY_DEMONSTRATED**, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. `LANE.0.HARDENING` conserva su outcome histórico **COMPLETE/READY_FOR_PUBLICATION_REVIEW**. El intento correctivo oficial posterior está **CONSUMED/INVALID/NOT PUBLISHABLE/NO RETRY**. Phase 1 del successor fue publicada y auditada; `LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT` es el cierre canónico actual. Phase 2 permanece **NOT_STARTED / NOT_AUTHORIZED** y exige `VERIFIED_MANIFEST_OBJECT_COUPLING`; el default continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró READY y la recertificación final de `SAFETY.REMEDIATION.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**: partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. Las investigaciones posteriores de selection-set remapping y OP-466 son focalizadas, observacionales y sin autoridad conductual. `LANE.0` conserva un cierre histórico **COMPLETE/FEASIBILITY_DEMONSTRATED**, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. `LANE.0.HARDENING` conserva su outcome histórico **COMPLETE/READY_FOR_PUBLICATION_REVIEW**. El intento correctivo oficial posterior está **CONSUMED/INVALID/NOT PUBLISHABLE/NO RETRY**. Phase 2 del successor cerró **COMPLETE/READY_FOR_INDEPENDENT_EXECUTION_AUDIT / NO_C11_AUTHORIZATION** con manifest-object coupling, evaluator successor y paquete determinista; no existe binding/receipt real ni ejecución C11. El default continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1206,6 +1206,14 @@ Closure recorded at publication: LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION —
 **COMPLETE — OUTCOME AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS.** Phase 1 está publicada en `6a7c44d` y la auditoría independiente confirmó contrato, join público, B/A y `9+2`. La separación SHA/charts del API actual queda registrada como hardening obligatorio futuro: Phase 2 deberá consumir un `VerifiedFrozenC11Manifest` indivisible. No se implementó Phase 2 ni autoridad.
 
 Current phase: LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT — COMPLETE — OUTCOME AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS.
+
+## Phase LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION — Phase 2 Execution Preparation
+
+<!-- PHASE-CONTRACT:LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION;kind=ResearchShadow;behaviorChange=false;authorization=NO_C11_AUTHORIZATION -->
+
+**COMPLETE — OUTCOME READY_FOR_INDEPENDENT_EXECUTION_AUDIT.** `VerifiedFrozenC11Manifest` es ahora el único valor aceptado por la API execution-facing; el constructor no es público y no se puede separar el SHA confiable de los charts. La ruta successor conserva A/segundo chart/`9+2`, ejecuta dos estados independientes, compara el paquete completo byte a byte y aplica receipt durable sólo en roots sintéticos. Los fallos pre-authority prueban `CorpusAccessCalls=0`. No se creó autoridad real, no se accedió C11 y no se produjo resultado científico.
+
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION — COMPLETE — OUTCOME READY_FOR_INDEPENDENT_EXECUTION_AUDIT.
 
 ## Phase G1 — Interior Relation Semantics A/B
 

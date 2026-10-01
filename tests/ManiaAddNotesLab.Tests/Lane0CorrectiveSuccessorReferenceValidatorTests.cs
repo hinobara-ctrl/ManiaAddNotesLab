@@ -125,10 +125,15 @@ public sealed class Lane0CorrectiveSuccessorReferenceValidatorTests
     [Fact]
     public void StaticValidatorHasNoCorpusOrRngInputSurface()
     {
-        var method = typeof(Lane0CorrectiveSuccessorReferenceValidator).GetMethod("Validate")!;
-        var types = method.GetParameters().Select(x => x.ParameterType).ToArray();
-        Assert.DoesNotContain(types, x => x == typeof(Random) || x == typeof(DirectoryInfo)
-            || x == typeof(FileInfo));
+        var methods = typeof(Lane0CorrectiveSuccessorReferenceValidator).GetMethods()
+            .Where(x => x.Name == "Validate").ToArray();
+        Assert.Equal(2, methods.Length);
+        Assert.All(methods, method =>
+        {
+            var types = method.GetParameters().Select(x => x.ParameterType).ToArray();
+            Assert.DoesNotContain(types, x => x == typeof(Random) || x == typeof(DirectoryInfo)
+                || x == typeof(FileInfo));
+        });
     }
 
     private static ImmutableArray<Lane0CorrectiveSuccessorReference> References() =>
