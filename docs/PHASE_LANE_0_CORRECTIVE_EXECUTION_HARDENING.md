@@ -4,7 +4,7 @@
 
 `READY FOR MANUAL PUBLICATION AND FINAL INDEPENDENT AUDIT / BINDING V2 NOT YET ISSUED / C11 EXECUTION BLOCKED`
 
-Baseline de esta micro-remediación: `92ae78e8cb2faf7d7113aa67fb112d6063e04dce`; parent: `b3a87c5420371af212ff5f0512e5137dffb1e2bc`. El baseline histórico declarado por el contrato permanece deliberadamente en `b3a87c5…`. Este successor responde a F07–F08 sobre el cierre F01–F06 sin modificar la preparación histórica, el evaluator, la solución congelada, Core científico, defaults ni conducta.
+Baseline de F09: `53adc67627a88aa0e8f47adcfc0adbebb29f0f76`; parent: `92ae78e8cb2faf7d7113aa67fb112d6063e04dce`. El baseline histórico declarado por el contrato permanece deliberadamente en `b3a87c5…`. Este successor cierra F09 sobre el estado F01–F08 publicado sin modificar la preparación histórica, el evaluator, la solución congelada, Core científico, defaults ni conducta.
 
 No se accedió a C11, no se abrió un `.osu` real y no se emitió un publication binding.
 
@@ -80,23 +80,35 @@ Los tests sintéticos demuestran que archivos locales benignos, `Evil.cs`, `Dire
 
 La validación dejó de enumerar sólo archivos. Ahora enumera todas las entradas inmediatas de staging, exige cardinalidad seis, exige que las seis sean archivos regulares y luego verifica nombres y bytes. Un archivo o subdirectorio adicional produce `INVALID`, mantiene final ausente y conserva staging como evidencia.
 
+### F09 — HEAD autorizado antes de ejecutar código del repositorio
+
+Una comprobación situada únicamente dentro del launcher no basta para establecer el trust root: al comenzar el `.ps1`, ya se estaría ejecutando código perteneciente al HEAD actualmente checkout. Por ello la ruta oficial comienza con un **external host precheck** ejecutado mediante primitivas PowerShell/.NET del host y Git, sin cargar scripts, binarios, proyectos ni targets del repositorio.
+
+El precheck trata el binding únicamente como datos: exige presencia, schema v2 y `approvedPublishedHead` de 40 hex; obtiene el HEAD mediante Git; exige igualdad binding/source; comprueba tracked unstaged/staged clean y que el binding no esté tracked en ese HEAD. Sólo entonces puede invocar el launcher rastreado. Los archivos untracked benignos distintos del binding no bloquean este nivel porque F07 garantiza que no se copian al checkout de ejecución.
+
+Como defensa en profundidad, el launcher vuelve a parsear esos mismos bytes antes de examinar o crear `ExecutionRoot`: exige schema v2, HEAD bien formado e igual al source HEAD y `authorizedExecutionCount` entero. El parser C# interno conserva la autoridad completa sobre shape, hashes, autorización, count uno y runtime HEAD.
+
+La invariancia congelada es `BINDING_HEAD_EQUALS_SOURCE_HEAD_EQUALS_ISOLATED_HEAD_EQUALS_RUNTIME_HEAD`. Los controles sintéticos prueban que un HEAD B con un launcher capaz de crear `unauthorized-launcher-ran.marker` jamás se ejecuta cuando el binding aprueba A; marker, `ExecutionRoot` y corpus opaco permanecen ausentes.
+
+La ruta oficial se expresa normativamente como `HOST_PRECHECK_APPROVED_HEAD_AND_TRACKED_CLEAN → tracked isolated launcher`. No se afirma firma criptográfica, binding firmado, host/OS confiable, toolchain firmado ni build reproducible.
+
 ## Binding v2 y orden del gate
 
 El schema futuro es `lane-0-corrective-evaluation-publication-binding.2`, con ocho propiedades exactas: schema, HEAD, contrato hardened, preregistro, evaluator hardening, manifest, autorización humana y count. Binding v1, extras, faltantes o hashes malformados son rechazados.
 
-El launcher ejecuta LA–LK antes del orden interno A–AA: raíz/HEAD fuente; tracked-clean; binding canónico no tracked; raíz externa inexistente; clone local; checkout detached exacto; árbol aislado vacío; copia única y SHA del binding; `dotnet run` con build y corpus opaco. El runner mantiene A–AA: contrato; HEAD; tracked-clean; runtime science; implementación/runner/launcher; binding; schema; contract hash; parent hashes; HEAD binding; autorización; count uno; final/staging/receipt ausentes; manifest público; receipt `CreateNew`; corpus explícito; byte hash+parse; inputs ordinales; segunda carga independiente; dos evaluaciones; dos paquetes; comparación; staging; verificación de todas las entradas; rename final.
+El host ejecuta HA–HG antes de cualquier código del repositorio; el launcher autorizado repite LA–LL antes del orden interno A–AA. El runner mantiene A–AA: contrato; HEAD; tracked-clean; runtime science; implementación/runner/launcher; binding; schema; contract hash; parent hashes; HEAD binding; autorización; count uno; final/staging/receipt ausentes; manifest público; receipt `CreateNew`; corpus explícito; byte hash+parse; inputs ordinales; segunda carga independiente; dos evaluaciones; dos paquetes; comparación; staging; verificación de todas las entradas; rename final.
 
 No se toca corpus antes de crear el receipt en Q.
 
 ## Identidades successor
 
-- contract canonical: `20D8B5A4A6EC34D76496BCB3DF093C17F6C02999136D52D07EA2246C3810E3AA`;
+- contract canonical: `37285CB557182ACBAF477A4083C5B911E123D6DE2530DD8BCC9A688C5BB26265`;
 - runtime scientific tree: `CD0FCFA43EC457CF2B49B07F1F18CDFB1515D112AEDA6C579A128B6630FF6BD8`;
 - hardening implementation tree: `D1781679967C6050C9F38012506408C3C55E8B2E23C5B8C47305E52A3779226F`;
 - official runner tree: `96DB4A9EA0D12A8A60D69B47F327D4EA93B2551161C1CA59D2BC4EA6A329AC8D`;
-- isolated launcher normalized file: `B602DCB9394100FC65947592285E50CA72231615862CB43B427E8BBA04552F2D`;
-- hardening harness tree: `6EB62EE22013FDCC702E6D08C94004D7BF9D0F0945B20BC562E14174F5A7F492`;
-- verifier normalized file: `3D1C13F767FABF90FAFACDDB1814AC9F30DCDEB9A7138D2D1DE86DAB5E3036CA`.
+- isolated launcher normalized file: `787843DEF8E060E36E4614D790BEC493F4F398B38DC990BD74C58D8BF3717E1E`;
+- hardening harness tree: `2A75CFBE6E8E83C4B6AEABFD95C784134C284CB3EBB13B7A689BA51346735402`;
+- verifier normalized file: `3FDCACE5699EDA1B6140F0188007AB8601E19EDB9E0B1D231E11675425215BD4`.
 
 ## Validación
 
@@ -107,7 +119,7 @@ Con heap limitado a 16 GiB, conservación 9 y ejecución secuencial:
 - suite congelada: 921 passed, 0 failed, 0 skipped;
 - evaluator directo: 53 passed, 0 failed, 0 skipped;
 - execution-preparation histórico: 31 passed, 0 failed, 0 skipped;
-- execution-hardening successor: 46 passed, 0 failed, 0 skipped;
+- execution-hardening successor: 56 passed, 0 failed, 0 skipped;
 - isolated launcher synthetic clone: PASS; exact detached HEAD, binding-only copy and source-only inputs excluded;
 - F08 bad controls for extra file and extra directory: PASS; final absent and staging retained;
 - dedicated runner build: PASS;

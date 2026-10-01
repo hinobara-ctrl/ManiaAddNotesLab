@@ -332,6 +332,86 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
     }
 
     [Fact]
+    public void ExternalHostPreflightMatchingHeadPermitsTrackedLauncherStageDespiteBenignUntrackedFiles()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        File.WriteAllText(Path.Combine(repository.Path, "benign-local-note.txt"), "not copied");
+        var invoked = false;
+        RunExternalHostPreflight(repository.Path, () => invoked = true);
+        Assert.True(invoked);
+    }
+
+    [Fact]
+    public void ExternalHostPreflightHeadMismatchNeverExecutesUnauthorizedRepositoryLauncher()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        var approvedHead = GitOutput(repository.Path, "rev-parse", "HEAD");
+        var unauthorizedLauncher = Path.Combine(repository.Path, "tools", "unauthorized-launcher.ps1");
+        File.WriteAllText(unauthorizedLauncher,
+            "param([string]$Marker,[string]$CorpusMarker) " +
+            "[IO.File]::WriteAllText($Marker,'ran'); [IO.File]::WriteAllText($CorpusMarker,'touched')");
+        Git(repository.Path, "add", "tools/unauthorized-launcher.ps1");
+        Git(repository.Path, "commit", "-m", "unauthorized head B");
+        Assert.NotEqual(approvedHead, GitOutput(repository.Path, "rev-parse", "HEAD"));
+
+        var marker = NonexistentTempPath("unauthorized-launcher-ran.marker");
+        var execution = NonexistentTempPath("lane0-host-preflight-mismatch");
+        var opaqueCorpusMarker = NonexistentTempPath("opaque-corpus-untouched.marker");
+        Assert.Throws<InvalidDataException>(() => RunExternalHostPreflight(repository.Path, () =>
+        {
+            RunPowerShellScript(unauthorizedLauncher, marker, opaqueCorpusMarker);
+            Directory.CreateDirectory(execution);
+        }));
+        Assert.False(File.Exists(marker));
+        Assert.False(File.Exists(opaqueCorpusMarker));
+        Assert.False(Directory.Exists(execution));
+    }
+
+    [Theory]
+    [InlineData("malformed")]
+    [InlineData("schema-v1")]
+    [InlineData("malformed-head")]
+    public void ExternalHostPreflightRejectsMalformedBindingBeforeLauncher(string mutation)
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        var binding = Path.Combine(repository.Path, Lane0CorrectiveExecutionHardening.BindingPath);
+        if (mutation == "malformed") File.WriteAllText(binding, "not-json");
+        else WriteSyntheticBinding(repository.Path,
+            mutation == "malformed-head" ? "not-a-head" : GitOutput(repository.Path, "rev-parse", "HEAD"),
+            mutation == "schema-v1" ? "lane-0-corrective-evaluation-publication-binding.1"
+                : Lane0CorrectiveExecutionHardening.BindingSchema);
+        var invoked = false;
+        Assert.ThrowsAny<Exception>(() => RunExternalHostPreflight(repository.Path, () => invoked = true));
+        Assert.False(invoked);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ExternalHostPreflightRejectsTrackedDirtySourceBeforeLauncher(bool staged)
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        File.AppendAllText(Path.Combine(repository.Path, "tracked.txt"), "dirty");
+        if (staged) Git(repository.Path, "add", "tracked.txt");
+        var invoked = false;
+        Assert.Throws<InvalidDataException>(() =>
+            RunExternalHostPreflight(repository.Path, () => invoked = true));
+        Assert.False(invoked);
+    }
+
+    [Fact]
+    public void ExternalHostPreflightRejectsTrackedBindingBeforeLauncher()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true, bindingTracked: true);
+        Assert.Equal(0, GitExitCode(repository.Path, "cat-file", "-e",
+            $"HEAD:{Lane0CorrectiveExecutionHardening.BindingPath}"));
+        var invoked = false;
+        Assert.Throws<InvalidDataException>(() =>
+            RunExternalHostPreflight(repository.Path, () => invoked = true));
+        Assert.False(invoked);
+    }
+
+    [Fact]
     public void BindingAbsentBlocksIsolatedLauncherBeforeCloneOrCorpusProbe()
     {
         using var repository = SyntheticLauncherRepository(bindingPresent: false);
@@ -374,6 +454,36 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
                 GitOutput(execution, "ls-files", "--others", "--exclude-standard"));
         }
         finally { DeleteTree(execution); }
+    }
+
+    [Fact]
+    public void IsolatedLauncherDefenseInDepthRejectsMismatchedBindingBeforeExecutionRoot()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        WriteSyntheticBinding(repository.Path, new string('A', 40));
+        var execution = NonexistentTempPath("lane0-launcher-head-mismatch");
+        var opaqueCorpus = NonexistentTempPath("lane0-opaque-corpus");
+        var result = RunIsolatedLauncher(repository.Path, execution, opaqueCorpus);
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains("approvedPublishedHead does not equal source HEAD", result.AllOutput,
+            StringComparison.Ordinal);
+        Assert.False(Directory.Exists(execution));
+        Assert.False(File.Exists(opaqueCorpus));
+        Assert.False(Directory.Exists(opaqueCorpus));
+    }
+
+    [Fact]
+    public void IsolatedLauncherDefenseInDepthRejectsNonIntegerCountBeforeExecutionRoot()
+    {
+        using var repository = SyntheticLauncherRepository(bindingPresent: true);
+        WriteSyntheticBinding(repository.Path, GitOutput(repository.Path, "rev-parse", "HEAD"),
+            authorizedExecutionCount: "1");
+        var execution = NonexistentTempPath("lane0-launcher-invalid-count");
+        var result = RunIsolatedLauncher(repository.Path, execution, "opaque");
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains("authorizedExecutionCount must be a valid integer", result.AllOutput,
+            StringComparison.Ordinal);
+        Assert.False(Directory.Exists(execution));
     }
 
     [Theory]
@@ -632,13 +742,68 @@ public sealed class Lane0CorrectiveExecutionHardeningTests
         File.WriteAllText(Path.Combine(root, "docs", ".gitkeep"), string.Empty);
         if (bindingPresent && bindingTracked)
             File.WriteAllBytes(Path.Combine(root, Lane0CorrectiveExecutionHardening.BindingPath),
-                Encoding.UTF8.GetBytes("synthetic tracked binding bytes\n"));
+                JsonSerializer.SerializeToUtf8Bytes(new
+                {
+                    schemaVersion = Lane0CorrectiveExecutionHardening.BindingSchema,
+                    approvedPublishedHead = new string('0', 40),
+                    authorizedExecutionCount = 1
+                }));
         Git(root, "add", ".gitignore", "tracked.txt", "tools", "docs");
         Git(root, "commit", "-m", "synthetic launcher baseline");
         if (bindingPresent && !bindingTracked)
-            File.WriteAllBytes(Path.Combine(root, Lane0CorrectiveExecutionHardening.BindingPath),
-                Encoding.UTF8.GetBytes("synthetic binding bytes\n"));
+            WriteSyntheticBinding(root, GitOutput(root, "rev-parse", "HEAD"));
         return new(root);
+    }
+
+    private static void WriteSyntheticBinding(string root, string approvedHead,
+        string schema = "lane-0-corrective-evaluation-publication-binding.2",
+        object? authorizedExecutionCount = null)
+    {
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(new
+        {
+            schemaVersion = schema,
+            approvedPublishedHead = approvedHead,
+            authorizedExecutionCount = authorizedExecutionCount ?? 1
+        });
+        File.WriteAllBytes(Path.Combine(root, Lane0CorrectiveExecutionHardening.BindingPath), bytes);
+    }
+
+    private static void RunExternalHostPreflight(string repository, Action invokeTrackedLauncher)
+    {
+        var bindingPath = Path.Combine(repository, Lane0CorrectiveExecutionHardening.BindingPath);
+        if (!File.Exists(bindingPath)) throw new FileNotFoundException("Canonical binding absent.");
+        using var document = JsonDocument.Parse(File.ReadAllBytes(bindingPath));
+        var root = document.RootElement;
+        var schema = root.GetProperty("schemaVersion").GetString();
+        var approvedHead = root.GetProperty("approvedPublishedHead").GetString();
+        if (schema != Lane0CorrectiveExecutionHardening.BindingSchema)
+            throw new InvalidDataException("Binding schema is not v2.");
+        if (approvedHead is null || approvedHead.Length != 40 || !approvedHead.All(Uri.IsHexDigit))
+            throw new InvalidDataException("Approved HEAD is malformed.");
+        var sourceHead = GitOutput(repository, "rev-parse", "--verify", "HEAD");
+        if (sourceHead.Length != 40 || !sourceHead.All(Uri.IsHexDigit)
+            || !string.Equals(approvedHead, sourceHead, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException("Binding HEAD does not equal source HEAD.");
+        var unstaged = GitExitCode(repository, "diff", "--quiet", "HEAD", "--");
+        var staged = GitExitCode(repository, "diff", "--cached", "--quiet");
+        if (unstaged != 0 || staged != 0)
+            throw new InvalidDataException("Tracked source is dirty.");
+        if (GitExitCode(repository, "cat-file", "-e",
+                $"{sourceHead}:{Lane0CorrectiveExecutionHardening.BindingPath}") == 0)
+            throw new InvalidDataException("Canonical binding is tracked at source HEAD.");
+        invokeTrackedLauncher();
+    }
+
+    private static void RunPowerShellScript(string path, params string[] arguments)
+    {
+        var start = new ProcessStartInfo("pwsh") { UseShellExecute = false };
+        start.ArgumentList.Add("-NoProfile");
+        start.ArgumentList.Add("-File");
+        start.ArgumentList.Add(path);
+        foreach (var argument in arguments) start.ArgumentList.Add(argument);
+        using var process = Process.Start(start) ?? throw new InvalidOperationException("Cannot run pwsh.");
+        process.WaitForExit();
+        if (process.ExitCode != 0) throw new InvalidOperationException("Synthetic launcher failed.");
     }
 
     private static ProcessResult RunIsolatedLauncher(string repository, string execution, string corpus)

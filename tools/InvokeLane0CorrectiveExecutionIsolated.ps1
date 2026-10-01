@@ -75,6 +75,44 @@ if ($trackedBinding.ExitCode -ne 128) {
 }
 $bindingBytes = [IO.File]::ReadAllBytes($bindingSource)
 $bindingSourceSha256 = Get-Sha256 -Bytes $bindingBytes
+$bindingDocument = $null
+try {
+    $bindingDocument = [Text.Json.JsonDocument]::Parse(
+        [ReadOnlyMemory[byte]]::new($bindingBytes))
+    $bindingRoot = $bindingDocument.RootElement
+    if ($bindingRoot.ValueKind -ne [Text.Json.JsonValueKind]::Object) {
+        throw 'binding root must be an object'
+    }
+    $bindingSchema = $bindingRoot.GetProperty('schemaVersion')
+    $bindingHead = $bindingRoot.GetProperty('approvedPublishedHead')
+    $bindingCount = $bindingRoot.GetProperty('authorizedExecutionCount')
+    if ($bindingSchema.ValueKind -ne [Text.Json.JsonValueKind]::String -or
+        $bindingSchema.GetString() -cne 'lane-0-corrective-evaluation-publication-binding.2') {
+        throw 'binding schema must be publication binding v2'
+    }
+    if ($bindingHead.ValueKind -ne [Text.Json.JsonValueKind]::String) {
+        throw 'approvedPublishedHead must be a string'
+    }
+    $approvedPublishedHead = $bindingHead.GetString()
+    if ($approvedPublishedHead -notmatch '^[0-9a-fA-F]{40}$') {
+        throw 'approvedPublishedHead must be exactly 40 hexadecimal characters'
+    }
+    if (-not [string]::Equals($approvedPublishedHead, $sourceHead,
+            [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'approvedPublishedHead does not equal source HEAD'
+    }
+    [int]$authorizedExecutionCount = 0
+    if ($bindingCount.ValueKind -ne [Text.Json.JsonValueKind]::Number -or
+        -not $bindingCount.TryGetInt32([ref]$authorizedExecutionCount)) {
+        throw 'authorizedExecutionCount must be a valid integer'
+    }
+}
+catch {
+    throw "INVALID: pre-build publication binding validation failed: $($_.Exception.Message)"
+}
+finally {
+    if ($null -ne $bindingDocument) { $bindingDocument.Dispose() }
+}
 
 if (-not [IO.Path]::IsPathFullyQualified($ExecutionRoot)) {
     throw 'BLOCKED: ExecutionRoot must be an absolute path.'

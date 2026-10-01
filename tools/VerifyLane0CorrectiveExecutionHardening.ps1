@@ -116,11 +116,34 @@ $expected = @{
     expectedC11ManifestSha256 = 'AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445'
     bindingSchema = 'lane-0-corrective-evaluation-publication-binding.2'
     officialExecutionMode = 'LOCAL_ISOLATED_CLONE_OF_PUBLISHED_HEAD'
-    officialCommandShape = 'pwsh -NoProfile -File tools/InvokeLane0CorrectiveExecutionIsolated.ps1 -RepositoryRoot . -ExecutionRoot <DEDICATED_NONEXISTENT_PATH> -CorpusRoot <EXPLICIT_FROZEN_C11_ROOT>'
+    officialBootstrapMode = 'HOST_POWERSHELL_GIT_PRECHECK_BEFORE_REPO_CODE'
+    externalPreflightRequired = $true
+    approvedHeadInvariant = 'BINDING_HEAD_EQUALS_SOURCE_HEAD_EQUALS_ISOLATED_HEAD_EQUALS_RUNTIME_HEAD'
+    launcherDefenseInDepthBindingHeadCheck = $true
+    officialCommandShape = 'HOST_PRECHECK_APPROVED_HEAD_AND_TRACKED_CLEAN -> pwsh -NoProfile -File tools/InvokeLane0CorrectiveExecutionIsolated.ps1 -RepositoryRoot . -ExecutionRoot <DEDICATED_NONEXISTENT_PATH> -CorpusRoot <EXPLICIT_FROZEN_C11_ROOT>'
     currentState = 'READY FOR MANUAL PUBLICATION AND FINAL INDEPENDENT AUDIT / BINDING V2 NOT YET ISSUED / C11 EXECUTION BLOCKED'
 }
 foreach ($pair in $expected.GetEnumerator()) {
     if ($body.($pair.Key) -ne $pair.Value) { Write-Error "Frozen declaration mismatch: $($pair.Key)"; $failed = $true }
+}
+$expectedExternalPreflight = @(
+    'READ_CANONICAL_BINDING_AS_DATA',
+    'REQUIRE_BINDING_SCHEMA_V2',
+    'READ_SOURCE_HEAD_WITH_GIT',
+    'REQUIRE_APPROVED_HEAD_EQUALS_SOURCE_HEAD',
+    'REQUIRE_SOURCE_TRACKED_UNSTAGED_CLEAN',
+    'REQUIRE_SOURCE_TRACKED_STAGED_CLEAN',
+    'REQUIRE_CANONICAL_BINDING_UNTRACKED_AT_HEAD',
+    'ONLY_THEN_INVOKE_TRACKED_ISOLATED_LAUNCHER'
+)
+if (@($body.externalPreflightSteps).Count -ne $expectedExternalPreflight.Count) {
+    Write-Error 'External host preflight step count drifted.'; $failed = $true
+} else {
+    for ($index = 0; $index -lt $expectedExternalPreflight.Count; $index++) {
+        if ($body.externalPreflightSteps[$index] -cne $expectedExternalPreflight[$index]) {
+            Write-Error "External host preflight step drifted at index $index."; $failed = $true
+        }
+    }
 }
 
 $parentCanonical = Get-CanonicalContractHash $body.parentPreparationContractPath
@@ -169,6 +192,12 @@ $runnerSource = [Text.UTF8Encoding]::new($false).GetString((Get-NormalizedBytes 
 $launcherSource = [Text.UTF8Encoding]::new($false).GetString((Get-NormalizedBytes $body.isolatedLauncherPath))
 $hardeningSource = [Text.UTF8Encoding]::new($false).GetString((Get-NormalizedBytes $body.hardeningImplementationFiles[0]))
 $solutionText = [Text.UTF8Encoding]::new($false).GetString((Get-NormalizedBytes $body.solutionPath))
+$bindingParseIndex = $launcherSource.IndexOf('[Text.Json.JsonDocument]::Parse', [StringComparison]::Ordinal)
+$bindingSchemaIndex = $launcherSource.IndexOf("bindingSchema.GetString() -cne 'lane-0-corrective-evaluation-publication-binding.2'", [StringComparison]::Ordinal)
+$bindingHeadIndex = $launcherSource.IndexOf('[string]::Equals($approvedPublishedHead, $sourceHead', [StringComparison]::Ordinal)
+$executionRootIndex = $launcherSource.IndexOf('[IO.Path]::IsPathFullyQualified($ExecutionRoot)', [StringComparison]::Ordinal)
+$cloneIndex = $launcherSource.IndexOf("'clone', '--no-hardlinks', '--no-checkout'", [StringComparison]::Ordinal)
+$dotnetIndex = $launcherSource.IndexOf("'run', '--project', `$RunnerProject, '-c', 'Release'", [StringComparison]::Ordinal)
 if (-not $runnerSource.Contains('Lane0CorrectiveExecutionHardening.Execute', [StringComparison]::Ordinal) `
     -or $runnerSource.Contains('Lane0CorrectiveExecutionPreparation.Execute', [StringComparison]::Ordinal) `
     -or $solutionText.Contains('ManiaAddNotesLab.CorrectiveExecution.csproj', [StringComparison]::Ordinal) `
@@ -180,6 +209,10 @@ if (@($body.preBuildAllowedUntracked).Count -ne 1 `
     -or $body.executionRootPolicy -ne 'NONEXISTENT / PRESERVE_AFTER_ATTEMPT' `
     -or $body.sourceWorkingTreeUntrackedPolicy -ne 'NOT_COPIED_TO_EXECUTION_ROOT' `
     -or $body.isolatedExecutionTreePolicy -ne 'TRACKED_HEAD_PLUS_CANONICAL_BINDING_ONLY_BEFORE_BUILD' `
+    -or $bindingParseIndex -lt 0 -or $bindingSchemaIndex -le $bindingParseIndex `
+    -or $bindingHeadIndex -le $bindingSchemaIndex -or $executionRootIndex -le $bindingHeadIndex `
+    -or $cloneIndex -le $executionRootIndex -or $dotnetIndex -le $cloneIndex `
+    -or -not $launcherSource.Contains('TryGetInt32([ref]$authorizedExecutionCount)', [StringComparison]::Ordinal) `
     -or -not $launcherSource.Contains("'clone', '--no-hardlinks', '--no-checkout'", [StringComparison]::Ordinal) `
     -or -not $launcherSource.Contains("'checkout', '--detach'", [StringComparison]::Ordinal) `
     -or -not $launcherSource.Contains("'status', '--porcelain=v1', '--untracked-files=all', '--ignored'", [StringComparison]::Ordinal) `
