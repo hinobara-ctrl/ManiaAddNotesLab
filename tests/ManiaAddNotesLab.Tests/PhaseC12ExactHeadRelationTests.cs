@@ -190,7 +190,7 @@ public sealed class PhaseC12ExactHeadRelationTests
         var stateRoot = state.RootElement;
         Assert.Equal("legacy-experimental.1", stateRoot.GetProperty("behaviorPolicyVersion").GetString());
         Assert.False(stateRoot.GetProperty("behaviorChange").GetBoolean());
-        Assert.Equal("LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS",
+        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION",
             stateRoot.GetProperty("currentPhase").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextRecommendedPhase").ValueKind);
         Assert.Equal("HUMAN_REVIEW_REQUIRED", stateRoot.GetProperty("nextRecommendedAction").GetString());
@@ -226,14 +226,14 @@ public sealed class PhaseC12ExactHeadRelationTests
         Assert.Equal("READY_FOR_PUBLICATION_REVIEW", phases.Single(x =>
                 x.GetProperty("id").GetString() == "LANE.0.HARDENING")
             .GetProperty("outcome").GetString());
-        const string currentPhase = "Current phase: LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS "
-            + "— COMPLETE — OUTCOME POST_ATTEMPT_FORENSIC_DOCUMENTED";
+        const string currentPhase = "Current phase: LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION "
+            + "— COMPLETE — OUTCOME READY_FOR_HUMAN_REVIEW";
         Assert.Contains(currentPhase, readme);
         Assert.Contains(currentPhase, status);
         Assert.Contains("Retry: prohibited", readme);
         Assert.Contains("Retry: prohibited", status);
-        Assert.Contains("Successor: not preregistered / not authorized", readme);
-        Assert.Contains("Successor: not preregistered / not authorized", status);
+        Assert.Contains("Successor: preregistered / no C11 authorization", readme);
+        Assert.Contains("Successor: preregistered / no C11 authorization", status);
         Assert.Contains("Next actionable research candidate: none", readme);
         Assert.Contains("Next actionable research candidate: none", status);
         Assert.Contains("Next behavioral phase: none", readme);

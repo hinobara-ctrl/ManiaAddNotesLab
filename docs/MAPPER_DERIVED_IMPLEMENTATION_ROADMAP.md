@@ -2,7 +2,7 @@
 
 Estado: roadmap de transición aprobado para implementación incremental.  
 Baseline revisado: estado publicado de `ManiaAddNotesLab`, 28 de septiembre de 2026.
-Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró READY y la recertificación final de `SAFETY.REMEDIATION.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**: partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. Las investigaciones posteriores de selection-set remapping y OP-466 son focalizadas, observacionales y sin autoridad conductual. `LANE.0` conserva un cierre histórico **COMPLETE/FEASIBILITY_DEMONSTRATED**, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. `LANE.0.HARDENING` conserva su outcome histórico **COMPLETE/READY_FOR_PUBLICATION_REVIEW**. El intento correctivo oficial posterior está **CONSUMED/INVALID/NOT PUBLISHABLE/NO RETRY** y `LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS` es el cierre canónico actual. G1, G2, H, LANE.DESIGN/GATE y cualquier sucesora permanecen **NOT_AUTHORIZED**; el default continúa en `legacy-experimental.1`.
+Phase A/B: **COMPLETE**. Phase C1: **HOLD**. D0/D0.1/D0.2 y F1: **COMPLETE/A**. F2: **COMPLETE/B SHADOW ONLY**; F2.ACQ **BLOCKED**. D1 y D1.SAFETY: **COMPLETE/C / PARKED**. SAFETY.PROV y G1.0: **COMPLETE/A / SHADOW ONLY**. G1.DESIGN: **COMPLETE/READY / RECERTIFIED / SHADOW ONLY**. `G1.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**. `SAFETY.CAUSAL` cerró **COMPLETE/A / CAUSE FOUND**. `SAFETY.REMEDIATION.DESIGN` cerró READY y la recertificación final de `SAFETY.REMEDIATION.GATE` cerró **COMPLETE/NEEDS_REVIEW / NO PROMOTION**: partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. Las investigaciones posteriores de selection-set remapping y OP-466 son focalizadas, observacionales y sin autoridad conductual. `LANE.0` conserva un cierre histórico **COMPLETE/FEASIBILITY_DEMONSTRATED**, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. `LANE.0.HARDENING` conserva su outcome histórico **COMPLETE/READY_FOR_PUBLICATION_REVIEW**. El intento correctivo oficial posterior está **CONSUMED/INVALID/NOT PUBLISHABLE/NO RETRY**. `LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION` es el cierre canónico actual, listo sólo para revisión humana y sin autorización C11. G1, G2, H y LANE.DESIGN/GATE permanecen **NOT_AUTHORIZED**; el default continúa en `legacy-experimental.1`.
 
 Este documento reconcilia la visión de `FUTURE_MAPPER_DERIVED_ALGORITHM_PLAN.md`, la revisión crítica `MAPPER_DERIVED_PROPOSALS_REVIEW.md`, el blueprint previo y el código real. La visión establece el destino; la revisión identifica peligros conceptuales; este roadmap define una secuencia implementable. Ninguno reemplaza a los otros.
 
@@ -1189,7 +1189,15 @@ La ruta `lane-0-corrective-*` separa preparación, validación y ejecución. El 
 
 **COMPLETE — OUTCOME POST_ATTEMPT_FORENSIC_DOCUMENTED.** El único intento correctivo oficial fue consumido y terminó `INVALID / NOT PUBLISHABLE`. `SCI-01` preserva la referencia congelada incorrecta como evidencia histórica y establece una causa suficiente no exclusiva. F03×F07 permanece cerrado; no existe retry ni successor diseñado, preregistrado o autorizado.
 
-Current phase: LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS — COMPLETE — OUTCOME POST_ATTEMPT_FORENSIC_DOCUMENTED.
+Closure recorded at that point: LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS — COMPLETE — OUTCOME POST_ATTEMPT_FORENSIC_DOCUMENTED.
+
+## Phase LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION — Successor Design and Pre-C11 Static Hardening
+
+<!-- PHASE-CONTRACT:LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION;kind=ResearchShadow;behaviorChange=false;authorization=NO_C11_AUTHORIZATION -->
+
+**COMPLETE — OUTCOME READY_FOR_HUMAN_REVIEW.** Un contrato successor separado conserva la pregunta y thresholds, sustituye B únicamente dentro de la nueva configuración por la identidad pública A y valida membresía, family, keymode y distribución `9+2` contra el manifest versionado. Phase 1 no contiene binding, receipt, adapter, launcher ni acceso C11.
+
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION — COMPLETE — OUTCOME READY_FOR_HUMAN_REVIEW.
 
 ## Phase G1 — Interior Relation Semantics A/B
 

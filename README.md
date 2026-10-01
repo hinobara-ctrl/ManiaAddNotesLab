@@ -50,29 +50,30 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **LANE.0 corrective evaluation preparation — HISTORICAL PREREGISTRATION:** el preregistro, snapshots y templates describen lo realmente congelado y ejecutado; se preservan sin reescribir como evidencia histórica.
 - **LANE.0 corrective evaluator core — PUBLISHED / RESEARCH-ONLY / ATTEMPT CONSUMED:** el núcleo publicado en `d005534` fue ejecutado una vez bajo la autoridad oficial y produjo `INVALID / NOT PUBLISHABLE`.
 - **LANE.0 post-attempt forensics — DOCUMENTED / SCI-01 RECORDED / NO RETRY:** la referencia Spring congelada no pertenece al manifest público; es una causa suficiente no exclusiva del `INVALID`. El binding y receipt consumidos se preservan, no hay promoción y ningún successor está preregistrado o autorizado.
+- **LANE.0 corrective successor Phase 1 — READY FOR HUMAN REVIEW / NO C11 AUTHORIZATION:** preregistra la referencia Spring pública corregida, valida estáticamente `9+2` contra el manifest versionado y reserva un namespace nuevo de autoridad sin binding, receipt, corpus adapter ni ejecución.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. La recertificación final conserva `NEEDS_REVIEW`: seguridad observada 215→0, pero causalidad final `188 A + 21 B + 5 D + 1 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS — COMPLETE — OUTCOME POST_ATTEMPT_FORENSIC_DOCUMENTED<br>
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION — COMPLETE — OUTCOME READY_FOR_HUMAN_REVIEW<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
 Next behavioral authorization: N/A<br>
 Retry: prohibited<br>
-Successor: not preregistered / not authorized<br>
+Successor: preregistered / no C11 authorization<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 929 passed / 0 failed / 0 skipped
+Tests: 939 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.
 
-`LANE.0` conserva su cierre histórico, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo oficial está **CONSUMED / INVALID / NOT PUBLISHABLE** y no admite retry. La reparación y el hardening no eligieron lane ni introdujeron frecuencia, score, selector o conducta. Un eventual successor aún no está diseñado, preregistrado ni autorizado; `LANE.DESIGN`, `LANE.GATE` y cualquier integración siguen sin autorización.
+`LANE.0` conserva su cierre histórico, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo oficial está **CONSUMED / INVALID / NOT PUBLISHABLE** y no admite retry. Phase 1 preregistró un successor separado con validación pública pre-C11, pero no existe binding, receipt, adapter ni autorización de ejecución; `LANE.DESIGN`, `LANE.GATE` y cualquier integración siguen sin autorización.
 
 ## Ejecutar
 

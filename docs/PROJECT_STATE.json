@@ -40,7 +40,8 @@
     { "id": "LANE.0", "name": "Original-Only Spatial Relation Feasibility / Shadow", "status": "COMPLETE", "outcome": "FEASIBILITY_DEMONSTRATED", "behaviorChange": false, "report": "docs/PHASE_LANE_0_FEASIBILITY_REPORT.md", "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED" },
     { "id": "LANE.0.REMEDIATION", "name": "Future-Held Instrument Remediation / Shadow", "status": "COMPLETE", "outcome": "READY_FOR_CORRECTIVE_EVALUATION", "behaviorChange": false, "report": "docs/PHASE_LANE_0_FUTURE_HELD_REMEDIATION_ADDENDUM.md", "authorization": "STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL" },
     { "id": "LANE.0.HARDENING", "name": "Future-Held Pre-Recertification Hardening / Shadow", "status": "COMPLETE", "outcome": "READY_FOR_PUBLICATION_REVIEW", "behaviorChange": false, "report": "docs/PHASE_LANE_0_FUTURE_HELD_HARDENING.md", "authorization": "STEP_2_NOT_AUTHORIZED" },
-    { "id": "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS", "name": "Corrective Post-Attempt Forensic Closure", "status": "COMPLETE", "outcome": "POST_ATTEMPT_FORENSIC_DOCUMENTED", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_POST_ATTEMPT_FORENSIC_ADDENDUM.md", "authorization": "NO_SUCCESSOR_AUTHORIZED" }
+    { "id": "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS", "name": "Corrective Post-Attempt Forensic Closure", "status": "COMPLETE", "outcome": "POST_ATTEMPT_FORENSIC_DOCUMENTED", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_POST_ATTEMPT_FORENSIC_ADDENDUM.md", "authorization": "NO_SUCCESSOR_AUTHORIZED" },
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION", "name": "Corrective Successor Design, Preregistration and Pre-C11 Static Hardening", "status": "COMPLETE", "outcome": "READY_FOR_HUMAN_REVIEW", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_PREREGISTRATION.md", "authorization": "NO_C11_AUTHORIZATION" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -65,13 +66,14 @@
     { "id": "LANE.0", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED" },
     { "id": "LANE.0.REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL" },
     { "id": "LANE.0.HARDENING", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "STEP_2_NOT_AUTHORIZED" },
-    { "id": "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NO_SUCCESSOR_AUTHORIZED" }
+    { "id": "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NO_SUCCESSOR_AUTHORIZED" },
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NO_C11_AUTHORIZATION" }
   ],
-  "currentPhase": "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS",
+  "currentPhase": "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION",
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 929, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 939, "failed": 0, "skipped": 0 },
   "lane0Closure": {
     "status": "COMPLETE",
     "outcome": "FEASIBILITY_DEMONSTRATED",
@@ -150,10 +152,25 @@
     "successor": "NOT_YET_PREREGISTERED_NOT_AUTHORIZED",
     "report": "docs/PHASE_LANE_0_CORRECTIVE_POST_ATTEMPT_FORENSIC_ADDENDUM.md"
   },
+  "lane0CorrectiveSuccessorPhase1": {
+    "status": "READY_FOR_HUMAN_REVIEW",
+    "schemaVersion": "lane-0-corrective-successor-preregistration.1",
+    "contract": "docs/lane_0_corrective_successor_preregistration_contract.json",
+    "contractHash": "66B0D27535B8EEE5B466DDAB1209DD0C548B982C24913E1993E611D57E1BE505",
+    "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_PREREGISTRATION.md",
+    "scientificRemediation": "SCIENTIFIC_REFERENCE_REMEDIATION_ONLY",
+    "authorization": "NO_C11_AUTHORIZATION",
+    "bindingPresent": false,
+    "receiptPresent": false,
+    "c11Accessed": false,
+    "behaviorChange": false,
+    "rngChange": false,
+    "defaultChange": false
+  },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "LANE_0_CORRECTIVE_ATTEMPT_CONSUMED_SUCCESSOR_NOT_PREREGISTERED"
+    "currentBlockingRequirement": "SUCCESSOR_PREREGISTRATION_AWAITING_PUBLICATION_INDEPENDENT_AUDIT_AND_EXPLICIT_AUTHORIZATION"
   },
   "g10Recertification": {
     "status": "PASS",

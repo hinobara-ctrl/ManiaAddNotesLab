@@ -12,6 +12,7 @@ var root = FindRoot(AppContext.BaseDirectory);
 var statePath = Path.Combine(root, "docs", "PROJECT_STATE.json");
 var errors = new List<string>();
 const string lane0PostAttemptPhase = "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS";
+const string lane0SuccessorPhase = "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION";
 ValidateRepositoryRootLayout();
 ProjectState? state = null;
 try
@@ -51,6 +52,7 @@ else
     ValidateLane0FutureHeldHardening(state);
     ValidateLane0CounterClosure(state);
     ValidateLane0CorrectivePostAttemptForensics(state);
+    ValidateLane0CorrectiveSuccessorPhase1(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -156,7 +158,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ", "LANE.0", "LANE.0.REMEDIATION", "LANE.0.HARDENING", lane0PostAttemptPhase })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ", "LANE.0", "LANE.0.REMEDIATION", "LANE.0.HARDENING", lane0PostAttemptPhase, lane0SuccessorPhase })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -200,7 +202,7 @@ void ValidatePhaseContracts(ProjectState value)
             $"canonical phase contract {contract.Id}");
     }
 
-    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "F2.ACQ", "C2", lane0PostAttemptPhase })
+    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "F2.ACQ", "C2", lane0PostAttemptPhase, lane0SuccessorPhase })
         if (value.PhaseContracts.All(x => x.Id != required))
             errors.Add($"Required canonical phase contract is absent: {required}.");
 
@@ -793,7 +795,7 @@ void ValidateG1GateClosure(ProjectState value)
     if (gate?.Status != "COMPLETE") return;
     if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
         || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
 
@@ -866,7 +868,7 @@ void ValidateSafetyCausalClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "A" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_REMEDIATION"
-        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.CAUSAL must close COMPLETE/A with no remediation, promotion or successor.");
 
@@ -949,7 +951,7 @@ void ValidateSafetyRemediationDesignClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "READY_FOR_SEPARATE_REMEDIATION_GATE" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.DESIGN must close READY_FOR_SEPARATE_REMEDIATION_GATE with no implementation or authorized successor.");
 
@@ -1023,7 +1025,7 @@ void ValidateSafetyRemediationGateClosure(ProjectState value)
         || phase.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
         || contractState?.Kind != "BehaviorChanging" || contractState.BehaviorChange is not true
         || contractState.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.GATE hardening must close NEEDS_REVIEW, experimental-only and without promotion or successor.");
 
@@ -1734,7 +1736,7 @@ void ValidateLane0CorrectivePostAttemptForensics(ProjectState value)
         value.CurrentPhase, forensic is not null, phase is not null, forensic?.Attempt, forensic?.Retry,
         forensic?.Successor));
 
-    if (value.CurrentPhase != lane0PostAttemptPhase
+    if (value.CurrentPhase is not (lane0PostAttemptPhase or lane0SuccessorPhase)
         || value.NextRecommendedPhase is not null
         || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
         || value.NextBehavioralPhase is not null
@@ -1761,6 +1763,153 @@ void ValidateLane0CorrectivePostAttemptForensics(ProjectState value)
     CheckContains("DOCUMENTATION_INDEX.md", report, "LANE.0 post-attempt forensic index entry");
 }
 
+void ValidateLane0CorrectiveSuccessorPhase1(ProjectState value)
+{
+    const string report = "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_PREREGISTRATION.md";
+    const string contractPath = "docs/lane_0_corrective_successor_preregistration_contract.json";
+    const string canonicalIdentity =
+        "66B0D27535B8EEE5B466DDAB1209DD0C548B982C24913E1993E611D57E1BE505";
+    const string manifestIdentity =
+        "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445";
+    const string correctedA =
+        "E73B098AA0CB6FA3BECE45E9551EF225412F5E01F6398184093A40B944F0AAE0";
+    const string historicalB =
+        "E73B098A4D4C99D716D2C53B3EA3A4BFD1A75059881F30DB416631B5EDB972D4";
+    const string second =
+        "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788";
+
+    var phase = value.Phases.FirstOrDefault(x => x.Id == lane0SuccessorPhase);
+    var phaseContract = value.PhaseContracts.FirstOrDefault(x => x.Id == lane0SuccessorPhase);
+    var successor = value.Lane0CorrectiveSuccessorPhase1;
+    if (phase?.Status != "COMPLETE" || phase.Outcome != "READY_FOR_HUMAN_REVIEW"
+        || phase.BehaviorChange is not false || phase.Authorization != "NO_C11_AUTHORIZATION"
+        || phase.Report != report || phaseContract?.Kind != "ResearchShadow"
+        || phaseContract.BehaviorChange is not false
+        || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
+        errors.Add("LANE.0 successor Phase 1 must remain research-only and have no C11 authorization.");
+    if (value.CurrentPhase != lane0SuccessorPhase || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
+        || value.BehaviorChange)
+        errors.Add("LANE.0 successor Phase 1 must stop at human review with no actionable successor.");
+    if (successor is null
+        || successor.Status != "READY_FOR_HUMAN_REVIEW"
+        || successor.SchemaVersion != "lane-0-corrective-successor-preregistration.1"
+        || successor.Contract != contractPath || successor.ContractHash != canonicalIdentity
+        || successor.Report != report
+        || successor.ScientificRemediation != "SCIENTIFIC_REFERENCE_REMEDIATION_ONLY"
+        || successor.Authorization != "NO_C11_AUTHORIZATION"
+        || successor.BindingPresent || successor.ReceiptPresent || successor.C11Accessed
+        || successor.BehaviorChange || successor.RngChange || successor.DefaultChange)
+        errors.Add("PROJECT_STATE does not preserve the static, non-authorizing successor Phase 1 boundary.");
+
+    foreach (var artifact in new[] { report, contractPath })
+    {
+        RequireFile(artifact, "LANE.0 successor Phase 1 artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact, "LANE.0 successor Phase 1 index entry");
+    }
+
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, contractPath)));
+        var artifact = document.RootElement;
+        var contract = artifact.GetProperty("contract");
+        var canonical = CanonicalJsonHash(contract);
+        var rule = contract.GetProperty("historicalG1CaseRule");
+        var distribution = rule.GetProperty("distribution").EnumerateArray().ToArray();
+        var ids = distribution.Select(x => x.GetProperty("chartId").GetString()).ToArray();
+        var authority = contract.GetProperty("authorityNamespace");
+        var boundary = contract.GetProperty("phaseBoundary");
+        var preserved = contract.GetProperty("preservedScientificBoundaries");
+
+        if (canonical != canonicalIdentity
+            || artifact.GetProperty("canonicalSha256").GetString() != canonicalIdentity
+            || contract.GetProperty("schemaVersion").GetString()
+                != "lane-0-corrective-successor-preregistration.1"
+            || contract.GetProperty("phaseId").GetString() != lane0SuccessorPhase
+            || contract.GetProperty("authorization").GetString() != "NO_C11_AUTHORIZATION"
+            || contract.GetProperty("scientificRemediation").GetString()
+                != "SCIENTIFIC_REFERENCE_REMEDIATION_ONLY"
+            || contract.GetProperty("expectedC11ManifestSha256").GetString() != manifestIdentity
+            || distribution.Length != 2 || ids.Distinct(StringComparer.Ordinal).Count() != 2
+            || !ids.Contains(correctedA, StringComparer.Ordinal)
+            || !ids.Contains(second, StringComparer.Ordinal)
+            || ids.Contains(historicalB, StringComparer.Ordinal)
+            || rule.GetProperty("expectedTotalHistoricalOperationalCount").GetInt32() != 11
+            || distribution.Sum(x => x.GetProperty("historicallySupportedCount").GetInt32()) != 11
+            || distribution.Single(x => x.GetProperty("chartId").GetString() == second)
+                .GetProperty("historicallySupportedCount").GetInt32() != 9
+            || distribution.Single(x => x.GetProperty("chartId").GetString() == correctedA)
+                .GetProperty("historicallySupportedCount").GetInt32() != 2
+            || distribution.Any(x => x.GetProperty("keymode").GetInt32() != 7)
+            || preserved.GetProperty("historicalDistribution").GetString() != "9+2"
+            || preserved.GetProperty("zeroRng").GetBoolean() is not true
+            || preserved.GetProperty("behaviorChange").GetBoolean()
+            || preserved.GetProperty("defaultChange").GetBoolean()
+            || authority.GetProperty("historicalBindingPath").GetString()
+                == authority.GetProperty("successorBindingPath").GetString()
+            || authority.GetProperty("historicalReceiptPath").GetString()
+                == authority.GetProperty("successorReceiptPath").GetString()
+            || authority.GetProperty("successorBindingPath").GetString()
+                != "docs/lane_0_corrective_successor_publication_binding.json"
+            || authority.GetProperty("successorReceiptPath").GetString()
+                != ".artifacts/lane_0_corrective_successor.attempt.json"
+            || authority.GetProperty("bindingPresent").GetBoolean()
+            || authority.GetProperty("receiptPresent").GetBoolean()
+            || authority.GetProperty("humanAuthorizationGranted").GetBoolean()
+            || authority.GetProperty("corpusAccessAuthorized").GetBoolean()
+            || boundary.GetProperty("bindingCreationAuthorized").GetBoolean()
+            || boundary.GetProperty("receiptCreationAuthorized").GetBoolean()
+            || boundary.GetProperty("c11AdapterPresent").GetBoolean()
+            || boundary.GetProperty("corpusRootAccepted").GetBoolean()
+            || boundary.GetProperty("osuDiscoveryAuthorized").GetBoolean()
+            || boundary.GetProperty("osuParsingAuthorized").GetBoolean()
+            || boundary.GetProperty("executionLauncherPresent").GetBoolean()
+            || boundary.GetProperty("officialRunnerPresent").GetBoolean())
+            errors.Add("LANE.0 successor preregistration identity, references, distribution or authority boundary is invalid.");
+
+        using var manifestDocument = JsonDocument.Parse(File.ReadAllText(
+            Path.Combine(root, "docs", "g1_gate_runtime_manifest.json")));
+        var manifestArtifact = manifestDocument.RootElement;
+        var charts = manifestArtifact.GetProperty("manifest").GetProperty("charts")
+            .EnumerateArray().ToArray();
+        if (manifestArtifact.GetProperty("canonicalSha256").GetString() != manifestIdentity)
+            errors.Add("Successor preregistration does not join against the trusted public manifest identity.");
+        foreach (var reference in distribution)
+        {
+            var id = reference.GetProperty("chartId").GetString();
+            var matches = charts.Where(x => x.GetProperty("chartId").GetString() == id).ToArray();
+            if (matches.Length != 1
+                || matches[0].GetProperty("family").GetString()
+                    != reference.GetProperty("expectedManifestFamily").GetString()
+                || matches[0].GetProperty("keyCount").GetInt32()
+                    != reference.GetProperty("keymode").GetInt32())
+                errors.Add($"Successor reference does not match public manifest metadata: {id}.");
+        }
+
+        using var historical = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            "docs", "lane_0_corrective_evaluation_preregistration_contract.json")));
+        var historicalIds = historical.RootElement.GetProperty("contract")
+            .GetProperty("historicalG1OperationalReferences").EnumerateArray()
+            .Select(x => x.GetProperty("chartId").GetString()).ToArray();
+        if (!historicalIds.Contains(historicalB, StringComparer.Ordinal))
+            errors.Add("Historical corrective preregistration no longer preserves erroneous identity B.");
+
+        if (File.Exists(Path.Combine(root, authority.GetProperty("successorBindingPath").GetString()!))
+            || File.Exists(Path.Combine(root, authority.GetProperty("successorReceiptPath").GetString()!)))
+            errors.Add("Successor binding or receipt exists before future authorization.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"LANE.0 successor Phase 1 cannot be validated: {exception.Message}");
+    }
+
+    foreach (var marker in new[]
+    {
+        "READY FOR HUMAN REVIEW / NO C11 AUTHORIZATION", "SCIENTIFIC_REFERENCE_REMEDIATION_ONLY",
+        correctedA, historicalB, "9 + 2 = 11", "no C11 adapter"
+    }) CheckContains(report, marker, "LANE.0 successor Phase 1 boundary");
+}
+
 void ValidateMasterStateBlocks(ProjectState value)
 {
     var current = value.Phases.FirstOrDefault(x => x.Id == value.CurrentPhase);
@@ -1775,7 +1924,7 @@ void ValidateMasterStateBlocks(ProjectState value)
         nextBehavioral?.Authorization ?? "N/A", blocker.Id, blocker.Status,
         branch.Id, branch.Decision, value.BehaviorPolicyVersion,
         value.BehaviorChange ? "true" : "none", "prohibited",
-        "not preregistered / not authorized", value.TestStatus.Passed,
+        "preregistered / no C11 authorization", value.TestStatus.Passed,
         value.TestStatus.Failed, value.TestStatus.Skipped);
     foreach (var document in new[] { "README.md", "PROJECT_STATUS.md" })
     {
@@ -1909,6 +2058,38 @@ void CheckBlockContains(string relative, string block, string expected, string m
 static string Normalize(string value) => new(value.Where(char.IsLetterOrDigit)
     .Select(char.ToUpperInvariant).ToArray());
 
+static string CanonicalJsonHash(JsonElement element)
+{
+    using var stream = new MemoryStream();
+    using (var writer = new Utf8JsonWriter(stream)) WriteCanonicalJson(writer, element);
+    return Convert.ToHexString(SHA256.HashData(stream.ToArray()));
+}
+
+static void WriteCanonicalJson(Utf8JsonWriter writer, JsonElement element)
+{
+    switch (element.ValueKind)
+    {
+        case JsonValueKind.Object:
+            writer.WriteStartObject();
+            foreach (var property in element.EnumerateObject()
+                         .OrderBy(x => x.Name, StringComparer.Ordinal))
+            {
+                writer.WritePropertyName(property.Name);
+                WriteCanonicalJson(writer, property.Value);
+            }
+            writer.WriteEndObject();
+            break;
+        case JsonValueKind.Array:
+            writer.WriteStartArray();
+            foreach (var item in element.EnumerateArray()) WriteCanonicalJson(writer, item);
+            writer.WriteEndArray();
+            break;
+        default:
+            element.WriteTo(writer);
+            break;
+    }
+}
+
 string NormalizedTextTreeIdentity(IEnumerable<string> files)
 {
     var rows = files.Order(StringComparer.Ordinal)
@@ -1948,6 +2129,7 @@ sealed record ProjectState(
     string? NextRecommendedAction,
     string? NextBehavioralPhase,
     Lane0CorrectivePostAttemptForensicsState? Lane0CorrectivePostAttemptForensics,
+    Lane0CorrectiveSuccessorPhase1State? Lane0CorrectiveSuccessorPhase1,
     TestState TestStatus,
     CorpusState ValidationCorpus,
     IReadOnlyList<string> MasterDocuments);
@@ -1970,6 +2152,20 @@ sealed record Lane0CorrectivePostAttemptForensicsState(
     string Retry,
     string Successor,
     string Report);
+sealed record Lane0CorrectiveSuccessorPhase1State(
+    string Status,
+    string SchemaVersion,
+    string Contract,
+    string ContractHash,
+    string Report,
+    string ScientificRemediation,
+    string Authorization,
+    bool BindingPresent,
+    bool ReceiptPresent,
+    bool C11Accessed,
+    bool BehaviorChange,
+    bool RngChange,
+    bool DefaultChange);
 sealed record TestState(int Passed, int Failed, int Skipped);
 sealed record CorpusState(
     int Families,

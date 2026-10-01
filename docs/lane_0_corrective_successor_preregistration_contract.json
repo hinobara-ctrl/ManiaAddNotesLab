@@ -1,0 +1,113 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-successor-preregistration.1",
+    "phaseId": "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION",
+    "baselinePublicHead": "45292af1ac58d8af4d24e53ab297a8b7099f0825",
+    "publicationState": "UNCOMMITTED_AWAITING_MANUAL_PUBLICATION_AND_INDEPENDENT_AUDIT",
+    "authorization": "NO_C11_AUTHORIZATION",
+    "scientificRemediation": "SCIENTIFIC_REFERENCE_REMEDIATION_ONLY",
+    "question": "Do RICE_HEAD_COMPLETION and G1_INTERIOR_SPATIAL retain legitimate reproducible joint support after corrected future-held exclusion, without temporal contamination or reuse of original identities?",
+    "families": [
+      "RICE_HEAD_COMPLETION",
+      "G1_INTERIOR_SPATIAL"
+    ],
+    "historicalReferenceEvidence": {
+      "invalidSpringIdentityB": "E73B098A4D4C99D716D2C53B3EA3A4BFD1A75059881F30DB416631B5EDB972D4",
+      "disposition": "INVALID_HISTORICAL_INPUT_RETAINED_FOR_EVIDENCE_ONLY",
+      "correctedSuccessorSpringIdentityA": "E73B098AA0CB6FA3BECE45E9551EF225412F5E01F6398184093A40B944F0AAE0"
+    },
+    "historicalG1CaseRule": {
+      "scientificFamily": "G1_INTERIOR_SPATIAL",
+      "expectedTotalHistoricalOperationalCount": 11,
+      "distribution": [
+        {
+          "chartId": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+          "expectedManifestFamily": "KIKUO | KARA KARA KARA NO KARA | XNETT",
+          "keymode": 7,
+          "historicallySupportedCount": 9
+        },
+        {
+          "chartId": "E73B098AA0CB6FA3BECE45E9551EF225412F5E01F6398184093A40B944F0AAE0",
+          "expectedManifestFamily": "NJK RECORD FEAT. 3L | SPRING OF DREAMS | ITZBENJA616",
+          "keymode": 7,
+          "historicallySupportedCount": 2
+        }
+      ]
+    },
+    "expectedC11ManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445",
+    "manifestInvariant": "Every successor historical-G1 distribution key identifies exactly one frozen public C11 manifest chart and matches its versioned family and keymode metadata.",
+    "preservedScientificBoundaries": {
+      "historicalDistribution": "9+2",
+      "riceCriterion": "UNCHANGED_FROM_CONSUMED_PREREGISTRATION",
+      "g1Criterion": "UNCHANGED_FROM_CONSUMED_PREREGISTRATION",
+      "futureHeldExclusion": "UNCHANGED",
+      "anchorTime": "UNCHANGED",
+      "temporalExclusion": "UNCHANGED",
+      "futureHeldIdentityExclusion": "UNCHANGED",
+      "jointSupportRequirement": "UNCHANGED",
+      "familyCriterion": "joint support >= 2 charts AND >= 2 keymodes AND >= 1 supported operational target",
+      "zeroIntegrityFailures": true,
+      "zeroRng": true,
+      "behaviorChange": false,
+      "defaultChange": false,
+      "byteIdenticalRepeatRequired": true
+    },
+    "staticValidationOrder": [
+      "SUCCESSOR_CONTRACT_PARSE",
+      "CANONICAL_CONTRACT_IDENTITY",
+      "SUCCESSOR_SCIENTIFIC_REFERENCE_IDENTITY",
+      "PUBLIC_C11_MANIFEST_IDENTITY",
+      "REFERENCE_MANIFEST_SEMANTIC_JOIN",
+      "DISTRIBUTION_FAMILY_KEYMODE_VALIDATION",
+      "FUTURE_IMPLEMENTATION_AND_HARNESS_IDENTITIES",
+      "FUTURE_DEPENDENCIES",
+      "STOP_BEFORE_AUTHORITY_OR_CORPUS"
+    ],
+    "outcomeRules": {
+      "INVALID": "Any contract, corrected-reference, manifest identity, membership, uniqueness, family, keymode, distribution or total-count failure.",
+      "BLOCKED": "Static validation passes but successor publication, independent audit, approved public HEAD, binding, human authorization or future receipt authority is absent.",
+      "FEASIBILITY_DEMONSTRATED": "Reserved for a separately authorized future scientific evaluation; impossible in Phase 1.",
+      "LIMITED_PARK": "Reserved for a separately authorized future scientific evaluation; impossible in Phase 1."
+    },
+    "authorityNamespace": {
+      "historicalBindingPath": "docs/lane_0_corrective_evaluation_publication_binding.json",
+      "successorBindingPath": "docs/lane_0_corrective_successor_publication_binding.json",
+      "historicalReceiptPath": ".artifacts/lane_0_corrective.attempt.json",
+      "successorReceiptPath": ".artifacts/lane_0_corrective_successor.attempt.json",
+      "bindingPresent": false,
+      "receiptPresent": false,
+      "humanAuthorizationGranted": false,
+      "corpusAccessAuthorized": false,
+      "oldAuthorityCanAuthorizeSuccessor": false,
+      "successorAuthorityCanMutateHistoricalAttempt": false
+    },
+    "oneShotGovernance": {
+      "consumeOnFirstScientificallyAuthorizedAttempt": true,
+      "successAndFailureConsumeAuthority": true,
+      "automaticRetry": false,
+      "rearm": false,
+      "oldReceiptDeletionOrReuse": false,
+      "laterAttemptRequiresSeparatePreregisteredSuccessor": true
+    },
+    "publicationLifecycle": [
+      "PHASE_1_STATIC_VALIDATION",
+      "HUMAN_REVIEW",
+      "PUBLIC_COMMIT",
+      "INDEPENDENT_AUDIT",
+      "SEPARATE_EXECUTION_PREPARATION_PROMPT"
+    ],
+    "phaseBoundary": {
+      "bindingCreationAuthorized": false,
+      "receiptCreationAuthorized": false,
+      "c11AdapterPresent": false,
+      "corpusRootAccepted": false,
+      "osuDiscoveryAuthorized": false,
+      "osuParsingAuthorized": false,
+      "executionLauncherPresent": false,
+      "officialRunnerPresent": false,
+      "currentState": "BLOCKED_PENDING_PUBLICATION_AUDIT_AND_FUTURE_AUTHORIZATION"
+    }
+  },
+  "canonicalSha256": "66B0D27535B8EEE5B466DDAB1209DD0C548B982C24913E1993E611D57E1BE505",
+  "canonicalization": "UTF-8 JSON; recursively sort object properties ordinally; preserve array order and primitive values; no insignificant whitespace; hash only the contract object."
+}

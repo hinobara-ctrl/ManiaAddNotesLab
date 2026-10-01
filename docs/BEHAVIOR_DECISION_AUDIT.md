@@ -180,6 +180,10 @@ La ruta correctiva v2 verifica hash canónico, identidad de implementación, har
 
 El successor `f303726` fue publicado con un corrective evaluator research-only, in-memory, RNG-free y no mutante. La auditoría post-publicación cerró F01-F04: inputs científicos obligatorios, contradicciones históricas `INVALID`, snapshot RICE externo y rechazo de destinos no vacíos. No existe call site desde CLI, Web o producción, ni corpus adapter, binding o autorización C11. Esta publicación no modificó ninguna decisión conductual: `legacy-experimental.1` permanece intacta y LANE.0 continúa pendiente de recertificación científica.
 
-## LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS — estado actual
+## LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS — cierre histórico
 
 Estado: **COMPLETE — POST_ATTEMPT_FORENSIC_DOCUMENTED / NO_SUCCESSOR_AUTHORIZED**. Después del cierre histórico anterior se publicó la ruta de ejecución y se consumió su única autoridad oficial. El evaluador terminó `INVALID / NOT PUBLISHABLE`; `SCI-01` documenta una referencia histórica Spring incorrecta como causa suficiente no exclusiva. No existe retry, promoción ni cambio de defaults. F03×F07 sigue cerrado y cualquier successor permanece no diseñado, no preregistrado y no autorizado.
+
+## LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION — estado actual
+
+Estado: **COMPLETE — READY_FOR_HUMAN_REVIEW / NO_C11_AUTHORIZATION**. Phase 1 crea únicamente un preregistro y validator estático successor-specific. La referencia B histórica permanece intacta; la nueva configuración usa A y conserva `9+2`, pregunta, thresholds, RICE, G1 y future-held. No hay binding, receipt, corpus adapter, ejecución, RNG, cambio conductual ni promoción.
