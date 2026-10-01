@@ -135,6 +135,87 @@ public sealed class DocumentationStateGuardTests
     }
 
     [Fact]
+    public void ConsumedAttemptRejectsHistoricalHardeningAsCurrent()
+    {
+        var errors = DocumentationStateGuard.ValidatePostAttemptCurrentState(
+            "LANE.0.HARDENING", true, true, "AUTHORIZED_CORRECTIVE_ATTEMPT_CONSUMED",
+            "PROHIBITED", "NOT_YET_PREREGISTERED_NOT_AUTHORIZED");
+
+        Assert.Contains(errors, error => error.Contains("current phase", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void PostAttemptStateRejectsPermittedRetry()
+    {
+        var errors = DocumentationStateGuard.ValidatePostAttemptCurrentState(
+            "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS", true, true,
+            "AUTHORIZED_CORRECTIVE_ATTEMPT_CONSUMED", "PERMITTED",
+            "NOT_YET_PREREGISTERED_NOT_AUTHORIZED");
+
+        Assert.Contains(errors, error => error.Contains("prohibit retry", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void PostAttemptStateRejectsAuthorizedSuccessor()
+    {
+        var errors = DocumentationStateGuard.ValidatePostAttemptCurrentState(
+            "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS", true, true,
+            "AUTHORIZED_CORRECTIVE_ATTEMPT_CONSUMED", "PROHIBITED", "AUTHORIZED");
+
+        Assert.Contains(errors, error => error.Contains("successor", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ForensicObjectRequiresPostAttemptPhase()
+    {
+        var errors = DocumentationStateGuard.ValidatePostAttemptCurrentState(
+            "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS", true, false,
+            "AUTHORIZED_CORRECTIVE_ATTEMPT_CONSUMED", "PROHIBITED",
+            "NOT_YET_PREREGISTERED_NOT_AUTHORIZED");
+
+        Assert.Contains(errors, error => error.Contains("forensic phase", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("README.md")]
+    [InlineData("PROJECT_STATUS.md")]
+    public void StateBlockRejectsStaleReadyForPublicationReviewAfterAttemptConsumed(string document)
+    {
+        var errors = DocumentationStateGuard.ValidateStateBlock(document,
+            StateBlock().Replace("Current phase: E.1 — COMPLETE — OUTCOME B",
+                "Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW"),
+            Expected);
+
+        Assert.Contains(errors, error => error.Contains("current phase", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void HistoricalHarnessSnapshotDoesNotRequireCurrentMutableHarnessIdentity()
+    {
+        const string canonical = "221D5133D8058FEBEAEA0A13F83058219D900261B033282EE389A82BA20FAAF7";
+        const string implementation = "2F938F18D98C6299214C080195633A68B68C688CABF49DC0F4DEFFCA9C1897D9";
+        const string harness = "1EFC2B824FAA6F0798C3FFA679FCA073939D88B2C751612C06BB75C240E96309";
+
+        Assert.Empty(DocumentationStateGuard.ValidateHistoricalCounterClosureIdentities(
+            canonical, canonical, canonical, implementation, implementation, implementation,
+            implementation, harness, harness, harness, canonical));
+    }
+
+    [Fact]
+    public void HistoricalRepairImplementationDriftRemainsDetectable()
+    {
+        const string canonical = "221D5133D8058FEBEAEA0A13F83058219D900261B033282EE389A82BA20FAAF7";
+        const string implementation = "2F938F18D98C6299214C080195633A68B68C688CABF49DC0F4DEFFCA9C1897D9";
+        const string harness = "1EFC2B824FAA6F0798C3FFA679FCA073939D88B2C751612C06BB75C240E96309";
+
+        var errors = DocumentationStateGuard.ValidateHistoricalCounterClosureIdentities(
+            canonical, canonical, canonical, implementation, "CURRENT_REPAIR_DRIFT",
+            implementation, implementation, harness, harness, harness, canonical);
+
+        Assert.Contains(errors, error => error.Contains("repair implementation", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void ExactPhaseRowsKeepBlockedPrerequisiteSeparateFromActionableCandidate()
     {
         var roadmap = Roadmap() + "\n| F2 — Parent | COMPLETE | Historical branch row. |";
@@ -150,7 +231,8 @@ public sealed class DocumentationStateGuardTests
         "E.1", "COMPLETE", "B", "D1.0", "Resulting-State Composition Feasibility / Shadow",
         "NOT_AUTHORIZED", "D1", "ChordCompletion Resulting-State A/B", "NOT_AUTHORIZED",
         "F2.ACQ", "BLOCKED", "F2", "CONTINUE_CONDITIONALLY",
-        "legacy-experimental.1", "none", 518, 0, 0);
+        "legacy-experimental.1", "none", "prohibited",
+        "not preregistered / not authorized", 518, 0, 0);
 
     private static string StateBlock() => """
         Historical reports are deliberately outside this living-state projection.
@@ -164,6 +246,8 @@ public sealed class DocumentationStateGuardTests
         Research branch: F2 — CONTINUE CONDITIONALLY<br>
         Behavior policy: `legacy-experimental.1`<br>
         Behavior change: none<br>
+        Retry: prohibited<br>
+        Successor: not preregistered / not authorized<br>
         Tests: 518 passed / 0 failed / 0 skipped
         <!-- PROJECT-STATE:END -->
         """;

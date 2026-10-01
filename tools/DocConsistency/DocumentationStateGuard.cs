@@ -18,6 +18,8 @@ public sealed record DocumentationStateExpectation(
     string BranchDecision,
     string BehaviorPolicyVersion,
     string BehaviorChange,
+    string Retry,
+    string Successor,
     int TestsPassed,
     int TestsFailed,
     int TestsSkipped);
@@ -99,6 +101,8 @@ public static class DocumentationStateGuard
             "research branch");
         Equal("Behavior policy", $"`{expected.BehaviorPolicyVersion}`", "behavior policy");
         Equal("Behavior change", expected.BehaviorChange, "behavior change");
+        Equal("Retry", expected.Retry, "retry authority");
+        Equal("Successor", expected.Successor, "successor authority");
         Equal("Tests", $"{expected.TestsPassed} passed / {expected.TestsFailed} failed / " +
             $"{expected.TestsSkipped} skipped", "test snapshot");
         return errors.ToImmutable();
@@ -115,6 +119,59 @@ public static class DocumentationStateGuard
                 || !string.Equals(Normalize(actual), Normalize(wanted), StringComparison.Ordinal))
                 errors.Add($"{documentName} PROJECT-STATE block does not reflect {meaning}: {wanted}");
         }
+    }
+
+    public static ImmutableArray<string> ValidatePostAttemptCurrentState(
+        string currentPhase,
+        bool postAttemptForensicsPresent,
+        bool postAttemptPhasePresent,
+        string? attempt,
+        string? retry,
+        string? successor)
+    {
+        const string expectedPhase = "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS";
+        var errors = ImmutableArray.CreateBuilder<string>();
+        if (!postAttemptForensicsPresent)
+            errors.Add("Current state omits the post-attempt forensic object.");
+        if (!postAttemptPhasePresent)
+            errors.Add("Current state omits the post-attempt forensic phase.");
+        if (postAttemptForensicsPresent && currentPhase != expectedPhase)
+            errors.Add($"Consumed corrective attempt requires current phase {expectedPhase}, not {currentPhase}.");
+        if (attempt != "AUTHORIZED_CORRECTIVE_ATTEMPT_CONSUMED")
+            errors.Add("Post-attempt current state must record the authorized corrective attempt as consumed.");
+        if (retry != "PROHIBITED")
+            errors.Add("Post-attempt current state must prohibit retry.");
+        if (successor != "NOT_YET_PREREGISTERED_NOT_AUTHORIZED")
+            errors.Add("Post-attempt current state must not authorize a successor.");
+        return errors.ToImmutable();
+    }
+
+    public static ImmutableArray<string> ValidateHistoricalCounterClosureIdentities(
+        string expectedCanonicalContractIdentity,
+        string recomputedCanonicalContractIdentity,
+        string? declaredCanonicalContractIdentity,
+        string expectedHistoricalImplementationIdentity,
+        string currentRepairImplementationIdentity,
+        string contractRepairImplementationIdentity,
+        string stateRepairImplementationIdentity,
+        string expectedHistoricalHarnessIdentity,
+        string contractHarnessIdentity,
+        string stateHarnessIdentity,
+        string stateContractIdentity)
+    {
+        var errors = ImmutableArray.CreateBuilder<string>();
+        if (recomputedCanonicalContractIdentity != expectedCanonicalContractIdentity
+            || declaredCanonicalContractIdentity != expectedCanonicalContractIdentity
+            || stateContractIdentity != expectedCanonicalContractIdentity)
+            errors.Add("Historical counter-closure canonical contract identity drifted.");
+        if (currentRepairImplementationIdentity != expectedHistoricalImplementationIdentity
+            || contractRepairImplementationIdentity != expectedHistoricalImplementationIdentity
+            || stateRepairImplementationIdentity != expectedHistoricalImplementationIdentity)
+            errors.Add("Historical counter-closure repair implementation identity drifted.");
+        if (contractHarnessIdentity != expectedHistoricalHarnessIdentity
+            || stateHarnessIdentity != expectedHistoricalHarnessIdentity)
+            errors.Add("Historical counter-closure harness snapshot drifted.");
+        return errors.ToImmutable();
     }
 
     public static ImmutableArray<string> ValidateRoadmap(string markdown,

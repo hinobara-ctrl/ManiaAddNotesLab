@@ -39,6 +39,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | LANE.0.REMEDIATION — Future-Held Instrument Remediation / Shadow | **COMPLETE — READY_FOR_CORRECTIVE_EVALUATION / HISTORICAL PREPARATION RETAINED** | `AnchorTime` e identities future-held restauradas; el posterior intento correctivo no produjo recertificación publicable. |
 | LANE.0.HARDENING — Future-Held Pre-Recertification Hardening / Shadow | **COMPLETE — READY_FOR_PUBLICATION_REVIEW / F03×F07 CLOSED** | La autoridad durable se consumió como fue diseñada; no existe defecto material conocido en el hardening de ejecución. |
 | LANE.0 corrective official attempt | **CONSUMED — INVALID / NOT PUBLISHABLE / NO RETRY** | Ninguno; `SCI-01` identifica una causa suficiente no exclusiva. Binding y receipt históricos se preservan; successor no autorizado. |
+| LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS — Corrective Post-Attempt Forensic Closure | **COMPLETE — POST_ATTEMPT_FORENSIC_DOCUMENTED / NO_SUCCESSOR_AUTHORIZED** | Ninguno; hace canónico el cierre del intento consumido sin cambiar ciencia, autoridad ni conducta. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -296,11 +297,13 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 `F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION**; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. LANE.0 conserva sólo sus cifras históricas y su certificación está **SUSPENDED / PENDING_RECERTIFICATION**. El intento correctivo oficial está consumido, terminó `INVALID / NOT PUBLISHABLE` y no puede reintentarse. Cualquier trabajo futuro deberá diseñar un successor separado con nueva preregistración, namespace de autoridad, auditoría y autorización humana; actualmente está **NOT YET PREREGISTERED / NOT AUTHORIZED**. `LANE.DESIGN`, `LANE.GATE` y toda integración siguen **NOT_AUTHORIZED**.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW<br>
+Current phase: LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS — COMPLETE — OUTCOME POST_ATTEMPT_FORENSIC_DOCUMENTED<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
 Next behavioral authorization: N/A<br>
+Retry: prohibited<br>
+Successor: not preregistered / not authorized<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>

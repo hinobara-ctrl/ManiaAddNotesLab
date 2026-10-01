@@ -11,6 +11,7 @@ if (args.Length != 1 || args[0] != "--check")
 var root = FindRoot(AppContext.BaseDirectory);
 var statePath = Path.Combine(root, "docs", "PROJECT_STATE.json");
 var errors = new List<string>();
+const string lane0PostAttemptPhase = "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS";
 ValidateRepositoryRootLayout();
 ProjectState? state = null;
 try
@@ -49,6 +50,7 @@ else
     ValidateLane0FutureHeldRemediation(state);
     ValidateLane0FutureHeldHardening(state);
     ValidateLane0CounterClosure(state);
+    ValidateLane0CorrectivePostAttemptForensics(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -154,7 +156,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ", "LANE.0", "LANE.0.REMEDIATION", "LANE.0.HARDENING" })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ", "LANE.0", "LANE.0.REMEDIATION", "LANE.0.HARDENING", lane0PostAttemptPhase })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -198,7 +200,7 @@ void ValidatePhaseContracts(ProjectState value)
             $"canonical phase contract {contract.Id}");
     }
 
-    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "F2.ACQ", "C2" })
+    foreach (var required in new[] { "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "F2.ACQ", "C2", lane0PostAttemptPhase })
         if (value.PhaseContracts.All(x => x.Id != required))
             errors.Add($"Required canonical phase contract is absent: {required}.");
 
@@ -791,7 +793,7 @@ void ValidateG1GateClosure(ProjectState value)
     if (gate?.Status != "COMPLETE") return;
     if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
         || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
 
@@ -864,7 +866,7 @@ void ValidateSafetyCausalClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "A" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_REMEDIATION"
-        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.CAUSAL must close COMPLETE/A with no remediation, promotion or successor.");
 
@@ -947,7 +949,7 @@ void ValidateSafetyRemediationDesignClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "READY_FOR_SEPARATE_REMEDIATION_GATE" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.DESIGN must close READY_FOR_SEPARATE_REMEDIATION_GATE with no implementation or authorized successor.");
 
@@ -1021,7 +1023,7 @@ void ValidateSafetyRemediationGateClosure(ProjectState value)
         || phase.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
         || contractState?.Kind != "BehaviorChanging" || contractState.BehaviorChange is not true
         || contractState.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.GATE hardening must close NEEDS_REVIEW, experimental-only and without promotion or successor.");
 
@@ -1462,10 +1464,8 @@ void ValidateLane0FutureHeldRemediation(ProjectState value)
     if (phase.Outcome != "READY_FOR_CORRECTIVE_EVALUATION" || phase.BehaviorChange is not false
         || phase.Authorization != "STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL"
         || phaseContract?.Kind != "ResearchShadow" || phaseContract.BehaviorChange is not false
-        || phaseContract.Authorization != "STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL"
-        || value.CurrentPhase is not ("LANE.0.REMEDIATION" or "LANE.0.HARDENING") || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
-        errors.Add("LANE.0.REMEDIATION must close research-only and keep corrective evaluation unauthorized.");
+        || phaseContract.Authorization != "STEP_2_PENDING_USER_PUBLICATION_AND_APPROVAL")
+        errors.Add("Historical LANE.0.REMEDIATION must preserve its research-only closure snapshot.");
 
     const string addendum = "docs/PHASE_LANE_0_FUTURE_HELD_REMEDIATION_ADDENDUM.md";
     const string contractPath = "docs/lane_0_future_held_remediation_contract.json";
@@ -1530,10 +1530,8 @@ void ValidateLane0FutureHeldHardening(ProjectState value)
     if (phase.Outcome != "READY_FOR_PUBLICATION_REVIEW" || phase.BehaviorChange is not false
         || phase.Authorization != "STEP_2_NOT_AUTHORIZED"
         || phaseContract?.Kind != "ResearchShadow" || phaseContract.BehaviorChange is not false
-        || phaseContract.Authorization != "STEP_2_NOT_AUTHORIZED"
-        || value.CurrentPhase != "LANE.0.HARDENING" || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
-        errors.Add("LANE.0.HARDENING must close research-only, publication-review-ready and keep Step 2 unauthorized.");
+        || phaseContract.Authorization != "STEP_2_NOT_AUTHORIZED")
+        errors.Add("Historical LANE.0.HARDENING must preserve its research-only closure snapshot.");
 
     const string report = "docs/PHASE_LANE_0_FUTURE_HELD_HARDENING.md";
     const string contractPath = "docs/lane_0_future_held_hardening_contract.json";
@@ -1656,12 +1654,17 @@ void ValidateLane0CounterClosure(ProjectState value)
             ?? throw new InvalidDataException("Counter closure contract cannot be normalized.");
         var canonical = Convert.ToHexString(SHA256.HashData(
             JsonSerializer.SerializeToUtf8Bytes(contract, options)));
-        var implementation = NormalizedTextTreeIdentity(contract.RepairImplementationFiles);
-        var harness = NormalizedTextTreeIdentity(contract.CorrectiveHarnessFiles);
+        const string expectedHistoricalCanonicalContractIdentity =
+            "221D5133D8058FEBEAEA0A13F83058219D900261B033282EE389A82BA20FAAF7";
+        const string expectedHistoricalImplementationIdentity =
+            "2F938F18D98C6299214C080195633A68B68C688CABF49DC0F4DEFFCA9C1897D9";
+        const string expectedHistoricalHarnessIdentity =
+            "1EFC2B824FAA6F0798C3FFA679FCA073939D88B2C751612C06BB75C240E96309";
+        var currentRepairImplementationIdentity =
+            NormalizedTextTreeIdentity(contract.RepairImplementationFiles);
         var dependencies = contract.ReusedDependencies.All(pair =>
             NormalizedTextFileHash(pair.Key) == pair.Value);
-        if (artifact.GetProperty("canonicalSha256").GetString() != canonical
-            || contract.SchemaVersion != "lane-0-future-held-counter-closure.3"
+        if (contract.SchemaVersion != "lane-0-future-held-counter-closure.3"
             || contract.AuditedBaselineHead != "c471d10ed48e42ab33b8a981ef22c6eb26774f3d"
             || contract.ParentHardeningContractSha256
                 != "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35"
@@ -1670,22 +1673,32 @@ void ValidateLane0CounterClosure(ProjectState value)
             || contract.CorpusManifestSha256
                 != "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
             || contract.MemoryLimit != "0x400000000"
-            || contract.RepairImplementationSha256 != implementation
-            || contract.CorrectiveHarnessSha256 != harness
             || !dependencies
             || !contract.CounterSemantics.Contains("unique_future_held_excluded is their union",
                 StringComparison.Ordinal)
             || !contract.RequiredControls.Contains("corrective-execution-denied", StringComparer.Ordinal))
             errors.Add($"LANE.0 counter closure identity or boundary is invalid "
                 + $"(declared={artifact.GetProperty("canonicalSha256").GetString()}, canonical={canonical}, "
-                + $"implementation={implementation}, harness={harness}).");
+                + $"implementation={currentRepairImplementationIdentity}).");
 
         using var stateDocument = JsonDocument.Parse(File.ReadAllText(statePath));
         var state = stateDocument.RootElement.GetProperty("lane0FutureHeldCounterClosure");
-        if (state.GetProperty("contractHash").GetString() != canonical
-            || state.GetProperty("repairImplementationSnapshot").GetString() != implementation
-            || state.GetProperty("correctiveHarnessSnapshot").GetString() != harness
-            || state.GetProperty("parentContractHash").GetString()
+        errors.AddRange(DocumentationStateGuard.ValidateHistoricalCounterClosureIdentities(
+            expectedHistoricalCanonicalContractIdentity,
+            canonical,
+            artifact.GetProperty("canonicalSha256").GetString(),
+            expectedHistoricalImplementationIdentity,
+            currentRepairImplementationIdentity,
+            contract.RepairImplementationSha256,
+            state.GetProperty("repairImplementationSnapshot").GetString() ?? string.Empty,
+            expectedHistoricalHarnessIdentity,
+            contract.CorrectiveHarnessSha256,
+            state.GetProperty("correctiveHarnessSnapshot").GetString() ?? string.Empty,
+            state.GetProperty("contractHash").GetString() ?? string.Empty));
+
+        // The historical harness includes DocConsistency itself. It is a frozen snapshot, so
+        // legitimate post-closure guard changes must not be compared with the current tree.
+        if (state.GetProperty("parentContractHash").GetString()
                 != "E0BCDA19B3E05E5ECA3EE8FCC7380C4AC74ACBDDE3241D77CD2F1B6EA6274F35"
             || state.GetProperty("publicationBinding").GetString() != "ABSENT_BY_DESIGN"
             || state.GetProperty("correctiveEvaluationExecuted").GetBoolean()
@@ -1697,6 +1710,55 @@ void ValidateLane0CounterClosure(ProjectState value)
     {
         errors.Add($"LANE.0 counter closure contract cannot be validated: {exception.Message}");
     }
+}
+
+void ValidateLane0CorrectivePostAttemptForensics(ProjectState value)
+{
+    const string report = "docs/PHASE_LANE_0_CORRECTIVE_POST_ATTEMPT_FORENSIC_ADDENDUM.md";
+    var phase = value.Phases.FirstOrDefault(x => x.Id == lane0PostAttemptPhase);
+    var phaseContract = value.PhaseContracts.FirstOrDefault(x => x.Id == lane0PostAttemptPhase);
+    var forensic = value.Lane0CorrectivePostAttemptForensics;
+
+    if (phase?.Status != "COMPLETE"
+        || phase.Outcome != "POST_ATTEMPT_FORENSIC_DOCUMENTED"
+        || phase.BehaviorChange is not false
+        || phase.Authorization != "NO_SUCCESSOR_AUTHORIZED"
+        || phase.Report != report)
+        errors.Add("LANE.0 post-attempt forensic phase does not preserve its non-behavioral closure semantics.");
+    if (phaseContract?.Kind != "ResearchShadow"
+        || phaseContract.BehaviorChange is not false
+        || phaseContract.Authorization != "NO_SUCCESSOR_AUTHORIZED")
+        errors.Add("LANE.0 post-attempt forensic phase contract must remain research-only with no successor authority.");
+
+    errors.AddRange(DocumentationStateGuard.ValidatePostAttemptCurrentState(
+        value.CurrentPhase, forensic is not null, phase is not null, forensic?.Attempt, forensic?.Retry,
+        forensic?.Successor));
+
+    if (value.CurrentPhase != lane0PostAttemptPhase
+        || value.NextRecommendedPhase is not null
+        || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
+        || value.NextBehavioralPhase is not null
+        || value.BehaviorChange)
+        errors.Add("Canonical current state must close post-attempt forensics without selecting or authorizing a successor.");
+
+    if (forensic is null) return;
+    if (forensic.Status != "POST_ATTEMPT_FORENSIC_DOCUMENTED"
+        || forensic.PublicHead != "243c43a589512a12a69b9a4c0d68d1c4fd54a8ca"
+        || forensic.Attempt != "AUTHORIZED_CORRECTIVE_ATTEMPT_CONSUMED"
+        || forensic.ScientificEvaluator != "INVALID"
+        || forensic.ScientificResult != "NOT_PUBLISHABLE"
+        || forensic.ForensicFinding != "SCI-01_SCIENTIFIC_REFERENCE_IDENTITY_MISMATCH"
+        || forensic.ForensicVerdict != "SUFFICIENT_CAUSE_ESTABLISHED_EXCLUSIVE_CAUSE_NOT_PROVABLE"
+        || forensic.GlobalCertification != "SUSPENDED_PENDING_RECERTIFICATION"
+        || !forensic.HistoricalFeasibilityRetained
+        || forensic.Promotion != "NONE"
+        || forensic.Retry != "PROHIBITED"
+        || forensic.Successor != "NOT_YET_PREREGISTERED_NOT_AUTHORIZED"
+        || forensic.Report != report)
+        errors.Add("LANE.0 post-attempt forensic current-state facts are incomplete or contradictory.");
+
+    RequireFile(report, "LANE.0 post-attempt forensic report");
+    CheckContains("DOCUMENTATION_INDEX.md", report, "LANE.0 post-attempt forensic index entry");
 }
 
 void ValidateMasterStateBlocks(ProjectState value)
@@ -1712,7 +1774,8 @@ void ValidateMasterStateBlocks(ProjectState value)
         nextBehavioral?.Id, nextBehavioral?.Name,
         nextBehavioral?.Authorization ?? "N/A", blocker.Id, blocker.Status,
         branch.Id, branch.Decision, value.BehaviorPolicyVersion,
-        value.BehaviorChange ? "true" : "none", value.TestStatus.Passed,
+        value.BehaviorChange ? "true" : "none", "prohibited",
+        "not preregistered / not authorized", value.TestStatus.Passed,
         value.TestStatus.Failed, value.TestStatus.Skipped);
     foreach (var document in new[] { "README.md", "PROJECT_STATUS.md" })
     {
@@ -1884,6 +1947,7 @@ sealed record ProjectState(
     string? NextRecommendedPhase,
     string? NextRecommendedAction,
     string? NextBehavioralPhase,
+    Lane0CorrectivePostAttemptForensicsState? Lane0CorrectivePostAttemptForensics,
     TestState TestStatus,
     CorpusState ValidationCorpus,
     IReadOnlyList<string> MasterDocuments);
@@ -1892,6 +1956,20 @@ sealed record PhaseState(string Id, string Name, string Status, string? Outcome,
     string? Report, string? Authorization, string? BlockedReason);
 sealed record BranchState(string Id, string Decision, string BlockedBy);
 sealed record PhaseContractState(string Id, string Kind, bool? BehaviorChange, string? Authorization);
+sealed record Lane0CorrectivePostAttemptForensicsState(
+    string Status,
+    string PublicHead,
+    string Attempt,
+    string ScientificEvaluator,
+    string ScientificResult,
+    string ForensicFinding,
+    string ForensicVerdict,
+    string GlobalCertification,
+    bool HistoricalFeasibilityRetained,
+    string Promotion,
+    string Retry,
+    string Successor,
+    string Report);
 sealed record TestState(int Passed, int Failed, int Skipped);
 sealed record CorpusState(
     int Families,
