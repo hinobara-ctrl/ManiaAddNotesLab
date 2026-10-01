@@ -190,7 +190,8 @@ public sealed class PhaseC12ExactHeadRelationTests
         var stateRoot = state.RootElement;
         Assert.Equal("legacy-experimental.1", stateRoot.GetProperty("behaviorPolicyVersion").GetString());
         Assert.False(stateRoot.GetProperty("behaviorChange").GetBoolean());
-        Assert.Equal("LANE.0.HARDENING", stateRoot.GetProperty("currentPhase").GetString());
+        Assert.Equal("LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS",
+            stateRoot.GetProperty("currentPhase").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextRecommendedPhase").ValueKind);
         Assert.Equal("HUMAN_REVIEW_REQUIRED", stateRoot.GetProperty("nextRecommendedAction").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextBehavioralPhase").ValueKind);
@@ -225,8 +226,14 @@ public sealed class PhaseC12ExactHeadRelationTests
         Assert.Equal("READY_FOR_PUBLICATION_REVIEW", phases.Single(x =>
                 x.GetProperty("id").GetString() == "LANE.0.HARDENING")
             .GetProperty("outcome").GetString());
-        Assert.Contains("Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW", readme);
-        Assert.Contains("Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW", status);
+        const string currentPhase = "Current phase: LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS "
+            + "— COMPLETE — OUTCOME POST_ATTEMPT_FORENSIC_DOCUMENTED";
+        Assert.Contains(currentPhase, readme);
+        Assert.Contains(currentPhase, status);
+        Assert.Contains("Retry: prohibited", readme);
+        Assert.Contains("Retry: prohibited", status);
+        Assert.Contains("Successor: not preregistered / not authorized", readme);
+        Assert.Contains("Successor: not preregistered / not authorized", status);
         Assert.Contains("Next actionable research candidate: none", readme);
         Assert.Contains("Next actionable research candidate: none", status);
         Assert.Contains("Next behavioral phase: none", readme);

@@ -437,21 +437,21 @@ public sealed class Lane0FeasibilityTests
     }
 
     [Fact]
-    public void CounterClosureRouteVerifiesNormalizedIdentitiesThenBlocksBeforeManifest()
+    public void CounterClosureHistoricalRouteRejectsCurrentHarnessDriftBeforeManifest()
     {
         var root = FindRepositoryRoot();
         var contract = Path.Combine(root, "docs", "lane_0_future_held_counter_closure_contract.json");
         var readiness = Lane0FeasibilityRunner.ValidateCounterClosureReadiness(root, contract, null, null);
         var execution = Lane0FeasibilityRunner.DenyCounterClosureExecution(root, contract, null, null);
 
-        Assert.Equal("BLOCKED", readiness.Outcome);
+        Assert.Equal("INVALID", readiness.Outcome);
         Assert.True(readiness.Checks.ContractCanonical);
         Assert.True(readiness.Checks.ImplementationIdentity);
-        Assert.True(readiness.Checks.HarnessIdentity);
+        Assert.False(readiness.Checks.HarnessIdentity);
         Assert.True(readiness.Checks.ReusedDependencies);
         Assert.False(readiness.Checks.PublicationBindingPresent);
         Assert.False(readiness.Checks.ManifestVerified);
-        Assert.Equal("BLOCKED", execution.Outcome);
+        Assert.Equal("INVALID", execution.Outcome);
     }
 
     [Fact]
