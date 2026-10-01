@@ -184,6 +184,10 @@ El successor `f303726` fue publicado con un corrective evaluator research-only, 
 
 Estado: **COMPLETE — POST_ATTEMPT_FORENSIC_DOCUMENTED / NO_SUCCESSOR_AUTHORIZED**. Después del cierre histórico anterior se publicó la ruta de ejecución y se consumió su única autoridad oficial. El evaluador terminó `INVALID / NOT PUBLISHABLE`; `SCI-01` documenta una referencia histórica Spring incorrecta como causa suficiente no exclusiva. No existe retry, promoción ni cambio de defaults. F03×F07 sigue cerrado y cualquier successor permanece no diseñado, no preregistrado y no autorizado.
 
-## LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION — estado actual
+## LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION — cierre publicado
 
 Estado: **COMPLETE — READY_FOR_HUMAN_REVIEW / NO_C11_AUTHORIZATION**. Phase 1 crea únicamente un preregistro y validator estático successor-specific. La referencia B histórica permanece intacta; la nueva configuración usa A y conserva `9+2`, pregunta, thresholds, RICE, G1 y future-held. No hay binding, receipt, corpus adapter, ejecución, RNG, cambio conductual ni promoción.
+
+## LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT — estado actual
+
+Estado: **COMPLETE — AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS / NO_C11_AUTHORIZATION**. Phase 1 fue publicada en `6a7c44d` y auditada sin defecto científico. Phase 2 no ha comenzado: debe acoplar el validator a `VerifiedFrozenC11Manifest` antes de cualquier autoridad y permanece `NOT_AUTHORIZED`. No existe binding, receipt, C11, RNG, conducta ni cambio de defaults.
