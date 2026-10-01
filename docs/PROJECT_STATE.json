@@ -1,6 +1,6 @@
 {
   "schemaVersion": 21,
-  "lastUpdated": "2026-09-28",
+  "lastUpdated": "2026-10-01",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -133,10 +133,25 @@
     "correctiveEvaluationExecuted": false,
     "step2Authorized": false
   },
+  "lane0CorrectivePostAttemptForensics": {
+    "status": "POST_ATTEMPT_FORENSIC_DOCUMENTED",
+    "publicHead": "243c43a589512a12a69b9a4c0d68d1c4fd54a8ca",
+    "attempt": "AUTHORIZED_CORRECTIVE_ATTEMPT_CONSUMED",
+    "scientificEvaluator": "INVALID",
+    "scientificResult": "NOT_PUBLISHABLE",
+    "forensicFinding": "SCI-01_SCIENTIFIC_REFERENCE_IDENTITY_MISMATCH",
+    "forensicVerdict": "SUFFICIENT_CAUSE_ESTABLISHED_EXCLUSIVE_CAUSE_NOT_PROVABLE",
+    "globalCertification": "SUSPENDED_PENDING_RECERTIFICATION",
+    "historicalFeasibilityRetained": true,
+    "promotion": "NONE",
+    "retry": "PROHIBITED",
+    "successor": "NOT_YET_PREREGISTERED_NOT_AUTHORIZED",
+    "report": "docs/PHASE_LANE_0_CORRECTIVE_POST_ATTEMPT_FORENSIC_ADDENDUM.md"
+  },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "LANE_0_CORRECTIVE_EVALUATION_PENDING_USER_PUBLICATION_AND_APPROVAL"
+    "currentBlockingRequirement": "LANE_0_CORRECTIVE_ATTEMPT_CONSUMED_SUCCESSOR_NOT_PREREGISTERED"
   },
   "g10Recertification": {
     "status": "PASS",

@@ -1,10 +1,10 @@
 # Project Status
 
-Última actualización: 2026-09-28. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
+Última actualización: 2026-10-01. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 conserva su cierre histórico **FEASIBILITY_DEMONSTRATED**, pero su certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION**. El corrective evaluator in-memory, research-only, fue publicado y hardeneado en `f303726`; su auditoría post-publicación cerró F01-F04 sin classification escape. La futura evaluación C11 sigue **BLOCKED / NOT AUTHORIZED**: no existen corpus adapter, ruta CLI/Web, publication binding ni autorización humana. No existe selector ni promoción; G1.GATE continúa **NEEDS_REVIEW** y LANE.DESIGN/GATE o cualquier sucesora requieren autorización nueva.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 conserva su cierre histórico **FEASIBILITY_DEMONSTRATED**, pero su certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo C11 autorizado para `243c43a` está **CONSUMED / INVALID / NOT PUBLISHABLE / NO RETRY**. `SCI-01` registra una referencia Spring congelada incorrecta como causa suficiente no exclusiva; F03×F07 permanece cerrado y no existe promoción. Ningún successor está diseñado, preregistrado o autorizado. G1.GATE continúa **NEEDS_REVIEW** y LANE.DESIGN/GATE requieren autorización nueva.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -36,8 +36,9 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | SAFETY.OP466.RNG_GEOMETRY_AUDIT — Evidence Handoff | **COMPLETE — AUDIT/HANDOFF ONLY** | Ninguno; reconstruye `+8` llamadas antes, `+1` durante y `+9` después de OP-466 sin completar todavía la geometría A/B. |
 | SAFETY.OP466.GEOMETRY_OBSERVATION — Passive Lane Query | **COMPLETE — LANE_2_ILLEGAL A/B / RESEARCH ONLY** | Ninguno; v3 consulta padres completos sin RNG ni commit y detecta colisión inclusiva con LN sintética `34783→35009`. |
 | LANE.0 — Original-Only Spatial Relation Feasibility / Shadow | **COMPLETE — FEASIBILITY_DEMONSTRATED / HISTORICAL / SUSPENDED_PENDING_RECERTIFICATION** | Ninguno; resultado histórico de `12ee879`, no certificación global vigente. No elige lane. |
-| LANE.0.REMEDIATION — Future-Held Instrument Remediation / Shadow | **COMPLETE — READY_FOR_CORRECTIVE_EVALUATION / STEP 2 NOT AUTHORIZED** | `AnchorTime` e identities future-held restauradas; certificación global pendiente de recertificación C11 tras publicación y autorización humana. |
-| LANE.0.HARDENING — Future-Held Pre-Recertification Hardening / Shadow | **COMPLETE — READY_FOR_PUBLICATION_REVIEW / STEP 2 NOT AUTHORIZED** | Outcome histórico conservado; successor `f303726` publicado y auditado limpio, F01-F04 cerrados. Evaluator in-memory sin adapter/binding/CLI y C11 no consultado. |
+| LANE.0.REMEDIATION — Future-Held Instrument Remediation / Shadow | **COMPLETE — READY_FOR_CORRECTIVE_EVALUATION / HISTORICAL PREPARATION RETAINED** | `AnchorTime` e identities future-held restauradas; el posterior intento correctivo no produjo recertificación publicable. |
+| LANE.0.HARDENING — Future-Held Pre-Recertification Hardening / Shadow | **COMPLETE — READY_FOR_PUBLICATION_REVIEW / F03×F07 CLOSED** | La autoridad durable se consumió como fue diseñada; no existe defecto material conocido en el hardening de ejecución. |
+| LANE.0 corrective official attempt | **CONSUMED — INVALID / NOT PUBLISHABLE / NO RETRY** | Ninguno; `SCI-01` identifica una causa suficiente no exclusiva. Binding y receipt históricos se preservan; successor no autorizado. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -292,7 +293,7 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 
 ## Próximo paso recomendado
 
-`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION** tras la recertificación final; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. LANE.0 conserva sólo sus cifras históricas y su certificación está **SUSPENDED / PENDING_RECERTIFICATION**. El hardening ya fue publicado en `f303726` y su auditoría post-publicación quedó limpia. Un posible trabajo técnico futuro requiere un encargo separado y autorización humana explícita para preparar publication binding, adapter mínimo de corpus y verificación de manifest antes de una única evaluación C11; C11 sigue **NO AUTORIZADO**. `LANE.DESIGN`, `LANE.GATE` y toda integración siguen **NOT_AUTHORIZED**.
+`F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION**; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. LANE.0 conserva sólo sus cifras históricas y su certificación está **SUSPENDED / PENDING_RECERTIFICATION**. El intento correctivo oficial está consumido, terminó `INVALID / NOT PUBLISHABLE` y no puede reintentarse. Cualquier trabajo futuro deberá diseñar un successor separado con nueva preregistración, namespace de autoridad, auditoría y autorización humana; actualmente está **NOT YET PREREGISTERED / NOT AUTHORIZED**. `LANE.DESIGN`, `LANE.GATE` y toda integración siguen **NOT_AUTHORIZED**.
 
 <!-- PROJECT-STATE:BEGIN -->
 Current phase: LANE.0.HARDENING — COMPLETE — OUTCOME READY_FOR_PUBLICATION_REVIEW<br>
