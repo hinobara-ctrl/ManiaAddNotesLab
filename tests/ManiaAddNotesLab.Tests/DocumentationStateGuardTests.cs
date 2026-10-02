@@ -190,6 +190,15 @@ public sealed class DocumentationStateGuardTests
     }
 
     [Fact]
+    public void ConsumedAttemptAllowsNonAuthorizingIntegrationPreregistrationAuditClosure()
+    {
+        Assert.Empty(DocumentationStateGuard.ValidatePostAttemptCurrentState(
+            "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT", true, true,
+            "AUTHORIZED_CORRECTIVE_ATTEMPT_CONSUMED", "PROHIBITED",
+            "NOT_YET_PREREGISTERED_NOT_AUTHORIZED"));
+    }
+
+    [Fact]
     public void PostAttemptStateRejectsPermittedRetry()
     {
         var errors = DocumentationStateGuard.ValidatePostAttemptCurrentState(
