@@ -15,6 +15,7 @@ const string lane0PostAttemptPhase = "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS";
 const string lane0SuccessorPhase = "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION";
 const string lane0SuccessorAuditPhase = "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT";
 const string lane0SuccessorPhase2 = "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION";
+const string lane0SuccessorPhase2Audit = "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT";
 ValidateRepositoryRootLayout();
 ProjectState? state = null;
 try
@@ -57,6 +58,7 @@ else
     ValidateLane0CorrectiveSuccessorPhase1(state);
     ValidateLane0CorrectiveSuccessorPhase1Audit(state);
     ValidateLane0CorrectiveSuccessorPhase2(state);
+    ValidateLane0CorrectiveSuccessorPhase2Audit(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -162,7 +164,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ", "LANE.0", "LANE.0.REMEDIATION", "LANE.0.HARDENING", lane0PostAttemptPhase, lane0SuccessorPhase, lane0SuccessorAuditPhase, lane0SuccessorPhase2 })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ", "LANE.0", "LANE.0.REMEDIATION", "LANE.0.HARDENING", lane0PostAttemptPhase, lane0SuccessorPhase, lane0SuccessorAuditPhase, lane0SuccessorPhase2, lane0SuccessorPhase2Audit })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -799,7 +801,7 @@ void ValidateG1GateClosure(ProjectState value)
     if (gate?.Status != "COMPLETE") return;
     if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
         || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
 
@@ -872,7 +874,7 @@ void ValidateSafetyCausalClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "A" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_REMEDIATION"
-        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.CAUSAL must close COMPLETE/A with no remediation, promotion or successor.");
 
@@ -955,7 +957,7 @@ void ValidateSafetyRemediationDesignClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "READY_FOR_SEPARATE_REMEDIATION_GATE" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.DESIGN must close READY_FOR_SEPARATE_REMEDIATION_GATE with no implementation or authorized successor.");
 
@@ -1029,7 +1031,7 @@ void ValidateSafetyRemediationGateClosure(ProjectState value)
         || phase.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
         || contractState?.Kind != "BehaviorChanging" || contractState.BehaviorChange is not true
         || contractState.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION") || value.NextRecommendedPhase is not null
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT") || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         errors.Add("SAFETY.REMEDIATION.GATE hardening must close NEEDS_REVIEW, experimental-only and without promotion or successor.");
 
@@ -1740,7 +1742,7 @@ void ValidateLane0CorrectivePostAttemptForensics(ProjectState value)
         value.CurrentPhase, forensic is not null, phase is not null, forensic?.Attempt, forensic?.Retry,
         forensic?.Successor));
 
-    if (value.CurrentPhase is not (lane0PostAttemptPhase or lane0SuccessorPhase or lane0SuccessorAuditPhase or lane0SuccessorPhase2)
+    if (value.CurrentPhase is not (lane0PostAttemptPhase or lane0SuccessorPhase or lane0SuccessorAuditPhase or lane0SuccessorPhase2 or lane0SuccessorPhase2Audit)
         || value.NextRecommendedPhase is not null
         || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
         || value.NextBehavioralPhase is not null
@@ -1791,7 +1793,7 @@ void ValidateLane0CorrectiveSuccessorPhase1(ProjectState value)
         || phaseContract.BehaviorChange is not false
         || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
         errors.Add("LANE.0 successor Phase 1 must remain research-only and have no C11 authorization.");
-    if (value.CurrentPhase is not (lane0SuccessorPhase or lane0SuccessorAuditPhase or lane0SuccessorPhase2)
+    if (value.CurrentPhase is not (lane0SuccessorPhase or lane0SuccessorAuditPhase or lane0SuccessorPhase2 or lane0SuccessorPhase2Audit)
         || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
         || value.BehaviorChange)
@@ -1944,7 +1946,7 @@ void ValidateLane0CorrectiveSuccessorPhase1Audit(ProjectState value)
         || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
         errors.Add("LANE.0 successor Phase 1 audit closure must remain research-only and non-authorizing.");
 
-    if (value.CurrentPhase is not (lane0SuccessorAuditPhase or lane0SuccessorPhase2)
+    if (value.CurrentPhase is not (lane0SuccessorAuditPhase or lane0SuccessorPhase2 or lane0SuccessorPhase2Audit)
         || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null
         || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
@@ -2046,12 +2048,8 @@ void ValidateLane0CorrectiveSuccessorPhase2(ProjectState value)
         || phaseContract.BehaviorChange is not false
         || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
         errors.Add("LANE.0 successor Phase 2 must remain research-only execution preparation.");
-    if (value.CurrentPhase != lane0SuccessorPhase2
-        || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null
-        || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
-        || value.BehaviorChange)
-        errors.Add("LANE.0 successor Phase 2 must stop at independent audit/human review without execution authority.");
+    if (value.BehaviorChange)
+        errors.Add("LANE.0 successor Phase 2 must remain behavior-neutral.");
     if (phase2 is null
         || phase2.Status != "COMPLETE"
         || phase2.Outcome != "READY_FOR_INDEPENDENT_EXECUTION_AUDIT"
@@ -2237,6 +2235,85 @@ void ValidateLane0CorrectiveSuccessorPhase2(ProjectState value)
             errors.Add($"Real successor authority artifact exists during Phase 2 preparation: {forbidden}.");
 }
 
+void ValidateLane0CorrectiveSuccessorPhase2Audit(ProjectState value)
+{
+    const string report = "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_PHASE2_AUDIT.md";
+    const string auditedHead = "6b1a1730c23d3429a533aa95ae251ecfb1eef18a";
+    const string implementationCommit = "60776c0b9acbfc5ded89397c36ffdbe609fb720d";
+    const string contractIdentity = "11F55A6770BA78F008A6690C88561C714CAF45BA15B96E472C0C80B219C4D5B6";
+    const string scientificIdentity = "8F9AE545027F0F1364E3378324646C7F7711CDF7EFFC8CC879660644A3D905D0";
+    const string harnessIdentity = "15DC978C24119E9832DD70C0C61F5BFB1BBAF11520A107A7728220009B793A61";
+    const string packageIdentity = "DFF48221A6FB087367B1C6B1062B7355806C53668C6876A4BB4EC59983232D38";
+    const string dependencyIdentity = "D5931A815701C0FAB854B878373A8ED03F3E29BDEA17C98A428C7AF6B0F7023B";
+    var phase = value.Phases.FirstOrDefault(x => x.Id == lane0SuccessorPhase2Audit);
+    var phaseContract = value.PhaseContracts.FirstOrDefault(x => x.Id == lane0SuccessorPhase2Audit);
+    var audit = value.Lane0CorrectiveSuccessorPhase2Audit;
+    if (phase?.Status != "COMPLETE"
+        || phase.Outcome != "AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS"
+        || phase.BehaviorChange is not false
+        || phase.Authorization != "NO_C11_AUTHORIZATION"
+        || phase.Report != report
+        || phaseContract?.Kind != "ResearchShadow"
+        || phaseContract.BehaviorChange is not false
+        || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
+        errors.Add("LANE.0 successor Phase 2 audit closure phase drifted.");
+    if (value.CurrentPhase != lane0SuccessorPhase2Audit
+        || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null
+        || value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"
+        || value.BehaviorChange)
+        errors.Add("Phase 2 audit closure must remain the current non-authorizing human-review stop.");
+    if (audit is null
+        || audit.Status != "COMPLETE"
+        || audit.Outcome != "AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS"
+        || audit.AuditedPublicHead != auditedHead
+        || audit.ImplementationCommit != implementationCommit
+        || audit.Phase2ContractHash != contractIdentity
+        || audit.ScientificImplementationHash != scientificIdentity
+        || audit.ExecutionHarnessHash != harnessIdentity
+        || audit.PackageVerifierHash != packageIdentity
+        || audit.FrozenDependenciesHash != dependencyIdentity
+        || audit.IndependentAudit != "COMPLETE"
+        || audit.R2Closure != "R2_01_THROUGH_R2_08_CLOSED"
+        || audit.CurrentPackageVerifier != "SUFFICIENT_FOR_PHASE2_IN_PROCESS_DETERMINISM"
+        || audit.SemanticVerifierRequirement != "REQUIRED_BEFORE_BINDING"
+        || audit.IntegrationStatus != "NOT_STARTED"
+        || audit.IntegrationAuthorization != "NOT_AUTHORIZED"
+        || audit.Authorization != "NO_C11_AUTHORIZATION"
+        || audit.BindingPresent || audit.ReceiptPresent || audit.C11Accessed
+        || audit.ExecutionAuthorized || audit.ScientificEvaluationExecuted
+        || audit.BehaviorChange || audit.RngChange || audit.DefaultChange
+        || audit.Phase2PublishedValidation.Passed != 995
+        || audit.Phase2PublishedValidation.Failed != 0
+        || audit.Phase2PublishedValidation.Skipped != 0
+        || audit.Phase2PublishedValidation.GithubCi != "NONE"
+        || audit.Report != report)
+        errors.Add("PROJECT_STATE does not preserve the exact Phase 2 independent-audit closure boundary.");
+
+    RequireFile(report, "LANE.0 successor Phase 2 audit closure");
+    CheckContains("DOCUMENTATION_INDEX.md", report, "LANE.0 successor Phase 2 audit index entry");
+    foreach (var marker in new[]
+    {
+        "PHASE 2 AUDIT CLEAN WITH NON-BLOCKING OBSERVATIONS",
+        "R2-01 through R2-08 are **CLOSED**",
+        "HistoricalV2RouteRejectsChangedInstrumentIdentity",
+        "passing rejection test",
+        "995 passed / 0 failed / 0 skipped",
+        "GitHub remote CI/check-run certification is **NONE**",
+        "REQUIRED_BEFORE_BINDING_FOR_REAL_EXECUTION",
+        "official internal research runner",
+        "isolated execution launcher",
+        "Independent audit closure **is not** binding issuance",
+        "NOT_STARTED / NOT_AUTHORIZED / NO_C11_AUTHORIZATION"
+    }) CheckContains(report, marker, "Phase 2 audit closure precision");
+    foreach (var forbidden in new[]
+    {
+        "legally binding Phase 2 audit", "CLI Runner Pipeline", "physical path testing"
+    })
+        if (File.ReadAllText(Path.Combine(root, report)).Contains(forbidden, StringComparison.OrdinalIgnoreCase))
+            errors.Add($"Phase 2 audit closure contains forbidden overclaim/terminology: {forbidden}.");
+}
+
 void ValidateMasterStateBlocks(ProjectState value)
 {
     var current = value.Phases.FirstOrDefault(x => x.Id == value.CurrentPhase);
@@ -2251,7 +2328,7 @@ void ValidateMasterStateBlocks(ProjectState value)
         nextBehavioral?.Authorization ?? "N/A", blocker.Id, blocker.Status,
         branch.Id, branch.Decision, value.BehaviorPolicyVersion,
         value.BehaviorChange ? "true" : "none", "prohibited",
-        "Phase 2 prepared / independent audit required / C11 not authorized", value.TestStatus.Passed,
+        "Phase 2 audit clean / integration not started / semantic verifier required before binding / C11 not authorized", value.TestStatus.Passed,
         value.TestStatus.Failed, value.TestStatus.Skipped);
     foreach (var document in new[] { "README.md", "PROJECT_STATUS.md" })
     {
@@ -2459,6 +2536,7 @@ sealed record ProjectState(
     Lane0CorrectiveSuccessorPhase1State? Lane0CorrectiveSuccessorPhase1,
     Lane0CorrectiveSuccessorPhase1AuditState? Lane0CorrectiveSuccessorPhase1Audit,
     Lane0CorrectiveSuccessorPhase2State? Lane0CorrectiveSuccessorPhase2,
+    Lane0CorrectiveSuccessorPhase2AuditState? Lane0CorrectiveSuccessorPhase2Audit,
     TestState TestStatus,
     CorpusState ValidationCorpus,
     IReadOnlyList<string> MasterDocuments);
@@ -2537,7 +2615,35 @@ sealed record Lane0CorrectiveSuccessorPhase2State(
     bool RngChange,
     bool DefaultChange,
     string NextRequiredAction);
+sealed record Lane0CorrectiveSuccessorPhase2AuditState(
+    string Status,
+    string Outcome,
+    string AuditedPublicHead,
+    string ImplementationCommit,
+    string Phase2ContractHash,
+    string ScientificImplementationHash,
+    string ExecutionHarnessHash,
+    string PackageVerifierHash,
+    string FrozenDependenciesHash,
+    string IndependentAudit,
+    string R2Closure,
+    string CurrentPackageVerifier,
+    string SemanticVerifierRequirement,
+    string IntegrationStatus,
+    string IntegrationAuthorization,
+    string Authorization,
+    bool BindingPresent,
+    bool ReceiptPresent,
+    bool C11Accessed,
+    bool ExecutionAuthorized,
+    bool ScientificEvaluationExecuted,
+    bool BehaviorChange,
+    bool RngChange,
+    bool DefaultChange,
+    PublishedValidationState Phase2PublishedValidation,
+    string Report);
 sealed record TestState(int Passed, int Failed, int Skipped);
+sealed record PublishedValidationState(int Passed, int Failed, int Skipped, string GithubCi);
 sealed record CorpusState(
     int Families,
     int HumanCharts,

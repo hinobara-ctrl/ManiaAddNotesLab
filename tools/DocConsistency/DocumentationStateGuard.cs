@@ -133,13 +133,14 @@ public static class DocumentationStateGuard
         const string successorPhase = "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION";
         const string auditPhase = "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT";
         const string phase2 = "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION";
+        const string phase2Audit = "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT";
         var errors = ImmutableArray.CreateBuilder<string>();
         if (!postAttemptForensicsPresent)
             errors.Add("Current state omits the post-attempt forensic object.");
         if (!postAttemptPhasePresent)
             errors.Add("Current state omits the post-attempt forensic phase.");
         if (postAttemptForensicsPresent
-            && currentPhase is not (expectedPhase or successorPhase or auditPhase or phase2))
+            && currentPhase is not (expectedPhase or successorPhase or auditPhase or phase2 or phase2Audit))
             errors.Add($"Consumed corrective attempt current phase requires post-attempt closure or its preregistered successor, not {currentPhase}.");
         if (attempt != "AUTHORIZED_CORRECTIVE_ATTEMPT_CONSUMED")
             errors.Add("Post-attempt current state must record the authorized corrective attempt as consumed.");
