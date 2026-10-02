@@ -199,3 +199,7 @@ Estado: **COMPLETE — READY_FOR_INDEPENDENT_EXECUTION_AUDIT / NO_C11_AUTHORIZAT
 ## LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT — cierre actual
 
 Estado: **COMPLETE — AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS / NO_C11_AUTHORIZATION**. La auditoría independiente confirmó R2-01…R2-08 e identidades congeladas sin alterar el outcome histórico de Phase 2. El package verifier actual es suficiente para determinismo in-process; un verificador semántico profundo es `REQUIRED_BEFORE_BINDING`. La integración, el adapter oficial, el internal research runner y el isolated execution launcher permanecen `NOT_STARTED / NOT_AUTHORIZED`. Auditoría, binding, autorización humana y ejecución son eventos distintos; no existe binding, receipt, C11 ni resultado científico real.
+
+## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION — cierre actual
+
+Estado: **COMPLETE — READY_FOR_HUMAN_REVIEW / NO_C11_AUTHORIZATION**. El diseño futuro de adapter, runner interno, launcher aislado y verificador semántico profundo está preregistrado con identidades aún `NOT_YET_IMPLEMENTED`, orden de autoridad exacto y stop conditions explícitas. Esto no implementa integración, no cambia engine, clasificador, RNG, defaults ni HardValidity, y no emite binding o receipt. La ejecución C11 continúa `NOT_STARTED / NOT_AUTHORIZED`.

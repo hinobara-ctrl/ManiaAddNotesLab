@@ -1,0 +1,354 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-successor-integration-preregistration.1",
+    "phaseId": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION",
+    "baselinePublicHead": "89c0ea9dcd55a5a0f9a34f580373df9115683821",
+    "parentAudit": {
+      "phaseId": "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT",
+      "status": "COMPLETE",
+      "outcome": "AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS",
+      "publicHead": "6b1a1730c23d3429a533aa95ae251ecfb1eef18a"
+    },
+    "researchQuestion": "Can a finite successor integration layer connect the verified frozen C11 manifest to the already-audited LANE.0 corrective successor evaluator through an official frozen-corpus adapter, internal research runner, isolated execution launcher and independent semantic package verifier, while preserving deterministic two-pass science, durable one-shot authority, pre-receipt corpus opacity and zero product/behavior change?",
+    "frozenPhase2Identities": {
+      "contractSha256": "11F55A6770BA78F008A6690C88561C714CAF45BA15B96E472C0C80B219C4D5B6",
+      "scientificImplementationSha256": "8F9AE545027F0F1364E3378324646C7F7711CDF7EFFC8CC879660644A3D905D0",
+      "executionHarnessSha256": "15DC978C24119E9832DD70C0C61F5BFB1BBAF11520A107A7728220009B793A61",
+      "packageVerifierSha256": "DFF48221A6FB087367B1C6B1062B7355806C53668C6876A4BB4EC59983232D38",
+      "frozenDependenciesSha256": "D5931A815701C0FAB854B878373A8ED03F3E29BDEA17C98A428C7AF6B0F7023B",
+      "verifiedManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
+    },
+    "scientificReferences": {
+      "historicalInvalidSpringB": "E73B098A4D4C99D716D2C53B3EA3A4BFD1A75059881F30DB416631B5EDB972D4",
+      "correctedSpringA": "E73B098AA0CB6FA3BECE45E9551EF225412F5E01F6398184093A40B944F0AAE0",
+      "secondG1Chart": "20651C9B11DBB0D7BA2D64A8F167577AE0452762EEA83C5A7558BA89B8D2C788",
+      "historicalOperationalDistribution": "9+2=11",
+      "semanticsChangeAuthorized": false
+    },
+    "components": {
+      "officialFrozenC11Adapter": "NOT_YET_IMPLEMENTED",
+      "officialInternalResearchRunner": "NOT_YET_IMPLEMENTED",
+      "isolatedExecutionLauncher": "NOT_YET_IMPLEMENTED",
+      "deepSemanticPackageVerifier": "NOT_YET_IMPLEMENTED"
+    },
+    "corpusAdmission": {
+      "manifestAuthorityModel": "VerifiedFrozenC11Manifest",
+      "admittedObjectModel": "FUTURE_VERIFIED_ADMITTED_CORPUS_OBJECT_WITH_RESTRICTED_CONSTRUCTION",
+      "explicitPathCount": 12,
+      "uniqueContentCount": 11,
+      "exactDuplicateRelationships": 1,
+      "keymodes": [4, 7, 10],
+      "originalObjectCount": 50836,
+      "requirements": [
+        "EXACT_EXPLICIT_PATH_MEMBERSHIP",
+        "EXACT_SHA256_MEMBERSHIP",
+        "EXPECTED_FAMILY_METADATA",
+        "EXPECTED_KEYMODE",
+        "PARSE_VALIDITY",
+        "EXPECTED_CONTENT_AND_OBJECT_INVARIANTS",
+        "DETERMINISTIC_ORDERING"
+      ],
+      "songsDiscovery": false,
+      "arbitraryOsuEnumeration": false,
+      "generatedAddMapsAccepted": false,
+      "unboundedFoldersAccepted": false,
+      "realCorpusAccessInThisPhase": false
+    },
+    "duplicateSemantics": {
+      "pathMembershipDistinctFromContentIdentity": true,
+      "admittedPathEvidenceCount": 12,
+      "scientificUniqueContentCount": 11,
+      "expectedDuplicateContentSha256": "322F995448A73713DCBECE3D140F4D516EF687DBC43CC140CFF14948566F906B",
+      "expectedDuplicateLocationCount": 2,
+      "expectedDuplicateFamily": "ORGT | DESTINY | BAIO",
+      "expectedDuplicateKeymode": 7,
+      "expectedDuplicateOriginalObjects": 1653,
+      "allOtherContentIdentitiesExpectedLocationCount": 1,
+      "exactExpectedDuplicatePreservedAsIntegrityEvidence": true,
+      "duplicateTeachesStyleTwice": false,
+      "duplicateCountsAsUniqueChartTwice": false,
+      "duplicateSilentlyDiscardedFromIntegrityEvidence": false,
+      "scienceRepresentation": "ONE_DETERMINISTIC_CHART_PER_UNIQUE_CONTENT_IDENTITY"
+    },
+    "runnerContract": {
+      "productCliExposure": false,
+      "webExposure": false,
+      "addNotesEngineExposure": false,
+      "requirements": [
+        "AUDITED_INTEGRATION_CONTRACT",
+        "EXACT_RUNTIME_IDENTITIES",
+        "SOURCE_CLEAN_AND_EXACT_HEADS",
+        "CANONICAL_BINDING_WHEN_AUTHORIZED",
+        "AUTHORIZED_EXECUTION_COUNT_ONE",
+        "DURABLE_RECEIPT_BEFORE_CORPUS",
+        "OFFICIAL_ADAPTER",
+        "TWO_INDEPENDENT_SCIENTIFIC_PASSES",
+        "UNCHANGED_SUCCESSOR_EVALUATOR",
+        "ZERO_RNG",
+        "INPUT_IMMUTABILITY",
+        "BEHAVIOR_AND_DEFAULT_NON_INTERFERENCE",
+        "DEEP_SEMANTIC_VERIFIER",
+        "DETERMINISTIC_FINAL_ARTIFACTS"
+      ]
+    },
+    "launcherContract": {
+      "headInvariant": "BINDING_HEAD == SOURCE_HEAD == ISOLATED_HEAD == RUNTIME_HEAD",
+      "authorizationRootControls": ["SOURCE_HEAD", "TRACKED_CLEANLINESS", "CANONICAL_BINDING", "DURABLE_RECEIPT"],
+      "executionRootControls": ["BUILD", "RUNTIME", "STAGING", "FINAL_ARTIFACTS"],
+      "executionRootRequirements": [
+        "ABSOLUTE",
+        "EXTERNAL_TO_SOURCE",
+        "NONEXISTENT_BEFORE_CREATION",
+        "NON_NESTED_WITH_SOURCE",
+        "NON_NESTED_WITH_CORPUS",
+        "CREATED_AFTER_PRE_AUTHORITY_CHECKS",
+        "NO_HARDLINK_ALIASING",
+        "DETACHED_AT_AUTHORIZED_HEAD",
+        "PRISTINE_EXCEPT_EXPLICIT_AUTHORITY_MATERIAL"
+      ],
+      "preReceiptIsolationScope": ["SOURCE_ROOT", "EXECUTION_ROOT"],
+      "preReceiptCorpusRootInspection": false,
+      "postReceiptIsolationScope": ["SOURCE_ROOT", "EXECUTION_ROOT", "CORPUS_ROOT"],
+      "pathIsolationSemantics": "CANONICAL_LEXICAL_ONLY",
+      "launcherImplementationInThisPhase": false
+    },
+    "corpusRootOpacity": {
+      "stateBeforeReceipt": "OPAQUE_TOKEN",
+      "preReceiptForbidden": [
+        "Path.GetFullPath",
+        "ResolvePath",
+        "Directory.Exists",
+        "File.Exists_ON_CORPUS_MEMBERS",
+        "DIRECTORY_ENUMERATION",
+        "OSU_ENUMERATION",
+        "OSU_PARSE",
+        "CORPUS_HASHING",
+        "PHYSICAL_PATH_NORMALIZATION",
+        "CORPUS_METADATA_QUERY",
+        "CORPUS_NON_NESTING_CHECKS"
+      ],
+      "interpretationAllowedAfterDurableReceipt": true,
+      "invalidAfterReceiptConsumesAttempt": true
+    },
+    "semanticVerifier": {
+      "currentPhase2Verifier": "SUFFICIENT_FOR_PHASE2_IN_PROCESS_DETERMINISM",
+      "deepVerifierLifecycle": "REQUIRED_BEFORE_BINDING",
+      "independentFromBuilderSerializationPath": true,
+      "artifacts": [
+        "execution_identity.json",
+        "successor_references.json",
+        "scientific_summary.json",
+        "integrity.json",
+        "chart_family_keymode_results.csv",
+        "g1_historical_operational_cases.csv",
+        "g1_state_transitions.csv",
+        "sha256sums.txt"
+      ],
+      "crossChecks": [
+        "MANIFEST_AND_CONTRACT_IDENTITIES",
+        "ALL_RUNTIME_IDENTITIES",
+        "APPROVED_PUBLIC_HEAD",
+        "SCIENTIFIC_OUTCOME",
+        "INTEGRITY_AND_BLOCKED_REASONS",
+        "ZERO_RNG",
+        "INPUTS_UNCHANGED",
+        "BEHAVIOR_AND_DEFAULT_UNCHANGED",
+        "REFERENCE_A_20651_9_PLUS_2",
+        "RICE_G1_AGGREGATE_CLASSIFICATION_CONSISTENCY"
+      ],
+      "implementationInThisPhase": false
+    },
+    "identityModel": {
+      "method": "Normalized UTF-8 text; strip BOM; CRLF/CR to LF; SHA-256 each file; ordinal-sort path|FILE_SHA256 rows; join with LF; SHA-256 aggregate.",
+      "setsFinite": true,
+      "setsNonOverlappingUnlessExplicitlyJustified": true,
+      "testsAndDocsExcluded": true,
+      "categories": {
+        "adapter": "NOT_YET_IMPLEMENTED",
+        "internalRunner": "NOT_YET_IMPLEMENTED",
+        "isolatedLauncher": "NOT_YET_IMPLEMENTED",
+        "deepSemanticVerifier": "NOT_YET_IMPLEMENTED"
+      }
+    },
+    "futureBinding": {
+      "status": "ABSENT",
+      "issuanceTarget": "FUTURE_INDEPENDENTLY_AUDITED_INTEGRATION_PUBLIC_SHA",
+      "currentBaselineIsEligibleTarget": false,
+      "fields": [
+        "schemaVersion",
+        "approvedPublicHead",
+        "phase1ContractSha256",
+        "phase2ContractSha256",
+        "integrationPreregistrationSha256",
+        "integrationExecutionContractSha256",
+        "manifestSha256",
+        "scientificImplementationSha256",
+        "phase2HarnessSha256",
+        "phase2PackageVerifierSha256",
+        "adapterSha256",
+        "runnerSha256",
+        "launcherSha256",
+        "semanticVerifierSha256",
+        "frozenDependenciesSha256",
+        "explicitHumanAuthorization",
+        "authorizedExecutionCount"
+      ],
+      "authorizedExecutionCount": 1,
+      "artifactCreationDoesNotConstituteHumanAuthorization": true,
+      "creationAuthorizedInThisPhase": false
+    },
+    "futureExecutionContract": {
+      "status": "NOT_YET_IMPLEMENTED",
+      "requiredParentLineageField": "parentIntegrationPreregistrationSha256",
+      "requiredParentLineageValue": "FINAL_CANONICAL_SHA256_OF_THIS_PREREGISTRATION_CONTRACT"
+    },
+    "futureReceipt": {
+      "status": "ABSENT",
+      "namespace": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION.ONE_SHOT",
+      "sourceAuthorizationRootAnchored": true,
+      "exclusiveCreate": true,
+      "fileMode": "CreateNew",
+      "fileAccess": "Write",
+      "fileShare": "None",
+      "durableFlush": true,
+      "fields": [
+        "schemaVersion",
+        "approvedPublicHead",
+        "canonicalBindingSha256",
+        "integrationPreregistrationSha256",
+        "integrationExecutionContractSha256",
+        "attemptCount"
+      ],
+      "canonicalBindingSha256Semantics": "SHA256_OF_EXACT_CANONICAL_BINDING_BYTES_VERIFIED_IMMEDIATELY_BEFORE_RECEIPT_CREATION",
+      "attemptCount": 1,
+      "successConsumes": true,
+      "failureConsumes": true,
+      "invalidConsumes": true,
+      "exceptionConsumes": true,
+      "automaticRetry": false,
+      "automaticRearm": false,
+      "deleteToRetry": false,
+      "creationAuthorizedInThisPhase": false
+    },
+    "authorityOrder": [
+      "SOURCE_PUBLIC_HEAD_CHECKS",
+      "CONTRACT_IDENTITIES",
+      "RUNTIME_IDENTITIES",
+      "CANONICAL_BINDING_PRESENCE",
+      "CANONICAL_BINDING_BYTE_AND_HASH_VERIFICATION",
+      "EXPLICIT_AUTHORIZATION_FIELD",
+      "AUTHORIZED_EXECUTION_COUNT_ONE",
+      "SOURCE_TRACKED_CLEANLINESS",
+      "SOURCE_EXECUTION_RUNTIME_HEAD_EQUALITY",
+      "SOURCE_EXECUTION_ROOT_ISOLATION",
+      "DURABLE_RECEIPT_ABSENCE",
+      "OUTPUT_AND_STAGING_ABSENCE",
+      "DURABLE_RECEIPT_CREATION",
+      "CORPUSROOT_INTERPRETATION",
+      "CORPUS_SOURCE_EXECUTION_ROOT_ISOLATION",
+      "CORPUS_ADMISSION",
+      "SCIENTIFIC_PASS_1",
+      "SCIENTIFIC_PASS_2",
+      "BYTE_DETERMINISM",
+      "DEEP_SEMANTIC_VERIFICATION",
+      "FINAL_PUBLISHABLE_OR_NON_PUBLISHABLE_CLASSIFICATION"
+    ],
+    "governanceSequence": [
+      "INTEGRATION_IMPLEMENTATION",
+      "PUBLIC_INTEGRATION_SHA",
+      "INDEPENDENT_INTEGRATION_AUDIT",
+      "BINDING_ARTIFACT_ISSUANCE_OR_PREPARATION",
+      "SEPARATE_EXPLICIT_HUMAN_AUTHORIZATION_EVENT",
+      "FINAL_AUTHORIZED_BINDING_STATE",
+      "DURABLE_RECEIPT_CREATION",
+      "C11_ACCESS"
+    ],
+    "threatModel": {
+      "covered": [
+        "ACCIDENTAL_PATH_REDIRECTION",
+        "SAME_OR_NESTED_LEXICAL_ROOTS",
+        "STALE_HEAD_OR_DIRTY_SOURCE",
+        "BINDING_RUNTIME_MANIFEST_OR_CORPUS_DRIFT",
+        "DUPLICATE_MISMATCH",
+        "PRE_RECEIPT_CORPUS_INSPECTION",
+        "CONCURRENT_ATTEMPTS_ON_ONE_AUTHORITY_ROOT",
+        "PACKAGE_BYTE_OR_SEMANTIC_DRIFT",
+        "UNEXPECTED_POST_RECEIPT_FAILURE",
+        "ACCIDENTAL_PRODUCT_EXPOSURE"
+      ],
+      "outOfScope": [
+        "HOSTILE_ADMINISTRATOR_OR_ROOT",
+        "HOSTILE_OS",
+        "COMPROMISED_COMPILER_OR_RUNTIME",
+        "PHYSICAL_SYMLINK_OR_JUNCTION_ALIAS_ATTACKS",
+        "DISTRIBUTED_MULTI_MACHINE_AUTHORITY",
+        "MALICIOUS_FILESYSTEM"
+      ]
+    },
+    "successConditions": [
+      "FINITE_DETERMINISTIC_ADAPTER",
+      "SYNTHETIC_VERSIONED_CORPUS_ADMISSION_CONTROLS",
+      "EXACT_12_PATH_11_CONTENT_DUPLICATE_PROOF",
+      "NO_CORPUS_ACCESS_BEFORE_DURABLE_RECEIPT",
+      "NON_REDIRECTABLE_AUTHORITY_PATHS",
+      "ISOLATED_LAUNCHER_PRESERVES_SOURCE_AUTHORITY",
+      "EXACT_HEAD_INVARIANTS",
+      "REPRODUCIBLE_ORTHOGONAL_RUNTIME_IDENTITIES",
+      "INDEPENDENT_SEMANTIC_CORRUPTION_REJECTION",
+      "BYTE_IDENTICAL_TWO_PASS_OUTPUT",
+      "ZERO_RNG_AND_INPUT_IMMUTABILITY",
+      "NO_BEHAVIOR_DEFAULT_OR_PRODUCT_CHANGE",
+      "NO_C11_OR_REAL_BINDING_DURING_IMPLEMENTATION_VALIDATION",
+      "FULL_SAFE_SUITE_AND_DOCCONSISTENCY_PASS"
+    ],
+    "stopConditions": {
+      "INVALID": [
+        "SUCCESSOR_SCIENTIFIC_SEMANTICS_CHANGE_REQUIRED",
+        "BROAD_CORPUS_DISCOVERY_REQUIRED",
+        "CORPUS_ACCESS_BEFORE_RECEIPT_REQUIRED",
+        "REDIRECTABLE_RECEIPT_OR_OUTPUT_AUTHORITY",
+        "PACKAGE_SEMANTICS_NOT_INDEPENDENTLY_VERIFIABLE",
+        "BINDING_CANNOT_FREEZE_ALL_MATERIAL_RUNTIME_COMPONENTS",
+        "PRODUCT_CLI_WEB_OR_ADDNOTESENGINE_EXPOSURE"
+      ],
+      "BLOCKED": [
+        "FROZEN_MEMBERSHIP_REQUIRES_REAL_C11_DURING_DEVELOPMENT",
+        "DUPLICATE_SEMANTICS_NOT_DETERMINISTIC",
+        "SAFE_SYNTHETIC_VERSIONED_CONTROLS_INSUFFICIENT_WITHOUT_C11"
+      ]
+    },
+    "exclusions": [
+      "REAL_C11_ACCESS",
+      "REAL_BINDING_OR_RECEIPT",
+      "REAL_EXECUTION_OR_OUTPUT_PACKAGE",
+      "ADAPTER_RUNNER_LAUNCHER_OR_SEMANTIC_VERIFIER_IMPLEMENTATION",
+      "BEHAVIOR_RNG_DEFAULT_OR_ADDNOTESENGINE_CHANGE",
+      "NORMAL_CLI_OR_WEB_EXPOSURE",
+      "LANE_DESIGN_G1_X_LANE_OR_COMPOSITION",
+      "DIFFICULTY_PLAYER_PREFERENCE_HUMAN_UTILITY_OR_SELECTION_PROBABILITY",
+      "EXTERNAL_RESERVE_OR_HUMAN_PLAYTESTING"
+    ],
+    "outcomeTaxonomy": {
+      "allowed": ["READY_FOR_HUMAN_REVIEW", "BLOCKED", "INVALID"],
+      "selected": "READY_FOR_HUMAN_REVIEW",
+      "readyMeaning": "DESIGN_SUFFICIENT_FOR_SEPARATE_IMPLEMENTATION_AUTHORIZATION_DECISION_ONLY"
+    },
+    "phaseBoundary": {
+      "integrationStatus": "NOT_STARTED",
+      "integrationAuthorization": "NOT_AUTHORIZED",
+      "c11Authorization": "NO_C11_AUTHORIZATION",
+      "implementationAuthorized": false,
+      "bindingPresent": false,
+      "receiptPresent": false,
+      "c11Accessed": false,
+      "executionAuthorized": false,
+      "behaviorChange": false,
+      "rngChange": false,
+      "defaultChange": false,
+      "productExposure": false,
+      "nextRequiredAction": "HUMAN_REVIEW_REQUIRED"
+    }
+  },
+  "canonicalSha256": "7C0A86BF3C6647CA7092C4D3390EB97EA6E11D7E5429ECBA6F499D55C5417A02",
+  "canonicalization": "UTF-8 JSON; recursively sort object properties ordinally; preserve array order and primitive values; no insignificant whitespace; hash only the contract object."
+}

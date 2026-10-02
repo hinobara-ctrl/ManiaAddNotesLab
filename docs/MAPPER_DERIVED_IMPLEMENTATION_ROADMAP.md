@@ -1223,6 +1223,14 @@ Current phase: LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION — COMPLETE �
 
 Current phase: LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT — COMPLETE — OUTCOME AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS.
 
+## Phase LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION — Integration Preregistration
+
+<!-- PHASE-CONTRACT:LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION;kind=ResearchShadow;behaviorChange=false;authorization=NO_C11_AUTHORIZATION -->
+
+**COMPLETE — OUTCOME READY_FOR_HUMAN_REVIEW.** El contrato congela exclusivamente el diseño de cuatro componentes futuros: adapter oficial del manifest C11, runner interno, launcher aislado y verificador semántico profundo. Conserva A/B/segundo chart/`9+2`, los 12 paths y 11 contenidos únicos, la relación duplicada exacta y `CorpusRoot` opaco hasta receipt durable. La implementación, binding, receipt, ejecución científica y acceso C11 permanecen `NOT_STARTED / NOT_AUTHORIZED`; auditoría, binding, autorización humana, receipt y ejecución son eventos distintos.
+
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION — COMPLETE — OUTCOME READY_FOR_HUMAN_REVIEW.
+
 ## Phase G1 — Interior Relation Semantics A/B
 
 <!-- PHASE-CONTRACT:G1;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->

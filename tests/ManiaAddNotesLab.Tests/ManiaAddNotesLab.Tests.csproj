@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\src\ManiaAddNotesLab.Core\ManiaAddNotesLab.Core.csproj" />
     <Compile Include="..\..\tools\DocConsistency\RepositoryRootGuard.cs" Link="RepositoryRootGuard.cs" />
     <Compile Include="..\..\tools\DocConsistency\DocumentationStateGuard.cs" Link="DocumentationStateGuard.cs" />
+    <Compile Include="..\..\tools\DocConsistency\IntegrationPreregistrationGuard.cs" Link="IntegrationPreregistrationGuard.cs" />
     <Compile Include="..\..\tools\DocConsistency\SafetyRemediationFollowupGuard.cs" Link="SafetyRemediationFollowupGuard.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\SafetySelectionSetRemappingPostPublicationVerifier.cs" Link="SafetySelectionSetRemappingPostPublicationVerifier.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\SafetyOp185Op466CounterfactualRunner.cs" Link="SafetyOp185Op466CounterfactualRunner.cs" />
