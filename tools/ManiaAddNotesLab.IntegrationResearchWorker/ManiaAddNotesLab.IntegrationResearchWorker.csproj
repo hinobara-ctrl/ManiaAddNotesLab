@@ -4,11 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>ManiaAddNotesLab.IntegrationResearchWorker</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../src/ManiaAddNotesLab.Core/ManiaAddNotesLab.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="ManiaAddNotesLab.IntegrationResearchWorker" />
+    <ProjectReference Include="../ManiaAddNotesLab.Experiments/ManiaAddNotesLab.Experiments.csproj" />
   </ItemGroup>
 </Project>

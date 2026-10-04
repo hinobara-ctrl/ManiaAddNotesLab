@@ -8,12 +8,20 @@ namespace ManiaAddNotesLab.Tests;
 public sealed class IntegrationImplementationGuardTests
 {
     [Fact]
-    public void PublishedContractAndLiveComponentsAreConsistent()
+    public void PublishedHistoricalContractIsInternallyConsistent()
     {
         using var document = JsonDocument.Parse(File.ReadAllText(ContractPath()));
         Assert.Equal(IntegrationImplementationGuard.ContractIdentity,
             IntegrationImplementationGuard.CanonicalJsonHash(document.RootElement.GetProperty("contract")));
         Assert.Empty(IntegrationImplementationGuard.Validate(document.RootElement, Root()));
+    }
+
+    [Fact]
+    public void HistoricalRouteRejectsTheRemediatedLiveIdentityWithoutInvalidatingItsSnapshot()
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(ContractPath()));
+        Assert.Empty(IntegrationImplementationGuard.Validate(document.RootElement, Root()));
+        Assert.NotEmpty(IntegrationImplementationGuard.ValidateAgainstLive(document.RootElement, Root()));
     }
 
     [Theory]

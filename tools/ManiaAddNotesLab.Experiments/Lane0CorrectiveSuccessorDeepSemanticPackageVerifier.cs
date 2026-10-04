@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Globalization;
 using ManiaAddNotesLab.Core;
 
 internal sealed record Lane0IntegrationSemanticExpectations(
@@ -127,6 +128,14 @@ internal sealed class Lane0CorrectiveSuccessorDeepSemanticPackageVerifier
         Require(groups.Single(x => x.Key == Lane0CorrectiveSuccessorFrozenC11Adapter.DuplicateChartId).Count() == 2
             && groups.Where(x => x.Key != Lane0CorrectiveSuccessorFrozenC11Adapter.DuplicateChartId)
                 .All(x => x.Count() == 1), "Exact duplicate relationship drifted.");
+        var locationIds = groups.Select(x => x.Key).ToHashSet(StringComparer.Ordinal);
+        var scientificIds = admitted.ScientificCharts.Select(x => x.ChartId).ToHashSet(StringComparer.Ordinal);
+        Require(locationIds.SetEquals(scientificIds),
+            "Scientific chart identities disagree with unique admitted-location content identities.");
+        var metadata = groups.ToDictionary(x => x.Key, x => x.First(), StringComparer.Ordinal);
+        Require(admitted.ScientificCharts.All(x => metadata[x.ChartId].KeyCount == x.Chart.KeyCount
+            && metadata[x.ChartId].OriginalObjects == x.Chart.OriginalObjects.Count),
+            "Scientific chart metadata disagrees with frozen location evidence.");
     }
 
     private static void VerifyReferences(JsonElement root)
@@ -158,32 +167,103 @@ internal sealed class Lane0CorrectiveSuccessorDeepSemanticPackageVerifier
         }), "Chart aggregate CSV header drifted.");
         var charts = summary.GetProperty("charts").EnumerateArray().ToArray();
         Require(csv.Length - 1 == charts.Length, "Chart aggregate row count disagrees with summary.");
-        var summaryKeys = charts.Select(x => $"{String(x, "chartId")}|{Int(x, "keyCount")}|{String(x, "family")}")
-            .OrderBy(x => x, StringComparer.Ordinal).ToArray();
-        var csvKeys = csv.Skip(1).Select(x =>
+        var summaryRows = charts.Select(ChartSummaryRow).OrderBy(x => x, StringComparer.Ordinal).ToArray();
+        var csvRows = csv.Skip(1).Select(x =>
         {
             Require(x.Length == 12, "Malformed chart aggregate row.");
-            return $"{x[0]}|{x[1]}|{x[2]}";
+            RequireIntFields(x, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+            return string.Join('|', x);
         }).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-        Require(summaryKeys.SequenceEqual(csvKeys), "Chart family/keymode totals disagree with summary.");
+        Require(summaryRows.Distinct(StringComparer.Ordinal).Count() == summaryRows.Length
+            && csvRows.Distinct(StringComparer.Ordinal).Count() == csvRows.Length,
+            "Chart aggregate semantic keys are duplicated.");
+        Require(summaryRows.SequenceEqual(csvRows),
+            "Chart family/keymode numeric semantics disagree with summary.");
     }
 
     private static void VerifyG1Aggregates(JsonElement summary, string[][] cases, string[][] transitions)
     {
+        Require(cases.Length >= 1 && cases[0].SequenceEqual(new[]
+        {
+            "chart_id", "keymode", "occurrence_id", "historical_state", "corrected_state",
+            "corrected_supported"
+        }), "Historical operational G1 case CSV header drifted.");
         Require(cases.Length == 12, "Historical operational G1 case count must equal eleven.");
-        Require(cases.Skip(1).All(x => x.Length == 6 && x[1] == "7"), "Malformed G1 case row.");
+        Require(cases.Skip(1).All(x => x.Length == 6), "Malformed G1 case row.");
+        foreach (var row in cases.Skip(1)) { RequireIntFields(row, 1); RequireBoolFields(row, 5); }
+        var summaryCases = summary.GetProperty("historicalOperationalG1Cases").EnumerateArray()
+            .Select(x => string.Join('|', String(x, "chartId"), IntText(x, "keyCount"),
+                String(x, "occurrenceId"), String(x, "historicalState"),
+                String(x, "correctedState"), BoolText(x, "correctedSupported")))
+            .OrderBy(x => x, StringComparer.Ordinal).ToArray();
+        var csvCases = cases.Skip(1).Select(x => string.Join('|', x))
+            .OrderBy(x => x, StringComparer.Ordinal).ToArray();
+        Require(summaryCases.Distinct(StringComparer.Ordinal).Count() == summaryCases.Length
+            && csvCases.Distinct(StringComparer.Ordinal).Count() == csvCases.Length,
+            "Historical operational G1 cases contain duplicate semantic rows.");
+        Require(summaryCases.SequenceEqual(csvCases),
+            "Historical operational G1 case values disagree with summary.");
         var distribution = cases.Skip(1).GroupBy(x => x[0], StringComparer.Ordinal)
             .ToDictionary(x => x.Key, x => x.Count(), StringComparer.Ordinal);
         Require(distribution.Count == 2
             && distribution.GetValueOrDefault(Lane0CorrectiveSuccessorReferenceValidator.SecondHistoricalIdentity) == 9
             && distribution.GetValueOrDefault(Lane0CorrectiveSuccessorReferenceValidator.CorrectedSpringIdentity) == 2,
             "G1 case CSV does not preserve exact 9+2.");
-        Require(summary.GetProperty("historicalOperationalG1Cases").GetArrayLength() == 11,
-            "G1 case summary count drifted.");
+        Require(transitions.Length >= 1 && transitions[0].SequenceEqual(new[]
+        {
+            "chart_id", "keymode", "occurrence_id", "group_id", "historical_state",
+            "corrected_state", "historical_joint_supported", "corrected_joint_supported",
+            "historical_operational", "corrected_operational", "transition_kind"
+        }), "G1 transition CSV header drifted.");
         Require(transitions.Length - 1 == summary.GetProperty("g1Transitions").GetArrayLength(),
             "G1 transition CSV and summary disagree.");
         Require(transitions.Skip(1).All(x => x.Length == 11), "Malformed G1 transition row.");
+        foreach (var row in transitions.Skip(1))
+        { RequireIntFields(row, 1); RequireBoolFields(row, 6, 7, 8, 9); }
+        var summaryTransitions = summary.GetProperty("g1Transitions").EnumerateArray()
+            .Select(x => string.Join('|', String(x, "chartId"), IntText(x, "keyCount"),
+                String(x, "occurrenceId"), String(x, "groupId"), String(x, "historicalState"),
+                String(x, "correctedState"), BoolText(x, "historicalJointSupported"),
+                BoolText(x, "correctedJointSupported"), BoolText(x, "historicalOperational"),
+                BoolText(x, "correctedOperational"), String(x, "transitionKind")))
+            .OrderBy(x => x, StringComparer.Ordinal).ToArray();
+        var csvTransitions = transitions.Skip(1).Select(x => string.Join('|', x))
+            .OrderBy(x => x, StringComparer.Ordinal).ToArray();
+        Require(summaryTransitions.Distinct(StringComparer.Ordinal).Count() == summaryTransitions.Length
+            && csvTransitions.Distinct(StringComparer.Ordinal).Count() == csvTransitions.Length,
+            "G1 transitions contain duplicate semantic rows.");
+        Require(summaryTransitions.SequenceEqual(csvTransitions),
+            "G1 transition values disagree with summary.");
     }
+
+    private static string ChartSummaryRow(JsonElement chart)
+    {
+        var historical = chart.GetProperty("historical");
+        var corrected = chart.GetProperty("corrected");
+        return string.Join('|', String(chart, "chartId"), IntText(chart, "keyCount"),
+            String(chart, "family"), IntText(historical, "structural"),
+            IntText(historical, "jointSupport"), IntText(historical, "operational"),
+            IntText(historical, "operationalSupported"), IntText(corrected, "structural"),
+            IntText(corrected, "jointSupport"), IntText(corrected, "operational"),
+            IntText(corrected, "operationalSupported"), IntText(corrected, "integrityFailures"));
+    }
+
+    private static void RequireIntFields(string[] row, params int[] fields)
+    {
+        foreach (var field in fields)
+            Require(int.TryParse(row[field], NumberStyles.None, CultureInfo.InvariantCulture, out _),
+                "CSV integer semantic field is malformed.");
+    }
+
+    private static void RequireBoolFields(string[] row, params int[] fields)
+    {
+        foreach (var field in fields)
+            Require(bool.TryParse(row[field], out _), "CSV Boolean semantic field is malformed.");
+    }
+
+    private static string IntText(JsonElement root, string name) =>
+        Int(root, name).ToString(CultureInfo.InvariantCulture);
+    private static string BoolText(JsonElement root, string name) => Bool(root, name).ToString();
 
     private static JsonDocument ParseJson(ImmutableSortedDictionary<string, byte[]> package, string name)
     {

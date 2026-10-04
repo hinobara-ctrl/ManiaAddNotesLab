@@ -1,7 +1,9 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
+using ManiaAddNotesLab.Core;
 
 internal sealed record Lane0IntegrationRuntimeIdentities(
     string Phase1ContractSha256, string Phase2ContractSha256,
@@ -23,15 +25,15 @@ internal sealed record Lane0IntegrationVerifiedBinding(
 internal sealed record Lane0IntegrationLaunchRequest(
     string ExpectedSourcePublicHead,
     Lane0IntegrationRuntimeIdentities ExpectedIdentities,
-    Lane0IntegrationRuntimeIdentities ObservedIdentities,
     Lane0IntegrationVerifiedBinding? Binding,
-    string SourceHead, string IsolatedHead, string RuntimeHead,
-    bool SourceTrackedClean, string SourceRoot, string ExecutionRoot,
+    string SourceRoot, string ExecutionRoot,
     string CorpusRootToken);
 
 internal sealed record Lane0IntegrationPreReceiptLease(
     Lane0IntegrationLaunchRequest Request, string CanonicalSourceRoot,
     string CanonicalExecutionRoot, string CanonicalBindingSha256,
+    Lane0IntegrationRuntimeIdentities ObservedIdentities,
+    Lane0IntegrationPreparedRuntime PreparedRuntime,
     ImmutableArray<string> CompletedAuthoritySteps);
 
 internal sealed record Lane0IntegrationPostReceiptLease(
@@ -55,6 +57,13 @@ internal interface ILane0IntegrationCheckoutMaterializer
         string canonicalSourceRoot, string canonicalExecutionRoot, string exactHead);
 }
 
+internal interface ILane0IntegrationAuthorityObserver
+{
+    string ObserveHead(string canonicalRepositoryRoot);
+    bool ObserveTrackedClean(string canonicalRepositoryRoot);
+    Lane0IntegrationRuntimeIdentities ObserveRuntimeIdentities(string canonicalRepositoryRoot);
+}
+
 /// <summary>
 /// Authority gate for a future isolated run. CorpusRoot is not interpreted or passed to an
 /// external collaborator until after CreateDurableReceipt succeeds.
@@ -62,13 +71,22 @@ internal interface ILane0IntegrationCheckoutMaterializer
 internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
 {
     private readonly ILane0IntegrationCheckoutMaterializer checkoutMaterializer;
+    private readonly ILane0IntegrationAuthorityObserver observer;
+    private readonly ILane0IntegrationIsolatedScientificRuntime scientificRuntime;
 
     internal Lane0CorrectiveSuccessorIsolatedLauncher(
-        ILane0IntegrationCheckoutMaterializer checkoutMaterializer) =>
+        ILane0IntegrationCheckoutMaterializer checkoutMaterializer,
+        ILane0IntegrationAuthorityObserver observer,
+        ILane0IntegrationIsolatedScientificRuntime scientificRuntime)
+    {
         this.checkoutMaterializer = checkoutMaterializer;
+        this.observer = observer;
+        this.scientificRuntime = scientificRuntime;
+    }
 
     internal static Lane0CorrectiveSuccessorIsolatedLauncher CreateOfficial() =>
-        new(new GitDetachedCheckoutMaterializer());
+        new(new GitDetachedCheckoutMaterializer(), new GitAndFileIntegrationAuthorityObserver(),
+            new Lane0ExecutionRootScientificRuntime());
 
     internal const string BindingSchema =
         "lane-0-corrective-successor-integration-publication-binding.1";
@@ -95,7 +113,9 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
         Lane0IntegrationLaunchRequest request, ILane0IntegrationAuthorityStore store)
     {
         var completed = ImmutableArray.CreateBuilder<string>();
-        Require(request.SourceHead == request.ExpectedSourcePublicHead,
+        var source = Path.GetFullPath(request.SourceRoot);
+        var observedSourceHead = observer.ObserveHead(source);
+        Require(observedSourceHead == request.ExpectedSourcePublicHead,
             "Source public HEAD does not equal the expected audited integration HEAD.");
         Require(request.ExpectedSourcePublicHead != HistoricalImplementationBaseline,
             "The implementation baseline is not eligible as an execution binding target.");
@@ -104,7 +124,8 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
             "7C0A86BF3C6647CA7092C4D3390EB97EA6E11D7E5429ECBA6F499D55C5417A02",
             "Integration preregistration identity drifted.");
         completed.Add(AuthorityOrder[1]);
-        Require(request.ExpectedIdentities == request.ObservedIdentities,
+        var observedIdentities = observer.ObserveRuntimeIdentities(source);
+        Require(request.ExpectedIdentities == observedIdentities,
             "Observed runtime identities do not equal the frozen integration identities.");
         completed.Add(AuthorityOrder[2]);
         var binding = request.Binding ?? throw new InvalidDataException("Canonical binding is absent.");
@@ -125,13 +146,8 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
         Require(binding.Fields.AuthorizedExecutionCount == 1,
             "Authorized execution count must equal one.");
         completed.Add(AuthorityOrder[6]);
-        Require(request.SourceTrackedClean, "Source tracked tree is dirty.");
+        Require(observer.ObserveTrackedClean(source), "Source tracked tree is dirty.");
         completed.Add(AuthorityOrder[7]);
-        Require(request.SourceHead == request.IsolatedHead && request.SourceHead == request.RuntimeHead,
-            "Binding/source/isolated/runtime HEAD equality failed.");
-        completed.Add(AuthorityOrder[8]);
-
-        var source = Path.GetFullPath(request.SourceRoot);
         Require(Path.IsPathFullyQualified(request.ExecutionRoot), "ExecutionRoot must be absolute.");
         var execution = Path.GetFullPath(request.ExecutionRoot);
         Require(RootsAreLexicallyIsolated(source, execution),
@@ -144,6 +160,10 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
             && checkout.TrackedClean && !checkout.UsedHardlinks
             && !checkout.ReusedSourceBuildOutputs,
             "Isolated checkout evidence does not prove exact detached pristine no-hardlink materialization.");
+        var preparedRuntime = scientificRuntime.Prepare(execution, request.ExpectedSourcePublicHead);
+        Require(preparedRuntime.Provenance.RuntimeHead == observedSourceHead,
+            "Binding/source/isolated/runtime HEAD equality failed.");
+        completed.Add(AuthorityOrder[8]);
         completed.Add(AuthorityOrder[9]);
         Require(!store.ReceiptExists, "Durable receipt already exists.");
         completed.Add(AuthorityOrder[10]);
@@ -152,8 +172,15 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
 
         store.CreateDurableReceipt(BuildReceipt(request, bindingHash));
         completed.Add(AuthorityOrder[12]);
-        return new(request, source, execution, bindingHash, completed.ToImmutable());
+        return new(request, source, execution, bindingHash, observedIdentities,
+            preparedRuntime, completed.ToImmutable());
     }
+
+    internal Lane0IntegrationScientificRuntimeResult ExecuteScience(
+        Lane0IntegrationPreReceiptLease lease,
+        ImmutableArray<Lane0CorrectiveChartInput> inputs,
+        Lane0SuccessorEvaluationContext context) =>
+        scientificRuntime.Execute(lease.PreparedRuntime, inputs, context);
 
     internal Lane0IntegrationPostReceiptLease InterpretCorpusRoot(Lane0IntegrationPreReceiptLease lease)
     {
@@ -209,6 +236,124 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
     private static void Require(bool condition, string message)
     {
         if (!condition) throw new InvalidDataException(message);
+    }
+}
+
+internal sealed class GitAndFileIntegrationAuthorityObserver : ILane0IntegrationAuthorityObserver
+{
+    private static readonly string[] ScientificFiles =
+    [
+        "src/ManiaAddNotesLab.Core/Lane0CorrectiveSuccessorReferenceValidator.cs",
+        "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorEvaluator.cs"
+    ];
+    private static readonly string[] HarnessFiles =
+        ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorExecutionPreparation.cs"];
+    private static readonly string[] PackageFiles =
+        ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorPackage.cs"];
+    private static readonly string[] DependencyFiles =
+    [
+        "src/ManiaAddNotesLab.Core/ChordCompletionResearch.cs",
+        "src/ManiaAddNotesLab.Core/FrozenC11ManifestResearch.cs",
+        "src/ManiaAddNotesLab.Core/InteriorRelationFeasibilityResearch.cs",
+        "src/ManiaAddNotesLab.Core/MapperEvidenceProfile.cs",
+        "src/ManiaAddNotesLab.Core/Model.cs",
+        "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveEvaluationRunner.cs",
+        "tools/ManiaAddNotesLab.Experiments/Lane0FeasibilityRunner.cs"
+    ];
+    private static readonly string[] AdapterFiles =
+        ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorFrozenC11Adapter.cs"];
+    private static readonly string[] RunnerFiles =
+        ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorInternalResearchRunner.cs"];
+    private static readonly string[] LauncherFiles =
+    [
+        "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorIsolatedLauncher.cs",
+        "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorIsolatedRuntime.cs",
+        "tools/ManiaAddNotesLab.Experiments/ManiaAddNotesLab.Experiments.csproj",
+        "tools/ManiaAddNotesLab.IntegrationResearchWorker/ManiaAddNotesLab.IntegrationResearchWorker.csproj",
+        "tools/ManiaAddNotesLab.IntegrationResearchWorker/Program.cs"
+    ];
+    private static readonly string[] VerifierFiles =
+        ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorDeepSemanticPackageVerifier.cs"];
+
+    public string ObserveHead(string root) => Capture("git", ["-C", root, "rev-parse", "HEAD"]).Trim();
+
+    public bool ObserveTrackedClean(string root) => string.IsNullOrWhiteSpace(
+        Capture("git", ["-C", root, "status", "--porcelain", "--untracked-files=no"]));
+
+    public Lane0IntegrationRuntimeIdentities ObserveRuntimeIdentities(string root) => new(
+        CanonicalContract(root, "docs/lane_0_corrective_successor_preregistration_contract.json"),
+        CanonicalContract(root, "docs/lane_0_corrective_successor_execution_preparation_contract.json"),
+        CanonicalContract(root, "docs/lane_0_corrective_successor_integration_preregistration_contract.json"),
+        CanonicalContract(root, "docs/lane_0_corrective_successor_integration_execution_contract.json"),
+        FrozenC11ManifestResearch.Load(Path.Combine(root, "docs", "g1_gate_runtime_manifest.json"))
+            .CanonicalSha256,
+        NormalizedTextTreeIdentity(root, ScientificFiles), NormalizedTextTreeIdentity(root, HarnessFiles),
+        NormalizedTextTreeIdentity(root, PackageFiles), NormalizedTextTreeIdentity(root, AdapterFiles),
+        NormalizedTextTreeIdentity(root, RunnerFiles), NormalizedTextTreeIdentity(root, LauncherFiles),
+        NormalizedTextTreeIdentity(root, VerifierFiles), NormalizedTextTreeIdentity(root, DependencyFiles));
+
+    internal static string NormalizedTextTreeIdentity(string root, IEnumerable<string> files)
+    {
+        var rows = files.OrderBy(x => x, StringComparer.Ordinal).Select(relative =>
+        {
+            var text = File.ReadAllText(Path.Combine(root,
+                relative.Replace('/', Path.DirectorySeparatorChar)));
+            if (text.Length > 0 && text[0] == '\uFEFF') text = text[1..];
+            text = text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
+            var hash = Convert.ToHexString(SHA256.HashData(new UTF8Encoding(false).GetBytes(text)));
+            return $"{relative}|{hash}";
+        });
+        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join('\n', rows))));
+    }
+
+    private static string CanonicalContract(string root, string relative)
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            relative.Replace('/', Path.DirectorySeparatorChar))));
+        var actual = CanonicalHash(document.RootElement.GetProperty("contract"));
+        var declared = document.RootElement.GetProperty("canonicalSha256").GetString();
+        if (actual != declared) throw new InvalidDataException($"Canonical contract drifted: {relative}.");
+        return actual;
+    }
+
+    private static string CanonicalHash(JsonElement element)
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream)) WriteCanonical(writer, element);
+        return Convert.ToHexString(SHA256.HashData(stream.ToArray()));
+    }
+
+    private static void WriteCanonical(Utf8JsonWriter writer, JsonElement element)
+    {
+        switch (element.ValueKind)
+        {
+            case JsonValueKind.Object:
+                writer.WriteStartObject();
+                foreach (var property in element.EnumerateObject().OrderBy(x => x.Name, StringComparer.Ordinal))
+                { writer.WritePropertyName(property.Name); WriteCanonical(writer, property.Value); }
+                writer.WriteEndObject(); break;
+            case JsonValueKind.Array:
+                writer.WriteStartArray(); foreach (var item in element.EnumerateArray()) WriteCanonical(writer, item);
+                writer.WriteEndArray(); break;
+            case JsonValueKind.String: writer.WriteStringValue(element.GetString()); break;
+            case JsonValueKind.Number: element.WriteTo(writer); break;
+            case JsonValueKind.True: writer.WriteBooleanValue(true); break;
+            case JsonValueKind.False: writer.WriteBooleanValue(false); break;
+            case JsonValueKind.Null: writer.WriteNullValue(); break;
+            default: throw new InvalidDataException("Unsupported canonical JSON value.");
+        }
+    }
+
+    private static string Capture(string file, IReadOnlyList<string> arguments)
+    {
+        var info = new ProcessStartInfo(file) { UseShellExecute = false, RedirectStandardOutput = true,
+            RedirectStandardError = true, CreateNoWindow = true };
+        foreach (var argument in arguments) info.ArgumentList.Add(argument);
+        using var process = Process.Start(info) ?? throw new InvalidOperationException($"Could not start {file}.");
+        var output = process.StandardOutput.ReadToEnd(); var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        if (process.ExitCode != 0) throw new InvalidDataException($"Authority observation failed: {error}");
+        return output;
     }
 }
 

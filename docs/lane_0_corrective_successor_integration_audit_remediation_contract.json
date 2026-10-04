@@ -1,0 +1,89 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-successor-integration-audit-remediation.1",
+    "phaseId": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION",
+    "baselinePublicHead": "7a1e55c5ddd415398ee750063c75697f4af47cec",
+    "parentIntegrationExecutionContractSha256": "8763BC90212AF44947C6BAF3BD7FAADD1905289F0F8A1C3480199F771D3CAA0A",
+    "parentIntegrationPreregistrationSha256": "7C0A86BF3C6647CA7092C4D3390EB97EA6E11D7E5429ECBA6F499D55C5417A02",
+    "explicitPathAuthoritySha256": "DA86B97DA2E0309BE4C5FC035E54397846EA5B2DBA6989BDEDE4424939EDF884",
+    "frozenPhase2Identities": {
+      "phase2ContractSha256": "11F55A6770BA78F008A6690C88561C714CAF45BA15B96E472C0C80B219C4D5B6",
+      "scientificImplementationSha256": "8F9AE545027F0F1364E3378324646C7F7711CDF7EFFC8CC879660644A3D905D0",
+      "harnessSha256": "15DC978C24119E9832DD70C0C61F5BFB1BBAF11520A107A7728220009B793A61",
+      "packageVerifierSha256": "DFF48221A6FB087367B1C6B1062B7355806C53668C6876A4BB4EC59983232D38",
+      "frozenDependenciesSha256": "D5931A815701C0FAB854B878373A8ED03F3E29BDEA17C98A428C7AF6B0F7023B",
+      "verifiedFrozenC11ManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
+    },
+    "remediatedComponents": {
+      "officialFrozenC11Adapter": {
+        "normalizedTextTreeSha256": "032F9660D8C0012C990983CE307CDA9D20B1C49116BEAA7F3C5E3DB1EBD875B0",
+        "files": ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorFrozenC11Adapter.cs"]
+      },
+      "officialInternalResearchRunner": {
+        "normalizedTextTreeSha256": "DAF26670B68F6621303DA6F3D49FD0E8B3DCDB61489E1AB0A33523267602F784",
+        "files": ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorInternalResearchRunner.cs"]
+      },
+      "isolatedExecutionLauncher": {
+        "normalizedTextTreeSha256": "498FF1C8CF83C54F5EF31F1D2C127CA688F36500C9CD25C34EE7E53DB6979DE9",
+        "files": [
+          "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorIsolatedLauncher.cs",
+          "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorIsolatedRuntime.cs",
+          "tools/ManiaAddNotesLab.Experiments/ManiaAddNotesLab.Experiments.csproj",
+          "tools/ManiaAddNotesLab.IntegrationResearchWorker/ManiaAddNotesLab.IntegrationResearchWorker.csproj",
+          "tools/ManiaAddNotesLab.IntegrationResearchWorker/Program.cs"
+        ]
+      },
+      "deepSemanticPackageVerifier": {
+        "normalizedTextTreeSha256": "67969A60704553AA6CFB134F8B7F67236757EA6A2CF51C9CD7C4EF3C8FA5A4DB",
+        "files": ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorDeepSemanticPackageVerifier.cs"]
+      }
+    },
+    "observedAuthorityModel": {
+      "sourceHead": "OBSERVED_BY_GIT",
+      "sourceTrackedCleanliness": "OBSERVED_BY_GIT",
+      "isolatedHeadAndDetachedState": "OBSERVED_BY_GIT",
+      "isolatedTrackedCleanliness": "OBSERVED_BY_GIT",
+      "runtimeComponents": "OBSERVED_FROM_LIVE_SOURCE_TREE",
+      "callerClaimsAuthorizeContradictions": false
+    },
+    "isolatedRuntimeProvenanceModel": {
+      "checkout": "DETACHED_NO_HARDLINK",
+      "buildOrigin": "EXECUTION_ROOT",
+      "runtime": "CHILD_PROCESS_FROM_EXECUTION_ROOT_BUILD",
+      "selfReport": true,
+      "independentAuthorityVerification": true
+    },
+    "semanticVerifierModel": {
+      "checksumsAreSemanticAuthority": false,
+      "allChartAggregateFields": true,
+      "allG1CaseAndTransitionRows": true,
+      "locationContentSetEquality": true,
+      "locationMetadataCrossCheck": true
+    },
+    "limitedC11PathInventoryAuthorization": {
+      "authority": "AUTHORIZED_FOR_FROZEN_C11_EXPLICIT_PATH_INVENTORY_READ_ONLY",
+      "root": ".artifacts/f2-1-corpus",
+      "filesRead": 12,
+      "songsDiscovery": false,
+      "scientificEvaluation": false,
+      "successorExecution": false,
+      "behaviorExperiment": false,
+      "rngExecution": false
+    },
+    "phaseBoundary": {
+      "status": "COMPLETE",
+      "outcome": "READY_FOR_INDEPENDENT_REMEDIATION_AUDIT",
+      "authority": "AUTHORIZED_FOR_INTEGRATION_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY",
+      "bindingCreated": false,
+      "realReceiptCreated": false,
+      "realOneShotExecuted": false,
+      "behaviorChange": false,
+      "rngChange": false,
+      "defaultChange": false,
+      "productExposure": false,
+      "nextRequiredAction": "HUMAN_REVIEW_REQUIRED"
+    }
+  },
+  "canonicalSha256": "F2FD07BC0D120A7B2CA7350BA582141C4EDC3277AD06C6D9E92139244F8A39EB",
+  "canonicalization": "recursive JSON object-property ordinal sort; array order preserved; UTF-8; SHA-256 uppercase hex"
+}

@@ -25,5 +25,6 @@
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorIsolatedLauncher.cs" Link="Lane0CorrectiveSuccessorIsolatedLauncher.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorDeepSemanticPackageVerifier.cs" Link="Lane0CorrectiveSuccessorDeepSemanticPackageVerifier.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorInternalResearchRunner.cs" Link="Lane0CorrectiveSuccessorInternalResearchRunner.cs" />
+    <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorIsolatedRuntime.cs" Link="Lane0CorrectiveSuccessorIsolatedRuntime.cs" />
   </ItemGroup>
 </Project>

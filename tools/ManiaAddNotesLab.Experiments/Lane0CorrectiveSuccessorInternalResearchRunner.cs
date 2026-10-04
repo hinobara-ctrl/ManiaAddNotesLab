@@ -60,20 +60,17 @@ internal sealed class Lane0CorrectiveSuccessorInternalResearchRunner
 {
     private readonly Lane0CorrectiveSuccessorIsolatedLauncher launcher;
     private readonly ILane0IntegrationFrozenCorpusAdapter adapter;
-    private readonly ILane0SuccessorScientificEvaluator science;
     private readonly ILane0IntegrationDeepSemanticVerifier semanticVerifier;
     private readonly ILane0IntegrationPackageFinalizer packageFinalizer;
 
     internal Lane0CorrectiveSuccessorInternalResearchRunner(
         Lane0CorrectiveSuccessorIsolatedLauncher launcher,
         ILane0IntegrationFrozenCorpusAdapter adapter,
-        ILane0SuccessorScientificEvaluator science,
         ILane0IntegrationDeepSemanticVerifier semanticVerifier,
         ILane0IntegrationPackageFinalizer packageFinalizer)
     {
         this.launcher = launcher;
         this.adapter = adapter;
-        this.science = science;
         this.semanticVerifier = semanticVerifier;
         this.packageFinalizer = packageFinalizer;
     }
@@ -112,19 +109,22 @@ internal sealed class Lane0CorrectiveSuccessorInternalResearchRunner
                 request.Launch.ExpectedIdentities.FrozenDependenciesSha256,
                 request.References);
 
-            started++;
-            var first = science.Evaluate(admitted.ScientificCharts.ToImmutableArray(), context);
-            completed++;
+            started += 2;
+            var runtime = launcher.ExecuteScience(preReceipt,
+                admitted.ScientificCharts.ToImmutableArray(), context);
+            var first = runtime.First;
+            var second = runtime.Second;
+            completed += 2;
             steps.Add(Lane0CorrectiveSuccessorIsolatedLauncher.AuthorityOrder[16]);
-            started++;
-            var second = science.Evaluate(admitted.ScientificCharts.ToImmutableArray(), context);
-            completed++;
             steps.Add(Lane0CorrectiveSuccessorIsolatedLauncher.AuthorityOrder[17]);
 
+            Require(runtime.Provenance.RuntimeHead == request.Launch.ExpectedSourcePublicHead,
+                "Child scientific runtime provenance HEAD drifted.");
+
             var firstPackage = packageFinalizer.Finalize(first.Package,
-                request.Launch.ExpectedIdentities, first.DefaultChanged);
+                preReceipt.ObservedIdentities, first.DefaultChanged);
             var secondPackage = packageFinalizer.Finalize(second.Package,
-                request.Launch.ExpectedIdentities, second.DefaultChanged);
+                preReceipt.ObservedIdentities, second.DefaultChanged);
 
             Require(firstPackage.Keys.SequenceEqual(secondPackage.Keys)
                 && firstPackage.All(x => x.Value.AsSpan().SequenceEqual(secondPackage[x.Key])),

@@ -211,3 +211,7 @@ Estado: **COMPLETE — AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS / NO_C11_AUTHO
 ## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION — cierre actual
 
 Estado: **COMPLETE — READY_FOR_INDEPENDENT_INTEGRATION_AUDIT / NO_C11_AUTHORIZATION**. Las cuatro superficies internas preregistradas están implementadas con identidades finitas, orden de autoridad 1–21, opacidad pre-receipt y verificación semántica independiente. No cambia engine, HardValidity, selección, RNG, defaults ni producto. No existe binding, receipt real, acceso C11 ni ejecución; el siguiente paso requiere revisión y publicación humana.
+
+## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION — cierre actual
+
+Estado: **COMPLETE — READY_FOR_INDEPENDENT_REMEDIATION_AUDIT**. R1–R4 corrigen únicamente autoridad/provenance, membresía exacta del corpus, verificación semántica y origen real del worker aislado. La inspección excepcional C11 se limitó al inventario read-only de 12 paths congelados; no hubo evaluación científica, RNG, binding, receipt real ni one-shot. Engine, clasificador causal, HardValidity, defaults y producto permanecen invariantes.

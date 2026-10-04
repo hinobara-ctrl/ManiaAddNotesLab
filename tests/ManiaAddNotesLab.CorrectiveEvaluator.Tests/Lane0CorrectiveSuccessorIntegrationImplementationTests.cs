@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using ManiaAddNotesLab.Core;
 using Xunit;
 
@@ -14,7 +15,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var manifest = Manifest();
         var reader = new ManifestReader(manifest);
         var adapter = new Lane0CorrectiveSuccessorFrozenC11Adapter(manifest, reader,
-            new ManifestCodec(manifest));
+            new ManifestCodec(manifest), PathPlan(manifest));
 
         var result = adapter.Admit(manifest, Path.GetTempPath());
 
@@ -32,7 +33,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
     public void AdapterRejectsPathUniqueDuplicateAndMetadataDrift()
     {
         var manifest = Manifest();
-        var plan = Lane0CorrectiveSuccessorFrozenC11Adapter.BuildOfficialPlan(manifest);
+        var plan = PathPlan(manifest);
         Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
             .ValidatePlan(manifest, plan.RemoveAt(0)));
         Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
@@ -43,6 +44,18 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
             .ValidatePlan(manifest, plan.RemoveAt(duplicateIndex)));
         Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
             .ValidatePlan(manifest, plan.SetItem(0, plan[0] with { KeyCount = 18 })));
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
+            .ValidatePlan(manifest, plan.Add(plan[0] with { LocationId = "EXTRA", RelativePath = "extra.osu" })));
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
+            .ValidatePlan(manifest, plan.SetItem(0, plan[0] with { RelativePath = "renamed.osu" }), plan));
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
+            .ValidatePlan(manifest, plan.SetItem(0, plan[0] with { Family = "DRIFT" })));
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
+            .ValidatePlan(manifest, plan.SetItem(0, plan[0] with { OriginalObjects = 1 })));
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
+            .ValidatePlan(manifest, plan.SetItem(0, plan[0] with { RelativePath = "../escape.osu" })));
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
+            .ValidatePlan(manifest, plan.SetItem(0, plan[0] with { RelativePath = Path.GetFullPath("absolute.osu") })));
     }
 
     [Fact]
@@ -51,17 +64,43 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var manifest = Manifest();
         var reader = new ManifestReader(manifest) { CorruptFirstRead = true };
         var adapter = new Lane0CorrectiveSuccessorFrozenC11Adapter(manifest, reader,
-            new ManifestCodec(manifest));
+            new ManifestCodec(manifest), PathPlan(manifest));
         Assert.Throws<InvalidDataException>(() => adapter.Admit(manifest, Path.GetTempPath()));
         Assert.Single(reader.ReadPaths);
         Assert.DoesNotContain(reader.ReadPaths, x => x.Contains("Songs", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
+    public void FrozenPathAuthorityRejectsSemanticDriftEvenWhenDeclaredHashIsRecomputed()
+    {
+        var manifest = Manifest();
+        Assert.Equal(12, Lane0CorrectiveSuccessorFrozenC11Adapter
+            .LoadFrozenPathAuthority(RepoRoot(), manifest).Length);
+        using var temp = new TempDirectory();
+        var docs = Path.Combine(temp.Path, "docs");
+        Directory.CreateDirectory(docs);
+        var source = Path.Combine(RepoRoot(),
+            Lane0CorrectiveSuccessorFrozenC11Adapter.PathAuthorityRelativePath.Replace('/', Path.DirectorySeparatorChar));
+        var target = Path.Combine(temp.Path,
+            Lane0CorrectiveSuccessorFrozenC11Adapter.PathAuthorityRelativePath.Replace('/', Path.DirectorySeparatorChar));
+        var root = JsonNode.Parse(File.ReadAllText(source))!.AsObject();
+        root["authority"]!["locations"]![0]!["relativePath"] = "substituted.osu";
+        File.WriteAllText(target, root.ToJsonString());
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
+            .LoadFrozenPathAuthority(temp.Path, manifest));
+        using var changed = JsonDocument.Parse(root["authority"]!.ToJsonString());
+        root["canonicalSha256"] = Lane0CorrectiveSuccessorFrozenC11Adapter
+            .CanonicalJsonHash(changed.RootElement);
+        File.WriteAllText(target, root.ToJsonString());
+        Assert.Throws<InvalidDataException>(() => Lane0CorrectiveSuccessorFrozenC11Adapter
+            .LoadFrozenPathAuthority(temp.Path, manifest));
+    }
+
+    [Fact]
     public void PreReceiptGateTreatsPoisonCorpusRootAsOpaque()
     {
         using var temp = new TempDirectory();
-        var launcher = new Lane0CorrectiveSuccessorIsolatedLauncher(new FakeCheckoutMaterializer());
+        var launcher = SyntheticLauncher(new FakeCheckoutMaterializer());
         var store = new MemoryAuthorityStore();
         var request = LaunchRequest(temp.Path, "\0POISON-CORPUS");
 
@@ -86,12 +125,14 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         using var temp = new TempDirectory();
         var request = LaunchRequest(temp.Path, "\0STILL-OPAQUE");
         var store = new MemoryAuthorityStore();
+        var observer = new FakeAuthorityObserver(request.ExpectedSourcePublicHead,
+            request.ExpectedIdentities, Clean: mutation != "dirty");
+        var runtime = new FakeIsolatedRuntime(new CountingScience(identical: true),
+            runtimeHead: mutation == "runtime-head" ? new string('E', 40) : request.ExpectedSourcePublicHead);
         request = mutation switch
         {
             "absent-binding" => request with { Binding = null },
-            "wrong-head" => request with { SourceHead = new string('F', 40) },
-            "runtime-head" => request with { RuntimeHead = new string('E', 40) },
-            "dirty" => request with { SourceTrackedClean = false },
+            "wrong-head" or "runtime-head" or "dirty" => request,
             "no-authorization" => Rebind(request, authorization: false),
             "wrong-count" => Rebind(request, count: 2),
             "receipt" => request,
@@ -101,7 +142,9 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         store.ReceiptExistsValue = mutation == "receipt";
         store.OutputExistsValue = mutation == "output";
         Assert.Throws<InvalidDataException>(() =>
-            new Lane0CorrectiveSuccessorIsolatedLauncher(new FakeCheckoutMaterializer())
+            new Lane0CorrectiveSuccessorIsolatedLauncher(new FakeCheckoutMaterializer(),
+                mutation == "wrong-head" ? observer with { Head = new string('F', 40) } : observer,
+                runtime)
                 .Acquire(request, store));
         Assert.False(store.CreateCalled);
     }
@@ -115,7 +158,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
             ExecutionRoot = Path.Combine(temp.Path, "source", "nested")
         };
         Assert.Throws<InvalidDataException>(() =>
-            new Lane0CorrectiveSuccessorIsolatedLauncher(new FakeCheckoutMaterializer())
+            SyntheticLauncher(new FakeCheckoutMaterializer())
                 .Acquire(request, new MemoryAuthorityStore()));
     }
 
@@ -125,7 +168,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         using var temp = new TempDirectory();
         var request = LaunchRequest(temp.Path, "opaque");
         Assert.Throws<InvalidDataException>(() =>
-            new Lane0CorrectiveSuccessorIsolatedLauncher(new BadCheckoutMaterializer())
+            SyntheticLauncher(new BadCheckoutMaterializer())
                 .Acquire(request, new MemoryAuthorityStore()));
     }
 
@@ -156,14 +199,14 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var semantic = new CountingSemanticVerifier();
         var finalizer = new IdentityPackageFinalizer();
         var runner = new Lane0CorrectiveSuccessorInternalResearchRunner(
-            new Lane0CorrectiveSuccessorIsolatedLauncher(new FakeCheckoutMaterializer()),
-            new FakeAdapter(manifest), science, semantic, finalizer);
+            SyntheticLauncher(new FakeCheckoutMaterializer(), science),
+            new FakeAdapter(manifest), semantic, finalizer);
         var store = new MemoryAuthorityStore();
         var result = runner.ExecuteSyntheticOrFutureAuthorized(new(
             LaunchRequest(temp.Path, Path.Combine(temp.Path, "corpus")), manifest,
             Lane0CorrectiveSuccessorReferenceValidator.FrozenReferences), store);
 
-        Assert.Equal("PUBLISHABLE", result.Classification);
+        Assert.True(result.Classification == "PUBLISHABLE", result.Reason);
         Assert.Equal(2, science.Calls);
         Assert.Equal(2, finalizer.Calls);
         Assert.Equal(1, semantic.Calls);
@@ -179,8 +222,8 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var science = new CountingScience(identical: false);
         var semantic = new CountingSemanticVerifier();
         var runner = new Lane0CorrectiveSuccessorInternalResearchRunner(
-            new Lane0CorrectiveSuccessorIsolatedLauncher(new FakeCheckoutMaterializer()),
-            new FakeAdapter(manifest), science, semantic, new IdentityPackageFinalizer());
+            SyntheticLauncher(new FakeCheckoutMaterializer(), science),
+            new FakeAdapter(manifest), semantic, new IdentityPackageFinalizer());
         var result = runner.ExecuteSyntheticOrFutureAuthorized(new(
             LaunchRequest(temp.Path, Path.Combine(temp.Path, "corpus")), manifest,
             Lane0CorrectiveSuccessorReferenceValidator.FrozenReferences), new MemoryAuthorityStore());
@@ -244,6 +287,148 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
             new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier().Verify(package, expected));
     }
 
+    [Theory]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(8)]
+    [InlineData(9)]
+    [InlineData(10)]
+    [InlineData(11)]
+    public void DeepSemanticVerifierRejectsEveryRehashedChartNumericDrift(int column)
+    {
+        var fixture = SemanticFixture();
+        var changed = MutateCsvCell(fixture.Package, "chart_family_keymode_results.csv", 1, column, "1");
+        Assert.Throws<InvalidDataException>(() =>
+            new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier().Verify(changed, fixture.Expected));
+    }
+
+    [Theory]
+    [InlineData("g1_historical_operational_cases.csv", 1, 1, "4")]
+    [InlineData("g1_historical_operational_cases.csv", 1, 2, "OTHER")]
+    [InlineData("g1_historical_operational_cases.csv", 1, 3, "DRIFT")]
+    [InlineData("g1_historical_operational_cases.csv", 1, 4, "DRIFT")]
+    [InlineData("g1_historical_operational_cases.csv", 1, 5, "False")]
+    [InlineData("g1_state_transitions.csv", 1, 1, "4")]
+    [InlineData("g1_state_transitions.csv", 1, 2, "OTHER")]
+    [InlineData("g1_state_transitions.csv", 1, 3, "OTHER")]
+    [InlineData("g1_state_transitions.csv", 1, 4, "DRIFT")]
+    [InlineData("g1_state_transitions.csv", 1, 5, "DRIFT")]
+    [InlineData("g1_state_transitions.csv", 1, 6, "True")]
+    [InlineData("g1_state_transitions.csv", 1, 7, "False")]
+    [InlineData("g1_state_transitions.csv", 1, 8, "False")]
+    [InlineData("g1_state_transitions.csv", 1, 9, "False")]
+    [InlineData("g1_state_transitions.csv", 1, 10, "DRIFT")]
+    public void DeepSemanticVerifierRejectsRehashedG1SemanticDrift(
+        string artifact, int row, int column, string value)
+    {
+        var fixture = SemanticFixture();
+        var changed = MutateCsvCell(fixture.Package, artifact, row, column, value);
+        Assert.Throws<InvalidDataException>(() =>
+            new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier().Verify(changed, fixture.Expected));
+    }
+
+    [Fact]
+    public void DeepSemanticVerifierRejectsScientificLocationSetAndMetadataDrift()
+    {
+        var fixture = SemanticFixture();
+        var scientific = fixture.Expected.AdmittedCorpus.ScientificCharts;
+        var missing = fixture.Expected with { AdmittedCorpus = fixture.Expected.AdmittedCorpus with
+            { ScientificCharts = scientific.RemoveAt(0) } };
+        Assert.Throws<InvalidDataException>(() =>
+            new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier().Verify(fixture.Package, missing));
+        var first = scientific[0];
+        var metadata = fixture.Expected with { AdmittedCorpus = fixture.Expected.AdmittedCorpus with
+            { ScientificCharts = scientific.SetItem(0, first with { Chart = EmptyChart(first.Chart.KeyCount + 1,
+                first.Chart.OriginalObjects.Count) }) } };
+        Assert.Throws<InvalidDataException>(() =>
+            new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier().Verify(fixture.Package, metadata));
+    }
+
+    [Fact]
+    public void ActualGitObservationRejectsDirtyStateAndCannotBeSuppliedByCaller()
+    {
+        using var temp = new TempDirectory();
+        var source = Path.Combine(temp.Path, "source");
+        File.WriteAllText(Path.Combine(source, "tracked.txt"), "clean\n");
+        RunGit(source, "init"); RunGit(source, "config", "user.email", "test@example.invalid");
+        RunGit(source, "config", "user.name", "Test"); RunGit(source, "add", "tracked.txt");
+        RunGit(source, "commit", "-m", "fixture");
+        var observer = new GitAndFileIntegrationAuthorityObserver();
+        Assert.Equal(RunGit(source, "rev-parse", "HEAD").Trim(), observer.ObserveHead(source));
+        Assert.True(observer.ObserveTrackedClean(source));
+        File.WriteAllText(Path.Combine(source, "tracked.txt"), "dirty\n");
+        Assert.False(observer.ObserveTrackedClean(source));
+        Assert.DoesNotContain(typeof(Lane0IntegrationLaunchRequest).GetProperties(), x =>
+            x.Name is "SourceHead" or "RuntimeHead" or "SourceTrackedClean" or "ObservedIdentities");
+    }
+
+    [Fact]
+    public void ExecutionRootRuntimeBuildsAndSelfReportsFromDetachedCheckout()
+    {
+        using var temp = new TempDirectory();
+        var source = Path.Combine(temp.Path, "source");
+        var worker = Path.Combine(source, "worker");
+        Directory.CreateDirectory(worker);
+        File.WriteAllText(Path.Combine(worker, "worker.csproj"),
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><AssemblyName>SyntheticWorker</AssemblyName><ImplicitUsings>enable</ImplicitUsings></PropertyGroup></Project>");
+        File.WriteAllText(Path.Combine(worker, "Program.cs"), SyntheticProvenanceWorkerSource());
+        RunGit(source, "init"); RunGit(source, "config", "user.email", "test@example.invalid");
+        RunGit(source, "config", "user.name", "Test"); RunGit(source, "add", "worker");
+        RunGit(source, "commit", "-m", "isolated-worker");
+        var head = RunGit(source, "rev-parse", "HEAD").Trim();
+        var execution = Path.Combine(temp.Path, "execution-real");
+        var checkout = new GitDetachedCheckoutMaterializer().CreateDetachedCheckout(source, execution, head);
+        Assert.True(checkout.Detached && checkout.TrackedClean && !checkout.UsedHardlinks);
+        File.WriteAllText(Path.Combine(worker, "Program.cs"), "// host drift must not execute\n");
+        var prepared = new Lane0ExecutionRootScientificRuntime("worker/worker.csproj", "SyntheticWorker.dll")
+            .Prepare(execution, head);
+        Assert.Equal(head, prepared.Provenance.RuntimeHead);
+        Assert.StartsWith(Path.GetFullPath(execution), Path.GetFullPath(prepared.Provenance.AssemblyPath),
+            OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        Assert.Equal(Lane0ExecutionRootScientificRuntime.ExpectedWorkerMarker,
+            prepared.Provenance.WorkerMarker);
+    }
+
+    [Fact]
+    public void LowFakeExecutionRootWorkerRunsSyntheticScienceInRealChildProcess()
+    {
+        using var temp = new TempDirectory();
+        var source = Path.Combine(temp.Path, "source");
+        var worker = Path.Combine(source, "worker");
+        var payload = Path.Combine(worker, "payload");
+        Directory.CreateDirectory(payload);
+        File.WriteAllText(Path.Combine(worker, "worker.csproj"),
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><AssemblyName>SyntheticWorker</AssemblyName><ImplicitUsings>enable</ImplicitUsings></PropertyGroup></Project>");
+        File.WriteAllText(Path.Combine(worker, "Program.cs"), SyntheticEndToEndWorkerSource());
+        File.WriteAllText(Path.Combine(worker, ".gitattributes"), "payload/* -text\n");
+        var fixture = SemanticFixture();
+        foreach (var pair in fixture.Package) File.WriteAllBytes(Path.Combine(payload, pair.Key), pair.Value);
+        RunGit(source, "init"); RunGit(source, "config", "user.email", "test@example.invalid");
+        RunGit(source, "config", "user.name", "Test"); RunGit(source, "add", "worker");
+        RunGit(source, "commit", "-m", "real-worker-fixture");
+        var head = RunGit(source, "rev-parse", "HEAD").Trim();
+        var execution = Path.Combine(temp.Path, "execution-science");
+        var checkout = new GitDetachedCheckoutMaterializer().CreateDetachedCheckout(source, execution, head);
+        Assert.True(checkout.Detached && checkout.TrackedClean && !checkout.UsedHardlinks);
+        var runtime = new Lane0ExecutionRootScientificRuntime("worker/worker.csproj", "SyntheticWorker.dll");
+        var prepared = runtime.Prepare(execution, head);
+        var token = new string('A', 64);
+        var context = new Lane0SuccessorEvaluationContext(head, token, token, token, token, token,
+            token, token, Lane0CorrectiveSuccessorReferenceValidator.FrozenReferences);
+        var inputs = ImmutableArray.Create(new Lane0CorrectiveChartInput(token, EmptyChart(4)));
+        var result = runtime.Execute(prepared, inputs, context);
+        Assert.Equal(head, result.Provenance.RuntimeHead);
+        Assert.Equal(result.First.ScientificOutcome, result.Second.ScientificOutcome);
+        Assert.Equal(result.First.Package.Keys, result.Second.Package.Keys);
+        Assert.All(result.First.Package.Keys, name =>
+            Assert.Equal(result.First.Package[name], result.Second.Package[name]));
+        new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier()
+            .Verify(result.First.Package, fixture.Expected);
+    }
+
     [Fact]
     public void IntegrationRunnerHasNoProductProgramCallSite()
     {
@@ -272,10 +457,24 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var ids = Identities();
         var fields = new Lane0IntegrationBindingFields(
             Lane0CorrectiveSuccessorIsolatedLauncher.BindingSchema, head, ids, true, 1);
-        return new(head, ids, ids,
+        return new(head, ids,
             Lane0CorrectiveSuccessorIsolatedLauncher.CreateSyntheticVerifiedBinding(fields),
-            head, head, head, true, Path.Combine(root, "source"), Path.Combine(root, "execution"), corpus);
+            Path.Combine(root, "source"), Path.Combine(root, "execution"), corpus);
     }
+
+    private static Lane0CorrectiveSuccessorIsolatedLauncher SyntheticLauncher(
+        ILane0IntegrationCheckoutMaterializer checkout,
+        CountingScience? science = null)
+    {
+        var ids = Identities();
+        var head = new string('A', 40);
+        return new(checkout, new FakeAuthorityObserver(head, ids, true),
+            new FakeIsolatedRuntime(science ?? new CountingScience(identical: true), head));
+    }
+
+    private static ImmutableArray<Lane0IntegrationCorpusLocation> PathPlan(
+        VerifiedFrozenC11Manifest manifest) =>
+        Lane0CorrectiveSuccessorFrozenC11Adapter.LoadFrozenPathAuthority(RepoRoot(), manifest);
 
     private static Lane0IntegrationRuntimeIdentities Identities() => new(
         new string('1', 64), "11F55A6770BA78F008A6690C88561C714CAF45BA15B96E472C0C80B219C4D5B6",
@@ -303,14 +502,31 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
     {
         var ids = Identities();
         var head = new string('A', 40);
-        var charts = new[] { new { chartId = "SYNTHETIC", keyCount = 4, family = "RICE_HEAD_COMPLETION" } };
+        var locations = PathPlan(Manifest());
+        var uniqueLocations = locations.GroupBy(x => x.ChartId, StringComparer.Ordinal)
+            .Select(x => x.First()).OrderBy(x => x.ChartId, StringComparer.Ordinal).ToArray();
+        var zero = new { structural = 0, holdouts = 0, operational = 0, comparableContext = 0,
+            jointSupport = 0, jointUnique = 0, jointAmongAlternatives = 0, contradiction = 0,
+            noContext = 0, marginalOnly = 0, ambiguousIntegrity = 0,
+            operationalSupported = 0, integrityFailures = 0 };
+        var charts = uniqueLocations.Select(x => new { chartId = x.ChartId, keyCount = x.KeyCount,
+            family = "RICE_HEAD_COMPLETION", historical = zero, corrected = zero }).ToArray();
         var cases = Enumerable.Range(0, 11).Select(index => new
         {
             chartId = index < 9 ? Lane0CorrectiveSuccessorReferenceValidator.SecondHistoricalIdentity
                 : Lane0CorrectiveSuccessorReferenceValidator.CorrectedSpringIdentity,
-            keyCount = 7, occurrenceId = $"O{index}", historicalState = "OPERATIONAL",
+            keyCount = 7, occurrenceId = index < 9 ? $"A{index}" : $"B{index - 9}",
+            historicalState = "OPERATIONAL",
             correctedState = "SUPPORTED", correctedSupported = true
         }).ToArray();
+        var transitions = new[] { new
+        {
+            chartId = Lane0CorrectiveSuccessorReferenceValidator.SecondHistoricalIdentity,
+            keyCount = 7, occurrenceId = "T0", groupId = "G0", historicalState = "NO_SUPPORT",
+            correctedState = "SUPPORTED", historicalJointSupported = false,
+            correctedJointSupported = true, historicalOperational = true,
+            correctedOperational = true, transitionKind = "GAINED_SUPPORT"
+        } };
         var files = ImmutableSortedDictionary.CreateBuilder<string, byte[]>(StringComparer.Ordinal);
         files["execution_identity.json"] = Json(new
         {
@@ -329,7 +545,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         });
         files["scientific_summary.json"] = Json(new
         {
-            outcome = "LIMITED_PARK", charts, g1Transitions = Array.Empty<object>(),
+            outcome = "LIMITED_PARK", charts, g1Transitions = transitions,
             historicalOperationalG1Cases = cases, researchRngCalls = 0, behaviorChanged = false,
             inputsUnchanged = true, integrityFailures = Array.Empty<string>(), blockedReasons = Array.Empty<string>()
         });
@@ -345,29 +561,26 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
             activeReferences = Lane0CorrectiveSuccessorReferenceValidator.FrozenReferences,
             historicalDistribution = "9+2=11"
         });
-        files["chart_family_keymode_results.csv"] = Encoding.UTF8.GetBytes(ChartCsv("SYNTHETIC"));
+        files["chart_family_keymode_results.csv"] = Encoding.UTF8.GetBytes(ChartCsvRows(
+            uniqueLocations.Select(x => $"{x.ChartId},{x.KeyCount},RICE_HEAD_COMPLETION,0,0,0,0,0,0,0,0,0")));
         files["g1_historical_operational_cases.csv"] = Encoding.UTF8.GetBytes(G1Cases(9, 2));
         files["g1_state_transitions.csv"] = Encoding.UTF8.GetBytes(
-            "chart_id,keymode,occurrence_id,group_id,historical_state,corrected_state,historical_joint_supported,corrected_joint_supported,historical_operational,corrected_operational,transition_kind\n");
+            "chart_id,keymode,occurrence_id,group_id,historical_state,corrected_state,historical_joint_supported,corrected_joint_supported,historical_operational,corrected_operational,transition_kind\n"
+            + $"{Lane0CorrectiveSuccessorReferenceValidator.SecondHistoricalIdentity},7,T0,G0,NO_SUPPORT,SUPPORTED,False,True,True,True,GAINED_SUPPORT\n");
         var semantic = files.ToImmutable();
         files["sha256sums.txt"] = ChecksumBytes(semantic);
-        var locations = Enumerable.Range(0, 11).Select(index =>
-            new Lane0IntegrationCorpusLocation($"L{index:D2}", $"p{index}", $"C{index}", "F", 4, 1)).ToList();
-        locations[0] = locations[0] with
-        {
-            ChartId = Lane0CorrectiveSuccessorFrozenC11Adapter.DuplicateChartId,
-            Family = "ORGT | DESTINY | BAIO", KeyCount = 7, OriginalObjects = 1653
-        };
-        locations.Add(locations[0] with { LocationId = "L11", RelativePath = "p11" });
-        var scientific = locations.Take(11).Select(x => new Lane0CorrectiveChartInput(x.ChartId,
-            EmptyChart(x.KeyCount))).ToImmutableArray();
-        var admitted = new Lane0IntegrationAdmittedCorpus(locations.ToImmutableArray(), scientific, 50_836);
+        var scientific = uniqueLocations.Select(x => new Lane0CorrectiveChartInput(x.ChartId,
+            EmptyChart(x.KeyCount, x.OriginalObjects))).ToImmutableArray();
+        var admitted = new Lane0IntegrationAdmittedCorpus(locations, scientific, 50_836);
         return (files.ToImmutable(), new(ids, head, "LIMITED_PARK", admitted, false));
     }
 
     private static string ChartCsv(string id) =>
+        ChartCsvRows([$"{id},4,RICE_HEAD_COMPLETION,0,0,0,0,0,0,0,0,0"]);
+
+    private static string ChartCsvRows(IEnumerable<string> rows) =>
         "chart_id,keymode,family,historical_structural,historical_joint_support,historical_operational,historical_operational_supported,corrected_structural,corrected_joint_support,corrected_operational,corrected_operational_supported,corrected_integrity_failures\n"
-        + $"{id},4,RICE_HEAD_COMPLETION,0,0,0,0,0,0,0,0,0\n";
+        + string.Join('\n', rows) + "\n";
 
     private static string G1Cases(int second, int spring)
     {
@@ -396,15 +609,65 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         return changed.SetItem("sha256sums.txt", ChecksumBytes(changed));
     }
 
+    private static ImmutableSortedDictionary<string, byte[]> MutateCsvCell(
+        ImmutableSortedDictionary<string, byte[]> package, string name, int row, int column, string value)
+    {
+        var rows = Encoding.UTF8.GetString(package[name]).Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Split(',')).ToArray();
+        rows[row][column] = value;
+        return ReplaceAndRehash(package, name,
+            Encoding.UTF8.GetBytes(string.Join('\n', rows.Select(x => string.Join(',', x))) + "\n"));
+    }
+
     private static byte[] ChecksumBytes(ImmutableSortedDictionary<string, byte[]> files) =>
         Encoding.UTF8.GetBytes(string.Join('\n', files.Select(x =>
             $"{Convert.ToHexString(SHA256.HashData(x.Value))}  {x.Key}")) + "\n");
     private static byte[] Json(object value) => JsonSerializer.SerializeToUtf8Bytes(value,
         new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-    private static ManiaChart EmptyChart(int keys) => new()
+    private static ManiaChart EmptyChart(int keys, int objects = 0) => new()
     {
-        KeyCount = keys, Lines = [], OriginalObjects = [], TimingPoints = [new(0, 500)]
+        KeyCount = keys, Lines = [], OriginalObjects = Enumerable.Range(0, objects)
+            .Select(index => ManiaObject.Tap(index % keys, index, sequence: index)).ToArray(),
+        TimingPoints = [new(0, 500)]
     };
+
+    private static string RunGit(string root, params string[] arguments)
+    {
+        var info = new System.Diagnostics.ProcessStartInfo("git")
+        { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true,
+            CreateNoWindow = true };
+        info.ArgumentList.Add("-C"); info.ArgumentList.Add(root);
+        foreach (var argument in arguments) info.ArgumentList.Add(argument);
+        using var process = System.Diagnostics.Process.Start(info)!;
+        var output = process.StandardOutput.ReadToEnd(); var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        if (process.ExitCode != 0) throw new InvalidOperationException(error);
+        return output;
+    }
+
+    private static string SyntheticProvenanceWorkerSource() =>
+        "using System.Diagnostics;using System.Reflection;using System.Security.Cryptography;using System.Text.Json;"
+        + "var i=Array.IndexOf(args,\"--execution-root\");var r=Path.GetFullPath(args[i+1]);"
+        + "var p=new ProcessStartInfo(\"git\"){UseShellExecute=false,RedirectStandardOutput=true};"
+        + "p.ArgumentList.Add(\"-C\");p.ArgumentList.Add(r);p.ArgumentList.Add(\"rev-parse\");p.ArgumentList.Add(\"HEAD\");"
+        + "using var x=Process.Start(p)!;var h=x.StandardOutput.ReadToEnd().Trim();x.WaitForExit();"
+        + "var a=Path.GetFullPath(Assembly.GetEntryAssembly()!.Location);var v=new{runtimeHead=h,assemblyPath=a,"
+        + "assemblySha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(a))),baseDirectory=Path.GetFullPath(AppContext.BaseDirectory),"
+        + "executionRoot=r,workerMarker=\"LANE0_EXECUTION_ROOT_WORKER_V1\"};File.WriteAllBytes(args[1],JsonSerializer.SerializeToUtf8Bytes(v));";
+
+    private static string SyntheticEndToEndWorkerSource() =>
+        "using System.Diagnostics;using System.Reflection;using System.Security.Cryptography;using System.Text.Json;"
+        + "var i=Array.IndexOf(args,\"--execution-root\");var r=Path.GetFullPath(args[i+1]);"
+        + "var p=new ProcessStartInfo(\"git\"){UseShellExecute=false,RedirectStandardOutput=true};"
+        + "p.ArgumentList.Add(\"-C\");p.ArgumentList.Add(r);p.ArgumentList.Add(\"rev-parse\");p.ArgumentList.Add(\"HEAD\");"
+        + "using var x=Process.Start(p)!;var h=x.StandardOutput.ReadToEnd().Trim();x.WaitForExit();"
+        + "var a=Path.GetFullPath(Assembly.GetEntryAssembly()!.Location);var v=new{runtimeHead=h,assemblyPath=a,"
+        + "assemblySha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(a))),baseDirectory=Path.GetFullPath(AppContext.BaseDirectory),"
+        + "executionRoot=r,workerMarker=\"LANE0_EXECUTION_ROOT_WORKER_V1\"};"
+        + "if(args[0]==\"--provenance-only\"){File.WriteAllBytes(args[1],JsonSerializer.SerializeToUtf8Bytes(v));return;}"
+        + "foreach(var d in new[]{args[3],args[4]}){Directory.CreateDirectory(d);foreach(var f in Directory.EnumerateFiles(Path.Combine(r,\"worker\",\"payload\")))File.Copy(f,Path.Combine(d,Path.GetFileName(f)));}"
+        + "var m=new{scientificOutcome=\"LIMITED_PARK\",integrityFailures=Array.Empty<string>(),blockedReasons=Array.Empty<string>(),rngCalls=0,inputsUnchanged=true,behaviorChanged=false,defaultChanged=false};"
+        + "File.WriteAllBytes(args[2],JsonSerializer.SerializeToUtf8Bytes(new{first=m,second=m,provenance=v}));";
 
     private sealed class ManifestReader : ILane0IntegrationCorpusReader
     {
@@ -412,7 +675,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         internal List<string> ReadPaths { get; } = [];
         internal bool CorruptFirstRead { get; init; }
         internal ManifestReader(VerifiedFrozenC11Manifest manifest) => byPath =
-            Lane0CorrectiveSuccessorFrozenC11Adapter.BuildOfficialPlan(manifest)
+            PathPlan(manifest)
                 .ToDictionary(x => x.RelativePath, x => x.ChartId, StringComparer.Ordinal);
         public byte[] ReadExact(string canonicalCorpusRoot, string relativePath)
         {
@@ -474,7 +737,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         internal FakeAdapter(VerifiedFrozenC11Manifest manifest) => this.manifest = manifest;
         public Lane0IntegrationAdmittedCorpus Admit(VerifiedFrozenC11Manifest _, string root)
         {
-            var plan = Lane0CorrectiveSuccessorFrozenC11Adapter.BuildOfficialPlan(manifest);
+            var plan = PathPlan(manifest);
             var charts = manifest.Charts.OrderBy(x => x.Sha256).Select(x =>
                 new Lane0CorrectiveChartInput(x.Sha256, EmptyChart(x.KeyCount))).ToImmutableArray();
             return new(plan, charts, 50_836);
@@ -494,6 +757,36 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
             return new("LIMITED_PARK",
                 ImmutableSortedDictionary<string, byte[]>.Empty.Add("synthetic", Encoding.UTF8.GetBytes(value)),
                 [], [], 0, true, false, false);
+        }
+    }
+
+    private sealed record FakeAuthorityObserver(string Head,
+        Lane0IntegrationRuntimeIdentities Identities, bool Clean) : ILane0IntegrationAuthorityObserver
+    {
+        public string ObserveHead(string canonicalRepositoryRoot) => Head;
+        public bool ObserveTrackedClean(string canonicalRepositoryRoot) => Clean;
+        public Lane0IntegrationRuntimeIdentities ObserveRuntimeIdentities(string canonicalRepositoryRoot) =>
+            Identities;
+    }
+
+    private sealed class FakeIsolatedRuntime : ILane0IntegrationIsolatedScientificRuntime
+    {
+        private readonly CountingScience science;
+        private readonly string runtimeHead;
+        internal FakeIsolatedRuntime(CountingScience science, string runtimeHead)
+        { this.science = science; this.runtimeHead = runtimeHead; }
+        public Lane0IntegrationPreparedRuntime Prepare(string root, string expectedHead)
+        {
+            var assembly = Path.Combine(root, "synthetic-worker.dll");
+            return new(root, assembly, "SYNTHETIC", new(runtimeHead, assembly, "SYNTHETIC",
+                root, root, Lane0ExecutionRootScientificRuntime.ExpectedWorkerMarker));
+        }
+        public Lane0IntegrationScientificRuntimeResult Execute(Lane0IntegrationPreparedRuntime prepared,
+            ImmutableArray<Lane0CorrectiveChartInput> inputs, Lane0SuccessorEvaluationContext context)
+        {
+            var first = science.Evaluate(inputs, context);
+            var second = science.Evaluate(inputs, context);
+            return new(first, second, prepared.Provenance);
         }
     }
 
@@ -523,7 +816,10 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         internal TempDirectory() => Directory.CreateDirectory(System.IO.Path.Combine(Path, "source"));
         public void Dispose()
         {
-            if (Directory.Exists(Path)) Directory.Delete(Path, true);
+            if (!Directory.Exists(Path)) return;
+            foreach (var file in Directory.EnumerateFiles(Path, "*", SearchOption.AllDirectories))
+                File.SetAttributes(file, FileAttributes.Normal);
+            Directory.Delete(Path, true);
         }
     }
 }
