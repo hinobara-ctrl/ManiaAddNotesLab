@@ -17,6 +17,8 @@ public sealed class IntegrationPrebindingAuditRemediationGuardTests
             actualIdentity);
         Assert.Empty(IntegrationPrebindingAuditRemediationGuard.Validate(
             document.RootElement, Root()));
+        Assert.NotEmpty(IntegrationPrebindingAuditRemediationGuard.ValidateAgainstLive(
+            document.RootElement, Root()));
     }
 
     [Theory]

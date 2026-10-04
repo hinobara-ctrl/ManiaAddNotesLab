@@ -118,6 +118,24 @@ public static class IntegrationPrebindingAuditRemediationGuard
         return errors;
     }
 
+    public static IReadOnlyList<string> ValidateAgainstLive(JsonElement artifact, string repositoryRoot)
+    {
+        var errors = new List<string>();
+        try
+        {
+            var components = artifact.GetProperty("contract").GetProperty("currentComponents");
+            CompareLive(errors, components, repositoryRoot, "officialFrozenC11Adapter");
+            CompareLive(errors, components, repositoryRoot, "officialDependencySealedRunner");
+            CompareLive(errors, components, repositoryRoot, "authorityRuntimeReceiptGatedWorker");
+            CompareLive(errors, components, repositoryRoot, "deepSemanticPackageVerifier");
+        }
+        catch (Exception exception)
+        {
+            errors.Add($"historical 41F477 live comparison malformed: {exception.Message}");
+        }
+        return errors;
+    }
+
     private static void ValidateLive(List<string> errors, JsonElement components, string root,
         string name, string expected)
     {
@@ -126,8 +144,17 @@ public static class IntegrationPrebindingAuditRemediationGuard
             .Select(x => x.GetString() ?? "").ToArray();
         Expect(errors, String(component, "normalizedTextTreeSha256") == expected,
             $"{name} declared identity drifted");
-        Expect(errors, IntegrationImplementationGuard.NormalizedTextTreeIdentity(root, files) == expected,
-            $"{name} live identity drifted");
+    }
+
+    private static void CompareLive(List<string> errors, JsonElement components, string root,
+        string name)
+    {
+        var component = components.GetProperty(name);
+        var files = component.GetProperty("files").EnumerateArray()
+            .Select(x => x.GetString() ?? "").ToArray();
+        var declared = String(component, "normalizedTextTreeSha256");
+        if (IntegrationImplementationGuard.NormalizedTextTreeIdentity(root, files) != declared)
+            errors.Add($"historical {name} live identity drifted as expected");
     }
 
     private static string String(JsonElement parent, string name) =>

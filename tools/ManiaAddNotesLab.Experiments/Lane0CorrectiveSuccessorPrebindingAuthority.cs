@@ -46,7 +46,15 @@ internal sealed record Lane0IntegrationCanonicalBindingDocument(
 
 internal sealed record Lane0IntegrationWorkerAuthorityState(
     string CanonicalSourceRoot, string ExpectedHead, string CanonicalBindingSha256,
-    Lane0IntegrationRuntimeIdentities ExpectedIdentities);
+    Lane0IntegrationRuntimeIdentities ExpectedIdentities,
+    Lane0IntegrationBinaryClosure BinaryClosure,
+    string ExecutionState);
+
+internal sealed record Lane0IntegrationOfficialLaunchAttestation(
+    string SchemaVersion, string CanonicalSourceRoot, string CanonicalExecutionRoot,
+    string ExpectedHead, Lane0IntegrationRuntimeIdentities ExpectedIdentities,
+    Lane0IntegrationBinaryClosure BinaryClosure, bool Detached, bool TrackedClean,
+    bool UsedHardlinks, bool ReusedSourceBuildOutputs, string CanonicalSha256);
 
 internal sealed class Lane0IntegrationCanonicalBindingLoader
 {

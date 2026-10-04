@@ -1271,6 +1271,14 @@ PB-A1 is a frozen-scope clarification; PB-A2/A3/A4 seal official dependencies, a
 
 Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION — COMPLETE — OUTCOME READY_FOR_INDEPENDENT_PREBINDING_REAUDIT.
 
+## Phase LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION — Final Authority-to-Science Boundary Remediation
+
+<!-- PHASE-CONTRACT:LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION;kind=ResearchShadow;behaviorChange=false;authorization=AUTHORIZED_FOR_FINAL_AUTHORITY_BOUNDARY_REMEDIATION_IMPLEMENTATION_ONLY -->
+
+FB-R1…FB-R5 are closed locally by replacing reusable production authorize/execute modes with one `--official-run` capability. That process owns durable attempt claim, receipt, post-receipt exact admission, deterministic science, finalization, semantic verification and derived outputs. `--synthetic-run` is explicitly nonofficial and isolated from the real receipt namespace. No C11, binding, real receipt, real execution or product promotion is authorized.
+
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION — COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT.
+
 ## Phase G1 — Interior Relation Semantics A/B
 
 <!-- PHASE-CONTRACT:G1;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->

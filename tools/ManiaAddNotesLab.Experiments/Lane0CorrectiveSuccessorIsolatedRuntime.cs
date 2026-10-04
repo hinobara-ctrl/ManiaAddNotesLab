@@ -36,10 +36,11 @@ internal sealed record Lane0IntegrationScientificRuntimeResult(
 internal interface ILane0IntegrationIsolatedScientificRuntime
 {
     Lane0IntegrationPreparedRuntime Prepare(string canonicalExecutionRoot, string expectedHead);
-    Lane0IntegrationWorkerAuthorityResponse CreateOfficialAuthorityReceipt(
+    Lane0IntegrationResearchResult RunOfficial(
         Lane0IntegrationPreparedRuntime prepared, string canonicalSourceRoot,
-        string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities);
-    Lane0IntegrationScientificRuntimeResult Execute(
+        string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities,
+        Lane0IntegrationCheckoutEvidence checkoutEvidence, string corpusRootToken);
+    Lane0IntegrationScientificRuntimeResult ExecuteSyntheticFixture(
         Lane0IntegrationPreparedRuntime prepared,
         ImmutableArray<Lane0CorrectiveChartInput> inputs,
         Lane0SuccessorEvaluationContext context,
@@ -123,54 +124,36 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
         return new(canonicalExecutionRoot, assembly, hash, closure, provenance);
     }
 
-    public Lane0IntegrationScientificRuntimeResult Execute(
+    public Lane0IntegrationScientificRuntimeResult ExecuteSyntheticFixture(
         Lane0IntegrationPreparedRuntime prepared,
         ImmutableArray<Lane0CorrectiveChartInput> inputs,
         Lane0SuccessorEvaluationContext context,
         Lane0IntegrationRuntimeIdentities identities) =>
-        ExecuteCore(prepared, inputs, context, identities, requireOfficialReceipt: true);
+        ExecuteSyntheticCore(prepared, inputs, context, identities);
 
-    internal Lane0IntegrationScientificRuntimeResult ExecuteSyntheticFixture(
+    private Lane0IntegrationScientificRuntimeResult ExecuteSyntheticCore(
         Lane0IntegrationPreparedRuntime prepared,
         ImmutableArray<Lane0CorrectiveChartInput> inputs,
         Lane0SuccessorEvaluationContext context,
-        Lane0IntegrationRuntimeIdentities identities) =>
-        ExecuteCore(prepared, inputs, context, identities, requireOfficialReceipt: false);
-
-    private Lane0IntegrationScientificRuntimeResult ExecuteCore(
-        Lane0IntegrationPreparedRuntime prepared,
-        ImmutableArray<Lane0CorrectiveChartInput> inputs,
-        Lane0SuccessorEvaluationContext context,
-        Lane0IntegrationRuntimeIdentities identities,
-        bool requireOfficialReceipt)
+        Lane0IntegrationRuntimeIdentities identities)
     {
         ValidatePreparedBinaryClosure(prepared, projectAssemblyNames,
-            "Prepared project binary closure changed before official science.");
-        if (requireOfficialReceipt)
-        {
-            var authorityState = LoadAuthorityState(prepared.WorkerAssemblyPath);
-            Require(authorityState.ExpectedIdentities == identities,
-                "Prepared authority state identities drifted before official science.");
-            Lane0IntegrationDurableReceiptVerifier.VerifyCanonicalReceipt(
-                authorityState.CanonicalSourceRoot, prepared.ExecutionRoot,
-                authorityState.ExpectedHead, authorityState.CanonicalBindingSha256,
-                authorityState.ExpectedIdentities);
-        }
-        var staging = Lane0IntegrationOfficialLayout.StagingRoot(prepared.ExecutionRoot);
-        var final = Lane0IntegrationOfficialLayout.FinalArtifactsRoot(prepared.ExecutionRoot);
-        Directory.CreateDirectory(staging);
-        Directory.CreateDirectory(final);
-        var requestPath = Path.Combine(staging, "request.json");
+            "Prepared project binary closure changed before synthetic science.");
+        var staging = UnderRoot(prepared.ExecutionRoot,
+            ".artifacts/synthetic-integration-exchange/staging");
+        var final = UnderRoot(prepared.ExecutionRoot,
+            ".artifacts/synthetic-integration-exchange/final-artifacts");
         var responsePath = Path.Combine(staging, "response.json");
         var firstPath = Path.Combine(final, "pass-1");
         var secondPath = Path.Combine(final, "pass-2");
         var charts = inputs.Select(x => new Lane0IntegrationWorkerChart(x.ChartId, x.Chart.KeyCount,
             x.Chart.Lines.ToImmutableArray(), x.Chart.OriginalObjects.ToImmutableArray(),
             x.Chart.TimingPoints.ToImmutableArray())).ToImmutableArray();
-        File.WriteAllBytes(requestPath, JsonSerializer.SerializeToUtf8Bytes(
-            new Lane0IntegrationWorkerRequest(charts, context, identities), JsonOptions));
-        Run("dotnet", [prepared.WorkerAssemblyPath, "--execute", requestPath, responsePath,
-            firstPath, secondPath, "--execution-root", prepared.ExecutionRoot], prepared.ExecutionRoot);
+        var request = new Lane0IntegrationWorkerRequest(charts, context, identities);
+        var process = StartSynthetic(prepared.WorkerAssemblyPath, prepared.ExecutionRoot, request);
+        if (process.ExitCode != 0)
+            throw new InvalidDataException(
+                $"Synthetic ExecutionRoot command failed: {process.Error}{process.Output}");
         var response = JsonSerializer.Deserialize<Lane0IntegrationWorkerResponse>(
             File.ReadAllBytes(responsePath), JsonOptions)
             ?? throw new InvalidDataException("Research worker returned no response.");
@@ -178,35 +161,101 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
             prepared.Provenance.RuntimeHead, prepared.WorkerAssemblyPath,
             prepared.WorkerAssemblySha256, prepared.BinaryClosure);
         ValidatePreparedBinaryClosure(prepared, projectAssemblyNames,
-            "Prepared project binary closure changed after official science.");
+            "Prepared project binary closure changed after synthetic science.");
         return new(ToPass(response.First, ReadPackage(firstPath)),
             ToPass(response.Second, ReadPackage(secondPath)), response.Provenance,
             firstPath, secondPath);
     }
 
-    public Lane0IntegrationWorkerAuthorityResponse CreateOfficialAuthorityReceipt(
+    public Lane0IntegrationResearchResult RunOfficial(
         Lane0IntegrationPreparedRuntime prepared, string canonicalSourceRoot,
-        string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities)
+        string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities,
+        Lane0IntegrationCheckoutEvidence checkoutEvidence, string corpusRootToken)
     {
         ValidatePreparedBinaryClosure(prepared, projectAssemblyNames,
-            "Prepared project binary closure changed before receipt creation.");
-        var exchange = Path.GetDirectoryName(prepared.WorkerAssemblyPath)
+            "Prepared project binary closure changed before official run.");
+        var buildRoot = Path.GetDirectoryName(prepared.WorkerAssemblyPath)
             ?? throw new InvalidDataException("Worker build directory is absent.");
-        var requestPath = UnderRoot(exchange, "authority-request.json");
-        var responsePath = UnderRoot(exchange, "authority-response.json");
-        File.WriteAllBytes(requestPath, JsonSerializer.SerializeToUtf8Bytes(
-            new Lane0IntegrationWorkerAuthorityRequest(canonicalSourceRoot, expectedHead,
-                expectedIdentities), JsonOptions));
-        Run("dotnet", [prepared.WorkerAssemblyPath, "--authorize", requestPath, responsePath,
-            "--execution-root", prepared.ExecutionRoot], prepared.ExecutionRoot);
-        var response = JsonSerializer.Deserialize<Lane0IntegrationWorkerAuthorityResponse>(
+        var attestationPath = UnderRoot(buildRoot, "official-launch-attestation.json");
+        var responsePath = UnderRoot(Lane0IntegrationOfficialLayout.StagingRoot(prepared.ExecutionRoot),
+            "response.json");
+        var unsigned = new Lane0IntegrationOfficialLaunchAttestation(
+            "lane-0-integration-official-launch-attestation.1",
+            Path.GetFullPath(canonicalSourceRoot), Path.GetFullPath(prepared.ExecutionRoot),
+            expectedHead, expectedIdentities, prepared.BinaryClosure,
+            checkoutEvidence.Detached, checkoutEvidence.TrackedClean,
+            checkoutEvidence.UsedHardlinks, checkoutEvidence.ReusedSourceBuildOutputs, "");
+        var canonicalHash = Convert.ToHexString(SHA256.HashData(
+            JsonSerializer.SerializeToUtf8Bytes(unsigned with { CanonicalSha256 = "" }, JsonOptions)));
+        File.WriteAllBytes(attestationPath, JsonSerializer.SerializeToUtf8Bytes(
+            unsigned with { CanonicalSha256 = canonicalHash }, JsonOptions));
+
+        var result = StartOfficial(prepared.WorkerAssemblyPath, prepared.ExecutionRoot,
+            corpusRootToken);
+        if (result.ExitCode != 0)
+            throw new InvalidDataException($"Official ExecutionRoot command failed: {result.Error}{result.Output}");
+        var response = JsonSerializer.Deserialize<Lane0IntegrationResearchResult>(
             File.ReadAllBytes(responsePath), JsonOptions)
-            ?? throw new InvalidDataException("Authority worker returned no response.");
-        ValidateProvenance(response.Provenance, prepared.ExecutionRoot, expectedHead,
-            prepared.WorkerAssemblyPath, prepared.WorkerAssemblySha256, prepared.BinaryClosure);
-        Require(response.ObservedIdentities == expectedIdentities,
-            "Authority worker observed identities drifted.");
+            ?? throw new InvalidDataException("Official worker returned no response.");
+        ValidatePreparedBinaryClosure(prepared, projectAssemblyNames,
+            "Prepared project binary closure changed after official run.");
         return response;
+    }
+
+    private static (int ExitCode, string Output, string Error) StartOfficial(
+        string assembly, string executionRoot, string corpusRootToken)
+    {
+        var info = new ProcessStartInfo("dotnet")
+        {
+            WorkingDirectory = executionRoot, UseShellExecute = false,
+            RedirectStandardInput = true, RedirectStandardOutput = true,
+            RedirectStandardError = true, CreateNoWindow = true
+        };
+        info.ArgumentList.Add(assembly); info.ArgumentList.Add("--official-run");
+        info.ArgumentList.Add("--execution-root"); info.ArgumentList.Add(executionRoot);
+        info.Environment["DOTNET_CLI_USE_MSBUILD_SERVER"] = "0";
+        info.Environment["MSBUILDDISABLENODEREUSE"] = "1";
+        using var process = Process.Start(info)
+            ?? throw new InvalidOperationException("Could not start official worker.");
+        var receiptBoundary = process.StandardOutput.ReadLine();
+        if (receiptBoundary == "RECEIPT_CREATED")
+        {
+            process.StandardInput.WriteLine(JsonSerializer.Serialize(corpusRootToken));
+            process.StandardInput.Close();
+        }
+        var output = receiptBoundary is null ? string.Empty : receiptBoundary + "\n";
+        output += process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        return (process.ExitCode, output, error);
+    }
+
+    private static (int ExitCode, string Output, string Error) StartSynthetic(
+        string assembly, string executionRoot, Lane0IntegrationWorkerRequest request)
+    {
+        var info = new ProcessStartInfo("dotnet")
+        {
+            WorkingDirectory = executionRoot, UseShellExecute = false,
+            RedirectStandardInput = true, RedirectStandardOutput = true,
+            RedirectStandardError = true, CreateNoWindow = true
+        };
+        info.ArgumentList.Add(assembly); info.ArgumentList.Add("--synthetic-run");
+        info.ArgumentList.Add("--execution-root"); info.ArgumentList.Add(executionRoot);
+        info.Environment["DOTNET_CLI_USE_MSBUILD_SERVER"] = "0";
+        info.Environment["MSBUILDDISABLENODEREUSE"] = "1";
+        using var process = Process.Start(info)
+            ?? throw new InvalidOperationException("Could not start synthetic worker.");
+        var receiptBoundary = process.StandardOutput.ReadLine();
+        if (receiptBoundary == "SYNTHETIC_RECEIPT_CREATED")
+        {
+            process.StandardInput.WriteLine(JsonSerializer.Serialize(request, JsonOptions));
+            process.StandardInput.Close();
+        }
+        var output = receiptBoundary is null ? string.Empty : receiptBoundary + "\n";
+        output += process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        return (process.ExitCode, output, error);
     }
 
     private static Lane0SuccessorEvaluationPass ToPass(Lane0IntegrationWorkerPassMetadata value,
@@ -309,6 +358,21 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
         Lane0IntegrationBinaryClosure left, Lane0IntegrationBinaryClosure right) =>
         left.AggregateSha256 == right.AggregateSha256
         && left.Binaries.SequenceEqual(right.Binaries);
+
+    internal static void ValidateDurableAuthorityClosure(
+        Lane0IntegrationWorkerAuthorityState state,
+        Lane0IntegrationBinaryClosure observed,
+        Lane0IntegrationRuntimeIdentities expectedIdentities)
+    {
+        Require(state.BinaryClosure is not null,
+            "Durable authority state has no project binary closure binding.");
+        Require(state.ExecutionState == "SCIENCE_ATTEMPT_CLAIMED",
+            "Durable authority state does not own the one-shot science attempt.");
+        Require(state.ExpectedIdentities == expectedIdentities,
+            "Durable authority state component identities drifted.");
+        Require(BinaryClosuresEqual(state.BinaryClosure!, observed),
+            "Durable authority project binary closure drifted.");
+    }
 
     internal static string AuthorityStatePath(string workerAssemblyPath) => Path.Combine(
         Path.GetDirectoryName(Path.GetFullPath(workerAssemblyPath))

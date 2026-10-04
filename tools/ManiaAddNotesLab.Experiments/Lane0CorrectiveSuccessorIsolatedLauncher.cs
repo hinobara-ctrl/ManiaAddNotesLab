@@ -122,7 +122,7 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
         return AcquireCore(request, binding, store);
     }
 
-    internal Lane0IntegrationPreReceiptLease AcquireOfficial(Lane0IntegrationOfficialLaunchRequest official)
+    internal Lane0IntegrationResearchResult RunOfficial(Lane0IntegrationOfficialLaunchRequest official)
     {
         var completed = ImmutableArray.CreateBuilder<string>();
         var source = Path.GetFullPath(official.SourceRoot);
@@ -176,16 +176,12 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
         completed.Add(AuthorityOrder[10]);
         Require(!store.OutputOrStagingExists, "Output or staging already exists.");
         completed.Add(AuthorityOrder[11]);
-        var authority = scientificRuntime.CreateOfficialAuthorityReceipt(prepared, source,
-            official.ExpectedSourcePublicHead, official.ExpectedIdentities);
-        Require(authority.CanonicalBindingSha256 == binding.CanonicalSha256,
-            "Authority worker binding identity disagrees with canonical preflight bytes.");
-        completed.Add(AuthorityOrder[12]);
-        var request = new Lane0IntegrationLaunchRequest(official.ExpectedSourcePublicHead,
-            official.ExpectedIdentities, null, official.SourceRoot, official.ExecutionRoot,
-            official.CorpusRootToken);
-        return new(request, source, execution, authority.CanonicalBindingSha256,
-            authority.ObservedIdentities, prepared, completed.ToImmutable());
+        // The worker owns receipt creation, post-receipt corpus interpretation/admission and
+        // both scientific passes in one process. CorpusRoot is delivered through the handshake
+        // only after that process has durably crossed the receipt boundary.
+        return scientificRuntime.RunOfficial(prepared, source,
+            official.ExpectedSourcePublicHead, official.ExpectedIdentities,
+            checkout, official.CorpusRootToken);
     }
 
     private Lane0IntegrationPreReceiptLease AcquireCore(
@@ -251,7 +247,7 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
         Lane0IntegrationPreReceiptLease lease,
         ImmutableArray<Lane0CorrectiveChartInput> inputs,
         Lane0SuccessorEvaluationContext context) =>
-        scientificRuntime.Execute(lease.PreparedRuntime, inputs, context,
+        scientificRuntime.ExecuteSyntheticFixture(lease.PreparedRuntime, inputs, context,
             lease.ObservedIdentities);
 
     internal Lane0IntegrationPostReceiptLease InterpretCorpusRoot(Lane0IntegrationPreReceiptLease lease)

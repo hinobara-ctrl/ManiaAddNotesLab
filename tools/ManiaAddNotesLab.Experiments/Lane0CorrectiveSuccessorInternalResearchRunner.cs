@@ -11,9 +11,7 @@ internal sealed record Lane0IntegrationResearchRequest(
     ImmutableArray<Lane0CorrectiveSuccessorReference> References);
 
 internal sealed record Lane0IntegrationOfficialResearchRequest(
-    Lane0IntegrationOfficialLaunchRequest Launch,
-    VerifiedFrozenC11Manifest Manifest,
-    ImmutableArray<Lane0CorrectiveSuccessorReference> References);
+    Lane0IntegrationOfficialLaunchRequest Launch);
 
 internal sealed record Lane0IntegrationResearchResult(
     string Classification, string? ScientificOutcome, bool ReceiptConsumed,
@@ -183,16 +181,7 @@ internal sealed class Lane0CorrectiveSuccessorOfficialResearchRunner
         var launcher = Lane0CorrectiveSuccessorIsolatedLauncher.CreateOfficial();
         try
         {
-            var source = Path.GetFullPath(request.Launch.SourceRoot);
-            var adapter = Lane0CorrectiveSuccessorFrozenC11Adapter.CreateOfficial(
-                request.Manifest, source);
-            var verifier = new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier();
-            var lease = launcher.AcquireOfficial(request.Launch);
-            return new Lane0CorrectiveSuccessorInternalResearchRunner(
-                launcher, adapter, verifier).ExecuteAcquired(
-                    lease, request.Manifest, request.References,
-                    request.Launch.ExpectedSourcePublicHead,
-                    request.Launch.ExpectedIdentities);
+            return launcher.RunOfficial(request.Launch);
         }
         catch (Exception exception)
         {
