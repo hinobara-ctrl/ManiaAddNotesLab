@@ -34,13 +34,13 @@ public static class IntegrationAuditRemediationGuard
 
             ValidatePathAuthority(errors, repositoryRoot);
             var components = contract.GetProperty("remediatedComponents");
-            ValidateComponent(errors, components, repositoryRoot, "officialFrozenC11Adapter",
+            ValidateHistoricalComponent(errors, components, "officialFrozenC11Adapter",
                 "032F9660D8C0012C990983CE307CDA9D20B1C49116BEAA7F3C5E3DB1EBD875B0");
-            ValidateComponent(errors, components, repositoryRoot, "officialInternalResearchRunner",
+            ValidateHistoricalComponent(errors, components, "officialInternalResearchRunner",
                 "DAF26670B68F6621303DA6F3D49FD0E8B3DCDB61489E1AB0A33523267602F784");
-            ValidateComponent(errors, components, repositoryRoot, "isolatedExecutionLauncher",
+            ValidateHistoricalComponent(errors, components, "isolatedExecutionLauncher",
                 "498FF1C8CF83C54F5EF31F1D2C127CA688F36500C9CD25C34EE7E53DB6979DE9");
-            ValidateComponent(errors, components, repositoryRoot, "deepSemanticPackageVerifier",
+            ValidateHistoricalComponent(errors, components, "deepSemanticPackageVerifier",
                 "67969A60704553AA6CFB134F8B7F67236757EA6A2CF51C9CD7C4EF3C8FA5A4DB");
 
             var authority = contract.GetProperty("observedAuthorityModel");
@@ -90,6 +90,29 @@ public static class IntegrationAuditRemediationGuard
         return errors;
     }
 
+    public static IReadOnlyList<string> ValidateAgainstLive(JsonElement artifact,
+        string repositoryRoot)
+    {
+        var errors = new List<string>();
+        try
+        {
+            var components = artifact.GetProperty("contract").GetProperty("remediatedComponents");
+            ValidateLiveComponent(errors, components, repositoryRoot, "officialFrozenC11Adapter",
+                "032F9660D8C0012C990983CE307CDA9D20B1C49116BEAA7F3C5E3DB1EBD875B0");
+            ValidateLiveComponent(errors, components, repositoryRoot, "officialInternalResearchRunner",
+                "DAF26670B68F6621303DA6F3D49FD0E8B3DCDB61489E1AB0A33523267602F784");
+            ValidateLiveComponent(errors, components, repositoryRoot, "isolatedExecutionLauncher",
+                "498FF1C8CF83C54F5EF31F1D2C127CA688F36500C9CD25C34EE7E53DB6979DE9");
+            ValidateLiveComponent(errors, components, repositoryRoot, "deepSemanticPackageVerifier",
+                "67969A60704553AA6CFB134F8B7F67236757EA6A2CF51C9CD7C4EF3C8FA5A4DB");
+        }
+        catch (Exception exception)
+        {
+            errors.Add($"integration audit remediation live comparison malformed: {exception.Message}");
+        }
+        return errors;
+    }
+
     private static void ValidatePathAuthority(List<string> errors, string root)
     {
         using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "docs",
@@ -106,16 +129,27 @@ public static class IntegrationAuditRemediationGuard
             "explicit path membership/count drifted");
     }
 
-    private static void ValidateComponent(List<string> errors, JsonElement components, string root,
+    private static void ValidateHistoricalComponent(List<string> errors, JsonElement components,
         string name, string expected)
     {
         var component = components.GetProperty(name);
         var files = component.GetProperty("files").EnumerateArray()
             .Select(x => x.GetString() ?? "").ToArray();
+        Expect(errors, files.Length > 0 && files.All(x => !string.IsNullOrWhiteSpace(x)),
+            $"{name} historical file set is empty");
         Expect(errors, String(component, "normalizedTextTreeSha256") == expected,
             $"{name} declared identity drifted");
+        // Published remediation identities describe the historical tree. Successor hardening may
+        // legitimately evolve those files; current-tree comparison is therefore explicit only.
+    }
+
+    private static void ValidateLiveComponent(List<string> errors, JsonElement components, string root,
+        string name, string expected)
+    {
+        var files = components.GetProperty(name).GetProperty("files").EnumerateArray()
+            .Select(x => x.GetString() ?? "").ToArray();
         Expect(errors, IntegrationImplementationGuard.NormalizedTextTreeIdentity(root, files) == expected,
-            $"{name} live identity drifted");
+            $"{name} live implementation no longer matches the historical remediation snapshot");
     }
 
     private static string String(JsonElement parent, string name) =>

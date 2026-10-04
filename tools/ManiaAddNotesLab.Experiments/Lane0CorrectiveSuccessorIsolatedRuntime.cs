@@ -13,17 +13,30 @@ internal sealed record Lane0IntegrationPreparedRuntime(
     string ExecutionRoot, string WorkerAssemblyPath, string WorkerAssemblySha256,
     Lane0IntegrationRuntimeProvenance Provenance);
 
+internal sealed record Lane0IntegrationWorkerAuthorityRequest(
+    string CanonicalSourceRoot, string ExpectedHead,
+    Lane0IntegrationRuntimeIdentities ExpectedIdentities);
+
+internal sealed record Lane0IntegrationWorkerAuthorityResponse(
+    string CanonicalBindingSha256, Lane0IntegrationRuntimeIdentities ObservedIdentities,
+    Lane0IntegrationRuntimeProvenance Provenance);
+
 internal sealed record Lane0IntegrationScientificRuntimeResult(
     Lane0SuccessorEvaluationPass First, Lane0SuccessorEvaluationPass Second,
-    Lane0IntegrationRuntimeProvenance Provenance);
+    Lane0IntegrationRuntimeProvenance Provenance,
+    string FirstFinalArtifactRoot, string SecondFinalArtifactRoot);
 
 internal interface ILane0IntegrationIsolatedScientificRuntime
 {
     Lane0IntegrationPreparedRuntime Prepare(string canonicalExecutionRoot, string expectedHead);
+    Lane0IntegrationWorkerAuthorityResponse CreateOfficialAuthorityReceipt(
+        Lane0IntegrationPreparedRuntime prepared, string canonicalSourceRoot,
+        string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities);
     Lane0IntegrationScientificRuntimeResult Execute(
         Lane0IntegrationPreparedRuntime prepared,
         ImmutableArray<Lane0CorrectiveChartInput> inputs,
-        Lane0SuccessorEvaluationContext context);
+        Lane0SuccessorEvaluationContext context,
+        Lane0IntegrationRuntimeIdentities identities);
 }
 
 internal sealed record Lane0IntegrationWorkerChart(
@@ -32,7 +45,8 @@ internal sealed record Lane0IntegrationWorkerChart(
 
 internal sealed record Lane0IntegrationWorkerRequest(
     ImmutableArray<Lane0IntegrationWorkerChart> Charts,
-    Lane0SuccessorEvaluationContext Context);
+    Lane0SuccessorEvaluationContext Context,
+    Lane0IntegrationRuntimeIdentities Identities);
 
 internal sealed record Lane0IntegrationWorkerPassMetadata(
     string ScientificOutcome, ImmutableArray<string> IntegrityFailures,
@@ -72,7 +86,9 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
             throw new InvalidDataException("Isolated research worker project is absent from ExecutionRoot.");
         var build = Path.Combine(canonicalExecutionRoot, ".artifacts", "integration-worker");
         Directory.CreateDirectory(build);
-        Run("dotnet", ["build", project, "-c", "Release", "-o", build, "--nologo"],
+        Run("dotnet", ["build", project, "-c", "Release", "-o", build, "--nologo",
+                "--ignore-failed-sources", "-p:NuGetAudit=false", "-nodeReuse:false",
+                "-p:UseSharedCompilation=false"],
             canonicalExecutionRoot);
         var assembly = UnderRoot(build, assemblyName);
         if (!File.Exists(assembly))
@@ -89,21 +105,24 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
     public Lane0IntegrationScientificRuntimeResult Execute(
         Lane0IntegrationPreparedRuntime prepared,
         ImmutableArray<Lane0CorrectiveChartInput> inputs,
-        Lane0SuccessorEvaluationContext context)
+        Lane0SuccessorEvaluationContext context,
+        Lane0IntegrationRuntimeIdentities identities)
     {
         Require(Sha256File(prepared.WorkerAssemblyPath) == prepared.WorkerAssemblySha256,
             "Prepared worker assembly changed after the receipt boundary.");
-        var exchange = Path.Combine(prepared.ExecutionRoot, ".artifacts", "integration-exchange");
-        Directory.CreateDirectory(exchange);
-        var requestPath = Path.Combine(exchange, "request.json");
-        var responsePath = Path.Combine(exchange, "response.json");
-        var firstPath = Path.Combine(exchange, "pass-1");
-        var secondPath = Path.Combine(exchange, "pass-2");
+        var staging = Lane0IntegrationOfficialLayout.StagingRoot(prepared.ExecutionRoot);
+        var final = Lane0IntegrationOfficialLayout.FinalArtifactsRoot(prepared.ExecutionRoot);
+        Directory.CreateDirectory(staging);
+        Directory.CreateDirectory(final);
+        var requestPath = Path.Combine(staging, "request.json");
+        var responsePath = Path.Combine(staging, "response.json");
+        var firstPath = Path.Combine(final, "pass-1");
+        var secondPath = Path.Combine(final, "pass-2");
         var charts = inputs.Select(x => new Lane0IntegrationWorkerChart(x.ChartId, x.Chart.KeyCount,
             x.Chart.Lines.ToImmutableArray(), x.Chart.OriginalObjects.ToImmutableArray(),
             x.Chart.TimingPoints.ToImmutableArray())).ToImmutableArray();
         File.WriteAllBytes(requestPath, JsonSerializer.SerializeToUtf8Bytes(
-            new Lane0IntegrationWorkerRequest(charts, context), JsonOptions));
+            new Lane0IntegrationWorkerRequest(charts, context, identities), JsonOptions));
         Run("dotnet", [prepared.WorkerAssemblyPath, "--execute", requestPath, responsePath,
             firstPath, secondPath, "--execution-root", prepared.ExecutionRoot], prepared.ExecutionRoot);
         var response = JsonSerializer.Deserialize<Lane0IntegrationWorkerResponse>(
@@ -113,7 +132,33 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
             prepared.Provenance.RuntimeHead, prepared.WorkerAssemblyPath,
             prepared.WorkerAssemblySha256);
         return new(ToPass(response.First, ReadPackage(firstPath)),
-            ToPass(response.Second, ReadPackage(secondPath)), response.Provenance);
+            ToPass(response.Second, ReadPackage(secondPath)), response.Provenance,
+            firstPath, secondPath);
+    }
+
+    public Lane0IntegrationWorkerAuthorityResponse CreateOfficialAuthorityReceipt(
+        Lane0IntegrationPreparedRuntime prepared, string canonicalSourceRoot,
+        string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities)
+    {
+        Require(Sha256File(prepared.WorkerAssemblyPath) == prepared.WorkerAssemblySha256,
+            "Prepared authority worker assembly changed before receipt creation.");
+        var exchange = Path.GetDirectoryName(prepared.WorkerAssemblyPath)
+            ?? throw new InvalidDataException("Worker build directory is absent.");
+        var requestPath = UnderRoot(exchange, "authority-request.json");
+        var responsePath = UnderRoot(exchange, "authority-response.json");
+        File.WriteAllBytes(requestPath, JsonSerializer.SerializeToUtf8Bytes(
+            new Lane0IntegrationWorkerAuthorityRequest(canonicalSourceRoot, expectedHead,
+                expectedIdentities), JsonOptions));
+        Run("dotnet", [prepared.WorkerAssemblyPath, "--authorize", requestPath, responsePath,
+            "--execution-root", prepared.ExecutionRoot], prepared.ExecutionRoot);
+        var response = JsonSerializer.Deserialize<Lane0IntegrationWorkerAuthorityResponse>(
+            File.ReadAllBytes(responsePath), JsonOptions)
+            ?? throw new InvalidDataException("Authority worker returned no response.");
+        ValidateProvenance(response.Provenance, prepared.ExecutionRoot, expectedHead,
+            prepared.WorkerAssemblyPath, prepared.WorkerAssemblySha256);
+        Require(response.ObservedIdentities == expectedIdentities,
+            "Authority worker observed identities drifted.");
+        return response;
     }
 
     private static Lane0SuccessorEvaluationPass ToPass(Lane0IntegrationWorkerPassMetadata value,
@@ -209,12 +254,17 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
             CreateNoWindow = true
         };
         foreach (var argument in arguments) info.ArgumentList.Add(argument);
+        // Persistent build/compilation servers can inherit redirected pipe handles and keep an
+        // otherwise completed isolated build from reaching an observable process boundary.
+        info.Environment["DOTNET_CLI_USE_MSBUILD_SERVER"] = "0";
+        info.Environment["MSBUILDDISABLENODEREUSE"] = "1";
         using var process = Process.Start(info)
             ?? throw new InvalidOperationException($"Could not start {file}.");
-        var output = process.StandardOutput.ReadToEnd();
-        var error = process.StandardError.ReadToEnd();
+        var outputTask = process.StandardOutput.ReadToEndAsync();
+        var errorTask = process.StandardError.ReadToEndAsync();
         process.WaitForExit();
-        return (process.ExitCode, output, error);
+        Task.WaitAll(outputTask, errorTask);
+        return (process.ExitCode, outputTask.Result, errorTask.Result);
     }
 
     private static readonly JsonSerializerOptions JsonOptions = new()

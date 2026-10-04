@@ -1,10 +1,10 @@
 # Project Status
 
-Última actualización: 2026-10-02. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
+Última actualización: 2026-10-04. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 conserva su cierre histórico **FEASIBILITY_DEMONSTRATED**, pero su certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo C11 autorizado para `243c43a` está **CONSUMED / INVALID / NOT PUBLISHABLE / NO RETRY**. `SCI-01` registra una referencia Spring congelada incorrecta como causa suficiente no exclusiva; F03×F07 permanece cerrado y no existe promoción. Phase 2 del successor permanece históricamente **READY_FOR_INDEPENDENT_EXECUTION_AUDIT**. La integración futura quedó preregistrada y su auditoría independiente cerró **AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS / NO_C11_AUTHORIZATION**; implementación sigue **NOT_STARTED / NOT_AUTHORIZED** y el verificador semántico profundo continúa requerido antes del binding.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 conserva su cierre histórico **FEASIBILITY_DEMONSTRATED**, pero su certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo C11 autorizado para `243c43a` está **CONSUMED / INVALID / NOT PUBLISHABLE / NO RETRY**. `SCI-01` registra una referencia Spring congelada incorrecta como causa suficiente no exclusiva; F03×F07 permanece cerrado y no existe promoción. La integración successor, su remediación y el hardening previo al binding están implementados; el estado actual es **READY_FOR_INDEPENDENT_PREBINDING_AUDIT**. Hubo acceso C11 histórico sólo para inventario explícito read-only, nunca evaluación científica successor. Binding, receipt real y ejecución successor permanecen ausentes.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -48,6 +48,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT — Corrective Successor Integration Preregistration Independent Audit Closure | **COMPLETE — AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS / NO_C11_AUTHORIZATION** | Auditoría de `9986e156` limpia; contrato publicado intacto, implementación no iniciada, semantic verifier requerido antes del binding y ninguna autoridad C11. |
 | LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION — Corrective Successor Integration Implementation | **COMPLETE — READY_FOR_INDEPENDENT_INTEGRATION_AUDIT / NO_C11_AUTHORIZATION** | Adapter, runner interno, launcher y semantic verifier implementados y congelados; sin binding, receipt real, C11, ejecución o exposición de producto. |
 | LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION — Integration Audit Remediation | **COMPLETE — READY_FOR_INDEPENDENT_REMEDIATION_AUDIT** | R1–R4 cerrados; inventario C11 limitado read-only; sin ciencia C11, binding, receipt real, one-shot ni cambio conductual. |
+| LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING — Integration Pre-Binding Hardening | **COMPLETE — READY_FOR_INDEPENDENT_PREBINDING_AUDIT** | X1–X4 cerrados con fixtures sintéticos: autoridad no redirigible, final artifacts de ExecutionRoot y provenance del worker real; sin C11 en esta fase, binding, receipt real ni ejecución. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -305,20 +306,20 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 `F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION**; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. LANE.0 conserva sólo sus cifras históricas y su certificación está **SUSPENDED / PENDING_RECERTIFICATION**. El intento correctivo oficial está consumido, terminó `INVALID / NOT PUBLISHABLE` y no puede reintentarse. La integración successor está implementada y se detiene en **HUMAN_REVIEW_REQUIRED** antes de publicación y auditoría independiente. No hay binding, receipt real, ejecución ni C11.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION — COMPLETE — OUTCOME READY_FOR_INDEPENDENT_REMEDIATION_AUDIT<br>
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING — COMPLETE — OUTCOME READY_FOR_INDEPENDENT_PREBINDING_AUDIT<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
 Next behavioral authorization: N/A<br>
 Retry: prohibited<br>
-Successor: Integration audit remediation complete / independent remediation audit pending / C11 science not authorized<br>
+Successor: Integration prebinding hardening complete / independent prebinding audit pending / C11 science not authorized<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 1099 passed / 0 failed / 0 skipped
+Tests: 1122 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

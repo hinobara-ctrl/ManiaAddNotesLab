@@ -10,6 +10,11 @@ internal sealed record Lane0IntegrationResearchRequest(
     VerifiedFrozenC11Manifest Manifest,
     ImmutableArray<Lane0CorrectiveSuccessorReference> References);
 
+internal sealed record Lane0IntegrationOfficialResearchRequest(
+    Lane0IntegrationOfficialLaunchRequest Launch,
+    VerifiedFrozenC11Manifest Manifest,
+    ImmutableArray<Lane0CorrectiveSuccessorReference> References);
+
 internal sealed record Lane0IntegrationResearchResult(
     string Classification, string? ScientificOutcome, bool ReceiptConsumed,
     int ScientificPassesStarted, int ScientificPassesCompleted,
@@ -61,18 +66,15 @@ internal sealed class Lane0CorrectiveSuccessorInternalResearchRunner
     private readonly Lane0CorrectiveSuccessorIsolatedLauncher launcher;
     private readonly ILane0IntegrationFrozenCorpusAdapter adapter;
     private readonly ILane0IntegrationDeepSemanticVerifier semanticVerifier;
-    private readonly ILane0IntegrationPackageFinalizer packageFinalizer;
 
     internal Lane0CorrectiveSuccessorInternalResearchRunner(
         Lane0CorrectiveSuccessorIsolatedLauncher launcher,
         ILane0IntegrationFrozenCorpusAdapter adapter,
-        ILane0IntegrationDeepSemanticVerifier semanticVerifier,
-        ILane0IntegrationPackageFinalizer packageFinalizer)
+        ILane0IntegrationDeepSemanticVerifier semanticVerifier)
     {
         this.launcher = launcher;
         this.adapter = adapter;
         this.semanticVerifier = semanticVerifier;
-        this.packageFinalizer = packageFinalizer;
     }
 
     internal Lane0IntegrationResearchResult ExecuteSyntheticOrFutureAuthorized(
@@ -89,6 +91,34 @@ internal sealed class Lane0CorrectiveSuccessorInternalResearchRunner
                 ImmutableArray<string>.Empty, exception.Message);
         }
 
+        return ExecuteAfterReceipt(preReceipt, request.Manifest, request.References,
+            request.Launch.ExpectedSourcePublicHead, request.Launch.ExpectedIdentities);
+    }
+
+    internal Lane0IntegrationResearchResult ExecuteOfficial(
+        Lane0IntegrationOfficialResearchRequest request)
+    {
+        try
+        {
+            var lease = launcher.AcquireOfficial(request.Launch);
+            return ExecuteAfterReceipt(lease, request.Manifest, request.References,
+                request.Launch.ExpectedSourcePublicHead, request.Launch.ExpectedIdentities);
+        }
+        catch (Exception exception)
+        {
+            var paths = Lane0IntegrationOfficialLayout.Derive(
+                Path.GetFullPath(request.Launch.SourceRoot),
+                Path.GetFullPath(request.Launch.ExecutionRoot));
+            return new("NON_PUBLISHABLE", null, File.Exists(paths.DurableReceiptPath), 0, 0,
+                ImmutableArray<string>.Empty, exception.Message);
+        }
+    }
+
+    private Lane0IntegrationResearchResult ExecuteAfterReceipt(
+        Lane0IntegrationPreReceiptLease preReceipt, VerifiedFrozenC11Manifest manifest,
+        ImmutableArray<Lane0CorrectiveSuccessorReference> references,
+        string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities)
+    {
         var steps = preReceipt.CompletedAuthoritySteps.ToBuilder();
         var started = 0;
         var completed = 0;
@@ -96,18 +126,18 @@ internal sealed class Lane0CorrectiveSuccessorInternalResearchRunner
         {
             var postReceipt = launcher.InterpretCorpusRoot(preReceipt);
             steps = postReceipt.CompletedAuthoritySteps.ToBuilder();
-            var admitted = adapter.Admit(request.Manifest, postReceipt.CanonicalCorpusRoot);
+            var admitted = adapter.Admit(manifest, postReceipt.CanonicalCorpusRoot);
             steps.Add(Lane0CorrectiveSuccessorIsolatedLauncher.AuthorityOrder[15]);
             var context = new Lane0SuccessorEvaluationContext(
-                request.Launch.ExpectedSourcePublicHead,
-                request.Launch.ExpectedIdentities.Phase1ContractSha256,
-                request.Launch.ExpectedIdentities.Phase2ContractSha256,
-                request.Launch.ExpectedIdentities.ManifestSha256,
-                request.Launch.ExpectedIdentities.ScientificImplementationSha256,
-                request.Launch.ExpectedIdentities.Phase2HarnessSha256,
-                request.Launch.ExpectedIdentities.Phase2PackageVerifierSha256,
-                request.Launch.ExpectedIdentities.FrozenDependenciesSha256,
-                request.References);
+                expectedHead,
+                expectedIdentities.Phase1ContractSha256,
+                expectedIdentities.Phase2ContractSha256,
+                expectedIdentities.ManifestSha256,
+                expectedIdentities.ScientificImplementationSha256,
+                expectedIdentities.Phase2HarnessSha256,
+                expectedIdentities.Phase2PackageVerifierSha256,
+                expectedIdentities.FrozenDependenciesSha256,
+                references);
 
             started += 2;
             var runtime = launcher.ExecuteScience(preReceipt,
@@ -118,13 +148,11 @@ internal sealed class Lane0CorrectiveSuccessorInternalResearchRunner
             steps.Add(Lane0CorrectiveSuccessorIsolatedLauncher.AuthorityOrder[16]);
             steps.Add(Lane0CorrectiveSuccessorIsolatedLauncher.AuthorityOrder[17]);
 
-            Require(runtime.Provenance.RuntimeHead == request.Launch.ExpectedSourcePublicHead,
+            Require(runtime.Provenance.RuntimeHead == expectedHead,
                 "Child scientific runtime provenance HEAD drifted.");
 
-            var firstPackage = packageFinalizer.Finalize(first.Package,
-                preReceipt.ObservedIdentities, first.DefaultChanged);
-            var secondPackage = packageFinalizer.Finalize(second.Package,
-                preReceipt.ObservedIdentities, second.DefaultChanged);
+            var firstPackage = first.Package;
+            var secondPackage = second.Package;
 
             Require(firstPackage.Keys.SequenceEqual(secondPackage.Keys)
                 && firstPackage.All(x => x.Value.AsSpan().SequenceEqual(secondPackage[x.Key])),
@@ -142,7 +170,7 @@ internal sealed class Lane0CorrectiveSuccessorInternalResearchRunner
                 "Successor science did not produce a publishable classification.");
 
             semanticVerifier.Verify(firstPackage, new(
-                request.Launch.ExpectedIdentities, request.Launch.ExpectedSourcePublicHead,
+                expectedIdentities, expectedHead,
                 first.ScientificOutcome, admitted, first.DefaultChanged));
             steps.Add(Lane0CorrectiveSuccessorIsolatedLauncher.AuthorityOrder[19]);
             steps.Add(Lane0CorrectiveSuccessorIsolatedLauncher.AuthorityOrder[20]);

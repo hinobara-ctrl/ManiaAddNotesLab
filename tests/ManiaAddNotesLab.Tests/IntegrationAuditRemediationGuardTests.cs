@@ -8,12 +8,21 @@ namespace ManiaAddNotesLab.Tests;
 public sealed class IntegrationAuditRemediationGuardTests
 {
     [Fact]
-    public void PublishedRemediationContractAndLiveComponentsAreConsistent()
+    public void PublishedRemediationContractRemainsInternallyConsistent()
     {
         using var document = JsonDocument.Parse(File.ReadAllText(ContractPath()));
         var actual = IntegrationImplementationGuard.CanonicalJsonHash(document.RootElement.GetProperty("contract"));
         Assert.True(actual == IntegrationAuditRemediationGuard.ContractIdentity, $"actual={actual}");
         Assert.Empty(IntegrationAuditRemediationGuard.Validate(document.RootElement, Root()));
+    }
+
+    [Fact]
+    public void HistoricalIntegrationRemediationRouteRejectsPrebindingHardenedLiveIdentity()
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(ContractPath()));
+        Assert.Empty(IntegrationAuditRemediationGuard.Validate(document.RootElement, Root()));
+        Assert.NotEmpty(IntegrationAuditRemediationGuard.ValidateAgainstLive(
+            document.RootElement, Root()));
     }
 
     [Theory]

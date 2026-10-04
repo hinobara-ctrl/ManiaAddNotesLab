@@ -29,6 +29,12 @@ internal sealed record Lane0IntegrationLaunchRequest(
     string SourceRoot, string ExecutionRoot,
     string CorpusRootToken);
 
+internal sealed record Lane0IntegrationOfficialLaunchRequest(
+    string ExpectedSourcePublicHead,
+    Lane0IntegrationRuntimeIdentities ExpectedIdentities,
+    string SourceRoot, string ExecutionRoot,
+    string CorpusRootToken);
+
 internal sealed record Lane0IntegrationPreReceiptLease(
     Lane0IntegrationLaunchRequest Request, string CanonicalSourceRoot,
     string CanonicalExecutionRoot, string CanonicalBindingSha256,
@@ -112,6 +118,80 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
     internal Lane0IntegrationPreReceiptLease Acquire(
         Lane0IntegrationLaunchRequest request, ILane0IntegrationAuthorityStore store)
     {
+        var binding = request.Binding ?? throw new InvalidDataException("Synthetic binding seam is absent.");
+        return AcquireCore(request, binding, store);
+    }
+
+    internal Lane0IntegrationPreReceiptLease AcquireOfficial(Lane0IntegrationOfficialLaunchRequest official)
+    {
+        var completed = ImmutableArray.CreateBuilder<string>();
+        var source = Path.GetFullPath(official.SourceRoot);
+        var execution = Path.GetFullPath(official.ExecutionRoot);
+        var paths = Lane0IntegrationOfficialLayout.Derive(source, execution);
+        var observedHead = observer.ObserveHead(source);
+        Require(observedHead == official.ExpectedSourcePublicHead,
+            "Source public HEAD does not equal the expected audited integration HEAD.");
+        Require(official.ExpectedSourcePublicHead != HistoricalImplementationBaseline,
+            "The implementation baseline is not eligible as an execution binding target.");
+        completed.Add(AuthorityOrder[0]);
+        Require(official.ExpectedIdentities.IntegrationPreregistrationSha256 ==
+            "7C0A86BF3C6647CA7092C4D3390EB97EA6E11D7E5429ECBA6F499D55C5417A02",
+            "Integration preregistration identity drifted.");
+        completed.Add(AuthorityOrder[1]);
+        var observedIdentities = observer.ObserveRuntimeIdentities(source);
+        Require(official.ExpectedIdentities == observedIdentities,
+            "Observed runtime identities do not equal the frozen integration identities.");
+        completed.Add(AuthorityOrder[2]);
+        completed.Add(AuthorityOrder[3]);
+        // Host loading is only an early fail-closed preflight. The ExecutionRoot-built worker
+        // independently reloads these fixed bytes and is the process that creates authority.
+        var binding = new Lane0IntegrationCanonicalBindingLoader().Load(paths.CanonicalBindingPath);
+        ValidateBinding(binding, official.ExpectedSourcePublicHead, official.ExpectedIdentities);
+        completed.Add(AuthorityOrder[4]);
+        Require(binding.Fields.ExplicitHumanAuthorization, "Explicit authorization is false.");
+        completed.Add(AuthorityOrder[5]);
+        Require(binding.Fields.AuthorizedExecutionCount == 1,
+            "Authorized execution count must equal one.");
+        completed.Add(AuthorityOrder[6]);
+        Require(observer.ObserveTrackedClean(source), "Source tracked tree is dirty.");
+        completed.Add(AuthorityOrder[7]);
+        Require(Path.IsPathFullyQualified(official.ExecutionRoot), "ExecutionRoot must be absolute.");
+        Require(RootsAreLexicallyIsolated(source, execution),
+            "SourceRoot and ExecutionRoot must be lexically disjoint and nonnested.");
+        Require(!Directory.Exists(execution) && !File.Exists(execution),
+            "ExecutionRoot must initially be nonexistent.");
+        var checkout = checkoutMaterializer.CreateDetachedCheckout(source, execution,
+            official.ExpectedSourcePublicHead);
+        Require(checkout.Head == official.ExpectedSourcePublicHead && checkout.Detached
+            && checkout.TrackedClean && !checkout.UsedHardlinks && !checkout.ReusedSourceBuildOutputs,
+            "Isolated checkout evidence does not prove exact detached pristine no-hardlink materialization.");
+        var prepared = scientificRuntime.Prepare(execution, official.ExpectedSourcePublicHead);
+        Require(prepared.Provenance.RuntimeHead == observedHead,
+            "Binding/source/isolated/authority-runtime HEAD equality failed.");
+        completed.Add(AuthorityOrder[8]);
+        completed.Add(AuthorityOrder[9]);
+        var store = new Lane0IntegrationFileAuthorityStore(paths.DurableReceiptPath,
+            paths.FinalArtifactsRoot, paths.StagingRoot);
+        Require(!store.ReceiptExists, "Durable receipt already exists.");
+        completed.Add(AuthorityOrder[10]);
+        Require(!store.OutputOrStagingExists, "Output or staging already exists.");
+        completed.Add(AuthorityOrder[11]);
+        var authority = scientificRuntime.CreateOfficialAuthorityReceipt(prepared, source,
+            official.ExpectedSourcePublicHead, official.ExpectedIdentities);
+        Require(authority.CanonicalBindingSha256 == binding.CanonicalSha256,
+            "Authority worker binding identity disagrees with canonical preflight bytes.");
+        completed.Add(AuthorityOrder[12]);
+        var request = new Lane0IntegrationLaunchRequest(official.ExpectedSourcePublicHead,
+            official.ExpectedIdentities, null, official.SourceRoot, official.ExecutionRoot,
+            official.CorpusRootToken);
+        return new(request, source, execution, authority.CanonicalBindingSha256,
+            authority.ObservedIdentities, prepared, completed.ToImmutable());
+    }
+
+    private Lane0IntegrationPreReceiptLease AcquireCore(
+        Lane0IntegrationLaunchRequest request, Lane0IntegrationVerifiedBinding binding,
+        ILane0IntegrationAuthorityStore store)
+    {
         var completed = ImmutableArray.CreateBuilder<string>();
         var source = Path.GetFullPath(request.SourceRoot);
         var observedSourceHead = observer.ObserveHead(source);
@@ -128,18 +208,9 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
         Require(request.ExpectedIdentities == observedIdentities,
             "Observed runtime identities do not equal the frozen integration identities.");
         completed.Add(AuthorityOrder[2]);
-        var binding = request.Binding ?? throw new InvalidDataException("Canonical binding is absent.");
         completed.Add(AuthorityOrder[3]);
-        var canonical = CanonicalBindingBytes(binding.Fields);
-        Require(binding.CanonicalBytes.AsSpan().SequenceEqual(canonical),
-            "Canonical binding bytes drifted.");
-        var bindingHash = Convert.ToHexString(SHA256.HashData(canonical));
-        Require(binding.CanonicalSha256 == bindingHash, "Canonical binding hash drifted.");
-        Require(binding.Fields.SchemaVersion == BindingSchema, "Canonical binding schema drifted.");
-        Require(binding.Fields.ApprovedPublicHead == request.ExpectedSourcePublicHead,
-            "Binding HEAD drifted.");
-        Require(binding.Fields.Identities == request.ExpectedIdentities,
-            "Binding runtime identities drifted.");
+        var bindingHash = ValidateBinding(binding, request.ExpectedSourcePublicHead,
+            request.ExpectedIdentities);
         completed.Add(AuthorityOrder[4]);
         Require(binding.Fields.ExplicitHumanAuthorization, "Explicit authorization is false.");
         completed.Add(AuthorityOrder[5]);
@@ -180,7 +251,8 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
         Lane0IntegrationPreReceiptLease lease,
         ImmutableArray<Lane0CorrectiveChartInput> inputs,
         Lane0SuccessorEvaluationContext context) =>
-        scientificRuntime.Execute(lease.PreparedRuntime, inputs, context);
+        scientificRuntime.Execute(lease.PreparedRuntime, inputs, context,
+            lease.ObservedIdentities);
 
     internal Lane0IntegrationPostReceiptLease InterpretCorpusRoot(Lane0IntegrationPreReceiptLease lease)
     {
@@ -218,7 +290,7 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
             WriteIndented = false
         }), (byte)'\n'];
 
-    private static byte[] BuildReceipt(Lane0IntegrationLaunchRequest request, string bindingHash) =>
+    internal static byte[] BuildReceipt(Lane0IntegrationLaunchRequest request, string bindingHash) =>
         [.. JsonSerializer.SerializeToUtf8Bytes(new
         {
             schemaVersion = ReceiptSchema,
@@ -228,6 +300,21 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
             integrationExecutionContractSha256 = request.ExpectedIdentities.IntegrationExecutionContractSha256,
             attemptCount = 1
         }, new JsonSerializerOptions { WriteIndented = true }), (byte)'\n'];
+
+    private static string ValidateBinding(Lane0IntegrationVerifiedBinding binding,
+        string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities)
+    {
+        var canonical = CanonicalBindingBytes(binding.Fields);
+        Require(binding.CanonicalBytes.AsSpan().SequenceEqual(canonical),
+            "Canonical binding bytes drifted.");
+        var bindingHash = Convert.ToHexString(SHA256.HashData(canonical));
+        Require(binding.CanonicalSha256 == bindingHash, "Canonical binding hash drifted.");
+        Require(binding.Fields.SchemaVersion == BindingSchema, "Canonical binding schema drifted.");
+        Require(binding.Fields.ApprovedPublicHead == expectedHead, "Binding HEAD drifted.");
+        Require(binding.Fields.Identities == expectedIdentities,
+            "Binding runtime identities drifted.");
+        return bindingHash;
+    }
 
     private static bool IsAncestor(string parent, string child, StringComparison comparison) =>
         child.StartsWith(parent + Path.DirectorySeparatorChar, comparison)
@@ -266,6 +353,7 @@ internal sealed class GitAndFileIntegrationAuthorityObserver : ILane0Integration
         ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorInternalResearchRunner.cs"];
     private static readonly string[] LauncherFiles =
     [
+        "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorPrebindingAuthority.cs",
         "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorIsolatedLauncher.cs",
         "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorIsolatedRuntime.cs",
         "tools/ManiaAddNotesLab.Experiments/ManiaAddNotesLab.Experiments.csproj",

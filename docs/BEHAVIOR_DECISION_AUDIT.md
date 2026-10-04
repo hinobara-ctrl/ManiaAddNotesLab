@@ -1,7 +1,7 @@
 # Behavior Decision Audit
 
 Estado: inventario vivo; conserva la historia de Phase A y sus refinamientos posteriores.
-Última actualización: 2026-09-28.
+Última actualización: 2026-10-04.
 Alcance: Core, parser/writer, CLI, Web y política experimental vigente.
 
 Esta auditoría no elimina ni modifica decisiones. Identifica números y elecciones no numéricas que pueden afectar el resultado para que futuras sustituciones sean versionadas y atribuibles.
@@ -192,26 +192,30 @@ Estado: **COMPLETE — READY_FOR_HUMAN_REVIEW / NO_C11_AUTHORIZATION**. Phase 1 
 
 Estado: **COMPLETE — AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS / NO_C11_AUTHORIZATION**. Phase 1 fue publicada en `6a7c44d` y auditada sin defecto científico. Phase 2 no ha comenzado: debe acoplar el validator a `VerifiedFrozenC11Manifest` antes de cualquier autoridad y permanece `NOT_AUTHORIZED`. No existe binding, receipt, C11, RNG, conducta ni cambio de defaults.
 
-## LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION — estado actual
+## LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION — cierre histórico
 
 Estado: **COMPLETE — READY_FOR_INDEPENDENT_EXECUTION_AUDIT / NO_C11_AUTHORIZATION**. La preparación successor cierra `VERIFIED_MANIFEST_OBJECT_COUPLING`, separa su ruta del evaluator consumido, congela A+segundo chart/`9+2`, exige dos paquetes byte-idénticos y prueba one-shot/concurrencia sólo en temp. No se creó binding ni receipt canónico, no se accedió C11, no hubo resultado científico ni cambio de comportamiento/RNG/default. Publicación y auditoría siguen sin constituir autorización.
 
-## LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT — cierre actual
+## LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT — cierre histórico
 
 Estado: **COMPLETE — AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS / NO_C11_AUTHORIZATION**. La auditoría independiente confirmó R2-01…R2-08 e identidades congeladas sin alterar el outcome histórico de Phase 2. El package verifier actual es suficiente para determinismo in-process; un verificador semántico profundo es `REQUIRED_BEFORE_BINDING`. La integración, el adapter oficial, el internal research runner y el isolated execution launcher permanecen `NOT_STARTED / NOT_AUTHORIZED`. Auditoría, binding, autorización humana y ejecución son eventos distintos; no existe binding, receipt, C11 ni resultado científico real.
 
-## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION — cierre actual
+## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION — cierre histórico
 
 Estado: **COMPLETE — READY_FOR_HUMAN_REVIEW / NO_C11_AUTHORIZATION**. El diseño futuro de adapter, runner interno, launcher aislado y verificador semántico profundo está preregistrado con identidades aún `NOT_YET_IMPLEMENTED`, orden de autoridad exacto y stop conditions explícitas. Esto no implementa integración, no cambia engine, clasificador, RNG, defaults ni HardValidity, y no emite binding o receipt. La ejecución C11 continúa `NOT_STARTED / NOT_AUTHORIZED`.
 
-## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT — cierre actual
+## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT — cierre histórico
 
 Estado: **COMPLETE — AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS / NO_C11_AUTHORIZATION**. La auditoría independiente de `9986e156` confirmó sin blocker la identidad canónica, freeze Phase 2, duplicado exacto, coupling del manifest, linaje contractual y orden de autoridad. El rechazo histórico es comportamiento esperado de un test que pasa y el aislamiento se limita al alcance canónico/léxico declarado. Auditoría, binding, autorización, receipt y ejecución permanecen distintos; integración continúa `NOT_STARTED / NOT_AUTHORIZED`.
 
-## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION — cierre actual
+## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION — cierre histórico
 
 Estado: **COMPLETE — READY_FOR_INDEPENDENT_INTEGRATION_AUDIT / NO_C11_AUTHORIZATION**. Las cuatro superficies internas preregistradas están implementadas con identidades finitas, orden de autoridad 1–21, opacidad pre-receipt y verificación semántica independiente. No cambia engine, HardValidity, selección, RNG, defaults ni producto. No existe binding, receipt real, acceso C11 ni ejecución; el siguiente paso requiere revisión y publicación humana.
 
-## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION — cierre actual
+## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION — cierre histórico
 
 Estado: **COMPLETE — READY_FOR_INDEPENDENT_REMEDIATION_AUDIT**. R1–R4 corrigen únicamente autoridad/provenance, membresía exacta del corpus, verificación semántica y origen real del worker aislado. La inspección excepcional C11 se limitó al inventario read-only de 12 paths congelados; no hubo evaluación científica, RNG, binding, receipt real ni one-shot. Engine, clasificador causal, HardValidity, defaults y producto permanecen invariantes.
+
+## LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING — estado actual
+
+Estado: **COMPLETE — READY_FOR_INDEPENDENT_PREBINDING_AUDIT**. X1–X4 fijan una única AuthorizationRoot, binding/receipt no redirigibles, staging y final artifacts bajo ExecutionRoot, finalización dentro del worker aislado y provenance pre/post receipt. El acceso C11 histórico fue sólo `READ_ONLY_EXPLICIT_PATH_INVENTORY_ONLY`; esta fase no accedió C11 y nunca ejecutó evaluación científica successor. Binding, receipt real y ejecución real siguen ausentes. No cambia engine, clasificador, HardValidity, RNG, defaults o producto.

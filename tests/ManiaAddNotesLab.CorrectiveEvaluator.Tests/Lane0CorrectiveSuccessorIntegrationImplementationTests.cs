@@ -173,6 +173,107 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
     }
 
     [Fact]
+    public void OfficialAuthorityLayoutIsFixedAndHasNoCallerRedirectSurface()
+    {
+        using var temp = new TempDirectory();
+        var request = LaunchRequest(temp.Path, "opaque");
+        var official = OfficialRequest(request);
+        var paths = Lane0IntegrationOfficialLayout.Derive(request.SourceRoot, request.ExecutionRoot);
+        Assert.EndsWith(Path.Combine("lane0-corrective-successor-integration-authorization",
+            "canonical-binding.json"), paths.CanonicalBindingPath);
+        Assert.Contains(Lane0IntegrationOfficialLayout.OneShotNamespace, paths.DurableReceiptPath);
+        Assert.StartsWith(Path.GetFullPath(request.SourceRoot), paths.AuthorizationRoot,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith(Path.GetFullPath(request.ExecutionRoot), paths.StagingRoot,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith(Path.GetFullPath(request.ExecutionRoot), paths.FinalArtifactsRoot,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(typeof(Lane0IntegrationOfficialLaunchRequest).GetProperties(), x =>
+            x.Name.Contains("Binding", StringComparison.Ordinal)
+            || x.Name.Contains("Receipt", StringComparison.Ordinal)
+            || x.Name.Contains("AuthorizationRoot", StringComparison.Ordinal)
+            || x.Name.Contains("Staging", StringComparison.Ordinal)
+            || x.Name.Contains("Output", StringComparison.Ordinal));
+        Assert.Equal(request.SourceRoot, official.SourceRoot);
+    }
+
+    [Fact]
+    public void OfficialPathIgnoresAlternateBindingAndRequiresCanonicalBindingBytes()
+    {
+        using var temp = new TempDirectory();
+        var request = LaunchRequest(temp.Path, "opaque");
+        var alternate = Path.Combine(temp.Path, "alternate", "binding.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(alternate)!);
+        File.WriteAllBytes(alternate, Lane0IntegrationCanonicalBindingLoader
+            .CanonicalDocumentBytes(request.Binding!.Fields));
+        var launcher = SyntheticLauncher(new FakeCheckoutMaterializer());
+        Assert.Throws<InvalidDataException>(() => launcher.AcquireOfficial(OfficialRequest(request)));
+        WriteOfficialBinding(request);
+        var lease = launcher.AcquireOfficial(OfficialRequest(request));
+        Assert.Equal(request.ExpectedSourcePublicHead, lease.PreparedRuntime.Provenance.RuntimeHead);
+    }
+
+    [Theory]
+    [InlineData("hash")]
+    [InlineData("schema")]
+    [InlineData("head")]
+    [InlineData("identities")]
+    [InlineData("authorization")]
+    [InlineData("count")]
+    public void OfficialCanonicalBindingBadControlsFailClosed(string mutation)
+    {
+        using var temp = new TempDirectory();
+        var request = LaunchRequest(temp.Path, "opaque");
+        var fields = request.Binding!.Fields;
+        fields = mutation switch
+        {
+            "schema" => fields with { SchemaVersion = "BAD" },
+            "head" => fields with { ApprovedPublicHead = new string('B', 40) },
+            "identities" => fields with { Identities = fields.Identities with { AdapterSha256 = "BAD" } },
+            "authorization" => fields with { ExplicitHumanAuthorization = false },
+            "count" => fields with { AuthorizedExecutionCount = 2 },
+            _ => fields
+        };
+        WriteOfficialBinding(request, fields, mutation == "hash" ? "BAD" : null);
+        Assert.Throws<InvalidDataException>(() => SyntheticLauncher(new FakeCheckoutMaterializer())
+            .AcquireOfficial(OfficialRequest(request)));
+    }
+
+    [Fact]
+    public void CanonicalReceiptCannotBeRearmedByAlternateDirectoryDeletion()
+    {
+        using var temp = new TempDirectory();
+        var request = LaunchRequest(temp.Path, "opaque");
+        WriteOfficialBinding(request);
+        var paths = Lane0IntegrationOfficialLayout.Derive(request.SourceRoot, request.ExecutionRoot);
+        Directory.CreateDirectory(Path.GetDirectoryName(paths.DurableReceiptPath)!);
+        File.WriteAllText(paths.DurableReceiptPath, "consumed");
+        var alternate = Path.Combine(temp.Path, "alternate-attempt");
+        Directory.CreateDirectory(alternate);
+        Directory.Delete(alternate);
+        var launcher = SyntheticLauncher(new FakeCheckoutMaterializer());
+        Assert.Throws<InvalidDataException>(() => launcher.AcquireOfficial(OfficialRequest(request)));
+        Assert.True(File.Exists(paths.DurableReceiptPath));
+    }
+
+    [Fact]
+    public async Task FixedCanonicalReceiptNamespaceHasAtMostOneConcurrentWinner()
+    {
+        using var temp = new TempDirectory();
+        var request = LaunchRequest(temp.Path, "opaque");
+        var paths = Lane0IntegrationOfficialLayout.Derive(request.SourceRoot, request.ExecutionRoot);
+        var stores = Enumerable.Range(0, 8).Select(_ => new Lane0IntegrationFileAuthorityStore(
+            paths.DurableReceiptPath, paths.FinalArtifactsRoot, paths.StagingRoot)).ToArray();
+        var wins = 0;
+        await Task.WhenAll(stores.Select(store => Task.Run(() =>
+        {
+            try { store.CreateDurableReceipt(Encoding.UTF8.GetBytes("synthetic\n")); Interlocked.Increment(ref wins); }
+            catch (IOException) { }
+        })));
+        Assert.Equal(1, wins);
+    }
+
+    [Fact]
     public async Task SyntheticDurableReceiptHasAtMostOneConcurrentWinnerAndCannotBeReused()
     {
         using var temp = new TempDirectory();
@@ -197,10 +298,9 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var manifest = Manifest();
         var science = new CountingScience(identical: true);
         var semantic = new CountingSemanticVerifier();
-        var finalizer = new IdentityPackageFinalizer();
         var runner = new Lane0CorrectiveSuccessorInternalResearchRunner(
             SyntheticLauncher(new FakeCheckoutMaterializer(), science),
-            new FakeAdapter(manifest), semantic, finalizer);
+            new FakeAdapter(manifest), semantic);
         var store = new MemoryAuthorityStore();
         var result = runner.ExecuteSyntheticOrFutureAuthorized(new(
             LaunchRequest(temp.Path, Path.Combine(temp.Path, "corpus")), manifest,
@@ -208,7 +308,6 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
 
         Assert.True(result.Classification == "PUBLISHABLE", result.Reason);
         Assert.Equal(2, science.Calls);
-        Assert.Equal(2, finalizer.Calls);
         Assert.Equal(1, semantic.Calls);
         Assert.Equal(21, result.CompletedAuthoritySteps.Length);
         Assert.True(result.ReceiptConsumed);
@@ -223,7 +322,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var semantic = new CountingSemanticVerifier();
         var runner = new Lane0CorrectiveSuccessorInternalResearchRunner(
             SyntheticLauncher(new FakeCheckoutMaterializer(), science),
-            new FakeAdapter(manifest), semantic, new IdentityPackageFinalizer());
+            new FakeAdapter(manifest), semantic);
         var result = runner.ExecuteSyntheticOrFutureAuthorized(new(
             LaunchRequest(temp.Path, Path.Combine(temp.Path, "corpus")), manifest,
             Lane0CorrectiveSuccessorReferenceValidator.FrozenReferences), new MemoryAuthorityStore());
@@ -419,14 +518,98 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var context = new Lane0SuccessorEvaluationContext(head, token, token, token, token, token,
             token, token, Lane0CorrectiveSuccessorReferenceValidator.FrozenReferences);
         var inputs = ImmutableArray.Create(new Lane0CorrectiveChartInput(token, EmptyChart(4)));
-        var result = runtime.Execute(prepared, inputs, context);
+        var result = runtime.Execute(prepared, inputs, context, Identities());
         Assert.Equal(head, result.Provenance.RuntimeHead);
         Assert.Equal(result.First.ScientificOutcome, result.Second.ScientificOutcome);
         Assert.Equal(result.First.Package.Keys, result.Second.Package.Keys);
         Assert.All(result.First.Package.Keys, name =>
             Assert.Equal(result.First.Package[name], result.Second.Package[name]));
+        Assert.StartsWith(Path.GetFullPath(execution), Path.GetFullPath(result.FirstFinalArtifactRoot),
+            StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith(Path.GetFullPath(execution), Path.GetFullPath(result.SecondFinalArtifactRoot),
+            StringComparison.OrdinalIgnoreCase);
         new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier()
             .Verify(result.First.Package, fixture.Expected);
+    }
+
+    [Fact]
+    public void OfficialHostRunnerCannotFinalizeOrMutateWorkerFinalPackages()
+    {
+        var runner = File.ReadAllText(Path.Combine(RepoRoot(), "tools",
+            "ManiaAddNotesLab.Experiments", "Lane0CorrectiveSuccessorInternalResearchRunner.cs"));
+        var worker = File.ReadAllText(Path.Combine(RepoRoot(), "tools",
+            "ManiaAddNotesLab.IntegrationResearchWorker", "Program.cs"));
+        Assert.DoesNotContain("packageFinalizer.Finalize", runner, StringComparison.Ordinal);
+        Assert.DoesNotContain("ILane0IntegrationPackageFinalizer packageFinalizer", runner,
+            StringComparison.Ordinal);
+        Assert.Contains("finalizer.Finalize(firstRaw.Package", worker, StringComparison.Ordinal);
+        Assert.Contains("finalizer.Finalize(secondRaw.Package", worker, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ActualProductionWorkerBuildsFinalizesAndRunsFromDetachedExecutionRoot()
+    {
+        using var temp = new TempDirectory();
+        var source = Path.Combine(temp.Path, "production-source");
+        CopyProjectSources(Path.Combine(RepoRoot(), "src", "ManiaAddNotesLab.Core"),
+            Path.Combine(source, "src", "ManiaAddNotesLab.Core"));
+        CopyProjectSources(Path.Combine(RepoRoot(), "tools", "ManiaAddNotesLab.Experiments"),
+            Path.Combine(source, "tools", "ManiaAddNotesLab.Experiments"));
+        CopyProjectSources(Path.Combine(RepoRoot(), "tools", "ManiaAddNotesLab.IntegrationResearchWorker"),
+            Path.Combine(source, "tools", "ManiaAddNotesLab.IntegrationResearchWorker"));
+        var docs = Path.Combine(source, "docs");
+        Directory.CreateDirectory(docs);
+        foreach (var name in new[]
+        {
+            "lane_0_corrective_successor_preregistration_contract.json",
+            "lane_0_corrective_successor_execution_preparation_contract.json",
+            "lane_0_corrective_successor_integration_preregistration_contract.json",
+            "lane_0_corrective_successor_integration_execution_contract.json",
+            "g1_gate_runtime_manifest.json"
+        }) File.Copy(Path.Combine(RepoRoot(), "docs", name), Path.Combine(docs, name));
+        RunGit(source, "init"); RunGit(source, "config", "user.email", "test@example.invalid");
+        RunGit(source, "config", "user.name", "Test"); RunGit(source, "add", "src", "tools", "docs");
+        RunGit(source, "commit", "-m", "production-worker-fixture");
+        var head = RunGit(source, "rev-parse", "HEAD").Trim();
+        var ids = new GitAndFileIntegrationAuthorityObserver().ObserveRuntimeIdentities(source);
+        var execution = Path.Combine(temp.Path, "production-execution");
+        var binding = new Lane0IntegrationBindingFields(
+            Lane0CorrectiveSuccessorIsolatedLauncher.BindingSchema, head, ids, true, 1);
+        var officialPaths = Lane0IntegrationOfficialLayout.Derive(source, execution);
+        Directory.CreateDirectory(Path.GetDirectoryName(officialPaths.CanonicalBindingPath)!);
+        File.WriteAllBytes(officialPaths.CanonicalBindingPath,
+            Lane0IntegrationCanonicalBindingLoader.CanonicalDocumentBytes(binding));
+        var checkout = new GitDetachedCheckoutMaterializer().CreateDetachedCheckout(source, execution, head);
+        Assert.True(checkout.Detached && checkout.TrackedClean && !checkout.UsedHardlinks);
+        var runtime = new Lane0ExecutionRootScientificRuntime();
+        var prepared = runtime.Prepare(execution, head);
+        var authority = runtime.CreateOfficialAuthorityReceipt(prepared, source, head, ids);
+        Assert.Equal(head, authority.Provenance.RuntimeHead);
+        Assert.Equal(ids, authority.ObservedIdentities);
+        Assert.True(File.Exists(officialPaths.DurableReceiptPath));
+        File.WriteAllText(Path.Combine(source, "tools", "ManiaAddNotesLab.IntegrationResearchWorker",
+            "Program.cs"), "// source drift after detached checkout must not execute\n");
+        var context = new Lane0SuccessorEvaluationContext(head, ids.Phase1ContractSha256,
+            ids.Phase2ContractSha256, ids.ManifestSha256, ids.ScientificImplementationSha256,
+            ids.Phase2HarnessSha256, ids.Phase2PackageVerifierSha256,
+            ids.FrozenDependenciesSha256, Lane0CorrectiveSuccessorReferenceValidator.FrozenReferences);
+        var chartId = new string('C', 64);
+        var result = runtime.Execute(prepared,
+            ImmutableArray.Create(new Lane0CorrectiveChartInput(chartId, EmptyChart(4))), context, ids);
+        Assert.Equal(head, result.Provenance.RuntimeHead);
+        Assert.True(Lane0CorrectiveSuccessorPackage.ByteIdentical(
+            result.First.Package, result.Second.Package));
+        Lane0CorrectiveSuccessorPackage.Verify(result.First.Package);
+        using var identity = JsonDocument.Parse(result.First.Package["execution_identity.json"]);
+        Assert.Equal(ids.AdapterSha256,
+            identity.RootElement.GetProperty("adapterSha256").GetString());
+        Assert.Equal(ids.LauncherSha256,
+            identity.RootElement.GetProperty("launcherSha256").GetString());
+        Assert.StartsWith(Path.GetFullPath(execution), result.FirstFinalArtifactRoot,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.Throws<InvalidDataException>(() =>
+            new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier().Verify(
+                result.First.Package, SemanticFixture().Expected));
     }
 
     [Fact]
@@ -449,6 +632,20 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         {
             Binding = Lane0CorrectiveSuccessorIsolatedLauncher.CreateSyntheticVerifiedBinding(fields)
         };
+    }
+
+    private static Lane0IntegrationOfficialLaunchRequest OfficialRequest(
+        Lane0IntegrationLaunchRequest request) => new(request.ExpectedSourcePublicHead,
+        request.ExpectedIdentities, request.SourceRoot, request.ExecutionRoot, request.CorpusRootToken);
+
+    private static void WriteOfficialBinding(Lane0IntegrationLaunchRequest request,
+        Lane0IntegrationBindingFields? fields = null, string? declaredHash = null)
+    {
+        var paths = Lane0IntegrationOfficialLayout.Derive(request.SourceRoot, request.ExecutionRoot);
+        Directory.CreateDirectory(Path.GetDirectoryName(paths.CanonicalBindingPath)!);
+        File.WriteAllBytes(paths.CanonicalBindingPath,
+            Lane0IntegrationCanonicalBindingLoader.CanonicalDocumentBytes(
+                fields ?? request.Binding!.Fields, declaredHash));
     }
 
     private static Lane0IntegrationLaunchRequest LaunchRequest(string root, string corpus)
@@ -639,10 +836,22 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         info.ArgumentList.Add("-C"); info.ArgumentList.Add(root);
         foreach (var argument in arguments) info.ArgumentList.Add(argument);
         using var process = System.Diagnostics.Process.Start(info)!;
-        var output = process.StandardOutput.ReadToEnd(); var error = process.StandardError.ReadToEnd();
+        var outputTask = process.StandardOutput.ReadToEndAsync();
+        var errorTask = process.StandardError.ReadToEndAsync();
         process.WaitForExit();
-        if (process.ExitCode != 0) throw new InvalidOperationException(error);
-        return output;
+        Task.WaitAll(outputTask, errorTask);
+        if (process.ExitCode != 0) throw new InvalidOperationException(errorTask.Result);
+        return outputTask.Result;
+    }
+
+    private static void CopyProjectSources(string source, string destination)
+    {
+        Directory.CreateDirectory(destination);
+        foreach (var file in Directory.EnumerateFiles(source))
+        {
+            if (Path.GetExtension(file) is not (".cs" or ".csproj")) continue;
+            File.Copy(file, Path.Combine(destination, Path.GetFileName(file)));
+        }
     }
 
     private static string SyntheticProvenanceWorkerSource() =>
@@ -781,12 +990,31 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
             return new(root, assembly, "SYNTHETIC", new(runtimeHead, assembly, "SYNTHETIC",
                 root, root, Lane0ExecutionRootScientificRuntime.ExpectedWorkerMarker));
         }
+        public Lane0IntegrationWorkerAuthorityResponse CreateOfficialAuthorityReceipt(
+            Lane0IntegrationPreparedRuntime prepared, string canonicalSourceRoot,
+            string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities)
+        {
+            var paths = Lane0IntegrationOfficialLayout.Derive(canonicalSourceRoot,
+                prepared.ExecutionRoot);
+            var binding = new Lane0IntegrationCanonicalBindingLoader().Load(
+                paths.CanonicalBindingPath);
+            var store = new Lane0IntegrationFileAuthorityStore(paths.DurableReceiptPath,
+                paths.FinalArtifactsRoot, paths.StagingRoot);
+            var launch = new Lane0IntegrationLaunchRequest(expectedHead, expectedIdentities, null,
+                canonicalSourceRoot, prepared.ExecutionRoot, "OPAQUE");
+            store.CreateDurableReceipt(Lane0CorrectiveSuccessorIsolatedLauncher.BuildReceipt(
+                launch, binding.CanonicalSha256));
+            return new(binding.CanonicalSha256, expectedIdentities, prepared.Provenance);
+        }
         public Lane0IntegrationScientificRuntimeResult Execute(Lane0IntegrationPreparedRuntime prepared,
-            ImmutableArray<Lane0CorrectiveChartInput> inputs, Lane0SuccessorEvaluationContext context)
+            ImmutableArray<Lane0CorrectiveChartInput> inputs, Lane0SuccessorEvaluationContext context,
+            Lane0IntegrationRuntimeIdentities identities)
         {
             var first = science.Evaluate(inputs, context);
             var second = science.Evaluate(inputs, context);
-            return new(first, second, prepared.Provenance);
+            var final = Lane0IntegrationOfficialLayout.FinalArtifactsRoot(prepared.ExecutionRoot);
+            return new(first, second, prepared.Provenance,
+                Path.Combine(final, "pass-1"), Path.Combine(final, "pass-2"));
         }
     }
 
@@ -795,18 +1023,6 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         internal int Calls { get; private set; }
         public void Verify(ImmutableSortedDictionary<string, byte[]> package,
             Lane0IntegrationSemanticExpectations expected) => Calls++;
-    }
-
-    private sealed class IdentityPackageFinalizer : ILane0IntegrationPackageFinalizer
-    {
-        internal int Calls { get; private set; }
-        public ImmutableSortedDictionary<string, byte[]> Finalize(
-            ImmutableSortedDictionary<string, byte[]> phase2Package,
-            Lane0IntegrationRuntimeIdentities identities, bool defaultChanged)
-        {
-            Calls++;
-            return phase2Package;
-        }
     }
 
     private sealed class TempDirectory : IDisposable

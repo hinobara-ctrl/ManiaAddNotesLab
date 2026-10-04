@@ -190,7 +190,7 @@ public sealed class PhaseC12ExactHeadRelationTests
         var stateRoot = state.RootElement;
         Assert.Equal("legacy-experimental.1", stateRoot.GetProperty("behaviorPolicyVersion").GetString());
         Assert.False(stateRoot.GetProperty("behaviorChange").GetBoolean());
-        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION",
+        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING",
             stateRoot.GetProperty("currentPhase").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextRecommendedPhase").ValueKind);
         Assert.Equal("HUMAN_REVIEW_REQUIRED", stateRoot.GetProperty("nextRecommendedAction").GetString());
@@ -226,13 +226,13 @@ public sealed class PhaseC12ExactHeadRelationTests
         Assert.Equal("READY_FOR_PUBLICATION_REVIEW", phases.Single(x =>
                 x.GetProperty("id").GetString() == "LANE.0.HARDENING")
             .GetProperty("outcome").GetString());
-        const string currentPhase = "Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION "
-            + "— COMPLETE — OUTCOME READY_FOR_INDEPENDENT_REMEDIATION_AUDIT";
+        const string currentPhase = "Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING "
+            + "— COMPLETE — OUTCOME READY_FOR_INDEPENDENT_PREBINDING_AUDIT";
         Assert.Contains(currentPhase, readme);
         Assert.Contains(currentPhase, status);
         Assert.Contains("Retry: prohibited", readme);
         Assert.Contains("Retry: prohibited", status);
-        const string successor = "Successor: Integration audit remediation complete / independent remediation "
+        const string successor = "Successor: Integration prebinding hardening complete / independent prebinding "
             + "audit pending / C11 science not authorized";
         Assert.Contains(successor, readme);
         Assert.Contains(successor, status);

@@ -21,6 +21,7 @@
     <Compile Include="..\..\tools\DocConsistency\IntegrationPreregistrationGuard.cs" Link="IntegrationPreregistrationGuard.cs" />
     <Compile Include="..\..\tools\DocConsistency\IntegrationImplementationGuard.cs" Link="IntegrationImplementationGuard.cs" />
     <Compile Include="..\..\tools\DocConsistency\IntegrationAuditRemediationGuard.cs" Link="IntegrationAuditRemediationGuard.cs" />
+    <Compile Include="..\..\tools\DocConsistency\IntegrationPrebindingHardeningGuard.cs" Link="IntegrationPrebindingHardeningGuard.cs" />
     <Compile Include="..\..\tools\DocConsistency\SafetyRemediationFollowupGuard.cs" Link="SafetyRemediationFollowupGuard.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\SafetySelectionSetRemappingPostPublicationVerifier.cs" Link="SafetySelectionSetRemappingPostPublicationVerifier.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\SafetyOp185Op466CounterfactualRunner.cs" Link="SafetyOp185Op466CounterfactualRunner.cs" />

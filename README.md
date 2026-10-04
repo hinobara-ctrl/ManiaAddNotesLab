@@ -58,29 +58,30 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **LANE.0 integration preregistration audit — CLEAN WITH NON-BLOCKING OBSERVATIONS:** la auditoría independiente de `9986e156` recomputó la identidad `7C0A86BF…17A02`, confirmó freeze, corpus/duplicado, autoridad y linaje. No autoriza implementación, binding, receipt, C11 ni ejecución.
 - **LANE.0 integration implementation — READY FOR INDEPENDENT INTEGRATION AUDIT / NO C11 AUTHORIZATION:** implementa las cuatro superficies preregistradas con 12 ubicaciones/11 contenidos, `CorpusRoot` opaco antes del receipt, dos pasadas y verificación semántica profunda. No existe binding, receipt real, ejecución C11 ni exposición de producto.
 - **LANE.0 integration audit remediation — READY FOR INDEPENDENT REMEDIATION AUDIT:** R1–R4 quedan cerrados: autoridad Git/runtime observada, autoridad exacta de 12 paths congelados, verificación semántica profunda resistente a rehash y worker construido/ejecutado desde el checkout aislado. C11 sólo fue leído para el inventario explícitamente autorizado; no hubo evaluación científica, binding, receipt real ni one-shot.
+- **LANE.0 integration prebinding hardening — READY FOR INDEPENDENT PREBINDING AUDIT:** binding/receipt canónicos no redirigibles, staging/final artifacts propiedad de ExecutionRoot y provenance del worker real quedan endurecidos con fixtures sintéticos. El acceso C11 histórico fue sólo inventario explícito read-only; en esta fase no hubo acceso C11, evaluación científica, binding, receipt real ni one-shot.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. La recertificación final conserva `NEEDS_REVIEW`: seguridad observada 215→0, pero causalidad final `188 A + 21 B + 5 D + 1 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION — COMPLETE — OUTCOME READY_FOR_INDEPENDENT_REMEDIATION_AUDIT<br>
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING — COMPLETE — OUTCOME READY_FOR_INDEPENDENT_PREBINDING_AUDIT<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
 Next behavioral authorization: N/A<br>
 Retry: prohibited<br>
-Successor: Integration audit remediation complete / independent remediation audit pending / C11 science not authorized<br>
+Successor: Integration prebinding hardening complete / independent prebinding audit pending / C11 science not authorized<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 1099 passed / 0 failed / 0 skipped
+Tests: 1122 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.
 
-`LANE.0` conserva su cierre histórico, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo oficial está **CONSUMED / INVALID / NOT PUBLISHABLE** y no admite retry. Phase 2 del successor está completa y su auditoría independiente cerró limpia con observaciones no bloqueantes. La integración sigue `NOT_STARTED / NOT_AUTHORIZED`; el verificador semántico profundo es obligatorio antes del binding. No existe binding/receipt canónico, no se accedió C11 y ninguna ejecución está autorizada.
+`LANE.0` conserva su cierre histórico, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo oficial está **CONSUMED / INVALID / NOT PUBLISHABLE** y no admite retry. La integración, su remediación y el hardening previo al binding están implementados localmente y esperan auditoría independiente. Hubo acceso histórico C11 exclusivamente para `READ_ONLY_EXPLICIT_PATH_INVENTORY_ONLY`; nunca hubo evaluación científica C11 del successor. No existe binding ni receipt real y ninguna ejecución successor está autorizada.
 
 ## Ejecutar
 
