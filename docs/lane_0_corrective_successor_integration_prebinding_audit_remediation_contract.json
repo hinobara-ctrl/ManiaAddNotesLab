@@ -1,0 +1,145 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-successor-integration-prebinding-audit-remediation.1",
+    "phaseId": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION",
+    "baselinePublicHead": "fd6cfad9d2f6a1bab40719e1432a781079bf9444",
+    "independentAuditResult": "PREBINDING_AUDIT_REQUIRES_REMEDIATION_BEFORE_BINDING",
+    "lineage": {
+      "prebindingHardeningContractSha256": "9CC3961686885766A546996604AC237453A0725E832CF509FC27EA715E8A4665",
+      "integrationAuditRemediationContractSha256": "F2FD07BC0D120A7B2CA7350BA582141C4EDC3277AD06C6D9E92139244F8A39EB",
+      "integrationExecutionContractSha256": "8763BC90212AF44947C6BAF3BD7FAADD1905289F0F8A1C3480199F771D3CAA0A",
+      "integrationPreregistrationSha256": "7C0A86BF3C6647CA7092C4D3390EB97EA6E11D7E5429ECBA6F499D55C5417A02",
+      "explicitPathAuthoritySha256": "DA86B97DA2E0309BE4C5FC035E54397846EA5B2DBA6989BDEDE4424939EDF884"
+    },
+    "frozenPhase2": {
+      "contractSha256": "11F55A6770BA78F008A6690C88561C714CAF45BA15B96E472C0C80B219C4D5B6",
+      "scientificImplementationSha256": "8F9AE545027F0F1364E3378324646C7F7711CDF7EFFC8CC879660644A3D905D0",
+      "harnessSha256": "15DC978C24119E9832DD70C0C61F5BFB1BBAF11520A107A7728220009B793A61",
+      "packageVerifierSha256": "DFF48221A6FB087367B1C6B1062B7355806C53668C6876A4BB4EC59983232D38",
+      "frozenDependenciesSha256": "D5931A815701C0FAB854B878373A8ED03F3E29BDEA17C98A428C7AF6B0F7023B",
+      "verifiedManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
+    },
+    "findingDispositions": {
+      "PB-A1": {
+        "disposition": "CONTRACT_CLARIFICATION_NOT_A_FINDING_WITHIN_FROZEN_THREAT_MODEL",
+        "authorityScope": "ONE_ATTEMPT_PER_EXPLICIT_SOURCE_AUTHORIZATION_ROOT",
+        "sourceAuthorizationRootAnchored": true,
+        "sameRootConcurrencyCovered": true,
+        "distributedOrGlobalAuthorityClaimed": false
+      },
+      "PB-A2": {
+        "disposition": "CLOSED",
+        "officialDependencyGraph": "SEALED_PRODUCTION_LAUNCHER_ADAPTER_VERIFIER",
+        "syntheticSurfaceSeparate": true,
+        "callerBooleanCapability": false
+      },
+      "PB-A3": {
+        "disposition": "CLOSED",
+        "closureRows": "BINARY_NAME_FULL_CANONICAL_PATH_SHA256",
+        "aggregate": "ORDINAL_ROWS_LF_NO_TRAILING_LF_SHA256",
+        "requiredProjectAssemblies": [
+          "ManiaAddNotesLab.Core.dll",
+          "ManiaAddNotesLab.Experiments.dll",
+          "ManiaAddNotesLab.IntegrationResearchWorker.dll"
+        ],
+        "verifiedPreReceipt": true,
+        "verifiedImmediatelyPreScience": true,
+        "verifiedPostScience": true
+      },
+      "PB-A4": {
+        "disposition": "CLOSED",
+        "officialScienceRequiresCanonicalDurableReceipt": true,
+        "receiptNamespace": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION.ONE_SHOT",
+        "callerSuppliesReceiptPathOrNamespace": false,
+        "receiptRemainsConsumedOnScienceFailure": true
+      },
+      "PB-O1": {
+        "disposition": "NON_BLOCKING_COVERAGE_STRENGTHENED",
+        "authorityRuntimeE2E": "PRODUCTION_WORKER_REAL_DETACHED_CHECKOUT_SYNTHETIC_CORPUS",
+        "realC11Admission": false,
+        "syntheticCorpusBoundaryDeclared": true
+      },
+      "PB-O2": {
+        "disposition": "NON_BLOCKING_RESIDUAL_TRUST_BOUNDED",
+        "remainingTrust": "HOST_ORCHESTRATION_AND_DECLARED_OS_TOOLCHAIN_THREAT_MODEL",
+        "hostCannotSupplyOfficialDependenciesOrReceiptLocation": true,
+        "hostRecomputesBinaryClosure": true
+      }
+    },
+    "currentComponents": {
+      "officialFrozenC11Adapter": {
+        "files": [
+          "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorFrozenC11Adapter.cs"
+        ],
+        "normalizedTextTreeSha256": "032F9660D8C0012C990983CE307CDA9D20B1C49116BEAA7F3C5E3DB1EBD875B0"
+      },
+      "officialDependencySealedRunner": {
+        "files": [
+          "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorInternalResearchRunner.cs"
+        ],
+        "normalizedTextTreeSha256": "8B2845436C735B93D9F92D4BE89F5788FBDDE2D82B425124A7FB154E22A0AF39"
+      },
+      "authorityRuntimeReceiptGatedWorker": {
+        "files": [
+          "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorPrebindingAuthority.cs",
+          "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorIsolatedLauncher.cs",
+          "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorIsolatedRuntime.cs",
+          "tools/ManiaAddNotesLab.Experiments/ManiaAddNotesLab.Experiments.csproj",
+          "tools/ManiaAddNotesLab.IntegrationResearchWorker/ManiaAddNotesLab.IntegrationResearchWorker.csproj",
+          "tools/ManiaAddNotesLab.IntegrationResearchWorker/Program.cs"
+        ],
+        "normalizedTextTreeSha256": "E48A21353DA5692CB9752D8C5D378D9160550CD42FD6B16BD97AD7D148A49042"
+      },
+      "deepSemanticPackageVerifier": {
+        "files": [
+          "tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorDeepSemanticPackageVerifier.cs"
+        ],
+        "normalizedTextTreeSha256": "67969A60704553AA6CFB134F8B7F67236757EA6A2CF51C9CD7C4EF3C8FA5A4DB"
+      }
+    },
+    "authorityOrder": [
+      "SOURCE_PUBLIC_HEAD_CHECKS",
+      "CONTRACT_IDENTITIES",
+      "RUNTIME_IDENTITIES",
+      "CANONICAL_BINDING_PRESENCE",
+      "CANONICAL_BINDING_BYTE_AND_HASH_VERIFICATION",
+      "EXPLICIT_AUTHORIZATION_FIELD",
+      "AUTHORIZED_EXECUTION_COUNT_ONE",
+      "SOURCE_TRACKED_CLEANLINESS",
+      "SOURCE_EXECUTION_RUNTIME_HEAD_EQUALITY",
+      "SOURCE_EXECUTION_ROOT_ISOLATION",
+      "DURABLE_RECEIPT_ABSENCE",
+      "OUTPUT_AND_STAGING_ABSENCE",
+      "DURABLE_RECEIPT_CREATION",
+      "CORPUSROOT_INTERPRETATION",
+      "CORPUS_SOURCE_EXECUTION_ROOT_ISOLATION",
+      "CORPUS_ADMISSION",
+      "SCIENTIFIC_PASS_1",
+      "SCIENTIFIC_PASS_2",
+      "BYTE_DETERMINISM",
+      "DEEP_SEMANTIC_VERIFICATION",
+      "FINAL_PUBLISHABLE_OR_NON_PUBLISHABLE_CLASSIFICATION"
+    ],
+    "phaseBoundary": {
+      "status": "COMPLETE",
+      "outcome": "READY_FOR_INDEPENDENT_PREBINDING_REAUDIT",
+      "authority": "AUTHORIZED_FOR_PREBINDING_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY",
+      "c11Authorization": "NO_C11_AUTHORIZATION",
+      "bindingAuthorization": "NO_BINDING_AUTHORIZATION",
+      "receiptAuthorization": "NO_RECEIPT_AUTHORIZATION",
+      "executionAuthorization": "NO_EXECUTION_AUTHORIZATION",
+      "productPromotionAuthorization": "NO_PRODUCT_PROMOTION_AUTHORIZATION",
+      "c11Accessed": false,
+      "bindingCreated": false,
+      "realReceiptCreated": false,
+      "realExecution": false,
+      "behaviorChange": false,
+      "rngChange": false,
+      "defaultChange": false,
+      "productExposure": false,
+      "nextRequiredAction": "INDEPENDENT_PREBINDING_REAUDIT"
+    }
+  },
+  "canonicalSha256": "41F47787C1B233797E988FE23B9CBB1167846A925834BF1B450DC512C2D1D4D2",
+  "canonicalization": "recursive ordinal object-property sort; arrays preserved; Utf8JsonWriter-compatible UTF-8; no insignificant whitespace; SHA-256 uppercase hex over contract only"
+}

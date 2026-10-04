@@ -50,6 +50,8 @@ static int MainWorker(string[] args)
                 source, executionRoot, "OPAQUE_NOT_INTERPRETED_BY_AUTHORITY_WORKER");
             store.CreateDurableReceipt(Lane0CorrectiveSuccessorIsolatedLauncher.BuildReceipt(
                 launch, binding.CanonicalSha256));
+            WriteAuthorityState(new(source, authorityRequest.ExpectedHead,
+                binding.CanonicalSha256, observed));
             var authorityResponse = new Lane0IntegrationWorkerAuthorityResponse(
                 binding.CanonicalSha256, observed, provenance);
             File.WriteAllBytes(args[2], JsonSerializer.SerializeToUtf8Bytes(authorityResponse, JsonOptions()));
@@ -58,6 +60,14 @@ static int MainWorker(string[] args)
         if (args.Length < 5 || args[0] != "--execute") throw new InvalidDataException("Unknown worker mode.");
         var request = JsonSerializer.Deserialize<Lane0IntegrationWorkerRequest>(
             File.ReadAllBytes(args[1]), JsonOptions()) ?? throw new InvalidDataException("Worker request is absent.");
+        var authorityState = ReadAuthorityState();
+        VerifyOfficialScienceAuthority(authorityState, executionRoot, request);
+        // Reobserve the complete project-owned closure immediately before science. The host
+        // independently performs the same check before launch and again after return.
+        var beforeScience = ObserveProvenance(executionRoot);
+        if (!Lane0ExecutionRootScientificRuntime.BinaryClosuresEqual(
+            beforeScience.BinaryClosure, provenance.BinaryClosure))
+            throw new InvalidDataException("Project binary closure drifted before science.");
         var inputs = request.Charts.Select(x => new Lane0CorrectiveChartInput(x.ChartId, new ManiaChart
         {
             KeyCount = x.KeyCount, Lines = x.Lines, OriginalObjects = x.OriginalObjects,
@@ -105,10 +115,58 @@ static Lane0IntegrationRuntimeProvenance ObserveProvenance(string executionRoot)
     // Under `dotnet worker.dll`, ProcessPath is dotnet; the scientific assembly is this assembly.
     assembly = Path.GetFullPath(System.Reflection.Assembly.GetEntryAssembly()?.Location
         ?? throw new InvalidDataException("Worker entry assembly is unavailable."));
+    var closure = Lane0ExecutionRootScientificRuntime.ObserveBinaryClosure(
+        AppContext.BaseDirectory, Lane0ExecutionRootScientificRuntime.DefaultProjectAssemblyNames);
     return new(CaptureGitHead(executionRoot), assembly,
         Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(assembly))),
         Path.GetFullPath(AppContext.BaseDirectory), executionRoot,
-        Lane0ExecutionRootScientificRuntime.ExpectedWorkerMarker);
+        Lane0ExecutionRootScientificRuntime.ExpectedWorkerMarker, closure);
+}
+
+static string AuthorityStatePath() => Lane0ExecutionRootScientificRuntime.AuthorityStatePath(
+    System.Reflection.Assembly.GetEntryAssembly()?.Location
+        ?? throw new InvalidDataException("Worker entry assembly is unavailable."));
+
+static void WriteAuthorityState(Lane0IntegrationWorkerAuthorityState state)
+{
+    using var stream = new FileStream(AuthorityStatePath(), FileMode.CreateNew,
+        FileAccess.Write, FileShare.None);
+    JsonSerializer.Serialize(stream, state, JsonOptions());
+    stream.Flush(true);
+}
+
+static Lane0IntegrationWorkerAuthorityState ReadAuthorityState()
+{
+    var path = AuthorityStatePath();
+    if (!File.Exists(path))
+        throw new InvalidDataException("Official authority state is absent; science cannot bypass receipt creation.");
+    return JsonSerializer.Deserialize<Lane0IntegrationWorkerAuthorityState>(
+        File.ReadAllBytes(path), JsonOptions())
+        ?? throw new InvalidDataException("Official authority state is malformed.");
+}
+
+static void VerifyOfficialScienceAuthority(Lane0IntegrationWorkerAuthorityState state,
+    string executionRoot, Lane0IntegrationWorkerRequest request)
+{
+    var source = Path.GetFullPath(state.CanonicalSourceRoot);
+    var observer = new GitAndFileIntegrationAuthorityObserver();
+    if (CaptureGitHead(executionRoot) != state.ExpectedHead
+        || observer.ObserveHead(source) != state.ExpectedHead
+        || !observer.ObserveTrackedClean(source))
+        throw new InvalidDataException("Official science rejected live Git authority state.");
+    var observed = observer.ObserveRuntimeIdentities(source);
+    if (observed != state.ExpectedIdentities || request.Identities != state.ExpectedIdentities)
+        throw new InvalidDataException("Official science rejected live component identities.");
+    var paths = Lane0IntegrationOfficialLayout.Derive(source, executionRoot);
+    var binding = new Lane0IntegrationCanonicalBindingLoader().Load(paths.CanonicalBindingPath);
+    if (binding.CanonicalSha256 != state.CanonicalBindingSha256
+        || binding.Fields.ApprovedPublicHead != state.ExpectedHead
+        || binding.Fields.Identities != state.ExpectedIdentities
+        || !binding.Fields.ExplicitHumanAuthorization
+        || binding.Fields.AuthorizedExecutionCount != 1)
+        throw new InvalidDataException("Official science rejected canonical binding authority.");
+    Lane0IntegrationDurableReceiptVerifier.VerifyCanonicalReceipt(source, executionRoot,
+        state.ExpectedHead, state.CanonicalBindingSha256, state.ExpectedIdentities);
 }
 
 static string CaptureGitHead(string root)

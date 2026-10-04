@@ -91,30 +91,11 @@ internal sealed class Lane0CorrectiveSuccessorInternalResearchRunner
                 ImmutableArray<string>.Empty, exception.Message);
         }
 
-        return ExecuteAfterReceipt(preReceipt, request.Manifest, request.References,
+        return ExecuteAcquired(preReceipt, request.Manifest, request.References,
             request.Launch.ExpectedSourcePublicHead, request.Launch.ExpectedIdentities);
     }
 
-    internal Lane0IntegrationResearchResult ExecuteOfficial(
-        Lane0IntegrationOfficialResearchRequest request)
-    {
-        try
-        {
-            var lease = launcher.AcquireOfficial(request.Launch);
-            return ExecuteAfterReceipt(lease, request.Manifest, request.References,
-                request.Launch.ExpectedSourcePublicHead, request.Launch.ExpectedIdentities);
-        }
-        catch (Exception exception)
-        {
-            var paths = Lane0IntegrationOfficialLayout.Derive(
-                Path.GetFullPath(request.Launch.SourceRoot),
-                Path.GetFullPath(request.Launch.ExecutionRoot));
-            return new("NON_PUBLISHABLE", null, File.Exists(paths.DurableReceiptPath), 0, 0,
-                ImmutableArray<string>.Empty, exception.Message);
-        }
-    }
-
-    private Lane0IntegrationResearchResult ExecuteAfterReceipt(
+    internal Lane0IntegrationResearchResult ExecuteAcquired(
         Lane0IntegrationPreReceiptLease preReceipt, VerifiedFrozenC11Manifest manifest,
         ImmutableArray<Lane0CorrectiveSuccessorReference> references,
         string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities)
@@ -187,5 +168,39 @@ internal sealed class Lane0CorrectiveSuccessorInternalResearchRunner
     private static void Require(bool condition, string message)
     {
         if (!condition) throw new InvalidDataException(message);
+    }
+}
+
+/// <summary>
+/// Sealed official capability. Unlike the explicitly synthetic runner, this surface has no
+/// dependency-injection constructor: launcher, exact-path adapter and semantic verifier are
+/// always production implementations created inside the official call.
+/// </summary>
+internal sealed class Lane0CorrectiveSuccessorOfficialResearchRunner
+{
+    internal Lane0IntegrationResearchResult Execute(Lane0IntegrationOfficialResearchRequest request)
+    {
+        var launcher = Lane0CorrectiveSuccessorIsolatedLauncher.CreateOfficial();
+        try
+        {
+            var source = Path.GetFullPath(request.Launch.SourceRoot);
+            var adapter = Lane0CorrectiveSuccessorFrozenC11Adapter.CreateOfficial(
+                request.Manifest, source);
+            var verifier = new Lane0CorrectiveSuccessorDeepSemanticPackageVerifier();
+            var lease = launcher.AcquireOfficial(request.Launch);
+            return new Lane0CorrectiveSuccessorInternalResearchRunner(
+                launcher, adapter, verifier).ExecuteAcquired(
+                    lease, request.Manifest, request.References,
+                    request.Launch.ExpectedSourcePublicHead,
+                    request.Launch.ExpectedIdentities);
+        }
+        catch (Exception exception)
+        {
+            var paths = Lane0IntegrationOfficialLayout.Derive(
+                Path.GetFullPath(request.Launch.SourceRoot),
+                Path.GetFullPath(request.Launch.ExecutionRoot));
+            return new("NON_PUBLISHABLE", null, File.Exists(paths.DurableReceiptPath), 0, 0,
+                ImmutableArray<string>.Empty, exception.Message);
+        }
     }
 }

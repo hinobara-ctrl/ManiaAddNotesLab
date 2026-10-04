@@ -8,13 +8,22 @@ namespace ManiaAddNotesLab.Tests;
 public sealed class IntegrationPrebindingHardeningGuardTests
 {
     [Fact]
-    public void CurrentHardeningContractAndLiveComponentsAreConsistent()
+    public void HistoricalHardeningContractRemainsInternallyConsistent()
     {
         using var document = JsonDocument.Parse(File.ReadAllText(ContractPath()));
         Assert.Equal(IntegrationPrebindingHardeningGuard.ContractIdentity,
             IntegrationImplementationGuard.CanonicalJsonHash(
                 document.RootElement.GetProperty("contract")));
         Assert.Empty(IntegrationPrebindingHardeningGuard.Validate(document.RootElement, Root()));
+    }
+
+    [Fact]
+    public void HistoricalPrebindingHardeningRouteRejectsAuditRemediatedLiveIdentity()
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(ContractPath()));
+        Assert.Empty(IntegrationPrebindingHardeningGuard.Validate(document.RootElement, Root()));
+        Assert.NotEmpty(IntegrationPrebindingHardeningGuard.ValidateAgainstLive(
+            document.RootElement, Root()));
     }
 
     [Theory]

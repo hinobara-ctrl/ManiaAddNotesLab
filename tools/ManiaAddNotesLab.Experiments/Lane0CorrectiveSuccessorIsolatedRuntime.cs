@@ -7,11 +7,18 @@ using ManiaAddNotesLab.Core;
 
 internal sealed record Lane0IntegrationRuntimeProvenance(
     string RuntimeHead, string AssemblyPath, string AssemblySha256,
-    string BaseDirectory, string ExecutionRoot, string WorkerMarker);
+    string BaseDirectory, string ExecutionRoot, string WorkerMarker,
+    Lane0IntegrationBinaryClosure BinaryClosure);
+
+internal sealed record Lane0IntegrationBinaryIdentity(
+    string BinaryName, string FullCanonicalPath, string Sha256);
+
+internal sealed record Lane0IntegrationBinaryClosure(
+    ImmutableArray<Lane0IntegrationBinaryIdentity> Binaries, string AggregateSha256);
 
 internal sealed record Lane0IntegrationPreparedRuntime(
     string ExecutionRoot, string WorkerAssemblyPath, string WorkerAssemblySha256,
-    Lane0IntegrationRuntimeProvenance Provenance);
+    Lane0IntegrationBinaryClosure BinaryClosure, Lane0IntegrationRuntimeProvenance Provenance);
 
 internal sealed record Lane0IntegrationWorkerAuthorityRequest(
     string CanonicalSourceRoot, string ExpectedHead,
@@ -68,15 +75,28 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
     internal const string DefaultAssemblyName = "ManiaAddNotesLab.IntegrationResearchWorker.dll";
     internal const string ExpectedWorkerMarker = "LANE0_EXECUTION_ROOT_WORKER_V1";
 
+    internal static readonly ImmutableArray<string> DefaultProjectAssemblyNames =
+    [
+        "ManiaAddNotesLab.Core.dll",
+        "ManiaAddNotesLab.Experiments.dll",
+        "ManiaAddNotesLab.IntegrationResearchWorker.dll"
+    ];
+
     private readonly string projectRelativePath;
     private readonly string assemblyName;
+    private readonly ImmutableArray<string> projectAssemblyNames;
 
     internal Lane0ExecutionRootScientificRuntime(
         string projectRelativePath = DefaultProjectPath,
-        string assemblyName = DefaultAssemblyName)
+        string assemblyName = DefaultAssemblyName,
+        IEnumerable<string>? projectAssemblyNames = null)
     {
         this.projectRelativePath = projectRelativePath;
         this.assemblyName = assemblyName;
+        this.projectAssemblyNames = (projectAssemblyNames ?? DefaultProjectAssemblyNames)
+            .OrderBy(x => x, StringComparer.Ordinal).ToImmutableArray();
+        Require(this.projectAssemblyNames.Contains(assemblyName, StringComparer.Ordinal),
+            "Project binary closure must include the worker entry assembly.");
     }
 
     public Lane0IntegrationPreparedRuntime Prepare(string canonicalExecutionRoot, string expectedHead)
@@ -94,22 +114,48 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
         if (!File.Exists(assembly))
             throw new InvalidDataException("ExecutionRoot build did not produce the research worker assembly.");
         var hash = Sha256File(assembly);
+        var closure = ObserveBinaryClosure(build, projectAssemblyNames);
         var provenancePath = Path.Combine(build, "pre-receipt-provenance.json");
         Run("dotnet", [assembly, "--provenance-only", provenancePath,
             "--execution-root", canonicalExecutionRoot], canonicalExecutionRoot);
         var provenance = ReadProvenance(provenancePath);
-        ValidateProvenance(provenance, canonicalExecutionRoot, expectedHead, assembly, hash);
-        return new(canonicalExecutionRoot, assembly, hash, provenance);
+        ValidateProvenance(provenance, canonicalExecutionRoot, expectedHead, assembly, hash, closure);
+        return new(canonicalExecutionRoot, assembly, hash, closure, provenance);
     }
 
     public Lane0IntegrationScientificRuntimeResult Execute(
         Lane0IntegrationPreparedRuntime prepared,
         ImmutableArray<Lane0CorrectiveChartInput> inputs,
         Lane0SuccessorEvaluationContext context,
-        Lane0IntegrationRuntimeIdentities identities)
+        Lane0IntegrationRuntimeIdentities identities) =>
+        ExecuteCore(prepared, inputs, context, identities, requireOfficialReceipt: true);
+
+    internal Lane0IntegrationScientificRuntimeResult ExecuteSyntheticFixture(
+        Lane0IntegrationPreparedRuntime prepared,
+        ImmutableArray<Lane0CorrectiveChartInput> inputs,
+        Lane0SuccessorEvaluationContext context,
+        Lane0IntegrationRuntimeIdentities identities) =>
+        ExecuteCore(prepared, inputs, context, identities, requireOfficialReceipt: false);
+
+    private Lane0IntegrationScientificRuntimeResult ExecuteCore(
+        Lane0IntegrationPreparedRuntime prepared,
+        ImmutableArray<Lane0CorrectiveChartInput> inputs,
+        Lane0SuccessorEvaluationContext context,
+        Lane0IntegrationRuntimeIdentities identities,
+        bool requireOfficialReceipt)
     {
-        Require(Sha256File(prepared.WorkerAssemblyPath) == prepared.WorkerAssemblySha256,
-            "Prepared worker assembly changed after the receipt boundary.");
+        ValidatePreparedBinaryClosure(prepared, projectAssemblyNames,
+            "Prepared project binary closure changed before official science.");
+        if (requireOfficialReceipt)
+        {
+            var authorityState = LoadAuthorityState(prepared.WorkerAssemblyPath);
+            Require(authorityState.ExpectedIdentities == identities,
+                "Prepared authority state identities drifted before official science.");
+            Lane0IntegrationDurableReceiptVerifier.VerifyCanonicalReceipt(
+                authorityState.CanonicalSourceRoot, prepared.ExecutionRoot,
+                authorityState.ExpectedHead, authorityState.CanonicalBindingSha256,
+                authorityState.ExpectedIdentities);
+        }
         var staging = Lane0IntegrationOfficialLayout.StagingRoot(prepared.ExecutionRoot);
         var final = Lane0IntegrationOfficialLayout.FinalArtifactsRoot(prepared.ExecutionRoot);
         Directory.CreateDirectory(staging);
@@ -130,7 +176,9 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
             ?? throw new InvalidDataException("Research worker returned no response.");
         ValidateProvenance(response.Provenance, prepared.ExecutionRoot,
             prepared.Provenance.RuntimeHead, prepared.WorkerAssemblyPath,
-            prepared.WorkerAssemblySha256);
+            prepared.WorkerAssemblySha256, prepared.BinaryClosure);
+        ValidatePreparedBinaryClosure(prepared, projectAssemblyNames,
+            "Prepared project binary closure changed after official science.");
         return new(ToPass(response.First, ReadPackage(firstPath)),
             ToPass(response.Second, ReadPackage(secondPath)), response.Provenance,
             firstPath, secondPath);
@@ -140,8 +188,8 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
         Lane0IntegrationPreparedRuntime prepared, string canonicalSourceRoot,
         string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities)
     {
-        Require(Sha256File(prepared.WorkerAssemblyPath) == prepared.WorkerAssemblySha256,
-            "Prepared authority worker assembly changed before receipt creation.");
+        ValidatePreparedBinaryClosure(prepared, projectAssemblyNames,
+            "Prepared project binary closure changed before receipt creation.");
         var exchange = Path.GetDirectoryName(prepared.WorkerAssemblyPath)
             ?? throw new InvalidDataException("Worker build directory is absent.");
         var requestPath = UnderRoot(exchange, "authority-request.json");
@@ -155,7 +203,7 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
             File.ReadAllBytes(responsePath), JsonOptions)
             ?? throw new InvalidDataException("Authority worker returned no response.");
         ValidateProvenance(response.Provenance, prepared.ExecutionRoot, expectedHead,
-            prepared.WorkerAssemblyPath, prepared.WorkerAssemblySha256);
+            prepared.WorkerAssemblyPath, prepared.WorkerAssemblySha256, prepared.BinaryClosure);
         Require(response.ObservedIdentities == expectedIdentities,
             "Authority worker observed identities drifted.");
         return response;
@@ -187,7 +235,8 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
         ?? throw new InvalidDataException("Research worker provenance is absent.");
 
     private static void ValidateProvenance(Lane0IntegrationRuntimeProvenance value,
-        string executionRoot, string expectedHead, string expectedAssembly, string expectedHash)
+        string executionRoot, string expectedHead, string expectedAssembly, string expectedHash,
+        Lane0IntegrationBinaryClosure expectedClosure)
     {
         var independentlyObservedHead = Capture("git", ["-C", executionRoot, "rev-parse", "HEAD"],
             executionRoot).Trim();
@@ -202,6 +251,8 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
         Require(value.AssemblySha256 == expectedHash && Sha256File(expectedAssembly) == expectedHash,
             "Runtime assembly identity drifted.");
         Require(value.WorkerMarker == ExpectedWorkerMarker, "Runtime worker marker drifted.");
+        Require(BinaryClosuresEqual(value.BinaryClosure, expectedClosure),
+            "Runtime project binary closure drifted.");
         var clean = Capture("git", ["-C", executionRoot, "status", "--porcelain",
             "--untracked-files=no"], executionRoot);
         Require(string.IsNullOrWhiteSpace(clean), "ExecutionRoot tracked tree became dirty.");
@@ -226,6 +277,65 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
 
     private static string Sha256File(string path) =>
         Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
+
+    internal static Lane0IntegrationBinaryClosure ObserveBinaryClosure(
+        string buildRoot, IEnumerable<string> expectedAssemblyNames)
+    {
+        var canonicalBuildRoot = Path.GetFullPath(buildRoot);
+        var names = expectedAssemblyNames.OrderBy(x => x, StringComparer.Ordinal).ToArray();
+        Require(names.Length > 0 && names.Distinct(StringComparer.Ordinal).Count() == names.Length
+            && names.All(x => Path.GetFileName(x) == x && x.EndsWith(".dll", StringComparison.Ordinal)),
+            "Project binary closure names are invalid or duplicated.");
+        var expected = names.ToHashSet(StringComparer.Ordinal);
+        var unexpectedProjectAssemblies = Directory.EnumerateFiles(canonicalBuildRoot, "ManiaAddNotesLab.*.dll")
+            .Select(Path.GetFileName).Where(x => x is not null && !expected.Contains(x))
+            .OrderBy(x => x, StringComparer.Ordinal).ToArray();
+        Require(unexpectedProjectAssemblies.Length == 0,
+            "Unexpected project-owned assembly appeared in the runtime closure.");
+        var binaries = names.Select(name =>
+        {
+            var path = Path.GetFullPath(Path.Combine(canonicalBuildRoot, name));
+            Require(IsUnder(canonicalBuildRoot, path) && File.Exists(path),
+                $"Expected project binary is missing or escaped its build root: {name}.");
+            return new Lane0IntegrationBinaryIdentity(name, path, Sha256File(path));
+        }).ToImmutableArray();
+        var rows = binaries.Select(x => $"{x.BinaryName}|{x.FullCanonicalPath}|{x.Sha256}");
+        var aggregate = Convert.ToHexString(SHA256.HashData(
+            Encoding.UTF8.GetBytes(string.Join('\n', rows))));
+        return new(binaries, aggregate);
+    }
+
+    internal static bool BinaryClosuresEqual(
+        Lane0IntegrationBinaryClosure left, Lane0IntegrationBinaryClosure right) =>
+        left.AggregateSha256 == right.AggregateSha256
+        && left.Binaries.SequenceEqual(right.Binaries);
+
+    internal static string AuthorityStatePath(string workerAssemblyPath) => Path.Combine(
+        Path.GetDirectoryName(Path.GetFullPath(workerAssemblyPath))
+            ?? throw new InvalidDataException("Worker build directory is absent."),
+        "official-authority-state.json");
+
+    private static Lane0IntegrationWorkerAuthorityState LoadAuthorityState(string workerAssemblyPath)
+    {
+        var path = AuthorityStatePath(workerAssemblyPath);
+        if (!File.Exists(path))
+            throw new InvalidDataException(
+                "Official authority state is absent; science cannot create staging or bypass receipt creation.");
+        return JsonSerializer.Deserialize<Lane0IntegrationWorkerAuthorityState>(
+            File.ReadAllBytes(path), JsonOptions)
+            ?? throw new InvalidDataException("Official authority state is malformed.");
+    }
+
+    internal static void ValidatePreparedBinaryClosure(
+        Lane0IntegrationPreparedRuntime prepared, IEnumerable<string> projectAssemblyNames,
+        string message)
+    {
+        var current = ObserveBinaryClosure(
+            Path.GetDirectoryName(prepared.WorkerAssemblyPath)
+                ?? throw new InvalidDataException("Worker build directory is absent."),
+            projectAssemblyNames);
+        Require(BinaryClosuresEqual(current, prepared.BinaryClosure), message);
+    }
 
     private static void Run(string file, IReadOnlyList<string> arguments, string workingDirectory)
     {

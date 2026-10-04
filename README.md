@@ -59,24 +59,25 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **LANE.0 integration implementation — READY FOR INDEPENDENT INTEGRATION AUDIT / NO C11 AUTHORIZATION:** implementa las cuatro superficies preregistradas con 12 ubicaciones/11 contenidos, `CorpusRoot` opaco antes del receipt, dos pasadas y verificación semántica profunda. No existe binding, receipt real, ejecución C11 ni exposición de producto.
 - **LANE.0 integration audit remediation — READY FOR INDEPENDENT REMEDIATION AUDIT:** R1–R4 quedan cerrados: autoridad Git/runtime observada, autoridad exacta de 12 paths congelados, verificación semántica profunda resistente a rehash y worker construido/ejecutado desde el checkout aislado. C11 sólo fue leído para el inventario explícitamente autorizado; no hubo evaluación científica, binding, receipt real ni one-shot.
 - **LANE.0 integration prebinding hardening — READY FOR INDEPENDENT PREBINDING AUDIT:** binding/receipt canónicos no redirigibles, staging/final artifacts propiedad de ExecutionRoot y provenance del worker real quedan endurecidos con fixtures sintéticos. El acceso C11 histórico fue sólo inventario explícito read-only; en esta fase no hubo acceso C11, evaluación científica, binding, receipt real ni one-shot.
+- **LANE.0 prebinding audit remediation — READY FOR INDEPENDENT PREBINDING REAUDIT:** PB-A1 queda aclarado dentro del threat model congelado y PB-A2/A3/A4 quedan remediados mediante dependencias oficiales selladas, cierre binario de Worker+Experiments+Core y ciencia estructuralmente gated por el receipt canónico. No hubo C11, binding, receipt real ni ejecución successor.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. La recertificación final conserva `NEEDS_REVIEW`: seguridad observada 215→0, pero causalidad final `188 A + 21 B + 5 D + 1 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING — COMPLETE — OUTCOME READY_FOR_INDEPENDENT_PREBINDING_AUDIT<br>
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION — COMPLETE — OUTCOME READY_FOR_INDEPENDENT_PREBINDING_REAUDIT<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
 Next behavioral authorization: N/A<br>
 Retry: prohibited<br>
-Successor: Integration prebinding hardening complete / independent prebinding audit pending / C11 science not authorized<br>
+Successor: Prebinding audit remediation complete / independent prebinding reaudit pending / C11 science not authorized<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 1122 passed / 0 failed / 0 skipped
+Tests: 1148 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

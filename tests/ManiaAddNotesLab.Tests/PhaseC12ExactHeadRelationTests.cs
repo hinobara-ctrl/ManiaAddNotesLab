@@ -190,10 +190,11 @@ public sealed class PhaseC12ExactHeadRelationTests
         var stateRoot = state.RootElement;
         Assert.Equal("legacy-experimental.1", stateRoot.GetProperty("behaviorPolicyVersion").GetString());
         Assert.False(stateRoot.GetProperty("behaviorChange").GetBoolean());
-        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING",
+        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION",
             stateRoot.GetProperty("currentPhase").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextRecommendedPhase").ValueKind);
-        Assert.Equal("HUMAN_REVIEW_REQUIRED", stateRoot.GetProperty("nextRecommendedAction").GetString());
+        Assert.Equal("INDEPENDENT_PREBINDING_REAUDIT",
+            stateRoot.GetProperty("nextRecommendedAction").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextBehavioralPhase").ValueKind);
         var phases = stateRoot.GetProperty("phases").EnumerateArray().ToArray();
         Assert.Equal("BLOCKED", phases.Single(x => x.GetProperty("id").GetString() == "F2.ACQ")
@@ -226,14 +227,15 @@ public sealed class PhaseC12ExactHeadRelationTests
         Assert.Equal("READY_FOR_PUBLICATION_REVIEW", phases.Single(x =>
                 x.GetProperty("id").GetString() == "LANE.0.HARDENING")
             .GetProperty("outcome").GetString());
-        const string currentPhase = "Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING "
-            + "— COMPLETE — OUTCOME READY_FOR_INDEPENDENT_PREBINDING_AUDIT";
+        const string currentPhase = "Current phase: LANE.0.CORRECTIVE_SUCCESSOR."
+            + "INTEGRATION_PREBINDING_AUDIT_REMEDIATION — COMPLETE — OUTCOME "
+            + "READY_FOR_INDEPENDENT_PREBINDING_REAUDIT";
         Assert.Contains(currentPhase, readme);
         Assert.Contains(currentPhase, status);
         Assert.Contains("Retry: prohibited", readme);
         Assert.Contains("Retry: prohibited", status);
-        const string successor = "Successor: Integration prebinding hardening complete / independent prebinding "
-            + "audit pending / C11 science not authorized";
+        const string successor = "Successor: Prebinding audit remediation complete / independent prebinding "
+            + "reaudit pending / C11 science not authorized";
         Assert.Contains(successor, readme);
         Assert.Contains(successor, status);
         Assert.Contains("Next actionable research candidate: none", readme);

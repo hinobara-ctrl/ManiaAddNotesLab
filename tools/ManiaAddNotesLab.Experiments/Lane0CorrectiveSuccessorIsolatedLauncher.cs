@@ -291,13 +291,17 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
         }), (byte)'\n'];
 
     internal static byte[] BuildReceipt(Lane0IntegrationLaunchRequest request, string bindingHash) =>
+        BuildReceipt(request.ExpectedSourcePublicHead, request.ExpectedIdentities, bindingHash);
+
+    internal static byte[] BuildReceipt(string expectedHead,
+        Lane0IntegrationRuntimeIdentities identities, string bindingHash) =>
         [.. JsonSerializer.SerializeToUtf8Bytes(new
         {
             schemaVersion = ReceiptSchema,
-            approvedPublicHead = request.ExpectedSourcePublicHead,
+            approvedPublicHead = expectedHead,
             canonicalBindingSha256 = bindingHash,
-            integrationPreregistrationSha256 = request.ExpectedIdentities.IntegrationPreregistrationSha256,
-            integrationExecutionContractSha256 = request.ExpectedIdentities.IntegrationExecutionContractSha256,
+            integrationPreregistrationSha256 = identities.IntegrationPreregistrationSha256,
+            integrationExecutionContractSha256 = identities.IntegrationExecutionContractSha256,
             attemptCount = 1
         }, new JsonSerializerOptions { WriteIndented = true }), (byte)'\n'];
 

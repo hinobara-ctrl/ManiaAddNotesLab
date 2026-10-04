@@ -44,6 +44,10 @@ internal static class Lane0IntegrationOfficialLayout
 internal sealed record Lane0IntegrationCanonicalBindingDocument(
     Lane0IntegrationBindingFields Fields, string CanonicalSha256);
 
+internal sealed record Lane0IntegrationWorkerAuthorityState(
+    string CanonicalSourceRoot, string ExpectedHead, string CanonicalBindingSha256,
+    Lane0IntegrationRuntimeIdentities ExpectedIdentities);
+
 internal sealed class Lane0IntegrationCanonicalBindingLoader
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -77,5 +81,23 @@ internal sealed class Lane0IntegrationCanonicalBindingLoader
         var hash = declaredHash ?? Convert.ToHexString(SHA256.HashData(fieldBytes));
         return [.. JsonSerializer.SerializeToUtf8Bytes(
             new Lane0IntegrationCanonicalBindingDocument(fields, hash), JsonOptions), (byte)'\n'];
+    }
+}
+
+internal static class Lane0IntegrationDurableReceiptVerifier
+{
+    internal static string VerifyCanonicalReceipt(
+        string canonicalSourceRoot, string canonicalExecutionRoot, string expectedHead,
+        string canonicalBindingSha256, Lane0IntegrationRuntimeIdentities identities)
+    {
+        var paths = Lane0IntegrationOfficialLayout.Derive(canonicalSourceRoot, canonicalExecutionRoot);
+        if (!File.Exists(paths.DurableReceiptPath))
+            throw new InvalidDataException("Canonical durable receipt is absent.");
+        var expected = Lane0CorrectiveSuccessorIsolatedLauncher.BuildReceipt(
+            expectedHead, identities, canonicalBindingSha256);
+        var actual = File.ReadAllBytes(paths.DurableReceiptPath);
+        if (!actual.AsSpan().SequenceEqual(expected))
+            throw new InvalidDataException("Canonical durable receipt bytes or semantics drifted.");
+        return paths.DurableReceiptPath;
     }
 }

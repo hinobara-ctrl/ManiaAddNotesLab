@@ -33,13 +33,13 @@ public static class IntegrationPrebindingHardeningGuard
                 IntegrationAuditRemediationGuard.PathAuthorityIdentity, "path authority drifted");
 
             var components = contract.GetProperty("hardeningComponents");
-            ValidateLive(errors, components, repositoryRoot, "officialFrozenC11Adapter",
+            ValidateHistoricalComponent(errors, components, "officialFrozenC11Adapter",
                 "032F9660D8C0012C990983CE307CDA9D20B1C49116BEAA7F3C5E3DB1EBD875B0");
-            ValidateLive(errors, components, repositoryRoot, "officialInternalResearchRunner",
+            ValidateHistoricalComponent(errors, components, "officialInternalResearchRunner",
                 "C2983EC9CD0CC8B2547864C29C62F11280000B2039AEB7154B7D216F3F2DFE74");
-            ValidateLive(errors, components, repositoryRoot, "authorityRuntimeWorker",
+            ValidateHistoricalComponent(errors, components, "authorityRuntimeWorker",
                 "32F8B90A44F3B4601EF3C978A70B3D21C514168FA1A5D00B28B7E0A37E1D6380");
-            ValidateLive(errors, components, repositoryRoot, "deepSemanticPackageVerifier",
+            ValidateHistoricalComponent(errors, components, "deepSemanticPackageVerifier",
                 "67969A60704553AA6CFB134F8B7F67236757EA6A2CF51C9CD7C4EF3C8FA5A4DB");
 
             var authorization = contract.GetProperty("canonicalAuthorizationModel");
@@ -100,16 +100,39 @@ public static class IntegrationPrebindingHardeningGuard
         return errors;
     }
 
-    private static void ValidateLive(List<string> errors, JsonElement components, string root,
+    public static IReadOnlyList<string> ValidateAgainstLive(JsonElement artifact, string repositoryRoot)
+    {
+        var errors = new List<string>();
+        try
+        {
+            var components = artifact.GetProperty("contract").GetProperty("hardeningComponents");
+            foreach (var name in new[] { "officialFrozenC11Adapter", "officialInternalResearchRunner",
+                "authorityRuntimeWorker", "deepSemanticPackageVerifier" })
+            {
+                var component = components.GetProperty(name);
+                var files = component.GetProperty("files").EnumerateArray()
+                    .Select(x => x.GetString() ?? "").ToArray();
+                var historical = String(component, "normalizedTextTreeSha256");
+                Expect(errors, IntegrationImplementationGuard.NormalizedTextTreeIdentity(
+                    repositoryRoot, files) == historical, $"{name} live identity drifted from historical snapshot");
+            }
+        }
+        catch (Exception exception)
+        {
+            errors.Add($"integration prebinding hardening live comparison failed: {exception.Message}");
+        }
+        return errors;
+    }
+
+    private static void ValidateHistoricalComponent(List<string> errors, JsonElement components,
         string name, string expected)
     {
         var component = components.GetProperty(name);
-        var files = component.GetProperty("files").EnumerateArray()
-            .Select(x => x.GetString() ?? "").ToArray();
         Expect(errors, String(component, "normalizedTextTreeSha256") == expected,
-            $"{name} declared identity drifted");
-        Expect(errors, IntegrationImplementationGuard.NormalizedTextTreeIdentity(root, files) == expected,
-            $"{name} live identity drifted");
+            $"{name} historical declared identity drifted");
+        Expect(errors, component.GetProperty("files").ValueKind == JsonValueKind.Array
+            && component.GetProperty("files").GetArrayLength() > 0,
+            $"{name} historical file inventory is absent");
     }
 
     private static string String(JsonElement parent, string name) =>
