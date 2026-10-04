@@ -22,7 +22,8 @@ public sealed class IntegrationPreregistrationAuditClosureTests
         using var state = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "docs",
             "PROJECT_STATE.json")));
         var stateRoot = state.RootElement;
-        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT",
+        // The historical audit remains frozen even though the canonical current phase advances.
+        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION",
             stateRoot.GetProperty("currentPhase").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextRecommendedPhase").ValueKind);
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextBehavioralPhase").ValueKind);
@@ -44,6 +45,15 @@ public sealed class IntegrationPreregistrationAuditClosureTests
         Assert.False(audit.GetProperty("behaviorChange").GetBoolean());
         Assert.False(audit.GetProperty("rngChange").GetBoolean());
         Assert.False(audit.GetProperty("defaultChange").GetBoolean());
+
+        var implementation = stateRoot.GetProperty(
+            "lane0CorrectiveSuccessorIntegrationImplementation");
+        Assert.Equal(expectedIdentity,
+            implementation.GetProperty("parentIntegrationPreregistrationSha256").GetString());
+        Assert.Equal("AUTHORIZED_FOR_IMPLEMENTATION_ONLY",
+            implementation.GetProperty("integrationAuthorization").GetString());
+        Assert.Equal("NO_C11_AUTHORIZATION",
+            implementation.GetProperty("c11Authorization").GetString());
     }
 
     private static string Root()

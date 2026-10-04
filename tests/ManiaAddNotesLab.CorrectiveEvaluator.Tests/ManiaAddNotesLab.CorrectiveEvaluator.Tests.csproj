@@ -21,5 +21,9 @@
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorEvaluator.cs" Link="Lane0CorrectiveSuccessorEvaluator.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorPackage.cs" Link="Lane0CorrectiveSuccessorPackage.cs" />
     <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorExecutionPreparation.cs" Link="Lane0CorrectiveSuccessorExecutionPreparation.cs" />
+    <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorFrozenC11Adapter.cs" Link="Lane0CorrectiveSuccessorFrozenC11Adapter.cs" />
+    <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorIsolatedLauncher.cs" Link="Lane0CorrectiveSuccessorIsolatedLauncher.cs" />
+    <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorDeepSemanticPackageVerifier.cs" Link="Lane0CorrectiveSuccessorDeepSemanticPackageVerifier.cs" />
+    <Compile Include="..\..\tools\ManiaAddNotesLab.Experiments\Lane0CorrectiveSuccessorInternalResearchRunner.cs" Link="Lane0CorrectiveSuccessorInternalResearchRunner.cs" />
   </ItemGroup>
 </Project>

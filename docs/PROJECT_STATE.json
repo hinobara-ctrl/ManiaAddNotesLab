@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 25,
-  "lastUpdated": "2026-10-02",
+  "schemaVersion": 26,
+  "lastUpdated": "2026-10-03",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -46,7 +46,8 @@
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION", "name": "Corrective Successor Phase 2 Execution Preparation", "status": "COMPLETE", "outcome": "READY_FOR_INDEPENDENT_EXECUTION_AUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_EXECUTION_PREPARATION.md", "authorization": "NO_C11_AUTHORIZATION" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT", "name": "Corrective Successor Phase 2 Independent Audit Closure", "status": "COMPLETE", "outcome": "AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_PHASE2_AUDIT.md", "authorization": "NO_C11_AUTHORIZATION" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION", "name": "Corrective Successor Integration Preregistration", "status": "COMPLETE", "outcome": "READY_FOR_HUMAN_REVIEW", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREREGISTRATION.md", "authorization": "NO_C11_AUTHORIZATION" },
-    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT", "name": "Corrective Successor Integration Preregistration Independent Audit Closure", "status": "COMPLETE", "outcome": "AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREREGISTRATION_AUDIT.md", "authorization": "NO_C11_AUTHORIZATION" }
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT", "name": "Corrective Successor Integration Preregistration Independent Audit Closure", "status": "COMPLETE", "outcome": "AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREREGISTRATION_AUDIT.md", "authorization": "NO_C11_AUTHORIZATION" },
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION", "name": "Corrective Successor Integration Implementation", "status": "COMPLETE", "outcome": "READY_FOR_INDEPENDENT_INTEGRATION_AUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_IMPLEMENTATION.md", "authorization": "AUTHORIZED_FOR_IMPLEMENTATION_ONLY" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -77,13 +78,14 @@
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NO_C11_AUTHORIZATION" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NO_C11_AUTHORIZATION" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NO_C11_AUTHORIZATION" },
-    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NO_C11_AUTHORIZATION" }
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "NO_C11_AUTHORIZATION" },
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_IMPLEMENTATION_ONLY" }
   ],
-  "currentPhase": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT",
+  "currentPhase": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION",
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "HUMAN_REVIEW_REQUIRED",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 1022, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 1060, "failed": 0, "skipped": 0 },
   "lane0Closure": {
     "status": "COMPLETE",
     "outcome": "FEASIBILITY_DEMONSTRATED",
@@ -297,10 +299,34 @@
     "publishedPreregistrationValidation": { "passed": 1020, "failed": 0, "skipped": 0, "githubCi": "NONE" },
     "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREREGISTRATION_AUDIT.md"
   },
+  "lane0CorrectiveSuccessorIntegrationImplementation": {
+    "status": "COMPLETE",
+    "outcome": "READY_FOR_INDEPENDENT_INTEGRATION_AUDIT",
+    "baselinePublicHead": "94bba4825e1a3fafbcb44940b63bbd3e9b8b221c",
+    "parentIntegrationPreregistrationSha256": "7C0A86BF3C6647CA7092C4D3390EB97EA6E11D7E5429ECBA6F499D55C5417A02",
+    "executionContract": "docs/lane_0_corrective_successor_integration_execution_contract.json",
+    "executionContractHash": "8763BC90212AF44947C6BAF3BD7FAADD1905289F0F8A1C3480199F771D3CAA0A",
+    "adapterSha256": "B656DC414568FD9464B324FA20B120DDE333D1ADEE2EF5FE6BC9E4E6AF4EB08C",
+    "runnerSha256": "CC26CF98AF721438362A0C5B6334E9215DB4C61F677C4D76D8864119A34CD0B4",
+    "launcherSha256": "D1AF3E14BF31104EFB61DA0A8D4B9447A2C7D069162256904F9AA0EB72FEC25F",
+    "semanticVerifierSha256": "F3A7E703541343DC51C34B95D433ABBD86B6DDCBEC7FA26F006252725FD7737F",
+    "integrationAuthorization": "AUTHORIZED_FOR_IMPLEMENTATION_ONLY",
+    "c11Authorization": "NO_C11_AUTHORIZATION",
+    "bindingPresent": false,
+    "receiptPresent": false,
+    "c11Accessed": false,
+    "executionAuthorized": false,
+    "behaviorChange": false,
+    "rngChange": false,
+    "defaultChange": false,
+    "productExposure": false,
+    "nextRequiredAction": "HUMAN_REVIEW_REQUIRED",
+    "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_IMPLEMENTATION.md"
+  },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "INTEGRATION_IMPLEMENTATION_REQUIRES_SEPARATE_HUMAN_AUTHORIZATION; DEEP_SEMANTIC_PACKAGE_VERIFIER_REQUIRED_BEFORE_BINDING"
+    "currentBlockingRequirement": "INDEPENDENT_INTEGRATION_AUDIT_REQUIRES_SEPARATE_HUMAN_AUTHORIZATION; BINDING_REMAINS_ABSENT"
   },
   "g10Recertification": {
     "status": "PASS",

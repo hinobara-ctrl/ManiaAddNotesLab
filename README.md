@@ -56,24 +56,25 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 - **LANE.0 corrective successor Phase 2 audit — CLEAN WITH NON-BLOCKING OBSERVATIONS:** la auditoría independiente de `6b1a173` cerró R2-01…R2-08 sin cambiar identidades. El verificador semántico profundo y toda integración son `REQUIRED_BEFORE_BINDING`; no existe adapter, runner interno, launcher aislado, binding, receipt ni autorización C11.
 - **LANE.0 corrective successor integration preregistration — READY FOR HUMAN REVIEW / NO C11 AUTHORIZATION:** congela el diseño futuro de adapter, runner interno, launcher aislado y verificador semántico profundo, junto con sus identidades y orden de autoridad. La implementación permanece `NOT_STARTED / NOT_AUTHORIZED`; no existe binding, receipt ni acceso C11.
 - **LANE.0 integration preregistration audit — CLEAN WITH NON-BLOCKING OBSERVATIONS:** la auditoría independiente de `9986e156` recomputó la identidad `7C0A86BF…17A02`, confirmó freeze, corpus/duplicado, autoridad y linaje. No autoriza implementación, binding, receipt, C11 ni ejecución.
+- **LANE.0 integration implementation — READY FOR INDEPENDENT INTEGRATION AUDIT / NO C11 AUTHORIZATION:** implementa las cuatro superficies preregistradas con 12 ubicaciones/11 contenidos, `CorpusRoot` opaco antes del receipt, dos pasadas y verificación semántica profunda. No existe binding, receipt real, ejecución C11 ni exposición de producto.
 
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. La recertificación final conserva `NEEDS_REVIEW`: seguridad observada 215→0, pero causalidad final `188 A + 21 B + 5 D + 1 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT — COMPLETE — OUTCOME AUDIT_CLEAN_WITH_NON_BLOCKING_OBSERVATIONS<br>
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION — COMPLETE — OUTCOME READY_FOR_INDEPENDENT_INTEGRATION_AUDIT<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
 Next behavioral authorization: N/A<br>
 Retry: prohibited<br>
-Successor: Integration preregistration audit clean / implementation not started / C11 not authorized<br>
+Successor: Integration implementation complete / independent audit pending / C11 not authorized<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 1022 passed / 0 failed / 0 skipped
+Tests: 1060 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

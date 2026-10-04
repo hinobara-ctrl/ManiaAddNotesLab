@@ -1,0 +1,94 @@
+{
+  "contract": {
+    "schemaVersion": "lane-0-corrective-successor-integration-execution.1",
+    "phaseId": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION",
+    "baselinePublicHead": "94bba4825e1a3fafbcb44940b63bbd3e9b8b221c",
+    "parentIntegrationPreregistrationSha256": "7C0A86BF3C6647CA7092C4D3390EB97EA6E11D7E5429ECBA6F499D55C5417A02",
+    "authorization": {
+      "integrationImplementation": "AUTHORIZED_FOR_IMPLEMENTATION_ONLY",
+      "c11": "NO_C11_AUTHORIZATION",
+      "binding": "ABSENT",
+      "receipt": "ABSENT",
+      "executionAuthorized": false
+    },
+    "components": {
+      "officialFrozenC11Adapter": {
+        "files": ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorFrozenC11Adapter.cs"],
+        "normalizedTextTreeSha256": "B656DC414568FD9464B324FA20B120DDE333D1ADEE2EF5FE6BC9E4E6AF4EB08C"
+      },
+      "officialInternalResearchRunner": {
+        "files": ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorInternalResearchRunner.cs"],
+        "normalizedTextTreeSha256": "CC26CF98AF721438362A0C5B6334E9215DB4C61F677C4D76D8864119A34CD0B4"
+      },
+      "isolatedExecutionLauncher": {
+        "files": ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorIsolatedLauncher.cs"],
+        "normalizedTextTreeSha256": "D1AF3E14BF31104EFB61DA0A8D4B9447A2C7D069162256904F9AA0EB72FEC25F"
+      },
+      "deepSemanticPackageVerifier": {
+        "files": ["tools/ManiaAddNotesLab.Experiments/Lane0CorrectiveSuccessorDeepSemanticPackageVerifier.cs"],
+        "normalizedTextTreeSha256": "F3A7E703541343DC51C34B95D433ABBD86B6DDCBEC7FA26F006252725FD7737F"
+      }
+    },
+    "frozenDependencies": {
+      "phase1ContractSha256": "66B0D27535B8EEE5B466DDAB1209DD0C548B982C24913E1993E611D57E1BE505",
+      "phase2ContractSha256": "11F55A6770BA78F008A6690C88561C714CAF45BA15B96E472C0C80B219C4D5B6",
+      "phase2ScientificImplementationSha256": "8F9AE545027F0F1364E3378324646C7F7711CDF7EFFC8CC879660644A3D905D0",
+      "phase2HarnessSha256": "15DC978C24119E9832DD70C0C61F5BFB1BBAF11520A107A7728220009B793A61",
+      "phase2PackageVerifierSha256": "DFF48221A6FB087367B1C6B1062B7355806C53668C6876A4BB4EC59983232D38",
+      "frozenDependenciesSha256": "D5931A815701C0FAB854B878373A8ED03F3E29BDEA17C98A428C7AF6B0F7023B",
+      "verifiedFrozenC11ManifestSha256": "AC28C73F65B7FC896E02046E9715C8A24156FBB9B200439657B6A6F0F3E81445"
+    },
+    "corpusAdmission": {
+      "locationCount": 12,
+      "uniqueContentCount": 11,
+      "duplicateContentSha256": "322F995448A73713DCBECE3D140F4D516EF687DBC43CC140CFF14948566F906B",
+      "duplicateLocationCount": 2,
+      "uniqueOriginalObjects": 50836,
+      "keymodes": [4, 7, 10],
+      "preReceiptCorpusRootState": "OPAQUE_TOKEN",
+      "discovery": false,
+      "arbitraryEnumeration": false
+    },
+    "authorityOrder": [
+      "SOURCE_PUBLIC_HEAD_CHECKS",
+      "CONTRACT_IDENTITIES",
+      "RUNTIME_IDENTITIES",
+      "CANONICAL_BINDING_PRESENCE",
+      "CANONICAL_BINDING_BYTE_AND_HASH_VERIFICATION",
+      "EXPLICIT_AUTHORIZATION_FIELD",
+      "AUTHORIZED_EXECUTION_COUNT_ONE",
+      "SOURCE_TRACKED_CLEANLINESS",
+      "SOURCE_EXECUTION_RUNTIME_HEAD_EQUALITY",
+      "SOURCE_EXECUTION_ROOT_ISOLATION",
+      "DURABLE_RECEIPT_ABSENCE",
+      "OUTPUT_AND_STAGING_ABSENCE",
+      "DURABLE_RECEIPT_CREATION",
+      "CORPUSROOT_INTERPRETATION",
+      "CORPUS_SOURCE_EXECUTION_ROOT_ISOLATION",
+      "CORPUS_ADMISSION",
+      "SCIENTIFIC_PASS_1",
+      "SCIENTIFIC_PASS_2",
+      "BYTE_DETERMINISM",
+      "DEEP_SEMANTIC_VERIFICATION",
+      "FINAL_PUBLISHABLE_OR_NON_PUBLISHABLE_CLASSIFICATION"
+    ],
+    "threatModel": {
+      "pathScope": "CANONICAL_LEXICAL_ONLY",
+      "physicalAliasProtectionClaimed": false,
+      "hostileAdministratorOrOsCovered": false,
+      "distributedAuthorityCovered": false
+    },
+    "phaseBoundary": {
+      "status": "COMPLETE",
+      "outcome": "READY_FOR_INDEPENDENT_INTEGRATION_AUDIT",
+      "c11Accessed": false,
+      "behaviorChange": false,
+      "rngChange": false,
+      "defaultChange": false,
+      "productExposure": false,
+      "nextRequiredAction": "HUMAN_REVIEW_REQUIRED"
+    }
+  },
+  "canonicalSha256": "8763BC90212AF44947C6BAF3BD7FAADD1905289F0F8A1C3480199F771D3CAA0A",
+  "canonicalization": "UTF-8 JSON; recursively sort object properties ordinally; preserve array order and primitive values; no insignificant whitespace; hash only the contract object."
+}
