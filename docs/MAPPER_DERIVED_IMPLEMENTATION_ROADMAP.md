@@ -1287,6 +1287,14 @@ Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_
 
 Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION — COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT.
 
+## Phase LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION — Historical Validation Portability Remediation
+
+<!-- PHASE-CONTRACT:LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION;kind=ResearchShadow;behaviorChange=false;authorization=AUTHORIZED_FOR_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION_IMPLEMENTATION_ONLY -->
+
+**COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT.** HV-P1 separates el propósito estable del regression test actual del diagnóstico `ReusedDependencies`, cuya semántica histórica depende intencionalmente de bytes físicos exactos. El contrato y el validador históricos no cambian; `ReusedDependencies=false` continúa clasificando `INVALID`, y las identidades adapter, runner, authority/runtime/worker y verifier permanecen congeladas. No hubo C11, Songs, binding, receipt real, ejecución, conducta, RNG, defaults o exposición de producto.
+
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION — COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT.
+
 ## Phase G1 — Interior Relation Semantics A/B
 
 <!-- PHASE-CONTRACT:G1;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->

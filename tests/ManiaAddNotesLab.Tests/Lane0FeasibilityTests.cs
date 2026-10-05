@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Text.Json;
 using ManiaAddNotesLab.Core;
 
 namespace ManiaAddNotesLab.Tests;
@@ -431,9 +432,37 @@ public sealed class Lane0FeasibilityTests
 
         Assert.Equal("INVALID", readiness.Outcome);
         Assert.True(readiness.Checks.ContractCanonical);
-        Assert.True(readiness.Checks.ReusedDependencies);
         Assert.False(readiness.Checks.ImplementationIdentity);
         Assert.False(readiness.Checks.HarnessIdentity);
+    }
+
+    [Fact]
+    public void HistoricalV2ExactByteDependencyDriftRemainsFailClosed()
+    {
+        var readiness = Lane0FeasibilityRunner.ClassifyCorrectiveReadiness(new(
+            ContractCanonical: true,
+            ImplementationIdentity: true,
+            HarnessIdentity: true,
+            ReusedDependencies: false,
+            PublicationBindingPresent: true,
+            PublishedHeadMatches: true,
+            HumanAuthorized: true,
+            ManifestVerified: true));
+
+        Assert.Equal("INVALID", readiness.Outcome);
+    }
+
+    [Fact]
+    public void HistoricalV2ContractDeclaresExactByteDependencySemantics()
+    {
+        var path = Path.Combine(FindRepositoryRoot(), "docs",
+            "lane_0_future_held_hardening_contract.json");
+        using var document = JsonDocument.Parse(File.ReadAllText(path));
+        var canonicalization = document.RootElement.GetProperty("canonicalization").GetString();
+
+        Assert.Contains("file hashes use exact working-tree bytes", canonicalization,
+            StringComparison.Ordinal);
+        Assert.Contains("CRLF/LF changes identity", canonicalization, StringComparison.Ordinal);
     }
 
     [Fact]

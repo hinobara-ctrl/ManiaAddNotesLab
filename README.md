@@ -66,20 +66,20 @@ No utiliza una biblioteca hardcodeada de patrones —jack, trill, stream u otras
 La generación default continúa en `legacy-experimental.1`; el perfil sigue en `phase-a.1` y diagnostics en `phase-c1-2-shadow.1`. G1.GATE y SAFETY.REMEDIATION.GATE existen sólo como treatments research explícitos y no están expuestos en CLI/Web. La recertificación final conserva `NEEDS_REVIEW`: seguridad observada 215→0, pero causalidad final `188 A + 21 B + 5 D + 1 unresolved`. G1 de utilidad, G2/H y cualquier sucesora siguen sin autorización.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION — COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT<br>
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION — COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
 Next behavioral authorization: N/A<br>
 Retry: prohibited<br>
-Successor: Authority atomicity/provenance remediation complete / final independent prebinding reaudit pending / C11 science not authorized<br>
+Successor: Historical validation portability remediation complete / final independent prebinding reaudit pending / C11 science not authorized<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 1187 passed / 0 failed / 0 skipped
+Tests: 1202 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.

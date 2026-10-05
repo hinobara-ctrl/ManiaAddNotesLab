@@ -23,7 +23,7 @@ public sealed class IntegrationPreregistrationAuditClosureTests
             "PROJECT_STATE.json")));
         var stateRoot = state.RootElement;
         // The historical audit remains frozen even though the canonical current phase advances.
-        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION",
+        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION",
             stateRoot.GetProperty("currentPhase").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextRecommendedPhase").ValueKind);
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextBehavioralPhase").ValueKind);

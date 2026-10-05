@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 27,
+  "schemaVersion": 28,
   "lastUpdated": "2026-10-05",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
@@ -52,7 +52,8 @@
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING", "name": "Corrective Successor Integration Pre-Binding Hardening", "status": "COMPLETE", "outcome": "READY_FOR_INDEPENDENT_PREBINDING_AUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_HARDENING.md", "authorization": "AUTHORIZED_FOR_PREBINDING_HARDENING_IMPLEMENTATION_ONLY" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION", "name": "Corrective Successor Integration Pre-Binding Audit Remediation", "status": "COMPLETE", "outcome": "READY_FOR_INDEPENDENT_PREBINDING_REAUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_AUDIT_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_PREBINDING_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION", "name": "Corrective Successor Final Authority-to-Science Boundary Remediation", "status": "COMPLETE", "outcome": "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_FINAL_AUTHORITY_BOUNDARY_REMEDIATION_IMPLEMENTATION_ONLY" },
-    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION", "name": "Corrective Successor Pre-Binding Authority Atomicity and Provenance Remediation", "status": "COMPLETE", "outcome": "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION_IMPLEMENTATION_ONLY" }
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION", "name": "Corrective Successor Pre-Binding Authority Atomicity and Provenance Remediation", "status": "COMPLETE", "outcome": "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION_IMPLEMENTATION_ONLY" },
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION", "name": "Corrective Successor Historical Validation Portability Remediation", "status": "COMPLETE", "outcome": "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION_IMPLEMENTATION_ONLY" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -89,13 +90,14 @@
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_PREBINDING_HARDENING_IMPLEMENTATION_ONLY" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_PREBINDING_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_FINAL_AUTHORITY_BOUNDARY_REMEDIATION_IMPLEMENTATION_ONLY" },
-    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION_IMPLEMENTATION_ONLY" }
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION_IMPLEMENTATION_ONLY" },
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION_IMPLEMENTATION_ONLY" }
   ],
-  "currentPhase": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION",
+  "currentPhase": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION",
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "FINAL_INDEPENDENT_PREBINDING_REAUDIT",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 1187, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 1202, "failed": 0, "skipped": 0 },
   "lane0Closure": {
     "status": "COMPLETE",
     "outcome": "FEASIBILITY_DEMONSTRATED",
@@ -435,6 +437,34 @@
     "productExposure": false,
     "nextRequiredAction": "FINAL_INDEPENDENT_PREBINDING_REAUDIT",
     "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION.md"
+  },
+  "lane0CorrectiveSuccessorIntegrationHistoricalValidationPortabilityRemediation": {
+    "status": "COMPLETE",
+    "outcome": "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT",
+    "baselinePublicHead": "9eaf82e8aa933ab730af107042884c591e597576",
+    "parentRemediationContractSha256": "27BAFFB4B92E5B30A073E60673D8F2FEDB109FF70A69A23C5783D8D589693FDD",
+    "contract": "docs/lane_0_corrective_successor_integration_historical_validation_portability_remediation_contract.json",
+    "contractHash": "4BC0C5B4DCE583B8CC9A42BB64FF11A2E180E68E20E52269B91861F29521A4E1",
+    "finding": "HISTORICAL_EXACT_BYTE_REUSED_DEPENDENCY_ASSERTION_NOT_PORTABLE_ACROSS_CHECKOUTS",
+    "disposition": "CLOSED_CURRENT_REGRESSION_TEST_NO_LONGER_REQUIRES_CHECKOUT_DEPENDENT_TRUE_VALUE",
+    "historicalContractModified": false,
+    "historicalValidatorModified": false,
+    "historicalExactByteSemanticsPreserved": true,
+    "reusedDependencyFalseStillInvalid": true,
+    "adapterSha256": "032F9660D8C0012C990983CE307CDA9D20B1C49116BEAA7F3C5E3DB1EBD875B0",
+    "runnerSha256": "32C600B809F0B021C3806FDBC2BE58656C6DA27B5CE053E4E625AC9A175D72BF",
+    "authorityRuntimeWorkerSha256": "805F70466B503FEBBB14511E595A12E3AB42A583CED1A1D04193BF3DE04474DE",
+    "semanticVerifierSha256": "67969A60704553AA6CFB134F8B7F67236757EA6A2CF51C9CD7C4EF3C8FA5A4DB",
+    "c11AccessedInThisPhase": false,
+    "bindingPresent": false,
+    "realReceiptPresent": false,
+    "realSuccessorExecution": false,
+    "behaviorChange": false,
+    "rngChange": false,
+    "defaultChange": false,
+    "productExposure": false,
+    "nextRequiredAction": "FINAL_INDEPENDENT_PREBINDING_REAUDIT",
+    "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_HISTORICAL_VALIDATION_PORTABILITY_REMEDIATION.md"
   },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
