@@ -39,7 +39,7 @@ internal interface ILane0IntegrationIsolatedScientificRuntime
     Lane0IntegrationResearchResult RunOfficial(
         Lane0IntegrationPreparedRuntime prepared, string canonicalSourceRoot,
         string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities,
-        Lane0IntegrationCheckoutEvidence checkoutEvidence, string corpusRootToken);
+        Lane0IntegrationOfficialReceiptCoordinator receiptCoordinator, string corpusRootToken);
     Lane0IntegrationScientificRuntimeResult ExecuteSyntheticFixture(
         Lane0IntegrationPreparedRuntime prepared,
         ImmutableArray<Lane0CorrectiveChartInput> inputs,
@@ -170,7 +170,7 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
     public Lane0IntegrationResearchResult RunOfficial(
         Lane0IntegrationPreparedRuntime prepared, string canonicalSourceRoot,
         string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities,
-        Lane0IntegrationCheckoutEvidence checkoutEvidence, string corpusRootToken)
+        Lane0IntegrationOfficialReceiptCoordinator receiptCoordinator, string corpusRootToken)
     {
         ValidatePreparedBinaryClosure(prepared, projectAssemblyNames,
             "Prepared project binary closure changed before official run.");
@@ -179,19 +179,11 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
         var attestationPath = UnderRoot(buildRoot, "official-launch-attestation.json");
         var responsePath = UnderRoot(Lane0IntegrationOfficialLayout.StagingRoot(prepared.ExecutionRoot),
             "response.json");
-        var unsigned = new Lane0IntegrationOfficialLaunchAttestation(
-            "lane-0-integration-official-launch-attestation.1",
-            Path.GetFullPath(canonicalSourceRoot), Path.GetFullPath(prepared.ExecutionRoot),
-            expectedHead, expectedIdentities, prepared.BinaryClosure,
-            checkoutEvidence.Detached, checkoutEvidence.TrackedClean,
-            checkoutEvidence.UsedHardlinks, checkoutEvidence.ReusedSourceBuildOutputs, "");
-        var canonicalHash = Convert.ToHexString(SHA256.HashData(
-            JsonSerializer.SerializeToUtf8Bytes(unsigned with { CanonicalSha256 = "" }, JsonOptions)));
-        File.WriteAllBytes(attestationPath, JsonSerializer.SerializeToUtf8Bytes(
-            unsigned with { CanonicalSha256 = canonicalHash }, JsonOptions));
+        WriteOfficialLaunchAttestation(attestationPath, prepared, canonicalSourceRoot,
+            expectedHead, expectedIdentities);
 
         var result = StartOfficial(prepared.WorkerAssemblyPath, prepared.ExecutionRoot,
-            corpusRootToken);
+            receiptCoordinator, corpusRootToken);
         if (result.ExitCode != 0)
             throw new InvalidDataException($"Official ExecutionRoot command failed: {result.Error}{result.Output}");
         var response = JsonSerializer.Deserialize<Lane0IntegrationResearchResult>(
@@ -203,31 +195,44 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
     }
 
     private static (int ExitCode, string Output, string Error) StartOfficial(
-        string assembly, string executionRoot, string corpusRootToken)
+        string assembly, string executionRoot,
+        Lane0IntegrationOfficialReceiptCoordinator receiptCoordinator,
+        string corpusRootToken)
     {
-        var info = new ProcessStartInfo("dotnet")
+        using var session = Lane0IntegrationOfficialWorkerSession.Start(
+            assembly, executionRoot);
+        try
         {
-            WorkingDirectory = executionRoot, UseShellExecute = false,
-            RedirectStandardInput = true, RedirectStandardOutput = true,
-            RedirectStandardError = true, CreateNoWindow = true
-        };
-        info.ArgumentList.Add(assembly); info.ArgumentList.Add("--official-run");
-        info.ArgumentList.Add("--execution-root"); info.ArgumentList.Add(executionRoot);
-        info.Environment["DOTNET_CLI_USE_MSBUILD_SERVER"] = "0";
-        info.Environment["MSBUILDDISABLENODEREUSE"] = "1";
-        using var process = Process.Start(info)
-            ?? throw new InvalidOperationException("Could not start official worker.");
-        var receiptBoundary = process.StandardOutput.ReadLine();
-        if (receiptBoundary == "RECEIPT_CREATED")
-        {
-            process.StandardInput.WriteLine(JsonSerializer.Serialize(corpusRootToken));
-            process.StandardInput.Close();
+            receiptCoordinator.CreateCanonicalDurableReceipt();
         }
-        var output = receiptBoundary is null ? string.Empty : receiptBoundary + "\n";
-        output += process.StandardOutput.ReadToEnd();
-        var error = process.StandardError.ReadToEnd();
-        process.WaitForExit();
-        return (process.ExitCode, output, error);
+        catch
+        {
+            session.Terminate();
+            throw;
+        }
+        session.VerifyCreatedReceipt();
+        return session.Complete(corpusRootToken);
+    }
+
+    internal static string OfficialAttestationPath(Lane0IntegrationPreparedRuntime prepared) =>
+        UnderRoot(Path.GetDirectoryName(prepared.WorkerAssemblyPath)
+            ?? throw new InvalidDataException("Worker build directory is absent."),
+            "official-launch-attestation.json");
+
+    internal static void WriteOfficialLaunchAttestation(
+        string attestationPath, Lane0IntegrationPreparedRuntime prepared,
+        string canonicalSourceRoot, string expectedHead,
+        Lane0IntegrationRuntimeIdentities expectedIdentities)
+    {
+        var unsigned = new Lane0IntegrationOfficialLaunchAttestation(
+            "lane-0-integration-official-launch-attestation.1",
+            Path.GetFullPath(canonicalSourceRoot), Path.GetFullPath(prepared.ExecutionRoot),
+            expectedHead, expectedIdentities, prepared.BinaryClosure,
+            true, true, false, false, "");
+        var canonicalHash = Convert.ToHexString(SHA256.HashData(
+            JsonSerializer.SerializeToUtf8Bytes(unsigned with { CanonicalSha256 = "" }, JsonOptions)));
+        File.WriteAllBytes(attestationPath, JsonSerializer.SerializeToUtf8Bytes(
+            unsigned with { CanonicalSha256 = canonicalHash }, JsonOptions));
     }
 
     private static (int ExitCode, string Output, string Error) StartSynthetic(
@@ -366,8 +371,8 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
     {
         Require(state.BinaryClosure is not null,
             "Durable authority state has no project binary closure binding.");
-        Require(state.ExecutionState == "SCIENCE_ATTEMPT_CLAIMED",
-            "Durable authority state does not own the one-shot science attempt.");
+        Require(state.ExecutionState == "RECEIPT_VERIFIED_ATTEMPT_CONSUMED",
+            "Durable authority state does not prove post-receipt attempt consumption.");
         Require(state.ExpectedIdentities == expectedIdentities,
             "Durable authority state component identities drifted.");
         Require(BinaryClosuresEqual(state.BinaryClosure!, observed),
@@ -446,6 +451,95 @@ internal sealed class Lane0ExecutionRootScientificRuntime : ILane0IntegrationIso
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = false
     };
+
+    private static void Require(bool condition, string message)
+    {
+        if (!condition) throw new InvalidDataException(message);
+    }
+}
+
+/// <summary>
+/// One already-running pre-receipt worker session. It can verify a receipt created by the sealed
+/// coordinator, but deliberately has no receipt creation API and cannot attach after startup.
+/// </summary>
+internal sealed class Lane0IntegrationOfficialWorkerSession : IDisposable
+{
+    private readonly Process process;
+    private string output;
+    private bool completed;
+
+    private Lane0IntegrationOfficialWorkerSession(Process process, string boundary)
+    {
+        this.process = process;
+        output = boundary + "\n";
+    }
+
+    internal static Lane0IntegrationOfficialWorkerSession Start(
+        string assembly, string executionRoot)
+    {
+        var info = new ProcessStartInfo("dotnet")
+        {
+            WorkingDirectory = executionRoot, UseShellExecute = false,
+            RedirectStandardInput = true, RedirectStandardOutput = true,
+            RedirectStandardError = true, CreateNoWindow = true
+        };
+        info.ArgumentList.Add(assembly); info.ArgumentList.Add("--official-run");
+        info.ArgumentList.Add("--execution-root"); info.ArgumentList.Add(executionRoot);
+        info.Environment["DOTNET_CLI_USE_MSBUILD_SERVER"] = "0";
+        info.Environment["MSBUILDDISABLENODEREUSE"] = "1";
+        var process = Process.Start(info)
+            ?? throw new InvalidOperationException("Could not start official worker.");
+        var boundary = process.StandardOutput.ReadLine();
+        if (boundary != "PRE_RECEIPT_READY")
+        {
+            process.StandardInput.Close();
+            var remaining = process.StandardOutput.ReadToEnd();
+            var error = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            process.Dispose();
+            throw new InvalidDataException(
+                $"Official worker failed before PRE_RECEIPT_READY: {boundary}{remaining}{error}");
+        }
+        return new(process, boundary);
+    }
+
+    internal void VerifyCreatedReceipt()
+    {
+        Require(!completed, "Official worker session is already complete.");
+        process.StandardInput.WriteLine("RECEIPT_CREATED");
+        process.StandardInput.Flush();
+        var boundary = process.StandardOutput.ReadLine();
+        output += boundary is null ? string.Empty : boundary + "\n";
+        Require(boundary == "RECEIPT_VERIFIED",
+            "Official worker did not independently verify the canonical receipt.");
+    }
+
+    internal (int ExitCode, string Output, string Error) Complete(string corpusRootToken)
+    {
+        Require(!completed, "Official worker session is already complete.");
+        process.StandardInput.WriteLine(JsonSerializer.Serialize(corpusRootToken));
+        process.StandardInput.Close();
+        output += process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        completed = true;
+        return (process.ExitCode, output, error);
+    }
+
+    internal void Terminate()
+    {
+        if (completed) return;
+        try { process.StandardInput.Close(); } catch (ObjectDisposedException) { }
+        if (!process.HasExited) process.Kill(entireProcessTree: true);
+        process.WaitForExit();
+        completed = true;
+    }
+
+    public void Dispose()
+    {
+        Terminate();
+        process.Dispose();
+    }
 
     private static void Require(bool condition, string message)
     {

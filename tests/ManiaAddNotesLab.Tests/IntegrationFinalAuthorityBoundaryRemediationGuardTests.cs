@@ -8,10 +8,12 @@ namespace ManiaAddNotesLab.Tests;
 public sealed class IntegrationFinalAuthorityBoundaryRemediationGuardTests
 {
     [Fact]
-    public void CurrentContractAndLiveComponentsAreConsistent()
+    public void HistoricalContractRemainsInternallyConsistentAndRejectsLiveDrift()
     {
         using var document = JsonDocument.Parse(File.ReadAllText(ContractPath()));
         Assert.Empty(IntegrationFinalAuthorityBoundaryRemediationGuard.Validate(
+            document.RootElement, Root()));
+        Assert.NotEmpty(IntegrationFinalAuthorityBoundaryRemediationGuard.ValidateAgainstLive(
             document.RootElement, Root()));
     }
 

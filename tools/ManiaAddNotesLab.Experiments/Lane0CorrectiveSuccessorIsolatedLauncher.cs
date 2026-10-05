@@ -79,20 +79,31 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
     private readonly ILane0IntegrationCheckoutMaterializer checkoutMaterializer;
     private readonly ILane0IntegrationAuthorityObserver observer;
     private readonly ILane0IntegrationIsolatedScientificRuntime scientificRuntime;
+    private readonly bool canonicalOfficialAuthorityEnabled;
 
     internal Lane0CorrectiveSuccessorIsolatedLauncher(
         ILane0IntegrationCheckoutMaterializer checkoutMaterializer,
         ILane0IntegrationAuthorityObserver observer,
         ILane0IntegrationIsolatedScientificRuntime scientificRuntime)
+        : this(checkoutMaterializer, observer, scientificRuntime, false)
+    {
+    }
+
+    private Lane0CorrectiveSuccessorIsolatedLauncher(
+        ILane0IntegrationCheckoutMaterializer checkoutMaterializer,
+        ILane0IntegrationAuthorityObserver observer,
+        ILane0IntegrationIsolatedScientificRuntime scientificRuntime,
+        bool canonicalOfficialAuthorityEnabled)
     {
         this.checkoutMaterializer = checkoutMaterializer;
         this.observer = observer;
         this.scientificRuntime = scientificRuntime;
+        this.canonicalOfficialAuthorityEnabled = canonicalOfficialAuthorityEnabled;
     }
 
     internal static Lane0CorrectiveSuccessorIsolatedLauncher CreateOfficial() =>
         new(new GitDetachedCheckoutMaterializer(), new GitAndFileIntegrationAuthorityObserver(),
-            new Lane0ExecutionRootScientificRuntime());
+            new Lane0ExecutionRootScientificRuntime(), true);
 
     internal const string BindingSchema =
         "lane-0-corrective-successor-integration-publication-binding.1";
@@ -124,6 +135,8 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
 
     internal Lane0IntegrationResearchResult RunOfficial(Lane0IntegrationOfficialLaunchRequest official)
     {
+        Require(canonicalOfficialAuthorityEnabled,
+            "Canonical official authority is available only through the sealed production launcher.");
         var completed = ImmutableArray.CreateBuilder<string>();
         var source = Path.GetFullPath(official.SourceRoot);
         var execution = Path.GetFullPath(official.ExecutionRoot);
@@ -176,12 +189,15 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
         completed.Add(AuthorityOrder[10]);
         Require(!store.OutputOrStagingExists, "Output or staging already exists.");
         completed.Add(AuthorityOrder[11]);
-        // The worker owns receipt creation, post-receipt corpus interpretation/admission and
-        // both scientific passes in one process. CorpusRoot is delivered through the handshake
-        // only after that process has durably crossed the receipt boundary.
+        var receiptCoordinator = new Lane0IntegrationOfficialReceiptCoordinator(
+            source, execution, official.ExpectedSourcePublicHead, official.ExpectedIdentities,
+            checkout, prepared);
+        // One already-running worker proves pre-receipt readiness. The sealed coordinator, which
+        // directly owns the materializer evidence, then creates the canonical receipt. Only that
+        // same worker session may verify it and continue to CorpusRoot interpretation and science.
         return scientificRuntime.RunOfficial(prepared, source,
             official.ExpectedSourcePublicHead, official.ExpectedIdentities,
-            checkout, official.CorpusRootToken);
+            receiptCoordinator, official.CorpusRootToken);
     }
 
     private Lane0IntegrationPreReceiptLease AcquireCore(
@@ -301,7 +317,7 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
             attemptCount = 1
         }, new JsonSerializerOptions { WriteIndented = true }), (byte)'\n'];
 
-    private static string ValidateBinding(Lane0IntegrationVerifiedBinding binding,
+    internal static string ValidateBinding(Lane0IntegrationVerifiedBinding binding,
         string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities)
     {
         var canonical = CanonicalBindingBytes(binding.Fields);
@@ -319,6 +335,113 @@ internal sealed class Lane0CorrectiveSuccessorIsolatedLauncher
     private static bool IsAncestor(string parent, string child, StringComparison comparison) =>
         child.StartsWith(parent + Path.DirectorySeparatorChar, comparison)
         || child.StartsWith(parent + Path.AltDirectorySeparatorChar, comparison);
+
+    private static void Require(bool condition, string message)
+    {
+        if (!condition) throw new InvalidDataException(message);
+    }
+}
+
+/// <summary>
+/// Production-only receipt boundary. It receives the exact checkout result owned by the sealed
+/// launcher, re-observes all live authority immediately before receipt creation, and has no
+/// caller-selectable authority store or receipt path.
+/// </summary>
+internal sealed class Lane0IntegrationOfficialReceiptCoordinator
+{
+    private readonly string canonicalSourceRoot;
+    private readonly string canonicalExecutionRoot;
+    private readonly string expectedHead;
+    private readonly Lane0IntegrationRuntimeIdentities expectedIdentities;
+    private readonly Lane0IntegrationCheckoutEvidence checkoutEvidence;
+    private readonly Lane0IntegrationPreparedRuntime preparedRuntime;
+
+    internal Lane0IntegrationOfficialReceiptCoordinator(
+        string canonicalSourceRoot, string canonicalExecutionRoot, string expectedHead,
+        Lane0IntegrationRuntimeIdentities expectedIdentities,
+        Lane0IntegrationCheckoutEvidence checkoutEvidence,
+        Lane0IntegrationPreparedRuntime preparedRuntime)
+    {
+        this.canonicalSourceRoot = Path.GetFullPath(canonicalSourceRoot);
+        this.canonicalExecutionRoot = Path.GetFullPath(canonicalExecutionRoot);
+        this.expectedHead = expectedHead;
+        this.expectedIdentities = expectedIdentities;
+        this.checkoutEvidence = checkoutEvidence;
+        this.preparedRuntime = preparedRuntime;
+    }
+
+    internal string CreateCanonicalDurableReceipt()
+    {
+        ValidateCheckoutEvidence(checkoutEvidence, expectedHead);
+        Require(Path.GetFullPath(preparedRuntime.ExecutionRoot) == canonicalExecutionRoot,
+            "Receipt creator rejected the prepared ExecutionRoot.");
+
+        var observer = new GitAndFileIntegrationAuthorityObserver();
+        Require(observer.ObserveHead(canonicalSourceRoot) == expectedHead
+            && observer.ObserveTrackedClean(canonicalSourceRoot)
+            && observer.ObserveRuntimeIdentities(canonicalSourceRoot) == expectedIdentities,
+            "Receipt creator rejected immediately observed source authority.");
+        Require(CaptureGit(canonicalExecutionRoot, "rev-parse", "HEAD").Trim() == expectedHead
+            && CaptureGitExitCode(canonicalExecutionRoot, "symbolic-ref", "-q", "HEAD") != 0
+            && string.IsNullOrWhiteSpace(CaptureGit(canonicalExecutionRoot, "status", "--porcelain",
+                "--untracked-files=no")),
+            "Receipt creator rejected immediately observed detached checkout authority.");
+        Lane0ExecutionRootScientificRuntime.ValidatePreparedBinaryClosure(preparedRuntime,
+            Lane0ExecutionRootScientificRuntime.DefaultProjectAssemblyNames,
+            "Receipt creator rejected the immediately observed project binary closure.");
+
+        var paths = Lane0IntegrationOfficialLayout.Derive(
+            canonicalSourceRoot, canonicalExecutionRoot);
+        // The binding is intentionally re-read here rather than relying on the earlier preflight.
+        var binding = new Lane0IntegrationCanonicalBindingLoader().Load(paths.CanonicalBindingPath);
+        var bindingHash = Lane0CorrectiveSuccessorIsolatedLauncher.ValidateBinding(
+            binding, expectedHead, expectedIdentities);
+        Require(binding.Fields.ExplicitHumanAuthorization
+            && binding.Fields.AuthorizedExecutionCount == 1,
+            "Receipt creator rejected canonical binding authorization.");
+        var store = new Lane0IntegrationFileAuthorityStore(paths.DurableReceiptPath,
+            paths.FinalArtifactsRoot, paths.StagingRoot);
+        Require(!store.ReceiptExists, "Durable receipt already exists.");
+        Require(!store.OutputOrStagingExists, "Output or staging already exists.");
+        store.CreateDurableReceipt(Lane0CorrectiveSuccessorIsolatedLauncher.BuildReceipt(
+            expectedHead, expectedIdentities, bindingHash));
+        return bindingHash;
+    }
+
+    internal static void ValidateCheckoutEvidence(
+        Lane0IntegrationCheckoutEvidence evidence, string expectedHead) =>
+        Require(evidence.Head == expectedHead && evidence.Detached && evidence.TrackedClean
+            && !evidence.UsedHardlinks && !evidence.ReusedSourceBuildOutputs,
+            "Receipt creator rejected detached/no-hardlink materializer evidence.");
+
+    private static string CaptureGit(string root, params string[] arguments)
+    {
+        var result = StartGit(root, arguments);
+        if (result.ExitCode != 0)
+            throw new InvalidDataException($"Receipt creator Git observation failed: {result.Error}");
+        return result.Output;
+    }
+
+    private static int CaptureGitExitCode(string root, params string[] arguments) =>
+        StartGit(root, arguments).ExitCode;
+
+    private static (int ExitCode, string Output, string Error) StartGit(
+        string root, IReadOnlyList<string> arguments)
+    {
+        var info = new ProcessStartInfo("git")
+        {
+            UseShellExecute = false, RedirectStandardOutput = true,
+            RedirectStandardError = true, CreateNoWindow = true
+        };
+        info.ArgumentList.Add("-C"); info.ArgumentList.Add(root);
+        foreach (var argument in arguments) info.ArgumentList.Add(argument);
+        using var process = Process.Start(info)
+            ?? throw new InvalidOperationException("Could not start Git authority observation.");
+        var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        return (process.ExitCode, output, error);
+    }
 
     private static void Require(bool condition, string message)
     {

@@ -56,10 +56,10 @@ public static class IntegrationFinalAuthorityBoundaryRemediationGuard
                 && !synthetic.GetProperty("officialAuthorityNamespaceAccessible").GetBoolean(),
                 "synthetic separation drifted");
             var components = contract.GetProperty("currentComponents");
-            ValidateLive(errors, components, repositoryRoot, "officialFrozenC11Adapter", AdapterIdentity);
-            ValidateLive(errors, components, repositoryRoot, "officialDependencySealedRunner", RunnerIdentity);
-            ValidateLive(errors, components, repositoryRoot, "unifiedAuthorityRuntimeWorker", AuthorityIdentity);
-            ValidateLive(errors, components, repositoryRoot, "deepSemanticPackageVerifier", VerifierIdentity);
+            ValidateFrozen(errors, components, "officialFrozenC11Adapter", AdapterIdentity);
+            ValidateFrozen(errors, components, "officialDependencySealedRunner", RunnerIdentity);
+            ValidateFrozen(errors, components, "unifiedAuthorityRuntimeWorker", AuthorityIdentity);
+            ValidateFrozen(errors, components, "deepSemanticPackageVerifier", VerifierIdentity);
             var order = contract.GetProperty("authorityOrder").EnumerateArray()
                 .Select(x => x.GetString()).ToArray();
             Expect(errors, order.Length == 21 && order[12] == "DURABLE_RECEIPT_CREATION"
@@ -92,14 +92,40 @@ public static class IntegrationFinalAuthorityBoundaryRemediationGuard
         return errors;
     }
 
+    public static IReadOnlyList<string> ValidateAgainstLive(
+        JsonElement artifact, string repositoryRoot)
+    {
+        var errors = new List<string>();
+        try
+        {
+            var components = artifact.GetProperty("contract").GetProperty("currentComponents");
+            ValidateLive(errors, components, repositoryRoot,
+                "officialFrozenC11Adapter", AdapterIdentity);
+            ValidateLive(errors, components, repositoryRoot,
+                "officialDependencySealedRunner", RunnerIdentity);
+            ValidateLive(errors, components, repositoryRoot,
+                "unifiedAuthorityRuntimeWorker", AuthorityIdentity);
+            ValidateLive(errors, components, repositoryRoot,
+                "deepSemanticPackageVerifier", VerifierIdentity);
+        }
+        catch (Exception exception)
+        {
+            errors.Add($"final authority-boundary live comparison malformed: {exception.Message}");
+        }
+        return errors;
+    }
+
+    private static void ValidateFrozen(List<string> errors, JsonElement components,
+        string name, string expected) =>
+        Expect(errors, String(components.GetProperty(name), "normalizedTextTreeSha256") == expected,
+            $"{name} declared identity drifted");
+
     private static void ValidateLive(List<string> errors, JsonElement components, string root,
         string name, string expected)
     {
         var component = components.GetProperty(name);
         var files = component.GetProperty("files").EnumerateArray()
             .Select(x => x.GetString() ?? "").ToArray();
-        Expect(errors, String(component, "normalizedTextTreeSha256") == expected,
-            $"{name} declared identity drifted");
         Expect(errors, IntegrationImplementationGuard.NormalizedTextTreeIdentity(root, files) == expected,
             $"{name} live identity drifted");
     }

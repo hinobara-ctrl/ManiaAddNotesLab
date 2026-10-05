@@ -30,6 +30,8 @@ const string lane0IntegrationPrebindingAuditRemediation =
     "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION";
 const string lane0FinalAuthorityBoundaryRemediation =
     "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION";
+const string lane0AtomicityProvenanceRemediation =
+    "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION";
 ValidateRepositoryRootLayout();
 ProjectState? state = null;
 try
@@ -80,6 +82,7 @@ else
     ValidateLane0CorrectiveSuccessorIntegrationPrebindingHardening(state);
     ValidateLane0CorrectiveSuccessorIntegrationPrebindingAuditRemediation(state);
     ValidateLane0CorrectiveSuccessorIntegrationFinalAuthorityBoundaryRemediation(state);
+    ValidateLane0CorrectiveSuccessorIntegrationAtomicityProvenanceRemediation(state);
     ValidateVersionContracts(state);
     ValidateMasterStateBlocks(state);
     ValidatePhaseSummaries(state);
@@ -185,7 +188,7 @@ void ValidateCanonicalState(ProjectState value)
     if (value.NextRecommendedPhase is not null && value.NextRecommendedPhase == value.NextBehavioralPhase)
         errors.Add("nextRecommendedPhase and nextBehavioralPhase must remain separate.");
 
-    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ", "LANE.0", "LANE.0.REMEDIATION", "LANE.0.HARDENING", lane0PostAttemptPhase, lane0SuccessorPhase, lane0SuccessorAuditPhase, lane0SuccessorPhase2, lane0SuccessorPhase2Audit, lane0IntegrationPreregistration, lane0IntegrationPreregistrationAudit, lane0IntegrationImplementation, lane0IntegrationRemediation, lane0IntegrationPrebindingHardening, lane0IntegrationPrebindingAuditRemediation, lane0FinalAuthorityBoundaryRemediation })
+    foreach (var required in new[] { "C1", "C1.1", "C1.2", "C2", "D0", "D0.1", "D0.2", "D1.0", "D1.GATE", "D1", "D1.SAFETY", "SAFETY.PROV", "G1.0", "G1.DESIGN", "G1.GATE", "SAFETY.CAUSAL", "SAFETY.REMEDIATION.DESIGN", "SAFETY.REMEDIATION.GATE", "G1", "G2", "H", "E", "E.1", "F1", "F2", "F2.1", "F2.2", "F2.3", "F2.ACQ", "LANE.0", "LANE.0.REMEDIATION", "LANE.0.HARDENING", lane0PostAttemptPhase, lane0SuccessorPhase, lane0SuccessorAuditPhase, lane0SuccessorPhase2, lane0SuccessorPhase2Audit, lane0IntegrationPreregistration, lane0IntegrationPreregistrationAudit, lane0IntegrationImplementation, lane0IntegrationRemediation, lane0IntegrationPrebindingHardening, lane0IntegrationPrebindingAuditRemediation, lane0FinalAuthorityBoundaryRemediation, lane0AtomicityProvenanceRemediation })
         if (value.Phases.All(x => x.Id != required)) errors.Add($"Required phase is absent from state: {required}.");
 
     if (value.TestStatus.Passed < 0 || value.TestStatus.Failed < 0 || value.TestStatus.Skipped < 0)
@@ -822,8 +825,8 @@ void ValidateG1GateClosure(ProjectState value)
     if (gate?.Status != "COMPLETE") return;
     if (gate.Outcome != "NEEDS_REVIEW" || gate.BehaviorChange is not true
         || gate.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION") || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || value.CurrentPhase is not ("G1.GATE" or "SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION") || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"))
         errors.Add("G1.GATE must close COMPLETE/NEEDS_REVIEW with no promotion or authorized successor.");
 
@@ -896,8 +899,8 @@ void ValidateSafetyCausalClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "A" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_REMEDIATION"
-        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION") || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || value.CurrentPhase is not ("SAFETY.CAUSAL" or "SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION") || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"))
         errors.Add("SAFETY.CAUSAL must close COMPLETE/A with no remediation, promotion or successor.");
 
@@ -980,8 +983,8 @@ void ValidateSafetyRemediationDesignClosure(ProjectState value)
     if (phase?.Status != "COMPLETE") return;
     if (phase.Outcome != "READY_FOR_SEPARATE_REMEDIATION_GATE" || phase.BehaviorChange is not false
         || phase.Authorization != "RESEARCH_COMPLETED_NO_IMPLEMENTATION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION") || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.DESIGN" or "SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION") || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"))
         errors.Add("SAFETY.REMEDIATION.DESIGN must close READY_FOR_SEPARATE_REMEDIATION_GATE with no implementation or authorized successor.");
 
@@ -1055,8 +1058,8 @@ void ValidateSafetyRemediationGateClosure(ProjectState value)
         || phase.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
         || contractState?.Kind != "BehaviorChanging" || contractState.BehaviorChange is not true
         || contractState.Authorization != "EXPERIMENT_COMPLETED_NO_PROMOTION"
-        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION") || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || value.CurrentPhase is not ("SAFETY.REMEDIATION.GATE" or "LANE.0" or "LANE.0.REMEDIATION" or "LANE.0.HARDENING" or "LANE.0.CORRECTIVE_POST_ATTEMPT_FORENSICS" or "LANE.0.CORRECTIVE_SUCCESSOR.PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE1_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.EXECUTION_PREPARATION" or "LANE.0.CORRECTIVE_SUCCESSOR.PHASE2_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREREGISTRATION_AUDIT" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_IMPLEMENTATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION" or "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION") || value.NextRecommendedPhase is not null
+        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"))
         errors.Add("SAFETY.REMEDIATION.GATE hardening must close NEEDS_REVIEW, experimental-only and without promotion or successor.");
 
@@ -1443,7 +1446,7 @@ void ValidateLane0Closure(ProjectState value)
         || phaseContract?.Kind != "ResearchShadow" || phaseContract.BehaviorChange is not false
         || phaseContract.Authorization != "RESEARCH_COMPLETED_NO_SUCCESSOR_AUTHORIZED"
         || value.NextRecommendedPhase is not null || value.NextBehavioralPhase is not null
-        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED"))
         errors.Add("LANE.0 must close FEASIBILITY_DEMONSTRATED, research-only and without an authorized successor.");
 
@@ -1768,9 +1771,9 @@ void ValidateLane0CorrectivePostAttemptForensics(ProjectState value)
         value.CurrentPhase, forensic is not null, phase is not null, forensic?.Attempt, forensic?.Retry,
         forensic?.Successor));
 
-    if (value.CurrentPhase is not (lane0PostAttemptPhase or lane0SuccessorPhase or lane0SuccessorAuditPhase or lane0SuccessorPhase2 or lane0SuccessorPhase2Audit or lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+    if (value.CurrentPhase is not (lane0PostAttemptPhase or lane0SuccessorPhase or lane0SuccessorAuditPhase or lane0SuccessorPhase2 or lane0SuccessorPhase2Audit or lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
         || value.NextRecommendedPhase is not null
-        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         || value.NextBehavioralPhase is not null
         || value.BehaviorChange)
@@ -1820,9 +1823,9 @@ void ValidateLane0CorrectiveSuccessorPhase1(ProjectState value)
         || phaseContract.BehaviorChange is not false
         || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
         errors.Add("LANE.0 successor Phase 1 must remain research-only and have no C11 authorization.");
-    if (value.CurrentPhase is not (lane0SuccessorPhase or lane0SuccessorAuditPhase or lane0SuccessorPhase2 or lane0SuccessorPhase2Audit or lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+    if (value.CurrentPhase is not (lane0SuccessorPhase or lane0SuccessorAuditPhase or lane0SuccessorPhase2 or lane0SuccessorPhase2Audit or lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
         || value.NextRecommendedPhase is not null
-        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || value.NextBehavioralPhase is not null || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         || value.BehaviorChange)
         errors.Add("LANE.0 successor Phase 1 must stop at human review with no actionable successor.");
@@ -1974,10 +1977,10 @@ void ValidateLane0CorrectiveSuccessorPhase1Audit(ProjectState value)
         || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
         errors.Add("LANE.0 successor Phase 1 audit closure must remain research-only and non-authorizing.");
 
-    if (value.CurrentPhase is not (lane0SuccessorAuditPhase or lane0SuccessorPhase2 or lane0SuccessorPhase2Audit or lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+    if (value.CurrentPhase is not (lane0SuccessorAuditPhase or lane0SuccessorPhase2 or lane0SuccessorPhase2Audit or lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
         || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null
-        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         || value.BehaviorChange)
         errors.Add("LANE.0 successor Phase 1 audit must be the non-behavioral current closure without an active Phase 2.");
@@ -2286,10 +2289,10 @@ void ValidateLane0CorrectiveSuccessorPhase2Audit(ProjectState value)
         || phaseContract.BehaviorChange is not false
         || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
         errors.Add("LANE.0 successor Phase 2 audit closure phase drifted.");
-    if (value.CurrentPhase is not (lane0SuccessorPhase2Audit or lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+    if (value.CurrentPhase is not (lane0SuccessorPhase2Audit or lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
         || value.NextRecommendedPhase is not null
         || value.NextBehavioralPhase is not null
-        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED")
         || value.BehaviorChange)
         errors.Add("Phase 2 audit closure must remain the current non-authorizing human-review stop.");
@@ -2361,9 +2364,9 @@ void ValidateLane0CorrectiveSuccessorIntegrationPreregistration(ProjectState val
         || phaseContract.BehaviorChange is not false
         || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
         errors.Add("Successor integration preregistration phase must remain research-only and non-authorizing.");
-    if (value.CurrentPhase is not (lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+    if (value.CurrentPhase is not (lane0IntegrationPreregistration or lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
         || value.NextRecommendedPhase is not null || value.NextBehavioralPhase is not null
-        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED") || value.BehaviorChange)
         errors.Add("Integration preregistration must stop at human review without activating implementation.");
     if (preregistration is null
@@ -2453,9 +2456,9 @@ void ValidateLane0CorrectiveSuccessorIntegrationPreregistrationAudit(ProjectStat
         || phaseContract.BehaviorChange is not false
         || phaseContract.Authorization != "NO_C11_AUTHORIZATION")
         errors.Add("Integration preregistration audit closure must remain documentary and non-authorizing.");
-    if (value.CurrentPhase is not (lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+    if (value.CurrentPhase is not (lane0IntegrationPreregistrationAudit or lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
         || value.NextRecommendedPhase is not null || value.NextBehavioralPhase is not null
-        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+        || (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
             && value.NextRecommendedAction != "HUMAN_REVIEW_REQUIRED") || value.BehaviorChange)
         errors.Add("Integration preregistration audit must stop at human review without activating implementation.");
     if (audit is null
@@ -2515,7 +2518,7 @@ void ValidateLane0CorrectiveSuccessorIntegrationImplementation(ProjectState valu
         || phaseContract.BehaviorChange is not false
         || phaseContract.Authorization != "AUTHORIZED_FOR_IMPLEMENTATION_ONLY")
         errors.Add("Integration implementation phase boundary drifted.");
-    if (value.CurrentPhase is not (lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation))
+    if (value.CurrentPhase is not (lane0IntegrationImplementation or lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation))
         errors.Add("Integration implementation historical closure is missing from the active lineage.");
     if (implementation is null
         || implementation.Status != "COMPLETE"
@@ -2589,7 +2592,7 @@ void ValidateLane0CorrectiveSuccessorIntegrationAuditRemediation(ProjectState va
         || phaseContract.Authorization !=
             "AUTHORIZED_FOR_INTEGRATION_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY")
         errors.Add("Integration audit remediation phase boundary drifted.");
-    if (value.CurrentPhase is not (lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation))
+    if (value.CurrentPhase is not (lane0IntegrationRemediation or lane0IntegrationPrebindingHardening or lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation))
         errors.Add("Integration audit remediation historical closure is missing from the active lineage.");
     if (remediation is null || remediation.Status != "COMPLETE"
         || remediation.Outcome != "READY_FOR_INDEPENDENT_REMEDIATION_AUDIT"
@@ -2724,7 +2727,7 @@ void ValidateLane0CorrectiveSuccessorIntegrationPrebindingAuditRemediation(Proje
         || phaseContract.Authorization !=
             "AUTHORIZED_FOR_PREBINDING_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY")
         errors.Add("Integration prebinding audit remediation phase boundary drifted.");
-    if (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation)
+    if (value.CurrentPhase is not (lane0IntegrationPrebindingAuditRemediation or lane0FinalAuthorityBoundaryRemediation or lane0AtomicityProvenanceRemediation)
         || value.NextRecommendedPhase is not null || value.NextBehavioralPhase is not null
         || (value.CurrentPhase == lane0IntegrationPrebindingAuditRemediation
             && value.NextRecommendedAction != "INDEPENDENT_PREBINDING_REAUDIT")
@@ -2806,7 +2809,8 @@ void ValidateLane0CorrectiveSuccessorIntegrationFinalAuthorityBoundaryRemediatio
         || phaseContract.Authorization !=
             "AUTHORIZED_FOR_FINAL_AUTHORITY_BOUNDARY_REMEDIATION_IMPLEMENTATION_ONLY")
         errors.Add("Final authority-boundary remediation phase boundary drifted.");
-    if (value.CurrentPhase != lane0FinalAuthorityBoundaryRemediation
+    if (value.CurrentPhase is not (lane0FinalAuthorityBoundaryRemediation
+            or lane0AtomicityProvenanceRemediation)
         || value.NextRecommendedPhase is not null || value.NextBehavioralPhase is not null
         || value.NextRecommendedAction != "FINAL_INDEPENDENT_PREBINDING_REAUDIT"
         || value.BehaviorChange)
@@ -2823,6 +2827,9 @@ void ValidateLane0CorrectiveSuccessorIntegrationFinalAuthorityBoundaryRemediatio
             contractPath.Replace('/', Path.DirectorySeparatorChar))));
         errors.AddRange(IntegrationFinalAuthorityBoundaryRemediationGuard.Validate(
             document.RootElement, root));
+        if (IntegrationFinalAuthorityBoundaryRemediationGuard.ValidateAgainstLive(
+            document.RootElement, root).Count == 0)
+            errors.Add("Historical B4489D live route did not reject evolved atomicity identities.");
         using var historical = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "docs",
             "lane_0_corrective_successor_integration_prebinding_audit_remediation_contract.json")));
         errors.AddRange(IntegrationPrebindingAuditRemediationGuard.Validate(
@@ -2846,6 +2853,64 @@ void ValidateLane0CorrectiveSuccessorIntegrationFinalAuthorityBoundaryRemediatio
     }) CheckContains(report, marker, "final authority-boundary closure precision");
 }
 
+void ValidateLane0CorrectiveSuccessorIntegrationAtomicityProvenanceRemediation(ProjectState value)
+{
+    const string report =
+        "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION.md";
+    const string contractPath =
+        "docs/lane_0_corrective_successor_integration_prebinding_atomicity_provenance_remediation_contract.json";
+    var phase = value.Phases.FirstOrDefault(x => x.Id == lane0AtomicityProvenanceRemediation);
+    var phaseContract = value.PhaseContracts.FirstOrDefault(
+        x => x.Id == lane0AtomicityProvenanceRemediation);
+    if (phase?.Status != "COMPLETE"
+        || phase.Outcome != "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT"
+        || phase.BehaviorChange is not false || phase.Report != report
+        || phase.Authorization !=
+            "AUTHORIZED_FOR_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION_IMPLEMENTATION_ONLY"
+        || phaseContract?.Kind != "ResearchShadow" || phaseContract.BehaviorChange is not false
+        || phaseContract.Authorization !=
+            "AUTHORIZED_FOR_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION_IMPLEMENTATION_ONLY")
+        errors.Add("Atomicity/provenance remediation phase boundary drifted.");
+    if (value.CurrentPhase != lane0AtomicityProvenanceRemediation
+        || value.NextRecommendedPhase is not null || value.NextBehavioralPhase is not null
+        || value.NextRecommendedAction != "FINAL_INDEPENDENT_PREBINDING_REAUDIT"
+        || value.BehaviorChange)
+        errors.Add("Atomicity/provenance remediation must stop for final independent reaudit.");
+    foreach (var artifact in new[] { report, contractPath })
+    {
+        RequireFile(artifact, "atomicity/provenance remediation artifact");
+        CheckContains("DOCUMENTATION_INDEX.md", artifact,
+            "atomicity/provenance remediation index entry");
+    }
+    try
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,
+            contractPath.Replace('/', Path.DirectorySeparatorChar))));
+        errors.AddRange(IntegrationPrebindingAtomicityProvenanceRemediationGuard.Validate(
+            document.RootElement, root));
+        using var historical = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "docs",
+            "lane_0_corrective_successor_integration_final_authority_boundary_remediation_contract.json")));
+        errors.AddRange(IntegrationFinalAuthorityBoundaryRemediationGuard.Validate(
+            historical.RootElement, root));
+        if (IntegrationFinalAuthorityBoundaryRemediationGuard.ValidateAgainstLive(
+            historical.RootElement, root).Count == 0)
+            errors.Add("Historical B4489D live route did not reject evolved atomicity identities.");
+    }
+    catch (Exception exception)
+    {
+        errors.Add($"Atomicity/provenance contract cannot be validated: {exception.Message}");
+    }
+    foreach (var marker in new[]
+    {
+        "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT",
+        "FINAL_PREBINDING_REAUDIT_REQUIRES_REMEDIATION_BEFORE_BINDING",
+        IntegrationPrebindingAtomicityProvenanceRemediationGuard.ContractIdentity,
+        "AP-R1", "AP-R2", "PRE_RECEIPT_READY", "RECEIPT_VERIFIED",
+        "No C11 or Songs content was accessed", "No real publication",
+        "No behavior, RNG, default or product exposure change"
+    }) CheckContains(report, marker, "atomicity/provenance closure precision");
+}
+
 void ValidateMasterStateBlocks(ProjectState value)
 {
     var current = value.Phases.FirstOrDefault(x => x.Id == value.CurrentPhase);
@@ -2860,7 +2925,7 @@ void ValidateMasterStateBlocks(ProjectState value)
         nextBehavioral?.Authorization ?? "N/A", blocker.Id, blocker.Status,
         branch.Id, branch.Decision, value.BehaviorPolicyVersion,
         value.BehaviorChange ? "true" : "none", "prohibited",
-        "Final authority-boundary remediation complete / final independent prebinding reaudit pending / C11 science not authorized", value.TestStatus.Passed,
+        "Authority atomicity/provenance remediation complete / final independent prebinding reaudit pending / C11 science not authorized", value.TestStatus.Passed,
         value.TestStatus.Failed, value.TestStatus.Skipped);
     foreach (var document in new[] { "README.md", "PROJECT_STATUS.md" })
     {

@@ -1,10 +1,10 @@
 # Project Status
 
-Última actualización: 2026-10-04. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
+Última actualización: 2026-10-05. Este documento representa únicamente el estado actual y debe sobrescribirse al cerrar cada fase.
 
 ## Resumen
 
-ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 conserva su cierre histórico **FEASIBILITY_DEMONSTRATED**, pero su certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo C11 autorizado para `243c43a` está **CONSUMED / INVALID / NOT PUBLISHABLE / NO RETRY**. `SCI-01` registra una referencia Spring congelada incorrecta como causa suficiente no exclusiva; F03×F07 permanece cerrado y no existe promoción. La remediación final cerró FB-R1…FB-R5 con una única capacidad oficial autoridad→ciencia; el estado actual es **READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT**, no binding-ready. Hubo acceso C11 histórico sólo para inventario explícito read-only, nunca evaluación científica successor. Binding, receipt real y ejecución successor permanecen ausentes.
+ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu` deterministas, ejecutar lotes y estudiar decisiones del algoritmo. La política default activa es `legacy-experimental.1`; el perfil de evidencia es `phase-a.1` y el schema diagnóstico actual es `phase-c1-2-shadow.1`. SAFETY.REMEDIATION.GATE permanece **COMPLETE / NEEDS_REVIEW / NO PROMOTION** con partición oficial `188 A + 21 B + 5 D + 1 C_UNRESOLVED`. LANE.0 conserva su cierre histórico **FEASIBILITY_DEMONSTRATED**, pero su certificación global sigue **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo C11 autorizado para `243c43a` está **CONSUMED / INVALID / NOT PUBLISHABLE / NO RETRY**. `SCI-01` registra una referencia Spring congelada incorrecta como causa suficiente no exclusiva; F03×F07 permanece cerrado y no existe promoción. AP-R1/AP-R2 cierran ahora la atomicidad del SourceAuthorizationRoot y la autoridad real de procedencia `--no-hardlinks`: el host sellado crea el receipt y el mismo worker lo verifica antes de recibir CorpusRoot. El estado actual es **READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT**, no binding-ready. Hubo acceso C11 histórico sólo para inventario explícito read-only, nunca evaluación científica successor. Binding, receipt real y ejecución successor permanecen ausentes.
 
 | Fase | Estado | Efecto sobre generación |
 |---|---|---|
@@ -51,6 +51,7 @@ ManiaAddNotesLab funciona como laboratorio CLI/Web para generar variantes `.osu`
 | LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING — Integration Pre-Binding Hardening | **COMPLETE — READY_FOR_INDEPENDENT_PREBINDING_AUDIT** | X1–X4 cerrados con fixtures sintéticos: autoridad no redirigible, final artifacts de ExecutionRoot y provenance del worker real; sin C11 en esta fase, binding, receipt real ni ejecución. |
 | LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION — Integration Pre-Binding Audit Remediation | **COMPLETE — READY_FOR_INDEPENDENT_PREBINDING_REAUDIT** | PB-A1 aclarado; PB-A2/A3/A4 cerrados con dependency sealing, cierre binario y receipt-gated science. Sin C11, binding, receipt real, ejecución o promoción. |
 | LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION — Final Authority-to-Science Boundary Remediation | **COMPLETE — READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT** | FB-R1…FB-R5 cerrados con una única capacidad oficial, admisión interna, destinos derivados y cierre binario durable. Sin C11, binding, receipt real, ejecución o promoción. |
+| LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION — Authority Atomicity and Provenance Remediation | **COMPLETE — READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT** | AP-R1/AP-R2: receipt como primer consumo durable, coordinador sellado dueño del checkout no-hardlink y handshake `PRE_RECEIPT_READY` → `RECEIPT_VERIFIED`. Sin C11, binding, receipt real, ejecución o promoción. |
 | G1 — Interior Relation Semantics A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo ni expuesto. |
 | G2 — Causal Articulation A/B | **FUTURE / NOT_AUTHORIZED** | No existe treatment activo; G1 abstention no lo dispara. |
 | H — ParentArticulationPlan | **FUTURE / NOT_AUTHORIZED** | No existe planner de cortes múltiples activo. |
@@ -308,20 +309,20 @@ La consulta de vulnerabilidades de NuGet puede emitir `NU1900` cuando `api.nuget
 `F2.ACQ` permanece **BLOCKED ON EXTERNAL DATA** y F2 sigue `CONTINUE_CONDITIONALLY`. SAFETY.REMEDIATION.GATE permanece **NEEDS_REVIEW / NO PROMOTION**; G1.GATE conserva el mismo límite. C2 permanece **DEFERRED** y MapperSupport, G1 utility, G2 y H no están autorizados. LANE.0 conserva sólo sus cifras históricas y su certificación está **SUSPENDED / PENDING_RECERTIFICATION**. El intento correctivo oficial está consumido, terminó `INVALID / NOT PUBLISHABLE` y no puede reintentarse. La frontera final autoridad→ciencia está implementada y se detiene en **FINAL_INDEPENDENT_PREBINDING_REAUDIT**. No hay binding, receipt real, ejecución ni C11.
 
 <!-- PROJECT-STATE:BEGIN -->
-Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION — COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT<br>
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION — COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT<br>
 Next actionable research candidate: none<br>
 Next actionable authorization: N/A<br>
 Next behavioral phase: none<br>
 Next behavioral authorization: N/A<br>
 Retry: prohibited<br>
-Successor: Final authority-boundary remediation complete / final independent prebinding reaudit pending / C11 science not authorized<br>
+Successor: Authority atomicity/provenance remediation complete / final independent prebinding reaudit pending / C11 science not authorized<br>
 Blocked prerequisite: F2.ACQ — BLOCKED<br>
 Research branch: F2 — CONTINUE_CONDITIONALLY<br>
 Behavior policy: `legacy-experimental.1`<br>
 Behavior change: none<br>
 Evidence profile: `phase-a.1`<br>
 Diagnostic schema: `phase-c1-2-shadow.1`<br>
-Tests: 1164 passed / 0 failed / 0 skipped
+Tests: 1187 passed / 0 failed / 0 skipped
 <!-- PROJECT-STATE:END -->
 
 Detalles y evidencia: [D1.SAFETY](docs/PHASE_D1_SAFETY_ATTRIBUTABLE_GEOMETRY_REPORT.md) documenta el segundo hard abort causal; [D1](docs/PHASE_D1_RESULTING_STATE_AB_REPORT.md) permanece Outcome C histórico; D1.GATE y D1.0 conservan sus contratos previos.

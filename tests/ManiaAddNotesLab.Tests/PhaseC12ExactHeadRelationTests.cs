@@ -190,7 +190,7 @@ public sealed class PhaseC12ExactHeadRelationTests
         var stateRoot = state.RootElement;
         Assert.Equal("legacy-experimental.1", stateRoot.GetProperty("behaviorPolicyVersion").GetString());
         Assert.False(stateRoot.GetProperty("behaviorChange").GetBoolean());
-        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION",
+        Assert.Equal("LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION",
             stateRoot.GetProperty("currentPhase").GetString());
         Assert.Equal(JsonValueKind.Null, stateRoot.GetProperty("nextRecommendedPhase").ValueKind);
         Assert.Equal("FINAL_INDEPENDENT_PREBINDING_REAUDIT",
@@ -228,13 +228,13 @@ public sealed class PhaseC12ExactHeadRelationTests
                 x.GetProperty("id").GetString() == "LANE.0.HARDENING")
             .GetProperty("outcome").GetString());
         const string currentPhase = "Current phase: LANE.0.CORRECTIVE_SUCCESSOR."
-            + "INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION — COMPLETE — OUTCOME "
+            + "INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION — COMPLETE — OUTCOME "
             + "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT";
         Assert.Contains(currentPhase, readme);
         Assert.Contains(currentPhase, status);
         Assert.Contains("Retry: prohibited", readme);
         Assert.Contains("Retry: prohibited", status);
-        const string successor = "Successor: Final authority-boundary remediation complete / final independent "
+        const string successor = "Successor: Authority atomicity/provenance remediation complete / final independent "
             + "prebinding reaudit pending / C11 science not authorized";
         Assert.Contains(successor, readme);
         Assert.Contains(successor, status);

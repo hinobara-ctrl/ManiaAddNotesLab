@@ -76,14 +76,21 @@ static int RunOfficial(string executionRoot, Lane0IntegrationRuntimeProvenance i
     if (store.ReceiptExists || store.OutputOrStagingExists || File.Exists(AuthorityStatePath()))
         throw new InvalidDataException("Official one-shot authority is already consumed.");
 
-    // The claim is durable before the receipt. Failure and exceptions consume the attempt, while
-    // binding the exact project-owned closure independently of host process memory.
+    Console.WriteLine("PRE_RECEIPT_READY");
+    Console.Out.Flush();
+
+    if (Console.ReadLine() != "RECEIPT_CREATED")
+        throw new InvalidDataException("Official receipt continuation signal was not delivered.");
+    Lane0IntegrationDurableReceiptVerifier.VerifyCanonicalReceipt(source, executionRoot,
+        attestation.ExpectedHead, binding.CanonicalSha256, attestation.ExpectedIdentities);
+    var postReceiptProvenance = ObserveProvenance(executionRoot);
+    if (!Lane0ExecutionRootScientificRuntime.BinaryClosuresEqual(
+        postReceiptProvenance.BinaryClosure, initialProvenance.BinaryClosure))
+        throw new InvalidDataException("Project binary closure drifted across receipt creation.");
     WriteAuthorityState(new(source, attestation.ExpectedHead, binding.CanonicalSha256,
-        attestation.ExpectedIdentities, initialProvenance.BinaryClosure,
-        "SCIENCE_ATTEMPT_CLAIMED"));
-    store.CreateDurableReceipt(Lane0CorrectiveSuccessorIsolatedLauncher.BuildReceipt(
-        attestation.ExpectedHead, attestation.ExpectedIdentities, binding.CanonicalSha256));
-    Console.WriteLine("RECEIPT_CREATED");
+        attestation.ExpectedIdentities, postReceiptProvenance.BinaryClosure,
+        "RECEIPT_VERIFIED_ATTEMPT_CONSUMED"));
+    Console.WriteLine("RECEIPT_VERIFIED");
     Console.Out.Flush();
 
     var corpusLine = Console.ReadLine()

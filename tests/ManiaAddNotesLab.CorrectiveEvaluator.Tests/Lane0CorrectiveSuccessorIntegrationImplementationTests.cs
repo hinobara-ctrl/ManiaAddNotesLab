@@ -209,8 +209,11 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var launcher = SyntheticLauncher(new FakeCheckoutMaterializer());
         Assert.Throws<InvalidDataException>(() => launcher.RunOfficial(OfficialRequest(request)));
         WriteOfficialBinding(request);
-        var result = launcher.RunOfficial(OfficialRequest(request));
-        Assert.Equal("PUBLISHABLE", result.Classification);
+        Assert.Throws<InvalidDataException>(() => launcher.RunOfficial(OfficialRequest(request)));
+        var loaded = new Lane0IntegrationCanonicalBindingLoader().Load(
+            Lane0IntegrationOfficialLayout.Derive(request.SourceRoot, request.ExecutionRoot)
+                .CanonicalBindingPath);
+        Assert.Equal(request.Binding.CanonicalSha256, loaded.CanonicalSha256);
     }
 
     [Theory]
@@ -316,12 +319,9 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         var science = new CountingScience(identical: true);
         var launcher = SyntheticLauncher(new FakeCheckoutMaterializer(), science);
 
-        var first = launcher.RunOfficial(OfficialRequest(request));
-        Assert.Equal("PUBLISHABLE", first.Classification);
-        Assert.Equal(2, science.Calls);
         Assert.Throws<InvalidDataException>(() => launcher.RunOfficial(OfficialRequest(request)));
-        Assert.Equal(2, science.Calls);
-        Assert.True(File.Exists(Lane0IntegrationOfficialLayout.Derive(
+        Assert.Equal(0, science.Calls);
+        Assert.False(File.Exists(Lane0IntegrationOfficialLayout.Derive(
             request.SourceRoot, request.ExecutionRoot).DurableReceiptPath));
     }
 
@@ -342,7 +342,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         Assert.Throws<InvalidDataException>(() => launcher.RunOfficial(OfficialRequest(request)));
         var receipt = Lane0IntegrationOfficialLayout.Derive(
             request.SourceRoot, request.ExecutionRoot).DurableReceiptPath;
-        Assert.True(File.Exists(receipt));
+        Assert.False(File.Exists(receipt));
         Assert.Equal(0, science.Calls);
         Assert.Throws<InvalidDataException>(() => launcher.RunOfficial(OfficialRequest(request)));
     }
@@ -376,7 +376,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
             Lane0ExecutionRootScientificRuntime.DefaultProjectAssemblyNames);
         var ids = Identities();
         var state = new Lane0IntegrationWorkerAuthorityState(temp.Path, "HEAD", "BINDING",
-            ids, closure, "SCIENCE_ATTEMPT_CLAIMED");
+            ids, closure, "RECEIPT_VERIFIED_ATTEMPT_CONSUMED");
         Lane0ExecutionRootScientificRuntime.ValidateDurableAuthorityClosure(state, closure, ids);
         File.AppendAllText(Path.Combine(build, mutation), "drift");
         var changed = Lane0ExecutionRootScientificRuntime.ObserveBinaryClosure(build,
@@ -862,6 +862,136 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
                 result.First.Package, SemanticFixture().Expected));
     }
 
+    [Theory]
+    [InlineData("head")]
+    [InlineData("detached")]
+    [InlineData("clean")]
+    [InlineData("hardlinks")]
+    [InlineData("reused-build")]
+    public void OfficialReceiptCreatorRejectsEveryMaterializerEvidenceDrift(string mutation)
+    {
+        var head = new string('A', 40);
+        var evidence = new Lane0IntegrationCheckoutEvidence(head, true, true, false, false);
+        evidence = mutation switch
+        {
+            "head" => evidence with { Head = new string('B', 40) },
+            "detached" => evidence with { Detached = false },
+            "clean" => evidence with { TrackedClean = false },
+            "hardlinks" => evidence with { UsedHardlinks = true },
+            "reused-build" => evidence with { ReusedSourceBuildOutputs = true },
+            _ => throw new ArgumentOutOfRangeException(nameof(mutation))
+        };
+        Assert.Throws<InvalidDataException>(() =>
+            Lane0IntegrationOfficialReceiptCoordinator.ValidateCheckoutEvidence(evidence, head));
+    }
+
+    [Fact]
+    public void ProductionWorkerCannotCreateCanonicalReceiptAndUsesTwoPhaseHandshake()
+    {
+        var worker = File.ReadAllText(Path.Combine(RepoRoot(), "tools",
+            "ManiaAddNotesLab.IntegrationResearchWorker", "Program.cs"));
+        Assert.Contains("PRE_RECEIPT_READY", worker, StringComparison.Ordinal);
+        Assert.Contains("RECEIPT_VERIFIED", worker, StringComparison.Ordinal);
+        Assert.Contains("VerifyCanonicalReceipt(source, executionRoot", worker,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("store.CreateDurableReceipt", worker, StringComparison.Ordinal);
+        Assert.DoesNotContain("--authorize", worker, StringComparison.Ordinal);
+        Assert.DoesNotContain("--execute", worker, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void HostSendsCorpusOnlyAfterWorkerReceiptVerification()
+    {
+        var runtime = File.ReadAllText(Path.Combine(RepoRoot(), "tools",
+            "ManiaAddNotesLab.Experiments", "Lane0CorrectiveSuccessorIsolatedRuntime.cs"));
+        var verify = runtime.IndexOf("session.VerifyCreatedReceipt();", StringComparison.Ordinal);
+        var complete = runtime.IndexOf("session.Complete(corpusRootToken);", StringComparison.Ordinal);
+        Assert.True(verify >= 0 && complete > verify);
+        var worker = File.ReadAllText(Path.Combine(RepoRoot(), "tools",
+            "ManiaAddNotesLab.IntegrationResearchWorker", "Program.cs"));
+        var verified = worker.IndexOf("Console.WriteLine(\"RECEIPT_VERIFIED\")",
+            StringComparison.Ordinal);
+        var corpus = worker.IndexOf("var corpusLine = Console.ReadLine()",
+            StringComparison.Ordinal);
+        Assert.True(verified >= 0 && corpus > verified);
+    }
+
+    [Theory]
+    [InlineData("SCIENCE_FAILURE")]
+    [InlineData("INVALID_ADMISSION")]
+    [InlineData("POST_RECEIPT_EXCEPTION")]
+    public void CanonicalReceiptRemainsConsumedForEveryPostReceiptOutcome(string outcome)
+    {
+        using var temp = new TempDirectory();
+        var request = LaunchRequest(temp.Path, "opaque");
+        var paths = Lane0IntegrationOfficialLayout.Derive(request.SourceRoot, request.ExecutionRoot);
+        var store = new Lane0IntegrationFileAuthorityStore(paths.DurableReceiptPath,
+            paths.FinalArtifactsRoot, paths.StagingRoot);
+        store.CreateDurableReceipt(Encoding.UTF8.GetBytes(outcome));
+        File.WriteAllText(Path.Combine(temp.Path, "post-receipt-outcome.txt"), outcome);
+        Assert.True(new Lane0IntegrationFileAuthorityStore(paths.DurableReceiptPath,
+            paths.FinalArtifactsRoot, paths.StagingRoot).ReceiptExists);
+        Assert.Throws<IOException>(() => store.CreateDurableReceipt([1]));
+    }
+
+    [Fact]
+    public void RealWorkerCrashWindowsRemainAtomicAcrossFreshExecutionRoots()
+    {
+        using var temp = new TempDirectory();
+        var fixture = CreateProductionAuthorityFixture(temp.Path);
+        var runtime = new Lane0ExecutionRootScientificRuntime();
+        var materializer = new GitDetachedCheckoutMaterializer();
+
+        var e1 = Path.Combine(temp.Path, "atomic-e1");
+        var c1 = materializer.CreateDetachedCheckout(fixture.Source, e1, fixture.Head);
+        var p1 = runtime.Prepare(e1, fixture.Head);
+        Lane0ExecutionRootScientificRuntime.WriteOfficialLaunchAttestation(
+            Lane0ExecutionRootScientificRuntime.OfficialAttestationPath(p1), p1,
+            fixture.Source, fixture.Head, fixture.Identities);
+        using (var session = Lane0IntegrationOfficialWorkerSession.Start(
+            p1.WorkerAssemblyPath, e1))
+        {
+            var paths = Lane0IntegrationOfficialLayout.Derive(fixture.Source, e1);
+            Assert.False(File.Exists(paths.DurableReceiptPath));
+            Assert.False(File.Exists(Lane0ExecutionRootScientificRuntime.AuthorityStatePath(
+                p1.WorkerAssemblyPath)));
+            session.Terminate();
+        }
+
+        // No receipt was created by E1, so a fresh E2 may reach the same pre-receipt boundary.
+        var e2 = Path.Combine(temp.Path, "atomic-e2");
+        var c2 = materializer.CreateDetachedCheckout(fixture.Source, e2, fixture.Head);
+        var p2 = runtime.Prepare(e2, fixture.Head);
+        Lane0ExecutionRootScientificRuntime.WriteOfficialLaunchAttestation(
+            Lane0ExecutionRootScientificRuntime.OfficialAttestationPath(p2), p2,
+            fixture.Source, fixture.Head, fixture.Identities);
+        using (var session = Lane0IntegrationOfficialWorkerSession.Start(
+            p2.WorkerAssemblyPath, e2))
+        {
+            var coordinator = new Lane0IntegrationOfficialReceiptCoordinator(
+                fixture.Source, e2, fixture.Head, fixture.Identities, c2, p2);
+            coordinator.CreateCanonicalDurableReceipt();
+            var paths = Lane0IntegrationOfficialLayout.Derive(fixture.Source, e2);
+            Assert.True(File.Exists(paths.DurableReceiptPath));
+            Assert.False(File.Exists(Lane0ExecutionRootScientificRuntime.AuthorityStatePath(
+                p2.WorkerAssemblyPath)));
+            // Crash after receipt creation but before state/science: the receipt alone consumes.
+            session.Terminate();
+        }
+
+        var e3 = Path.Combine(temp.Path, "atomic-e3");
+        _ = materializer.CreateDetachedCheckout(fixture.Source, e3, fixture.Head);
+        var p3 = runtime.Prepare(e3, fixture.Head);
+        Lane0ExecutionRootScientificRuntime.WriteOfficialLaunchAttestation(
+            Lane0ExecutionRootScientificRuntime.OfficialAttestationPath(p3), p3,
+            fixture.Source, fixture.Head, fixture.Identities);
+        Assert.Throws<InvalidDataException>(() =>
+            Lane0IntegrationOfficialWorkerSession.Start(p3.WorkerAssemblyPath, e3));
+        Assert.True(File.Exists(Lane0IntegrationOfficialLayout.Derive(fixture.Source, e3)
+            .DurableReceiptPath));
+        Assert.False(c1.UsedHardlinks);
+    }
+
     [Fact]
     public void IntegrationRunnerHasNoProductProgramCallSite()
     {
@@ -1106,6 +1236,40 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         }
     }
 
+    private static (string Source, string Head,
+        Lane0IntegrationRuntimeIdentities Identities) CreateProductionAuthorityFixture(string root)
+    {
+        var source = Path.Combine(root, "atomic-production-source");
+        CopyProjectSources(Path.Combine(RepoRoot(), "src", "ManiaAddNotesLab.Core"),
+            Path.Combine(source, "src", "ManiaAddNotesLab.Core"));
+        CopyProjectSources(Path.Combine(RepoRoot(), "tools", "ManiaAddNotesLab.Experiments"),
+            Path.Combine(source, "tools", "ManiaAddNotesLab.Experiments"));
+        CopyProjectSources(Path.Combine(RepoRoot(), "tools", "ManiaAddNotesLab.IntegrationResearchWorker"),
+            Path.Combine(source, "tools", "ManiaAddNotesLab.IntegrationResearchWorker"));
+        var docs = Path.Combine(source, "docs");
+        Directory.CreateDirectory(docs);
+        foreach (var name in new[]
+        {
+            "lane_0_corrective_successor_preregistration_contract.json",
+            "lane_0_corrective_successor_execution_preparation_contract.json",
+            "lane_0_corrective_successor_integration_preregistration_contract.json",
+            "lane_0_corrective_successor_integration_execution_contract.json",
+            "g1_gate_runtime_manifest.json"
+        }) File.Copy(Path.Combine(RepoRoot(), "docs", name), Path.Combine(docs, name));
+        RunGit(source, "init"); RunGit(source, "config", "user.email", "test@example.invalid");
+        RunGit(source, "config", "user.name", "Test"); RunGit(source, "add", "src", "tools", "docs");
+        RunGit(source, "commit", "-m", "atomic-production-fixture");
+        var head = RunGit(source, "rev-parse", "HEAD").Trim();
+        var identities = new GitAndFileIntegrationAuthorityObserver().ObserveRuntimeIdentities(source);
+        var binding = new Lane0IntegrationBindingFields(
+            Lane0CorrectiveSuccessorIsolatedLauncher.BindingSchema, head, identities, true, 1);
+        var paths = Lane0IntegrationOfficialLayout.Derive(source, Path.Combine(root, "placeholder"));
+        Directory.CreateDirectory(Path.GetDirectoryName(paths.CanonicalBindingPath)!);
+        File.WriteAllBytes(paths.CanonicalBindingPath,
+            Lane0IntegrationCanonicalBindingLoader.CanonicalDocumentBytes(binding));
+        return (source, head, identities);
+    }
+
     private static string SyntheticProvenanceWorkerSource() =>
         "using System.Diagnostics;using System.Reflection;using System.Security.Cryptography;using System.Text;using System.Text.Json;"
         + "var i=Array.IndexOf(args,\"--execution-root\");var r=Path.GetFullPath(args[i+1]);"
@@ -1257,7 +1421,7 @@ public sealed class Lane0CorrectiveSuccessorIntegrationImplementationTests
         public Lane0IntegrationResearchResult RunOfficial(
             Lane0IntegrationPreparedRuntime prepared, string canonicalSourceRoot,
             string expectedHead, Lane0IntegrationRuntimeIdentities expectedIdentities,
-            Lane0IntegrationCheckoutEvidence checkoutEvidence, string corpusRootToken)
+            Lane0IntegrationOfficialReceiptCoordinator receiptCoordinator, string corpusRootToken)
         {
             var paths = Lane0IntegrationOfficialLayout.Derive(canonicalSourceRoot,
                 prepared.ExecutionRoot);

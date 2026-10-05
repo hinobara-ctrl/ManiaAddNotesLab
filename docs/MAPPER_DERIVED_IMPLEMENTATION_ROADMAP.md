@@ -1279,6 +1279,14 @@ FB-R1…FB-R5 are closed locally by replacing reusable production authorize/exec
 
 Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION — COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT.
 
+## Phase LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION — Authority Atomicity and Provenance Remediation
+
+<!-- PHASE-CONTRACT:LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION;kind=ResearchShadow;behaviorChange=false;authorization=AUTHORIZED_FOR_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION_IMPLEMENTATION_ONLY -->
+
+**COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT.** AP-R1 convierte el receipt canónico en el primer hecho durable que consume el SourceAuthorizationRoot; el worker sólo anuncia preflight y verifica el receipt creado por el host antes de recibir CorpusRoot. AP-R2 asigna la creación al coordinador sellado que posee directamente la evidencia de `git clone --no-hardlinks --no-checkout` y reobserva binding, Git y cierre binario inmediatamente antes. No hubo C11, binding, receipt real, ejecución successor, conducta, RNG, defaults o exposición de producto.
+
+Current phase: LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION — COMPLETE — OUTCOME READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT.
+
 ## Phase G1 — Interior Relation Semantics A/B
 
 <!-- PHASE-CONTRACT:G1;kind=BehaviorChanging;behaviorChange=true;authorization=NOT_AUTHORIZED -->

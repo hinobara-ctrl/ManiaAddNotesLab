@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 26,
-  "lastUpdated": "2026-10-04",
+  "schemaVersion": 27,
+  "lastUpdated": "2026-10-05",
   "behaviorPolicyVersion": "legacy-experimental.1",
   "evidenceProfileVersion": "phase-a.1",
   "diagnosticVersion": "phase-c1-2-shadow.1",
@@ -51,7 +51,8 @@
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION", "name": "Corrective Successor Integration Audit Remediation", "status": "COMPLETE", "outcome": "READY_FOR_INDEPENDENT_REMEDIATION_AUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_AUDIT_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_INTEGRATION_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING", "name": "Corrective Successor Integration Pre-Binding Hardening", "status": "COMPLETE", "outcome": "READY_FOR_INDEPENDENT_PREBINDING_AUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_HARDENING.md", "authorization": "AUTHORIZED_FOR_PREBINDING_HARDENING_IMPLEMENTATION_ONLY" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION", "name": "Corrective Successor Integration Pre-Binding Audit Remediation", "status": "COMPLETE", "outcome": "READY_FOR_INDEPENDENT_PREBINDING_REAUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_AUDIT_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_PREBINDING_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY" },
-    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION", "name": "Corrective Successor Final Authority-to-Science Boundary Remediation", "status": "COMPLETE", "outcome": "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_FINAL_AUTHORITY_BOUNDARY_REMEDIATION_IMPLEMENTATION_ONLY" }
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION", "name": "Corrective Successor Final Authority-to-Science Boundary Remediation", "status": "COMPLETE", "outcome": "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_FINAL_AUTHORITY_BOUNDARY_REMEDIATION_IMPLEMENTATION_ONLY" },
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION", "name": "Corrective Successor Pre-Binding Authority Atomicity and Provenance Remediation", "status": "COMPLETE", "outcome": "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT", "behaviorChange": false, "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION.md", "authorization": "AUTHORIZED_FOR_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION_IMPLEMENTATION_ONLY" }
   ],
   "researchBranches": [
     { "id": "F2", "decision": "CONTINUE_CONDITIONALLY", "blockedBy": "F2.ACQ" }
@@ -87,13 +88,14 @@
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_AUDIT_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_INTEGRATION_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_HARDENING", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_PREBINDING_HARDENING_IMPLEMENTATION_ONLY" },
     { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_AUDIT_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_PREBINDING_AUDIT_REMEDIATION_IMPLEMENTATION_ONLY" },
-    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_FINAL_AUTHORITY_BOUNDARY_REMEDIATION_IMPLEMENTATION_ONLY" }
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_FINAL_AUTHORITY_BOUNDARY_REMEDIATION_IMPLEMENTATION_ONLY" },
+    { "id": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION", "kind": "ResearchShadow", "behaviorChange": false, "authorization": "AUTHORIZED_FOR_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION_IMPLEMENTATION_ONLY" }
   ],
-  "currentPhase": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_FINAL_AUTHORITY_BOUNDARY_REMEDIATION",
+  "currentPhase": "LANE.0.CORRECTIVE_SUCCESSOR.INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION",
   "nextRecommendedPhase": null,
   "nextRecommendedAction": "FINAL_INDEPENDENT_PREBINDING_REAUDIT",
   "nextBehavioralPhase": null,
-  "testStatus": { "passed": 1164, "failed": 0, "skipped": 0 },
+  "testStatus": { "passed": 1187, "failed": 0, "skipped": 0 },
   "lane0Closure": {
     "status": "COMPLETE",
     "outcome": "FEASIBILITY_DEMONSTRATED",
@@ -408,10 +410,36 @@
     "nextRequiredAction": "INDEPENDENT_PREBINDING_REAUDIT",
     "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_AUDIT_REMEDIATION.md"
   },
+  "lane0CorrectiveSuccessorIntegrationPrebindingAtomicityProvenanceRemediation": {
+    "status": "COMPLETE",
+    "outcome": "READY_FOR_FINAL_INDEPENDENT_PREBINDING_REAUDIT",
+    "baselinePublicHead": "991dd5e8006d896d604a697a3d11c26d81a82a62",
+    "parentFinalAuthorityBoundaryContractSha256": "B4489D605EFF3E0AB2DF2768CAE2530DBA071E7AC4EF4009AEE7383E764AEFF0",
+    "contract": "docs/lane_0_corrective_successor_integration_prebinding_atomicity_provenance_remediation_contract.json",
+    "contractHash": "27BAFFB4B92E5B30A073E60673D8F2FEDB109FF70A69A23C5783D8D589693FDD",
+    "adapterSha256": "032F9660D8C0012C990983CE307CDA9D20B1C49116BEAA7F3C5E3DB1EBD875B0",
+    "runnerSha256": "32C600B809F0B021C3806FDBC2BE58656C6DA27B5CE053E4E625AC9A175D72BF",
+    "authorityRuntimeWorkerSha256": "805F70466B503FEBBB14511E595A12E3AB42A583CED1A1D04193BF3DE04474DE",
+    "semanticVerifierSha256": "67969A60704553AA6CFB134F8B7F67236757EA6A2CF51C9CD7C4EF3C8FA5A4DB",
+    "apR1Disposition": "CLOSED_SOURCE_ROOT_ONE_SHOT_ATOMICITY",
+    "apR2Disposition": "CLOSED_NO_HARDLINK_PROVENANCE_OWNERSHIP",
+    "c11HistoricalPathInventoryAccess": "YES_READ_ONLY_EXPLICIT_PATH_INVENTORY_ONLY",
+    "c11AccessedInThisPhase": false,
+    "c11ScientificEvaluation": false,
+    "bindingPresent": false,
+    "realReceiptPresent": false,
+    "realSuccessorExecution": false,
+    "behaviorChange": false,
+    "rngChange": false,
+    "defaultChange": false,
+    "productExposure": false,
+    "nextRequiredAction": "FINAL_INDEPENDENT_PREBINDING_REAUDIT",
+    "report": "docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_INTEGRATION_PREBINDING_ATOMICITY_PROVENANCE_REMEDIATION.md"
+  },
   "reviewRequirements": {
     "safetyProvHistoricalClosureRequirement": "ROADMAP_REVIEW_REQUIRED",
     "safetyProvCurrentBlockingRequirement": "SATISFIED_BY_POST_SAFETY_STRATEGIC_AND_HUMAN_ROADMAP_REVIEW",
-    "currentBlockingRequirement": "INDEPENDENT_REMEDIATION_AUDIT_REQUIRES_SEPARATE_HUMAN_AUTHORIZATION; BINDING_REMAINS_ABSENT"
+    "currentBlockingRequirement": "FINAL_INDEPENDENT_PREBINDING_REAUDIT_REQUIRES_SEPARATE_HUMAN_AUTHORIZATION; BINDING_REMAINS_ABSENT"
   },
   "g10Recertification": {
     "status": "PASS",
