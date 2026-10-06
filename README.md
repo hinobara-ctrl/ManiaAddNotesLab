@@ -84,7 +84,7 @@ Tests: 1202 passed / 0 failed / 0 skipped
 
 Este repositorio es un laboratorio de investigación, **no un algoritmo final ni una release lista para usuarios**. Varias políticas actuales siguen siendo hipótesis pendientes de playtesting diverso.
 
-`LANE.0` conserva su cierre histórico, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. El único intento correctivo oficial está **CONSUMED / INVALID / NOT PUBLISHABLE** y no admite retry. La frontera final autoridad→ciencia está remediada localmente y espera la reauditora independiente final. Hubo acceso histórico C11 exclusivamente para `READ_ONLY_EXPLICIT_PATH_INVENTORY_ONLY`; nunca hubo evaluación científica C11 del successor. No existe binding ni receipt real y ninguna ejecución successor está autorizada.
+`LANE.0` conserva su cierre histórico, pero su certificación global está **SUSPENDED / PENDING_RECERTIFICATION**. El intento correctivo histórico sigue **CONSUMED / INVALID / NOT PUBLISHABLE**. El [intento oficial del Corrective Successor](docs/PHASE_LANE_0_CORRECTIVE_SUCCESSOR_OFFICIAL_EXECUTION_CLOSURE.md) también consumió durablemente su one-shot y terminó `NON_PUBLISHABLE`: la admisión C11 exact-path encontró un mismatch entre el layout congelado antiguo y el layout físico aplanado, antes de iniciar ciencia. Binding, receipt y authority-state se preservan; no existe retry, successor autorizado ni promoción.
 
 ## Ejecutar
 
